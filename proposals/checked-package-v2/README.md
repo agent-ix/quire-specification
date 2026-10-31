@@ -183,6 +183,17 @@ structures, but any external consumer receives only the contract.
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The document `domain-package-acme-orders.json` is the
   domain package; `domain_package` is derived from it.
+- `collection-population-type-vectors.json` publishes complete structural
+  node keys for unbounded and bounded collection forms, including absent and
+  present bounds and different bound values, plus unbounded and bounded model
+  populations (TC-189, TC-247; FR-144-AC-9/AC-13, FR-153-AC-9). Each case records its
+  source type, kind or element type, bound/extent, and an `expected_node_key`
+  reference into the `node_keys` table; nested operands in that table use a
+  `node_key_ref` to share the referenced key without copying it; `segments`
+  holds the structural key's `path`. Collection
+  entries also reference their element type key, while population entries reference the semantic
+  `Set<Reference<T>>` key. The keys were confirmed against QSL's checked-package
+  emitter and are intended for its checked-package reader vectors.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.

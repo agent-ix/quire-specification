@@ -1,0 +1,369 @@
+{
+  "version": "quire.collection-population-type-vectors/v1",
+  "note": "TC-189/TC-247: collection and population structural node keys. QSL's checked-package emitter confirmed the expanded keys. node_keys stores reusable structural NodeIds; nested operands use {node_key_ref} references to share each key without copying it.",
+  "node_keys": {
+    "integer": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "scalar_type",
+        "integer"
+      ]
+    },
+    "config_version": {
+      "ordinal": 0,
+      "package": "example/config-version",
+      "segments": [
+        "model",
+        "object_type",
+        "ix://example/config-version/ConfigVersion"
+      ]
+    },
+    "reference_config_version": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "reference",
+        {
+          "node_key_ref": "config_version"
+        }
+      ]
+    },
+    "set_integer": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "set",
+        {
+          "node_key_ref": "integer"
+        }
+      ]
+    },
+    "set_integer_0_8": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "collection_bounds",
+        "min",
+        {
+          "node_key_ref": "integer"
+        },
+        "0",
+        "max",
+        "8",
+        {
+          "node_key_ref": "set_integer"
+        }
+      ]
+    },
+    "set_integer_1_8": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "collection_bounds",
+        "min",
+        {
+          "node_key_ref": "integer"
+        },
+        "1",
+        "max",
+        "8",
+        {
+          "node_key_ref": "set_integer"
+        }
+      ]
+    },
+    "bag_integer": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "bag",
+        {
+          "node_key_ref": "integer"
+        }
+      ]
+    },
+    "bag_integer_0_8": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "collection_bounds",
+        "min",
+        {
+          "node_key_ref": "integer"
+        },
+        "0",
+        "max",
+        "8",
+        {
+          "node_key_ref": "bag_integer"
+        }
+      ]
+    },
+    "sequence_integer": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "sequence",
+        {
+          "node_key_ref": "integer"
+        }
+      ]
+    },
+    "sequence_integer_0_8": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "collection_bounds",
+        "min",
+        {
+          "node_key_ref": "integer"
+        },
+        "0",
+        "max",
+        "8",
+        {
+          "node_key_ref": "sequence_integer"
+        }
+      ]
+    },
+    "ordered_set_integer": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "ordered_set",
+        {
+          "node_key_ref": "integer"
+        }
+      ]
+    },
+    "ordered_set_integer_0_8": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "collection_bounds",
+        "min",
+        {
+          "node_key_ref": "integer"
+        },
+        "0",
+        "max",
+        "8",
+        {
+          "node_key_ref": "ordered_set_integer"
+        }
+      ]
+    },
+    "set_reference_config_version": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "set",
+        {
+          "node_key_ref": "reference_config_version"
+        }
+      ]
+    },
+    "sequence_reference_config_version": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "composite_type",
+        "sequence",
+        {
+          "node_key_ref": "reference_config_version"
+        }
+      ]
+    },
+    "sequence_reference_config_version_1_3": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "collection_bounds",
+        "min",
+        {
+          "node_key_ref": "integer"
+        },
+        "1",
+        "max",
+        "3",
+        {
+          "node_key_ref": "sequence_reference_config_version"
+        }
+      ]
+    },
+    "population_config_version": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "model_population",
+        {
+          "node_key_ref": "set_reference_config_version"
+        }
+      ]
+    },
+    "population_config_version_0": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "model_population",
+        "max",
+        {
+          "node_key_ref": "integer"
+        },
+        "0",
+        {
+          "node_key_ref": "set_reference_config_version"
+        }
+      ]
+    },
+    "population_config_version_4": {
+      "ordinal": 0,
+      "package": "std610",
+      "segments": [
+        "bounded_domain",
+        "model_population",
+        "max",
+        {
+          "node_key_ref": "integer"
+        },
+        "4",
+        {
+          "node_key_ref": "set_reference_config_version"
+        }
+      ]
+    }
+  },
+  "collection_type_cases": [
+    {
+      "id": "CT-01",
+      "source_type": "Set<Integer>",
+      "kind": "set",
+      "element_type": "Integer",
+      "element_type_node_key": "integer",
+      "bounds": null,
+      "expected_node_key": "set_integer"
+    },
+    {
+      "id": "CT-02",
+      "source_type": "Set<Integer>[0, 8]",
+      "kind": "set",
+      "element_type": "Integer",
+      "element_type_node_key": "integer",
+      "bounds": {
+        "minimum": 0,
+        "maximum": 8
+      },
+      "expected_node_key": "set_integer_0_8"
+    },
+    {
+      "id": "CT-03",
+      "source_type": "Set<Integer>[1, 8]",
+      "kind": "set",
+      "element_type": "Integer",
+      "element_type_node_key": "integer",
+      "bounds": {
+        "minimum": 1,
+        "maximum": 8
+      },
+      "expected_node_key": "set_integer_1_8"
+    },
+    {
+      "id": "CT-04",
+      "source_type": "Bag<Integer>[0, 8]",
+      "kind": "bag",
+      "element_type": "Integer",
+      "element_type_node_key": "integer",
+      "bounds": {
+        "minimum": 0,
+        "maximum": 8
+      },
+      "expected_node_key": "bag_integer_0_8"
+    },
+    {
+      "id": "CT-05",
+      "source_type": "Sequence<Integer>[0, 8]",
+      "kind": "sequence",
+      "element_type": "Integer",
+      "element_type_node_key": "integer",
+      "bounds": {
+        "minimum": 0,
+        "maximum": 8
+      },
+      "expected_node_key": "sequence_integer_0_8"
+    },
+    {
+      "id": "CT-06",
+      "source_type": "OrderedSet<Integer>[0, 8]",
+      "kind": "ordered_set",
+      "element_type": "Integer",
+      "element_type_node_key": "integer",
+      "bounds": {
+        "minimum": 0,
+        "maximum": 8
+      },
+      "expected_node_key": "ordered_set_integer_0_8"
+    },
+    {
+      "id": "CT-07",
+      "source_type": "Set<Reference<Config::ConfigVersion>>",
+      "kind": "set",
+      "element_type": "Reference<Config::ConfigVersion>",
+      "element_type_node_key": "reference_config_version",
+      "bounds": null,
+      "expected_node_key": "set_reference_config_version"
+    },
+    {
+      "id": "CT-08",
+      "source_type": "Sequence<Reference<Config::ConfigVersion>>[1, 3]",
+      "kind": "sequence",
+      "element_type": "Reference<Config::ConfigVersion>",
+      "element_type_node_key": "reference_config_version",
+      "bounds": {
+        "minimum": 1,
+        "maximum": 3
+      },
+      "expected_node_key": "sequence_reference_config_version_1_3"
+    }
+  ],
+  "population_type_cases": [
+    {
+      "id": "PT-01",
+      "source_type": "Population<Config::ConfigVersion>",
+      "element_type": "Config::ConfigVersion",
+      "maximum": null,
+      "semantic_type_node_key": "set_reference_config_version",
+      "expected_node_key": "population_config_version"
+    },
+    {
+      "id": "PT-02",
+      "source_type": "Population<Config::ConfigVersion>[0]",
+      "element_type": "Config::ConfigVersion",
+      "maximum": 0,
+      "semantic_type_node_key": "set_reference_config_version",
+      "expected_node_key": "population_config_version_0"
+    },
+    {
+      "id": "PT-03",
+      "source_type": "Population<Config::ConfigVersion>[4]",
+      "element_type": "Config::ConfigVersion",
+      "maximum": 4,
+      "semantic_type_node_key": "set_reference_config_version",
+      "expected_node_key": "population_config_version_4"
+    }
+  ]
+}
