@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-330-AC-14
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-16
+    type: verifies
 ---
 # TC-934: ContractPackage source map is total for nodes, requests and refusals
 
@@ -48,10 +50,17 @@ entries are refused as `invalid_package`/`invalid-value` for source-map
 totality at `/source_map` before consumption. Encode each valid-JSON mutation
 as canonical RFC 8785 bytes before reading.
 
-## Source-frame id with an empty output graph
+## Source-frame ids and the empty output graph (FR-330-AC-14, AC-16)
 
-Lower a package whose only requested key is absent from the checked graph, so
-the output `semantic_graph` is empty. The requested item keeps the exact
-source-indexed id, is recorded `invalid_input`, and the package is admitted:
-the id's index segments resolve against the source package's graph, not the
-empty output graph.
+Lower a package whose only requested key is absent from the checked graph and
+derived: its structural key `{package, path, ordinal}` holds at least one
+operand, which the source wrote as an index segment. The output `semantic_graph`
+is empty. Require `source_keys` to carry the operand's key and the requested
+key exactly as the source wrote them, the requested key's index segment
+`{"node": i}` naming another `source_keys` entry, and the requested item,
+accounting `node_id` and source-map `requested_items` entry to be the source-key
+reference to the requested key. Require the package to be admitted with
+`invalid_input`, an empty output graph and an empty `occurrences` array. Then
+permute `source_keys` (rewriting every `source_key` reference and index
+segment) and, for a `lowered` item, the output graph: every accounting, bijection and refusal-pointer comparison is unchanged, and the
+`lowered` record's source key rebuilds to its output root's structural key.

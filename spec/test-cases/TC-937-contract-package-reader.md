@@ -15,6 +15,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-330-AC-13
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-15
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-272-AC-21
     type: verifies
 ---
@@ -183,3 +185,14 @@ at stage `package_read`, category incomplete, with the cause `input-bytes-exceed
 count, `setting` `CheckedPackageReadLimits.bytes`, `.nodes`, `.edges`,
 `.occurrences` or `.work`, and the location the `path` (none for `bytes`). No
 input yields a `diagnostics` stop.
+
+## Source-key refusal vectors (FR-330-AC-15)
+
+Apply one mutation per case to an otherwise admitted value: set a
+`feature_accounting` `node_id` to `{"source_key": n}` with `n` equal to the
+length of `source_keys`; give it a negative, fractional or string index or an
+extra member; set a `source_keys` index segment out of range; make an entry
+name itself, and make two entries name each other; duplicate a `source_keys`
+entry. The first five refuse `malformed_wire` with no cause at the offending
+`source_key` or `node` member pointer; the duplicate refuses
+`invalid_package`/`invalid-value` at the later `/source_keys/{k}`.
