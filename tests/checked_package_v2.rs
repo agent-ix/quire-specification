@@ -15909,6 +15909,55 @@ fn temporal_clock_package(case: &Value) -> Value {
     package
 }
 
+fn temporal_clock_package_with_two_clauses(case: &Value, second_clock_name: &str) -> Value {
+    let mut package = temporal_clock_package(case);
+    let (mut second_clause, first_clock_name) = {
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let index = nodes
+            .iter()
+            .position(|node| {
+                node["node_tag"] == "temporal" && node["semantic_form"] == "temporal_clause"
+            })
+            .expect("temporal declaration node");
+        (
+            nodes[index].clone(),
+            nodes[index]["body"]["arguments"][1]["value"]
+                .as_str()
+                .expect("clock name")
+                .to_owned(),
+        )
+    };
+    second_clause["body"]["arguments"][1]["value"] = json!(second_clock_name);
+    for segment in second_clause["node_id"]["path"]
+        .as_array_mut()
+        .expect("structural node path")
+    {
+        if segment.as_str() == Some(&first_clock_name) {
+            *segment = json!(second_clock_name);
+        }
+    }
+    let second_id = second_clause["node_id"].clone();
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes")
+        .push(second_clause);
+
+    let first_row = package["temporal_bindings"][0].clone();
+    let mut second_row = first_row.clone();
+    second_row["declaration"] = second_id;
+    second_row["clock_name"] = json!(second_clock_name);
+    let rows = package["temporal_bindings"].as_array_mut().expect("rows");
+    rows.push(second_row);
+    rows.sort_by(|left, right| {
+        left["clock_name"]
+            .as_str()
+            .cmp(&right["clock_name"].as_str())
+    });
+    package
+}
+
 #[trace("TC-134", "TC-233", "FR-322-AC-294")]
 #[test]
 fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
@@ -15957,6 +16006,55 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
         assert_eq!(clause["body"]["arguments"][1]["value"], binding["clock_name"]);
     }
 
+    let multi = &vectors["multi_clause_positive"];
+    let clock_names = multi["clock_names"].as_array().expect("clock names");
+    assert_eq!(clock_names.len(), 2, "multi-clause positive has two clauses");
+    let first_clock_name = positive[0]["clock_name"].as_str().unwrap();
+    assert!(
+        clock_names.iter().any(|name| name == first_clock_name),
+        "multi-clause vector includes the source fixture clock"
+    );
+    let additional_clock_name = clock_names
+        .iter()
+        .find(|name| name.as_str() != Some(first_clock_name))
+        .expect("one additional clock name");
+    let package = temporal_clock_package_with_two_clauses(
+        &positive[0],
+        additional_clock_name.as_str().expect("second clock name"),
+    );
+    assert!(
+        package_validator.is_valid(&package),
+        "{} is a schema-valid package with two clause rows: {:?}",
+        multi["id"],
+        package_validator
+            .iter_errors(&package)
+            .map(|error| error.to_string())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(multi["schema"], "valid");
+    let row_order: Vec<_> = package["temporal_bindings"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| row["clock_name"].as_str().unwrap())
+        .collect();
+    let expected_order: Vec<_> = multi["canonical_row_order"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|name| name.as_str().unwrap())
+        .collect();
+    assert_eq!(row_order, expected_order, "rows follow structural NodeRef order");
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    for row in package["temporal_bindings"].as_array().unwrap() {
+        let declaration = nodes
+            .iter()
+            .find(|node| node["node_id"] == row["declaration"])
+            .expect("each row resolves to its own clause NodeRef");
+        assert_eq!(declaration["semantic_form"], "temporal_clause");
+        assert_eq!(declaration["body"]["arguments"][1]["value"], row["clock_name"]);
+    }
+
     for case in vectors["schema_refusals"].as_array().expect("schema refusals") {
         let mut package = temporal_clock_package(&positive[0]);
         let clock = &mut package["temporal_bindings"][0]["clock"];
@@ -15982,14 +16080,24 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
         .expect("semantic refusal vectors")
     {
         let mut package = temporal_clock_package(&positive[0]);
-        match refusal["mutation"].as_str().expect("mutation name") {
+        let expected_locus = match refusal["mutation"].as_str().expect("mutation name") {
             "remove-row" => {
                 package.as_object_mut().unwrap().remove("temporal_bindings");
+                let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+                let clause_index = nodes
+                    .iter()
+                    .position(|node| {
+                        node["node_tag"] == "temporal"
+                            && node["semantic_form"] == "temporal_clause"
+                    })
+                    .expect("required temporal clause");
+                format!("/semantic_graph/nodes/{clause_index}/body")
             }
             "absent-declaration" => {
                 package["temporal_bindings"][0]["declaration"] = refusal["declaration"].clone();
                 let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
                 assert!(node_by_id(nodes, &refusal["declaration"]).is_none());
+                "/temporal_bindings/0/declaration".to_owned()
             }
             "wrong-kind-declaration" => {
                 let node_index = refusal["node_index"].as_u64().unwrap() as usize;
@@ -16002,13 +16110,28 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
                 };
                 package["temporal_bindings"][0]["declaration"] = node_id;
                 assert_ne!(semantic_form, "temporal_clause");
+                "/temporal_bindings/0/declaration".to_owned()
             }
             "duplicate-row" => {
                 let row = package["temporal_bindings"][0].clone();
                 package["temporal_bindings"].as_array_mut().unwrap().push(row);
+                "/temporal_bindings/1".to_owned()
+            }
+            "clock-name-mismatch" => {
+                package["temporal_bindings"][0]["clock_name"] = json!("other-clock");
+                "/temporal_bindings/0/clock_name".to_owned()
+            }
+            "profile-configuration-mismatch" => {
+                package["temporal_bindings"][0]["clock"] = json!({
+                    "kind": "fixed_sample",
+                    "epoch": {"kind": "integer", "decimal": "0"},
+                    "period": {"kind": "integer", "decimal": "1"},
+                    "unit": "seconds"
+                });
+                "/temporal_bindings/0/clock/kind".to_owned()
             }
             other => panic!("unknown temporal clock semantic mutation {other}"),
-        }
+        };
         assert!(
             package_validator.is_valid(&package),
             "{} remains schema-valid",
@@ -16017,9 +16140,24 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
         assert_eq!(refusal["schema"], "valid");
         assert_eq!(refusal["expected_code"], "invalid_package");
         assert_eq!(refusal["expected_cause"], "timed-node-reference");
-        assert!(!refusal["locus"].as_str().unwrap().is_empty());
+        assert_eq!(
+            refusal["locus"].as_str().unwrap(),
+            expected_locus,
+            "{} publishes the exact refusal locus",
+            refusal["id"]
+        );
         if refusal["mutation"] == "remove-row" {
             assert_eq!(refusal["precedence"], "after-aggregate-order-before-per-node-joins");
+        } else if refusal["mutation"] == "clock-name-mismatch" {
+            assert_eq!(
+                refusal["precedence"],
+                "after-aggregate-order-and-declaration-resolution-before-clock-kind"
+            );
+        } else if refusal["mutation"] == "profile-configuration-mismatch" {
+            assert_eq!(
+                refusal["precedence"],
+                "after-aggregate-order-and-declaration-resolution-and-clock-name"
+            );
         }
     }
 }
