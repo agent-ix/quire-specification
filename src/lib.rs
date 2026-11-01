@@ -5,7 +5,8 @@
 //!
 //! Consumers read QSpec's package-selection vectors and
 //! the native diagnostics catalog through these constants instead of holding copies. The crate carries the
-//! exact authored bytes and nothing else: no parsing.
+//! exact authored bytes, plus the typed [`QUALIFICATION_VECTORS`] table that
+//! `build.rs` generates from the authored test-case rows.
 
 /// `proposals/quire-v1/definitions/complete-value-selection-vectors.json`:
 /// the accepted, refused and ordering vectors for the complete-value
@@ -33,3 +34,63 @@ pub const VALUE_ACCOUNTING_CHARGE_POINT_VECTORS: &str =
 /// `LimitKind` set with this list.
 pub const VALUE_ACCOUNTING_LIMIT_KIND_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-accounting-limit-kind-vectors.json");
+
+/// A test case whose authored vector table is exported.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum TestCase {
+    /// `spec/test-cases/TC-185-exact-decimal-semantics.md`.
+    Tc185,
+    /// `spec/test-cases/TC-186-text-and-enum-identity-semantics.md`.
+    Tc186,
+    /// `spec/test-cases/TC-187-quantity-and-unit-conversion.md`.
+    Tc187,
+    /// `spec/test-cases/TC-192-integer-division-profiles.md`.
+    Tc192,
+    /// `spec/test-cases/TC-193-ieee-exceptional-and-rounding-profiles.md`.
+    Tc193,
+}
+
+impl TestCase {
+    /// Every exported test case, in id order.
+    pub const ALL: [TestCase; 5] = [
+        TestCase::Tc185,
+        TestCase::Tc186,
+        TestCase::Tc187,
+        TestCase::Tc192,
+        TestCase::Tc193,
+    ];
+
+    /// The authored test-case id, for example `TC-185`.
+    pub const fn id(self) -> &'static str {
+        match self {
+            TestCase::Tc185 => "TC-185",
+            TestCase::Tc186 => "TC-186",
+            TestCase::Tc187 => "TC-187",
+            TestCase::Tc192 => "TC-192",
+            TestCase::Tc193 => "TC-193",
+        }
+    }
+}
+
+/// One authored vector row of a test case's `Vector` table. The text fields
+/// are the authored cells, trimmed; nothing is interpreted or re-spelled.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct QualificationVector {
+    /// The test case the row belongs to.
+    pub test_case: TestCase,
+    /// The authored vector id, for example `D01` or `DIV-08`.
+    pub id: &'static str,
+    /// The authored operation, inputs, profile or domain cell.
+    pub inputs: &'static str,
+    /// The authored expected value, disposition, bits or result cell.
+    pub expected: &'static str,
+}
+
+include!(concat!(env!("OUT_DIR"), "/vectors.rs"));
+
+/// The authored vectors of one test case, in authored order.
+pub fn vectors_of(test_case: TestCase) -> impl Iterator<Item = &'static QualificationVector> {
+    QUALIFICATION_VECTORS
+        .iter()
+        .filter(move |v| v.test_case == test_case)
+}
