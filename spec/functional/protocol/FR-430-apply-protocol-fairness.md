@@ -11,6 +11,8 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-426
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: depends_on
 ---
 
 # FR-430: Apply scheduler and authored fairness over protocol steps
@@ -85,12 +87,19 @@ refuses `ambiguous_declaration`/`ambiguous-name`.
 
 Each member of a fairness set over a protocol subject is
 `{"kind":"weak"|"strong","target":<target>,"granularity":"whole"|"each","origin":"authored"|"scheduler"|"memory"}`,
-with `target` `{"type":"operation","name":"<qualified-name>"}`,
-`{"type":"attempt-node","node":"<node>"}`,
-`{"type":"thread-target","node":"<node>"|null,"branch":"<label>"|null}` (both
-null for the root) or `{"type":"template","name":"<qualified-name>"}`, or the
-target a memory model gives (a `tso` flush is `weak` and `each`; the `ra` visibility member is `strong` and `whole`, FR-437). The set is ordered by the JCS bytes of its
-members.
+with `target` a typed identity. An authored operation uses
+`{"kind":"operation","declaration":<NodeId>,"name":"<identifier>"}`;
+the protocol targets use `{"kind":"protocol_root","node":<NodeId>}`,
+`{"kind":"attempt_node","node":<NodeId>}`,
+`{"kind":"parallel_branch","parallel":<NodeId>,"branch":"<label>"}`
+or `{"kind":"compensation_template","node":<NodeId>}`. Each node id is
+the exact structural identity from the checked package; a branch pairs its
+parallel control id with its label because a branch position has no node of
+its own. The parallel id and label must both resolve within the named
+protocol. Scheduler members use the same protocol target shapes. Memory
+members use the target forms FR-436 and FR-437 define (a `tso` flush is `weak`
+and `each`; the `ra` visibility member is `strong` and `whole`). The set is
+ordered by the JCS bytes of its members.
 
 ### Machine closure
 

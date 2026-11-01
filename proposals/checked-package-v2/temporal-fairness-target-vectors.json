@@ -1,0 +1,66 @@
+{
+  "positive": [
+    {
+      "id": "FT-01-operation",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "operation", "declaration": {"package": "example", "path": ["Cell"], "ordinal": 0}, "name": "set"}}
+    },
+    {
+      "id": "FT-02-root",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "protocol_root", "node": {"package": "example", "path": ["Chatter"], "ordinal": 0}}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}}
+    },
+    {
+      "id": "FT-03-attempt",
+      "member": {"kind": "fairness", "fairness_kind": "strong", "granularity": "each", "target": {"kind": "attempt_node", "node": {"package": "example", "path": ["Chatter", "run", "Done"], "ordinal": 0}}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "controls": [{"node_id": {"package": "example", "path": ["Chatter", "run", "Done"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "control", "operator": "attempt"}]}
+    },
+    {
+      "id": "FT-04-branch",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "parallel_branch", "parallel": {"package": "example", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "branch": "s"}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "controls": [{"node_id": {"package": "example", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "control", "operator": "parallel", "branches": ["r", "s"]}]}
+    },
+    {
+      "id": "FT-05-compensation",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "each", "target": {"kind": "compensation_template", "node": {"package": "example", "path": ["Chatter", "compensate", "Recover"], "ordinal": 0}}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "compensations": [{"node_id": {"package": "example", "path": ["Chatter", "compensate", "Recover"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "compensation"}]}
+    },
+    {
+      "id": "FT-06-hybrid-transition",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "hybrid_transition", "declaration": {"package": "example", "path": ["Braking2", "Moving"], "ordinal": 0}, "name": "Stopped"}}
+    }
+  ],
+  "reader_cases": [
+    {
+      "id": "FT-13-missing-parallel",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "parallel_branch", "parallel": {"package": "example", "path": ["Chatter", "run", "Missing"], "ordinal": 0}, "branch": "s"}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "controls": [{"node_id": {"package": "example", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "control", "operator": "parallel", "branches": ["r", "s"]}]},
+      "expected": {"code": "missing_declaration", "cause": "missing-name", "locus": "/target/parallel"}
+    },
+    {
+      "id": "FT-14-foreign-parallel",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "parallel_branch", "parallel": {"package": "foreign", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "branch": "s"}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "controls": [{"node_id": {"package": "example", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "control", "operator": "parallel", "branches": ["r", "s"]}]},
+      "expected": {"code": "missing_declaration", "cause": "missing-name", "locus": "/target/parallel"}
+    },
+    {
+      "id": "FT-15-wrong-kind-parallel",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "parallel_branch", "parallel": {"package": "example", "path": ["Chatter", "run", "Sequence"], "ordinal": 0}, "branch": "s"}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "controls": [{"node_id": {"package": "example", "path": ["Chatter", "run", "Sequence"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "control", "operator": "sequence"}]},
+      "expected": {"code": "invalid_model_binding", "cause": "malformed-declaration", "locus": "/target/parallel"}
+    },
+    {
+      "id": "FT-16-absent-branch-label",
+      "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "parallel_branch", "parallel": {"package": "example", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "branch": "missing"}},
+      "target_context": {"protocol": {"node_id": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "protocol_clause"}, "controls": [{"node_id": {"package": "example", "path": ["Chatter", "run", "Both"], "ordinal": 0}, "node_tag": "protocol", "semantic_form": "control", "operator": "parallel", "branches": ["r", "s"]}]},
+      "expected": {"code": "missing_declaration", "cause": "missing-name", "locus": "/target/branch"}
+    }
+  ],
+  "malformed": [
+    {"id": "FT-07-missing-target-kind", "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"node": {"package": "example", "path": ["Chatter"], "ordinal": 0}}}},
+    {"id": "FT-08-unknown-target-kind", "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "name", "node": {"package": "example", "path": ["Chatter"], "ordinal": 0}}}},
+    {"id": "FT-09-operation-without-declaration", "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "operation", "name": "set"}}},
+    {"id": "FT-10-branch-without-parallel", "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "parallel_branch", "branch": "s"}}},
+    {"id": "FT-11-extra-target-identity", "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "protocol_root", "node": {"package": "example", "path": ["Chatter"], "ordinal": 0}, "name": "Chatter"}}},
+    {"id": "FT-12-invalid-node-identity", "member": {"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "target": {"kind": "attempt_node", "node": {"package": "example", "path": ["Chatter", "run", "Done"], "ordinal": -1}}}}
+  ]
+}
