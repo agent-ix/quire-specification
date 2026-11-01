@@ -92,40 +92,23 @@
         "operation",
         "parts"
       ],
-      "part": "binding predicate, then one reference to a clock_constraint for each constraint of the part, in order; a part names at least one constraint and a guard at least one part"
+      "part": "binding predicate, optional binding binders with ordered slot parameter references, then one reference to a clock_constraint for each constraint of the part, in order; a part names at least one constraint and a guard at least one part"
     },
     "time_invariant": {
       "body": [
         "predicate",
         "bounds"
       ],
-      "bounds": "a nonempty aggregate of references to clock_constraint nodes of kind place whose comparison is lt or le"
+      "bounds": "a nonempty aggregate of references to clock_constraint nodes of kind place whose comparison is lt or le",
+      "binders": "ordered references to quantified place slot parameter nodes; empty when omitted for unquantified invariant",
+      "quantified_body": [
+        "predicate",
+        "binders",
+        "bounds"
+      ]
     }
   },
   "membership": "derived clause-side: a clock_guard, clock_reset, time_invariant or clock_constraint listed by no root aggregate is not a member of the model (a guard that exists is listed, FR-322-AC-243); a clock_constraint is a member through the guard part or invariant that names it, and the root lists every constraint that a part or an invariant names, and no other",
-  "quantified_out_of_scope": {
-    "ticket": "STD-554",
-    "rule": "FR-322-AC-263",
-    "note": "Producer-level cases: they are source text and the refusal a producer gives, not package patches, because no package is emitted for them. The test tc_367_timed_clause_criteria_and_vectors_are_published pins their expected code and cause and that FR-322-AC-263, FR-415-AC-24 and TC-367 CK-37 name them; no reader or producer in this repository executes them (the producer is quire-spec-language, QSL).",
-    "cases": [
-      {
-        "id": "QN-01",
-        "source": "guard: forall(e in self.ts: e.x < 5 ms)",
-        "expected": "refused",
-        "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
-        "locus": "the quantifier"
-      },
-      {
-        "id": "QN-02",
-        "source": "invariant: exists(e in self.ts: e.x <= 5 ms)",
-        "expected": "refused",
-        "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
-        "locus": "the quantifier"
-      }
-    ]
-  },
   "cases": [
     {
       "id": "CL-01",
@@ -186,7 +169,7 @@
     },
     {
       "id": "CL-03",
-      "subject": "a reset whose operation anchor is point-qualified (pre{operation: \"size\"}); reader-level only, because the generic SemanticTerm body rule of the V2 schema already rejects every node with an execution_point binding",
+      "subject": "a reset whose operation anchor is point-qualified (pre{operation: \"size\"})",
       "fixture": "fixtures/positive-timed-clause-nodes.json",
       "patch": [
         {
@@ -202,7 +185,7 @@
           }
         }
       ],
-      "schema": "anchor-point-schema-gap",
+      "schema": "valid",
       "rule": "FR-322-AC-262",
       "expected": "refused",
       "expected_code": "invalid_package",
@@ -11053,11 +11036,624 @@
       "expected_cause": "operator-ineligible",
       "locus": "/semantic_graph/nodes/84/body/members/4/value",
       "locus_suffix": "members/4/value"
+    },
+    {
+      "id": "CL-57",
+      "subject": "a quantified guard part carries its typed slot parameter binder before its clock constraints",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1",
+          "value": {
+            "term": "binding",
+            "name": "binders",
+            "value": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "i",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/dependencies/-",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "i",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-268",
+      "expected": "admitted"
+    },
+    {
+      "id": "CL-58",
+      "subject": "a quantified guard binder that is a parameter but not a place slot is refused at that binder",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1",
+          "value": {
+            "term": "binding",
+            "name": "binders",
+            "value": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "self",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0",
+                      {
+                        "node": 26
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/dependencies/-",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "self",
+              "level",
+              {
+                "node": 24
+              },
+              "0",
+              {
+                "node": 26
+              }
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-268",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1/value/members/0/target",
+      "locus_suffix": "members/1/value/members/0/members/1/value/members/0/target"
+    },
+    {
+      "id": "CL-59",
+      "subject": "a quantified invariant carries its typed slot parameter binder before bounds",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/87/body/members/1",
+          "value": {
+            "term": "binding",
+            "name": "binders",
+            "value": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "i",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/87/dependencies/-",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "i",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-268",
+      "expected": "admitted"
+    },
+    {
+      "id": "CL-60",
+      "subject": "duplicate quantified invariant binders are refused at the second binder",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/87/body/members/1",
+          "value": {
+            "term": "binding",
+            "name": "binders",
+            "value": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "i",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  },
+                  "term": "reference"
+                },
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "i",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/87/dependencies/-",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "i",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-268",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/87/body/members/1/value/members/1/target",
+      "locus_suffix": "members/1/value/members/1/target"
+    },
+    {
+      "id": "CL-61",
+      "subject": "an operation_anchor with an unknown execution_point variant fails the closed schema",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/70/body/members/3",
+          "value": {
+            "name": "execution_point",
+            "term": "binding",
+            "value": {
+              "kind": "pre",
+              "operation": "size"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/body/members/3/value/kind",
+          "value": "entry"
+        }
+      ],
+      "schema": "invalid",
+      "rule": "FR-342-AC-10"
+    },
+    {
+      "id": "CL-62",
+      "subject": "two valid nested collection slot parameters bound in reverse slot order are refused at the second binder",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/members/1/value",
+          "value": {
+            "term": "reference",
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "timed_model",
+                "clock_place",
+                "model",
+                {
+                  "node": 53
+                },
+                "path",
+                "kind",
+                {
+                  "node": 23
+                },
+                "field",
+                "name",
+                "g",
+                "slot",
+                "collection",
+                "sequence",
+                "selector",
+                {
+                  "node": 24
+                },
+                "minimum",
+                "0",
+                "maximum",
+                "unbounded",
+                "resolved_path",
+                "path_step",
+                "declaring_type",
+                "ix://acme/orders/Order",
+                "member_identity",
+                "ix://acme/orders/Order/g",
+                "member_type",
+                "Sequence<Sequence<ix://quire/native/Clock>>",
+                "collection_kind",
+                "1",
+                "Sequence<ix://quire/native/Clock>",
+                "Sequence<Sequence<ix://quire/native/Clock>>[slot]",
+                "2",
+                "ix://quire/native/Clock",
+                "Sequence<ix://quire/native/Clock>[slot]",
+                "none",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/members/3/value",
+          "value": {
+            "term": "aggregate",
+            "members": [
+              {
+                "term": "reference",
+                "target": {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "node": 23
+                    },
+                    "i",
+                    "level",
+                    {
+                      "node": 24
+                    },
+                    "0"
+                  ]
+                }
+              },
+              {
+                "term": "reference",
+                "target": {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "node": 23
+                    },
+                    "e",
+                    "level",
+                    {
+                      "node": 24
+                    },
+                    "0"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/dependencies/0",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "timed_model",
+              "clock_place",
+              "model",
+              {
+                "node": 53
+              },
+              "path",
+              "kind",
+              {
+                "node": 23
+              },
+              "field",
+              "name",
+              "g",
+              "slot",
+              "collection",
+              "sequence",
+              "selector",
+              {
+                "node": 24
+              },
+              "minimum",
+              "0",
+              "maximum",
+              "unbounded",
+              "resolved_path",
+              "path_step",
+              "declaring_type",
+              "ix://acme/orders/Order",
+              "member_identity",
+              "ix://acme/orders/Order/g",
+              "member_type",
+              "Sequence<Sequence<ix://quire/native/Clock>>",
+              "collection_kind",
+              "1",
+              "Sequence<ix://quire/native/Clock>",
+              "Sequence<Sequence<ix://quire/native/Clock>>[slot]",
+              "2",
+              "ix://quire/native/Clock",
+              "Sequence<ix://quire/native/Clock>[slot]",
+              "none",
+              ""
+            ]
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/76/dependencies/1",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "e",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1",
+          "value": {
+            "term": "binding",
+            "name": "binders",
+            "value": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "e",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  }
+                },
+                {
+                  "term": "reference",
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "i",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/dependencies/6",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "e",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/dependencies/7",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "i",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-294",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1/value/members/1/target",
+      "locus_suffix": "members/1/value/members/0/members/1/value/members/1/target"
     }
   ],
   "excluded_forms": {
     "rule": "FR-322-AC-267",
-    "note": "Producer-level cases, like QN-01 and QN-02: source text and the refusal the checked-package producer gives, not package patches, because no package is emitted for a refused form. Each refused form is excluded from the checked package by rule: the producer refuses unsupported_construct/expression-form at the form, naming the construct, writes no clause node for the operation and does not approximate the form. The `built` cases are controls: the form is built, and the package row that pins it is named. The package rows CL-20, CL-55 and CL-56 pin the reader side of the same exclusions (a part with no constraint, a reset with no value, a reset with no slot term for a collection place). Test tc_367_excluded_clause_forms_are_published pins the codes, the causes and that FR-322-AC-267, FR-415-AC-25 and TC-367 CK-38 name them; no reader or producer in this repository executes them (the producer is quire-spec-language, QSL).",
+    "note": "Producer-level source text and the refusal the checked-package producer gives, not package patches, because no package is emitted for a refused form. Each refused form is excluded from the checked package by rule: the producer refuses unsupported_construct/expression-form at the form, naming the construct, writes no clause node for the operation and does not approximate the form. The `built` cases are controls: the form is built, and the package row that pins it is named. The package rows CL-20, CL-55 and CL-56 pin the reader side of the same exclusions (a part with no constraint, a reset with no value, a reset with no slot term for a collection place). Test tc_367_excluded_clause_forms_are_published pins the codes, the causes and that FR-322-AC-267, FR-415-AC-25 and TC-367 CK-38 name them; no reader or producer in this repository executes them (the producer is quire-spec-language, QSL).",
     "cases": [
       {
         "id": "GJ-01",
