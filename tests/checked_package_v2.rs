@@ -12756,6 +12756,75 @@ fn published_positive_packages() -> Vec<(String, Value)> {
         .collect()
 }
 
+/// Every published positive checked-package fixture carries the typed row
+/// required by each temporal clause whose selected profile configures a clock.
+/// This is the producer-side fixture invariant for FR-322-AC-294; the separate
+/// temporal-clock vectors cover each configuration alternative and refusal.
+#[trace("TC-134", "TC-233", "FR-322-AC-294")]
+#[test]
+fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
+    let expected_kind = |profile: &str| match profile {
+        "quire.temporal.event-position.false-extension/v1" => Some("event_position"),
+        "quire.temporal.fixed-sample.false-extension/v1" => Some("fixed_sample"),
+        "quire.temporal.timestamped-event.finite-window/v1" => Some("timestamped_event"),
+        _ => None,
+    };
+
+    for (name, package) in published_positive_packages() {
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("positive fixture semantic graph has nodes");
+        let configured = nodes
+            .iter()
+            .filter_map(|node| {
+                if node["body"]["operation"]["identity"] != "quire.op.temporal.clause" {
+                    return None;
+                }
+                let profile = node["body"]["operation"]["laws"]
+                    .as_array()?
+                    .iter()
+                    .find(|law| law["role"] == "temporal_profile")?["definition"]["identity"]
+                    .as_str()?;
+                expected_kind(profile).map(|kind| (node, profile, kind))
+            })
+            .collect::<Vec<_>>();
+        let bindings = package["temporal_bindings"].as_array();
+        if configured.is_empty() {
+            assert!(
+                bindings.is_none(),
+                "{name} has no clock-configured clause and no temporal bindings"
+            );
+            continue;
+        }
+
+        let bindings = bindings.unwrap_or_else(|| {
+            panic!("{name} has clock-configured clauses but no temporal_bindings")
+        });
+        assert_eq!(
+            bindings.len(),
+            configured.len(),
+            "{name} has one row for every clock-configured clause"
+        );
+        for (node, profile, kind) in configured {
+            let id = &node["node_id"];
+            let matching = bindings
+                .iter()
+                .filter(|row| row["declaration"] == *id)
+                .collect::<Vec<_>>();
+            assert_eq!(matching.len(), 1, "{name} binds {profile} clause {id} once");
+            let row = matching[0];
+            assert_eq!(
+                row["clock_name"], node["body"]["arguments"][1]["value"],
+                "{name} carries the clause's exact clock name"
+            );
+            assert_eq!(
+                row["clock"]["kind"], kind,
+                "{name} carries the configuration kind selected by {profile}"
+            );
+        }
+    }
+}
+
 fn model_root_positions(package: &Value) -> Vec<usize> {
     package["semantic_graph"]["nodes"]
         .as_array()

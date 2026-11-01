@@ -3324,5 +3324,40 @@
       ],
       "role": "generated"
     }
+  ],
+  "temporal_bindings": [
+    {
+      "declaration": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "temporal",
+          "temporal_clause",
+          {
+            "node": 12
+          },
+          {
+            "node": 9
+          },
+          "model-steps",
+          "kind",
+          "origin",
+          {
+            "node": 18
+          },
+          "quire.op.temporal.clause",
+          "quire.temporal.event-position.false-extension/v1",
+          "temporal",
+          {
+            "node": 0
+          }
+        ]
+      },
+      "clock": {
+        "kind": "event_position",
+        "sequence_authority": "order-events"
+      },
+      "clock_name": "model-steps"
+    }
   ]
 }
