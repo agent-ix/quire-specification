@@ -1329,7 +1329,7 @@
       "target": "ProtocolSemanticLocation",
       "mutation": "replace origin kind with source_region",
       "expected_code": "malformed_wire",
-      "locus": "/checked_term_data/protocol_locations/0/location/origin",
+      "locus": "/checked_term_data/protocol_locations/0/location/origin/kind",
       "value": {
         "application": {
           "package": "example",
@@ -2272,7 +2272,7 @@
     {
       "id": "PL-R2-missing-term-mapping",
       "target": "ProtocolSemanticLocation[]",
-      "mutation": "selected protocol application has no row for its second semantic term",
+      "mutation": "ordinal one witnesses a missing ordinal-zero mapping for the same application occurrence",
       "expected_code": "invalid_package",
       "expected_cause": "invalid-value",
       "locus": "/checked_term_data/protocol_locations",
@@ -2291,14 +2291,17 @@
             "role": "expression",
             "ordinal": 0
           },
-          "term_ordinal": 0,
+          "term_ordinal": 1,
           "location": {
             "origin": {
               "kind": "protocol_attempt",
               "protocol": 0,
               "attempt": 0
             },
-            "path": []
+            "path": [
+              2,
+              0
+            ]
           }
         }
       ]
