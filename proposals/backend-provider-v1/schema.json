@@ -124,13 +124,50 @@
       ]
     },
     "TransitionIdentity": {
-      "description": "FR-181: a transition identity in typed canonical form; a protocol subject's protocol-transition identity is owned by FR-425.",
+      "description": "FR-181: a transition identity in typed canonical form; protocol-transition is owned by FR-425 and task-transition by FR-419.",
       "type": "object",
       "required": ["type"],
       "oneOf": [
         {"properties": {"type": {"const": "transition"}, "operation": {"$ref": "#/$defs/Nonempty"}, "receiver": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]}, "arguments": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}}, "required": ["type", "operation", "receiver", "arguments"], "additionalProperties": false},
-        {"properties": {"type": {"const": "protocol-transition"}}, "required": ["type"]}
+        {"properties": {"type": {"const": "protocol-transition"}}, "required": ["type"]},
+        {"$ref": "#/$defs/TaskTransitionIdentity"}
       ]
+    },
+    "SourceTransitionIdentity": {
+      "description": "FR-419: the source model operation identity that releases or triggers a derived task action.",
+      "type": "object",
+      "required": ["type", "operation", "receiver", "arguments"],
+      "properties": {
+        "type": {"const": "transition"},
+        "operation": {"$ref": "#/$defs/Nonempty"},
+        "receiver": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
+        "arguments": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}
+      },
+      "additionalProperties": false
+    },
+    "TaskTransitionIdentity": {
+      "description": "FR-181/FR-419: exact identity and provenance of a derived scheduler step. Immutable job fields repeat on every step for that job.",
+      "type": "object",
+      "required": ["type", "action", "taskset", "task", "job", "slot", "generation", "release", "source_transition", "demand", "deadline", "priority"],
+      "properties": {
+        "type": {"const": "task-transition"},
+        "action": {"enum": ["release", "dispatch", "preempt", "resume", "complete", "budget-change", "deadline-miss", "queue-overflow"]},
+        "taskset": {"$ref": "#/$defs/Nonempty"},
+        "task": {"$ref": "#/$defs/Nonempty"},
+        "job": {"description": "FR-419: zero-based occurrence among releases of this task by the same source transition in the replayed prefix.", "$ref": "#/$defs/Count"},
+        "slot": {"$ref": "#/$defs/Count"},
+        "generation": {"$ref": "#/$defs/Count"},
+        "release": {"$ref": "#/$defs/SourceTransitionIdentity"},
+        "source_transition": {"description": "The source operation whose release or completion feedback enables this scheduler step; null for an autonomous scheduler action.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/SourceTransitionIdentity"}]},
+        "demand": {"description": "FR-419: exact rational total work selected for this job, in the task set's time unit.", "$ref": "#/$defs/Rational"},
+        "deadline": {"description": "FR-419: the job's absolute deadline from its source release, in the task set's time unit.", "$ref": "#/$defs/Rational"},
+        "priority": {"$ref": "#/$defs/Count"},
+        "demand_delta": {"description": "FR-419: exact non-negative additional work applied to this live job by a mode change; present only on budget-change.", "$ref": "#/$defs/Rational"}
+      },
+      "allOf": [
+        {"if": {"properties": {"action": {"const": "budget-change"}}, "required": ["action"]}, "then": {"required": ["demand_delta"]}, "else": {"not": {"required": ["demand_delta"]}}}
+      ],
+      "additionalProperties": false
     },
 
     "DiagnosticCause": {
@@ -525,6 +562,9 @@
         "post_state": {"$ref": "#/$defs/State"},
         "delay": {"description": "FR-181, FR-417: the delay of a timed step.", "$ref": "#/$defs/Rational"}
       },
+      "allOf": [
+        {"if": {"properties": {"transition": {"properties": {"type": {"const": "task-transition"}}, "required": ["type"]}}, "required": ["transition"]}, "then": {"required": ["delay"]}}
+      ],
       "additionalProperties": false
     },
     "TemporalCounterexample": {
@@ -889,7 +929,7 @@
         {"description": "FR-418, QSL FR-245 post-differs: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["backward-edge", "post-differs"]}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-245 step-fails: an edge and the failing step verdict, both present.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["edge", "verdict"], "properties": {"edge": {"$ref": "#/$defs/Count"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "node_id", "model", "ordinal", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested", "abstract_states", "automaton", "bias", "bound", "choice", "clock", "concrete", "constraint", "gain", "history", "lower", "node", "rank", "set", "state", "strict", "target", "transition", "transitions", "type", "upper", "value", "zone"]}}, "additionalProperties": false}}, "additionalProperties": false}
+        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "node_id", "model", "ordinal", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested", "task_product", "abstract_states", "automaton", "bias", "bound", "choice", "clock", "concrete", "constraint", "gain", "history", "lower", "node", "rank", "set", "state", "strict", "target", "transition", "transitions", "type", "upper", "value", "zone"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {
@@ -1139,7 +1179,7 @@
     },
     "DbmBound": {"description": "FR-418: one DBM entry: a scaled integer bound with its strictness, or infinity.", "oneOf": [{"const": "infinity"}, {"type": "object", "required": ["bound", "strict"], "properties": {"bound": {"$ref": "#/$defs/IntegerString"}, "strict": {"type": "boolean"}}, "additionalProperties": false}]},
     "ZoneCertificate": {
-      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initials, admitted and refinement carry QSL FR-244's additive members. An absent optional member is omitted, never null.",
+      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initials, admitted and refinement carry QSL FR-244's additive members; task_product carries the bounded-subtraction/diagonal product proof. An absent optional member is omitted, never null.",
       "type": "object",
       "required": ["identity", "scale", "bounds", "nodes", "edges", "initials", "admitted"],
       "properties": {
@@ -1153,7 +1193,35 @@
         "components": {"description": "FR-418: per node, its component index.", "type": "array", "items": {"$ref": "#/$defs/Count"}},
         "reasons": {"description": "FR-418: per component, its reason.", "type": "array", "items": {"$ref": "#/$defs/ComponentReason"}},
         "divergence": {"description": "FR-418: per node, a reachable time-divergent target node.", "type": "array", "items": {"$ref": "#/$defs/Count"}},
-        "refinement": {"$ref": "#/$defs/RefinementPart"}
+        "refinement": {"$ref": "#/$defs/RefinementPart"},
+        "task_product": {"$ref": "#/$defs/TaskProductCertificate"}
+      },
+      "additionalProperties": false
+    },
+    "TaskProductCertificate": {
+      "description": "FR-418/FR-419: finite refined-region product evidence for fixed-work task automata. The checker recompiles these values from the admitted task product and compares them before checking zones.",
+      "type": "object",
+      "required": ["abstraction", "queue_bounds", "clock_ceilings", "diagonal_constraints", "subtractions"],
+      "properties": {
+        "abstraction": {"const": "bounded-subtraction-diagonal/v1"},
+        "queue_bounds": {"type": "array", "items": {"type": "object", "required": ["taskset", "task", "max_jobs"], "properties": {"taskset": {"$ref": "#/$defs/Nonempty"}, "task": {"$ref": "#/$defs/Nonempty"}, "max_jobs": {"$ref": "#/$defs/PositiveCount"}}, "additionalProperties": false}},
+        "clock_ceilings": {"type": "array", "items": {"type": "object", "required": ["clock", "maximum"], "properties": {"clock": {"$ref": "#/$defs/Nonempty"}, "maximum": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}},
+        "diagonal_constraints": {"type": "array", "items": {"type": "object", "required": ["left", "operator", "right", "constant"], "properties": {"left": {"$ref": "#/$defs/Nonempty"}, "operator": {"enum": ["<", "<=", ">", ">="]}, "right": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "#/$defs/IntegerString"}}, "additionalProperties": false}},
+        "subtractions": {"type": "array", "items": {"type": "object", "required": ["transition", "clock", "constant"], "properties": {"transition": {"$ref": "#/$defs/TaskTransitionIdentity"}, "clock": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}}
+      },
+      "additionalProperties": false
+    },
+    "TaskSearchEvidence": {
+      "description": "FR-331/FR-419: replayable finite frontier for an incomplete bounded task-automaton search. It audits the stopped search and never proves absence of a deadline miss.",
+      "type": "object",
+      "required": ["type", "identity", "nodes", "edges", "frontier", "limit"],
+      "properties": {
+        "type": {"const": "task-search-frontier"},
+        "identity": {"$ref": "#/$defs/CertificateIdentity"},
+        "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "depth", "zone", "expanded"], "properties": {"state": {"$ref": "#/$defs/State"}, "depth": {"$ref": "#/$defs/Count"}, "zone": {"type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}, "expanded": {"type": "boolean"}}, "additionalProperties": false}},
+        "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
+        "frontier": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["node", "reason", "open"], "properties": {"node": {"$ref": "#/$defs/Count"}, "reason": {"enum": ["state-limit", "transition-limit", "clock-limit", "depth-limit"]}, "open": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["successors", "delay", "demand", "budget-change", "queue"]}}}, "additionalProperties": false}},
+        "limit": {"$ref": "#/$defs/LimitReached"}
       },
       "additionalProperties": false
     },
@@ -1198,11 +1266,12 @@
         "diagnostic": {"$ref": "#/$defs/DiagnosticCause"},
         "certificate": {"oneOf": [{"$ref": "#/$defs/ProbabilityCertificate"}, {"$ref": "#/$defs/ZoneCertificate"}]},
         "evidence": {"description": "FR-419 recomputable closed-form evidence (its owner's shape) under basis closed-form, or the FR-393 witness arm under cause well-definedness-unchecked; absent otherwise."},
+        "task_search": {"description": "FR-331/FR-419: replayable stopped-search frontier; permitted only on an incomplete task-automaton result and never proof evidence.", "$ref": "#/$defs/TaskSearchEvidence"},
         "verdict": {"$ref": "#/$defs/StatisticalVerdict"},
         "counterexample": {"description": "the zero-based position of the item's entry in counterexamples", "$ref": "#/$defs/Count"}
       },
       "allOf": [
-        {"if": {"properties": {"result": {"const": "proved"}}}, "then": {"required": ["basis", "certification"], "properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false}}, "else": {"properties": {"basis": false, "certification": false, "certificate": false, "cross_check": false}}},
+        {"if": {"properties": {"result": {"const": "proved"}}}, "then": {"required": ["basis", "certification"], "properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false, "task_search": false}}, "else": {"properties": {"basis": false, "certification": false, "certificate": false, "cross_check": false}}},
         {"description": "FR-331, FR-349: cross_check belongs to an SMT proof (basis bounded-complete or inductive), never to a trusted plugin proof.", "if": {"required": ["certification"], "properties": {"certification": {"const": "trusted"}}}, "then": {"properties": {"cross_check": false}}},
         {"if": {"required": ["basis"], "properties": {"basis": {"properties": {"type": {"not": {"enum": ["bounded-complete", "inductive"]}}}, "required": ["type"]}}}, "then": {"properties": {"cross_check": false}}},
         {"description": "FR-349: a disagreeing cross-check over an uncertified proof settles inconclusive, so an uncertified proof carries verdict proved only.", "if": {"required": ["certification"], "properties": {"certification": {"const": "uncertified"}}}, "then": {"properties": {"cross_check": {"properties": {"verdict": {"const": "proved"}}}}}},
@@ -1220,7 +1289,9 @@
         {"if": {"properties": {"result": {"const": "incomplete"}}}, "then": {"required": ["cause"], "properties": {"cause": {"$ref": "#/$defs/IncompleteCause"}, "diagnostic": false, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "unsupported"}}}, "then": {"oneOf": [{"required": ["cause"], "properties": {"diagnostic": false}}, {"required": ["diagnostic"], "properties": {"cause": false}}], "properties": {"cause": {"$ref": "#/$defs/UnsupportedCause"}, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "declined"}}}, "then": {"required": ["cause", "diagnostic"], "properties": {"cause": {"$ref": "#/$defs/DeclinedCause"}, "counterexample": false, "evidence": false}}},
-        {"if": {"properties": {"result": {"const": "failed"}}}, "then": {"oneOf": [{"required": ["cause"], "properties": {"diagnostic": false}}, {"required": ["diagnostic"], "properties": {"cause": false}}], "properties": {"cause": {"$ref": "#/$defs/FailedCause"}, "counterexample": false, "evidence": false}}}
+        {"if": {"properties": {"result": {"const": "failed"}}}, "then": {"oneOf": [{"required": ["cause"], "properties": {"diagnostic": false}}, {"required": ["diagnostic"], "properties": {"cause": false}}], "properties": {"cause": {"$ref": "#/$defs/FailedCause"}, "counterexample": false, "evidence": false}}},
+        {"if": {"properties": {"result": {"const": "incomplete"}}}, "then": {}, "else": {"properties": {"task_search": false}}},
+        {"description": "FR-331: task-search-frontier is only the replayable evidence for an incomplete result stopped by an exploration limit.", "if": {"required": ["task_search"]}, "then": {"required": ["cause", "result"], "properties": {"result": {"const": "incomplete"}, "cause": {"properties": {"type": {"const": "limit-reached"}}, "required": ["type"]}}}}
       ],
       "additionalProperties": false
     },

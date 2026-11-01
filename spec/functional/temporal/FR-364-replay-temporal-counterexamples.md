@@ -57,6 +57,7 @@ A replay settlement: `reproduced-with-evaluated-witness` with the item
 | Liveness | A lasso: a prefix, possibly empty, and a non-empty loop that re-enters at its first position. A model behaviour that ends at a terminal state is the lasso whose loop is the one terminal stutter step. |
 | Deadlock ([FR-366](FR-366-check-deadlock-freedom.md)) | A finite prefix from an initial state to the deadlocked state. Model arm only. |
 | Undefined evaluation ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)) | A finite prefix to the position at which an expression evaluates undefined, for every property form; `loop` is empty. |
+| Task-automaton deadline miss ([FR-419](../analysis/FR-419-analyze-task-set-schedulability.md)) | A prefix to the exact missed-deadline or overflow state, with `trace_position` at that bad state, followed by a nonempty timed loop with positive total delay. The loop witnesses that the bad prefix has a time-divergent extension; a prefix without a checked loop does not refute the timed claim. |
 
 ### Wire form
 
@@ -96,6 +97,33 @@ the state key of the step's post-state. An
 observed-arm step is `{document}`: the zero-based position in `request.provision` of the observed
 document at that position. The loop's entry is the position after the
 prefix's last step.
+
+For a task-automaton deadline-miss counterexample, the prefix ends at the
+missed-deadline or candidate overflow product state. The loop begins at that
+state and is a concrete positive-delay product path whose final state has the
+same source state and canonical scheduler control as its entry and whose
+clock valuations belong to the same FR-418 refined region. Its exact delays
+sum to a strictly positive rational. Repeating that region cycle gives a
+time-divergent continuation. When a completed slot is reused on the loop, the
+replayer alpha-renames the next iteration's job occurrence while preserving
+task declaration, slot, generation relation, demand choice and transition
+provenance; immutable live-job identities may not be merged. The selected
+demands and every mode-change delta in the represented prefix and loop are
+carried by their task-transition identities and are checked as exact
+rationals.
+
+For a task-derived timed subject, a model-arm `transition` may be the typed
+`task-transition` identity defined by FR-181 and FR-331. Its `action` names a
+release, dispatch, preemption, resumption, completion, budget change, deadline
+miss or queue-overflow step. Each such identity carries the task-set/task
+declarations, job sequence, slot and generation, the source transition that
+released the job, the job's exact selected rational demand, absolute deadline
+and priority, and the triggering source or scheduler transition. A
+`budget-change` identity also carries the exact non-negative `demand_delta`.
+All steps for one live job repeat equal immutable identity fields; replay
+refuses a change to any of them. A source release and its task release are
+checked as one derived transition, and a completion-feedback step checks the
+derived completion and the source transition it enables.
 
 The **undefined-evaluation envelope** is the one shape of an undefined
 evaluation for every engine:
@@ -140,10 +168,27 @@ The replayer SHALL, in this order:
    transition identity is not enabled at its pre-state refuses
    `invalid_runtime_input`/`invalid-value`. A terminal stutter step at a state
    that is not terminal refuses `invalid_runtime_input`/`invalid-value`.
+   For a task-derived subject, use FR-419's product successor relation: replay
+   the source transition and its task release/completion feedback, verify the
+   selected demand is within the admitted interval, verify policy order and
+   job slot generation, apply exact bounded subtraction and mode-change
+   updates, and compare the full source-plus-scheduler post-state key. Every
+   subtraction must satisfy its declared `c <= x <= M_x` side condition and
+   leave a non-negative clock. A deadline-miss or overflow refutation also
+   requires the exact time-divergent continuation checked by FR-418; reaching
+   an overflow or missed-deadline state without such a continuation does not
+   refute the timed claim.
    Observed arm: the trace is the steps' documents in order.
-3. For a lasso, check that the loop's last step returns to the loop's entry
-   (model arm: its post-state is the entry state; observed arm: its document
-   is the entry document), else refuse `invalid_runtime_input`/`invalid-value`.
+3. For an ordinary lasso, check that the loop's last step returns to the
+   loop's entry (model arm: its post-state is the entry state; observed arm:
+   its document is the entry document), else refuse
+   `invalid_runtime_input`/`invalid-value`. For a task-automaton deadline-miss
+   lasso, check instead that the final source-plus-scheduler control equals
+   the loop entry modulo canonical live-slot alpha-renaming, the exact clock
+   valuations occupy the same FR-418 refined region, and the exact sum of
+   loop delays is positive. A zero-delay loop, a non-equivalent region, a
+   changed live job's task/demand/deadline/priority, or a stale slot generation
+   refuses `invalid_runtime_input`/`invalid-value`.
 4. Fairness. Model arm, for a lasso: recompute the enabled transition
    identities at every loop state from the model, and check every constraint
    of `fairness` against the loop by
@@ -200,6 +245,8 @@ counterexamples an engine returned.
 | FR-364-AC-8 | A counterexample of an undefined evaluation is a finite prefix with an empty `loop`, a `kind` that is the envelope `{"type": "undefined-evaluation", "where", "cause"}` and `trace_position` at its last position; its replay re-evaluates the claim, guard, `terminal when` predicate or state constraint the locus names at the reported state and reproduces the undefined value with the locus and reason the envelope carries, read from the counterexample alone, settling `reproduced-with-evaluated-witness` and the item `refuted` with cause `undefined-evaluation`; a `trace_position` at which the expression is defined settles `inconclusive`, cause `replay-parity`. | Test (TC-305) |
 | FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step position the provision does not hold refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-295) |
 | FR-364-AC-10 | The wire schema admits an observed-arm formula counterexample (null `initial_state` and `over_binding`, two `document` steps) and an observed-arm undefined-evaluation envelope whose `where` carries `position`, `document` and `locus`; it refuses an observed-arm counterexample that names an initial state, carries an `over_binding`, carries a model-arm step in its `prefix` or in its `loop`, has `kind` `deadlock`, has `kind` `time-lock` with its `final_delay`, or has an envelope whose `where` carries `state_key` or `state_keys`; and it refuses a model-arm counterexample that has a null `initial_state`, carries a `document` step in its `prefix` or in its `loop`, or has an envelope whose `where` carries `document`. | Test (TC-431) |
+| FR-364-AC-11 | A task-derived counterexample replays the exact release occurrence, demand, absolute deadline, priority, slot generation, scheduler actions, delays, clock subtractions and source feedback; changing any identity field, a subtraction result or a budget delta refuses `invalid_runtime_input`/`invalid-value`, and a miss without a verified time-divergent continuation settles no `refuted`. | Test (TC-372, TC-371) |
+| FR-364-AC-12 | A task-miss lasso has a prefix ending at the missed-deadline/overflow state and a positive-delay loop whose final product state has the same source/scheduler control and refined region as its entry, modulo permitted completed-slot alpha-renaming; replay rejects a zero-delay loop, a different region, an altered demand/delta, a changed deadline/priority, or a job identity merge. A time-lock-only prefix has no such loop and does not refute the task claim. | Test (TC-372, TC-371) |
 
 ## Dependencies
 

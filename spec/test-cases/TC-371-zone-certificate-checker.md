@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-331
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-419
+    type: verifies
 ---
 
 # TC-371: Zone certificate checker
@@ -47,6 +49,9 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-12 | A refinement form with two initial states, the first a `locked` node with the reserved index and `admitted` starting at the positioned second | Valid; bytes equal `ZC-12`'s published `bytes_hex` (1617 bytes); `taken` is `[]` |
 | ZC-13 | ZC-10 with a zone entry or a bound as a bare JSON number, a bound as the JSON number `-1`, a bound `"01"`, `scale` `"0"`, `components` as `null`, `locked` `false`, `initials` removed or `initial` added | Each is not a `ZoneCertificate` |
 | ZC-14 | ZC-12 with `initials[1]` replaced by a node whose zone does not cover concrete initial state 1's symbolic state | `certificate-rejected` with rule `initial-missing` at `{key}`, the State record of that initial state's discrete state (the QSL checker's vector, QSL TC-700 step 8) |
+| ZC-15 | A fixed-work task product with one task type of work 1 and deadline 2, one live job slot, its service/deadline clocks, the exact `M_x` values, diagonal constraints and subtraction by 1; the certificate covers every reachable refined region | Accepted only when `task_product` matches the recompiled product and every edge is covered by the refined-region relation; aLU-only successor coverage is insufficient |
+| ZC-16 | ZC-15 with, in turn, its queue bound, one clock ceiling, one diagonal constraint, or the subtraction guard/constant omitted or changed; one subtraction enabled below `c` or above `M_x`, or yielding a negative value | Each is rejected at the task product/certificate locus; the checker recomputes all values from the admitted task set and product |
+| ZC-17 | ZC-15 with a reachable deadline-miss/overflow node having a verified positive-delay continuation; then a node with no such continuation and marked `locked` | The first certificate is rejected as `bad-state`; the locked time-lock-only path does not refute the timed claim and remains separately reportable by FR-417 |
 
 ## Expected Results
 

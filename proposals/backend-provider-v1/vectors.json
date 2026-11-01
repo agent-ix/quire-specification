@@ -5528,7 +5528,8 @@
       "name": "limit-reached-max-clocks",
       "stage": "outcome",
       "owners": {
-        "/results/0/cause": "FR-415"
+        "/results/0/cause": "FR-415",
+        "/results/0/task_search": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -5551,6 +5552,104 @@
               "limit": "max_clocks",
               "value": 1024,
               "setting": "model_check.max_clocks"
+            },
+            "task_search": {
+              "type": "task-search-frontier",
+              "identity": {
+                "node_id": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "model_root"
+                  ],
+                  "ordinal": 0
+                },
+                "model": "acme/orders",
+                "ordinal": 0
+              },
+              "nodes": [
+                {
+                  "state": {
+                    "key": "AA"
+                  },
+                  "depth": 0,
+                  "zone": [
+                    [
+                      {
+                        "bound": "0",
+                        "strict": false
+                      }
+                    ]
+                  ],
+                  "expanded": true
+                },
+                {
+                  "state": {
+                    "key": "AQ"
+                  },
+                  "depth": 1,
+                  "zone": [
+                    [
+                      {
+                        "bound": "0",
+                        "strict": false
+                      }
+                    ]
+                  ],
+                  "expanded": false
+                }
+              ],
+              "edges": [
+                {
+                  "node": 0,
+                  "transition": {
+                    "type": "task-transition",
+                    "action": "release",
+                    "taskset": "Task",
+                    "task": "A",
+                    "job": 0,
+                    "slot": 0,
+                    "generation": 0,
+                    "release": {
+                      "type": "transition",
+                      "operation": "task_release",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "source_transition": {
+                      "type": "transition",
+                      "operation": "task_release",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "demand": {
+                      "numerator": "1",
+                      "denominator": "1"
+                    },
+                    "deadline": {
+                      "numerator": "2",
+                      "denominator": "1"
+                    },
+                    "priority": 1
+                  },
+                  "target": 1
+                }
+              ],
+              "frontier": [
+                {
+                  "node": 1,
+                  "reason": "clock-limit",
+                  "open": [
+                    "successors"
+                  ]
+                }
+              ],
+              "limit": {
+                "type": "limit-reached",
+                "limit": "max_clocks",
+                "value": 1024,
+                "setting": "model_check.max_clocks"
+              }
             }
           }
         ],
@@ -10315,6 +10414,30 @@
           "op": "replace",
           "path": "/results/7/cause/at/member",
           "value": "refinement_name"
+        }
+      ]
+    },
+    {
+      "name": "task-search-proof-forbidden",
+      "base": "limit-reached-max-clocks",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/result",
+          "value": "proved"
+        }
+      ]
+    },
+    {
+      "name": "task-search-cause-not-limit",
+      "base": "limit-reached-max-clocks",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/type",
+          "value": "timed-out"
         }
       ]
     }

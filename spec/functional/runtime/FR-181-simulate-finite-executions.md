@@ -320,6 +320,49 @@ to its constant, so the dimension of a zone is the number of live places of its
 discrete state and is bounded by the model's clock dimension (FR-415 "Cardinality
 bound").
 
+### Task-automaton product states and steps
+
+A task-derived timed subject additionally carries the task scheduler's finite
+control state: the current mode, policy queue order, each live job's task
+declaration, release identity and occurrence, slot generation, priority,
+deadline and execution-demand phase, and whether it is ready, running,
+preempted or complete. This state is part of the canonical discrete state key.
+The derived auxiliary clocks are those of FR-415 "Task-derived timed
+products"; they are separate from source-model clock places. The number of
+live jobs and auxiliary clocks is finite under FR-419's validated slot bound
+or the active bounded-search limit. A slot is reclaimed only after completion
+or an explicit policy removal; a later job receives a new generation.
+
+Each derived task step has a typed identity distinct from a source operation
+identity. It names the action, task-set and task declarations, job occurrence,
+slot and generation, immutable release transition, exact selected demand,
+priority, and original absolute deadline. A release also names the source
+transition that created it. A scheduler step names the derived transition
+that enabled it, and a source completion-feedback step names both the source
+transition and the derived completion that enabled that transition. The same
+identity and provenance are carried in a timed counterexample. No derived
+release, dispatch, preemption, resumption, completion, budget change, deadline
+miss or overflow is represented as a fabricated source-model operation.
+
+During a delay of `d`, every source and auxiliary clock advances by `d`.
+Service is credited only to the job selected as running by the queue policy.
+The product's diagonal constraints and bounded-subtraction transitions
+preserve each suspended job's accumulated service across preemption while its
+clocks continue to advance at unit rate. A completion transition removes one
+job only when its exact selected demand has been met; an HI budget change
+records its exact delta on every affected live job and retains each job's
+release, priority and deadline identity. A deadline is missed only when the
+absolute deadline is reached and the job still has positive remaining
+demand.
+
+The finite fixed-work product may be explored and certified by the exact
+refined-region relation in FR-418. Variable-demand and mode-change products
+may use bounded exploration. A finite counterexample path is not a refutation
+until FR-364 replay validates every demand choice and product transition and
+the bad state has a checked time-divergent continuation. An exhausted bounded
+search with no replayable witness is incomplete; its explored prefix is not a
+proof of the unbounded timed claim.
+
 - A **delay** by real `d >= 0` takes `(s, v)` to `(s, v + d)`. It is admissible
   when `d = 0`, or when `s` is not urgent and every time invariant whose
   predicate holds at `s` holds at `v + d` (then at every point between).
@@ -396,6 +439,8 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-28 | A timed state is terminal exactly when no discrete step is enabled at it or after any admissible delay, a delay of 0 included. | Test (TC-370) |
 | FR-181-AC-29 | A bounded-delay terminal state is a time-lock reported by the time-lock-freedom item and not by the deadlock-freedom item. | Test (TC-370) |
 | FR-181-AC-30 | A state whose canonical state key is longer than `max_state_key_bytes` stops expansion of that state and settles the exploration `incomplete` with cause `state-key-limit-exceeded`, naming the limit and its value; a state whose key is exactly `max_state_key_bytes` long is expanded; no truncated or hashed key appears in a trace or frontier. | Test (TC-210) |
+| FR-181-AC-31 | In a task product, a job with fixed work 2 scheduled from 0 to 1, preempted from 1 to 2 by a one-unit job, and resumed from 2 to 3 has service 2 at completion although all auxiliary clocks advanced by 3; its deadline clock remains at 3, and every source-plus-scheduler post-state key includes queue order, job identity and slot generation. | Test (TC-372) |
+| FR-181-AC-32 | Two releases with the same source transition identity get distinct job occurrences; preemption and resumption preserve the same live job identity and deadline, a completed slot may be reused only with an incremented generation, and a replayed deadline or overflow witness whose loop region fails to close is not a time-divergent continuation. | Test (TC-372) |
 
 ## Dependencies
 

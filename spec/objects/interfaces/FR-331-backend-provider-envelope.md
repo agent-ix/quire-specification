@@ -42,6 +42,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-418
     type: references
+  - target: ix://agent-ix/quire-specification/FR-419
+    type: references
   - target: ix://agent-ix/quire-specification/FR-382
     type: references
   - target: ix://agent-ix/quire-specification/FR-462
@@ -177,7 +179,7 @@ SHALL NOT invent one to select a checker.
 | Zone edge | `{edge}`, its position in the certificate's `edges` | FR-418; QSL FR-245 for `post-differs` | `backward-edge`, `post-differs` |
 | Zone edge step | `{edge, verdict}`, both present: `edge` as in a zone edge and `verdict` the step verdict below | QSL FR-245 | `step-fails` |
 | Zone component | `{component}`, its component index | FR-418 | `witness-fails` |
-| Certificate member | `{member}`, the name of a member of the FR-412 or FR-418 certificate: `identity`, `objective`, `kind`, `values`, `ranking`, `policy`, `components`, `scale`, `bounds`, `nodes`, `edges`, `reasons`, `divergence`, `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start`, `nested`, and the members of the entries these hold: `abstract_states`, `algorithm`, `automaton`, `bias`, `bound`, `choice`, `clock`, `concrete`, `constraint`, `digest`, `domain`, `gain`, `history`, `lower`, `node`, `rank`, `set`, `state`, `strict`, `target`, `transition`, `transitions`, `type`, `upper`, `value` and `zone` (50 names: exactly the property names, at any depth, of the FR-412 and FR-418 certificates and the definitions they own, `CertificateIdentity`, `DbmBound`, `ComponentReason`, `RefinementPart` and `ProbabilityProductKey` (a base64url string that contributes no member names), the shared value types `StateKey`, `TransitionIdentity`, `Rational` and `NodeId` being named by their type; `refinement` names the refinement part and `refinement_node` its node id, `node` the index member of an `edges` entry; the locus names the member and carries no path); QSL FR-163 also owns `components` for an absent hyper component structure | FR-412, FR-418, QSL FR-163 | `malformed` |
+| Certificate member | `{member}`, the name of a member of the FR-412 or FR-418 certificate: `identity`, `objective`, `kind`, `values`, `ranking`, `policy`, `components`, `scale`, `bounds`, `nodes`, `edges`, `reasons`, `divergence`, `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start`, `nested`, `task_product`, and the members of the entries these hold: `abstract_states`, `algorithm`, `automaton`, `bias`, `bound`, `choice`, `clock`, `concrete`, `constraint`, `digest`, `domain`, `gain`, `history`, `lower`, `node`, `rank`, `set`, `state`, `strict`, `target`, `transition`, `transitions`, `type`, `upper`, `value` and `zone` (51 names: exactly the property names, at any depth, of the FR-412 and FR-418 certificates and the definitions they own, `CertificateIdentity`, `DbmBound`, `ComponentReason`, `RefinementPart` and `ProbabilityProductKey` (a base64url string that contributes no member names), the shared value types `StateKey`, `TransitionIdentity`, `Rational` and `NodeId` being named by their type; `task_product` names the fixed-work task-product evidence object and its closed schema validates its internal members; `refinement` names the refinement part and `refinement_node` its node id, `node` the index member of an `edges` entry; the locus names the member and carries no path); QSL FR-163 also owns `components` for an absent hyper component structure | FR-412, FR-418, QSL FR-163 | `malformed` |
 
 A model state's key is `{"key": <StateKey>}` in a State locus, as a product
 state's `model_state` and as an undefined evaluation's `state_key`, where
@@ -573,7 +575,36 @@ names, FR-462), `kind` and `result`, and:
   `zone-certified`), `evidence` (FR-419 for `closed-form`, the FR-393 witness
   arm for `well-definedness-unchecked`), `verdict` (FR-410 for `measured`) and
   `counterexample` (the position of the item's `counterexamples` entry, for
-  `refuted`).
+  `refuted`), and `task_search` (FR-419's replayable bounded-search frontier,
+  on an incomplete task-automaton result only).
+
+`task_search` is `{type: "task-search-frontier", identity, nodes, edges,
+frontier, limit}`. It binds to the item's FR-201 certificate identity. Each
+node carries the complete product state key, its search depth, a canonical
+DBM zone and whether it was expanded; each edge names the source node,
+transition identity and target node. Node keys are unique; the initial node is
+the sole depth-zero node; every other node is reachable from it by listed
+edges; every listed edge is a legal exact product successor and every
+successful successor below the stopping bound is listed exactly once (after
+canonical state merging). Each frontier row names an unexpanded
+reachable node, its stop reason (`state-limit`, `transition-limit`,
+`clock-limit` or `depth-limit`) and the open successor dimensions (`successors`,
+`delay`, `demand`, `budget-change` or `queue`). `limit` equals the result's
+`limit-reached{limit, value, setting}` cause. The task-search checker re-admits
+the package and product, replays every listed edge, verifies node reachability,
+the zones and the recorded open frontier, and verifies that the named effective
+limit stopped expansion at the recorded first over-limit transition or
+reachable node. The checker verifies that frontier and edge inventories are
+complete for every expansion below the bound; rejects a missing or extra edge,
+a reachable unexpanded node that was below the bound, an inconsistent stop
+reason, changed effective limits or accounting values, and any task/job
+identity, demand, deadline, priority or slot-generation mismatch. The limit's
+`value` equals the exact count at which expansion stopped and `setting` names
+the effective configured setting (including the provider default when the
+request omitted it). This record audits why the run is incomplete. It is
+not a closure certificate and never proves that the unsearched product has no
+deadline miss. It is present on every incomplete task-automaton search stopped
+by a search limit; other incomplete results carry no `task_search`.
 
 | Result | Carries |
 | --- | --- |
@@ -584,7 +615,7 @@ names, FR-462), `kind` and `result`, and:
 | `inconclusive` | `cause` |
 | `unsupported` | exactly one of `cause` and `diagnostic` |
 | `declined` | `cause` (`refused`, `invalid-input` or `incomplete-input`) and `diagnostic` |
-| `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled{source}` or `timed-out`) |
+| `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled{source}` or `timed-out`); a bounded task-automaton search additionally carries `task_search` |
 | `failed` | exactly one of `cause` (`tool-failure{defect}`, with `limit` and `value` for `frame-length` and `total-bytes`, FR-462) and `diagnostic` |
 
 The closed proof bases are those of FR-363 (`exhaustive`,
@@ -835,11 +866,12 @@ computed.
 | FR-331-AC-43 | An `inconclusive` temporal result carrying only cause `refuted-ignoring-constraints` is admitted with no proof basis, certification or counterexample; the same cause on a `refuted` or `proved` result is refused before consumption, so the diagnostic is never readable as a standard refutation or proof. | Test (TC-431) |
 | FR-331-AC-44 | A temporal request item whose `item_kind` is each of `deadlock-freedom`, `time-lock-freedom`, `race-freedom` and `refinement` is admitted by the request schema, with an empty `fairness` for the three derived kinds, an `unbounded` extent with an `infinite-trace` domain and the claim of FR-368-AC-14; an unknown spelling, a derived item with a non-empty `fairness`, a `bounded` extent, or an `unbounded` extent with no `infinite-trace` domain is refused before consumption. That the domain's node is the claim's node, the anchor and occurrence rule, and the item order are obligations of the request's producer that a reader checks against the package, which the schema run does not discharge. | Test (TC-431) |
 | FR-331-AC-45 | `initial-mismatch` is admitted at a zone node `{node}`, `post-differs` at a zone edge `{edge}` and `step-fails` at a zone edge step `{edge, verdict}`; `initial-mismatch` at `{edge}`, `post-differs` at `{edge, verdict}`, `step-fails` at `{edge}` alone, with a `null` verdict or with a verdict of another kind than a step verdict, and `backward-edge` at `{edge, verdict}` are refused. A reader still binds each rule and locus to the resolved checker (FR-331-AC-26), so a zone locus on an FR-149 claim is refused. | Test (TC-431) |
-| FR-331-AC-46 | `malformed` is admitted at each of the 50 member names the "Certificate member" row lists (the thirteen members of the FR-412 and Büchi parts, the eleven FR-418 adds `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start` and `nested`, and the 26 entry members such as `state`, `automaton`, `zone`, `target`, `transition`, `lower`, `upper`, `concrete`, `abstract_states` and `type`); the enum equals the property names of the two certificates computed from the schema, so a member added to a certificate and not to the enum is a failure; a name outside it, such as `initial` (which FR-418 does not carry), `initials[0]`, `position`, `refinement_name` or `refinement.node`, is refused. | Test (TC-431) |
+| FR-331-AC-46 | `malformed` is admitted at each of the 51 member names the "Certificate member" row lists (the thirteen members of the FR-412 and Büchi parts, the eleven FR-418 additions `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start` and `nested`, the new `task_product` member and the 26 entry members such as `state`, `automaton`, `zone`, `target`, `transition`, `lower`, `upper`, `concrete`, `abstract_states` and `type`); the enum equals the property names of the two certificates computed from the schema, so a member added to a certificate and not to the enum is a failure; a name outside it, such as `initial` (which FR-418 does not carry), `initials[0]`, `position`, `refinement_name` or `refinement.node`, is refused. | Test (TC-431) |
 | FR-331-AC-47 | A `refinement` item is admitted with `abstract_subject` `{identity, initial_states}` and refused without it; a `formula` or derived item carrying `abstract_subject`, an `abstract_subject` with a `universes` member, one without `initial_states` and one whose `identity` is not a string are each refused. That `identity` names a package of `request.dependencies` is a reader obligation the schema cannot state. The vector's consistency with it is checked (TC-431): the composed positive request carries the abstract package, the real fixture `positive-dependency-library.json` with its own v2 bytes, as its one dependency, and an `identity` no dependency carries is schema-admitted, so it is the reader that refuses it. | Test (TC-431) |
 | FR-331-AC-48 | The request identity includes the request's `memory` selections: two requests that differ only in one `memory` entry's model have different request identities, as FR-434-AC-1 requires of obligation identities. | Test (TC-431) |
 | FR-331-AC-49 | Withdrawn: the `stale-dependency` cause is removed; replay recompiles the supplied inputs and compares nothing against a supplied package. | Withdrawn |
 | FR-331-AC-50 | A domain rooted at a field, an operation parameter or an operation result of a selected domain package is a `node` key under the model declaration node of the member's declaring type, with path `[0, f, ...]`, `[1, o, p, ...]` or `[2, o, ...]` as "Model member domain keys" defines; over the published `acme/orders` document, `Order.total` is `[0, 17]`, `Order.scaled`'s parameter `n` is `[1, 1, 0]`, its result is `[2, 1]`, `Order.size`'s result is `[2, 2]` and `Sub.size`'s result is `[2, 1]` under `Sub`'s node, and no two roots of the document share a key. | Analysis |
+| FR-331-AC-51 | An incomplete task-automaton result stopped by a search limit carries a `task_search` record that independently replays the exact explored product prefix, all successor edges below the effective bound, and the first stopped frontier against the admitted task identity and effective limits; missing/extra edges, an unexplored node below the limit, a changed bound/count/setting, or any task/job identity or demand change is rejected. Replaying this record explains only why the result is `incomplete`, never that the unsearched product has no miss; it cannot accompany `proved`. | Test (TC-431, TC-372) |
 
 ## Dependencies
 
