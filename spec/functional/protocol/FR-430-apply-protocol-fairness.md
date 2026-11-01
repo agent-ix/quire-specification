@@ -89,17 +89,16 @@ Each member of a fairness set over a protocol subject is
 `{"kind":"weak"|"strong","target":<target>,"granularity":"whole"|"each","origin":"authored"|"scheduler"|"memory"}`,
 with `target` a typed identity. An authored operation uses
 `{"kind":"operation","declaration":<NodeId>,"name":"<identifier>"}`;
-the protocol targets use `{"kind":"protocol_root","node":<NodeId>}`,
-`{"kind":"attempt_node","node":<NodeId>}`,
-`{"kind":"parallel_branch","parallel":<NodeId>,"branch":"<label>"}`
-or `{"kind":"compensation_template","node":<NodeId>}`. Each node id is
-the exact structural identity from the checked package; a branch pairs its
-parallel control id with its label because a branch position has no node of
-its own. The parallel id and label must both resolve within the named
-protocol. Scheduler members use the same protocol target shapes. Memory
-members use the target forms FR-436 and FR-437 define (a `tso` flush is `weak`
-and `each`; the `ra` visibility member is `strong` and `whole`). The set is
-ordered by the JCS bytes of its members.
+The checked-package target union, including the protocol-root, attempt,
+parallel-branch, compensation-template and hybrid-transition identities, is
+defined normatively by FR-370, “The `fairness` member.” This requirement
+selects the protocol target variants for authored protocol constraints and
+derived scheduler constraints; it does not define a second wire shape. Each
+identity is the exact structural id from the checked package, and every
+protocol target must belong to the named protocol clause. Memory members use
+the target forms FR-436 and FR-437 define (a `tso` flush is `weak` and `each`;
+the `ra` visibility member is `strong` and `whole`). The set is ordered by
+the JCS bytes of its members.
 
 ### Machine closure
 

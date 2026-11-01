@@ -8732,7 +8732,7 @@ fn effective_operations(domain: &Value, node: &str) -> Vec<(String, String)> {
     effective
 }
 
-#[trace("TC-303", "FR-322-AC-293", "FR-370-AC-14")]
+#[trace("TC-303", "FR-322-AC-293", "FR-370-AC-14", "FR-370-AC-15")]
 #[test]
 fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema() {
     let vectors = parsed_fixture(TEMPORAL_FAIRNESS_TARGET_VECTORS);
@@ -8750,26 +8750,45 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
         let context = &row["target_context"];
         match kind {
             "protocol_root" => assert_eq!(context["protocol"]["node_id"], target["node"], "{id}"),
-            "attempt_node" => assert!(context["controls"].as_array().unwrap().iter().any(|node| {
-                node["node_id"] == target["node"]
-                    && node["node_tag"] == "protocol"
-                    && node["semantic_form"] == "control"
-                    && node["operator"] == "attempt"
-            }), "{id} points to a protocol attempt control"),
+            "attempt_node" => assert!(
+                context["controls"].as_array().unwrap().iter().any(|node| {
+                    node["node_id"] == target["node"]
+                        && node["node_tag"] == "protocol"
+                        && node["semantic_form"] == "control"
+                        && node["operator"] == "attempt"
+                }),
+                "{id} points to a protocol attempt control"
+            ),
             "parallel_branch" => {
-                let parallel = context["controls"].as_array().unwrap().iter().find(|node| {
-                    node["node_id"] == target["parallel"]
-                }).expect("the branch target's parallel node is in its context");
+                let parallel = context["controls"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|node| node["node_id"] == target["parallel"])
+                    .expect("the branch target's parallel node is in its context");
                 assert_eq!(parallel["node_tag"], "protocol", "{id}");
                 assert_eq!(parallel["semantic_form"], "control", "{id}");
                 assert_eq!(parallel["operator"], "parallel", "{id}");
-                assert!(parallel["branches"].as_array().unwrap().contains(&target["branch"]), "{id} names an existing branch label");
+                assert!(
+                    parallel["branches"]
+                        .as_array()
+                        .unwrap()
+                        .contains(&target["branch"]),
+                    "{id} names an existing branch label"
+                );
             }
-            "compensation_template" => assert!(context["compensations"].as_array().unwrap().iter().any(|node| {
-                node["node_id"] == target["node"]
-                    && node["node_tag"] == "protocol"
-                    && node["semantic_form"] == "compensation"
-            }), "{id} points to a compensation template"),
+            "compensation_template" => assert!(
+                context["compensations"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|node| {
+                        node["node_id"] == target["node"]
+                            && node["node_tag"] == "protocol"
+                            && node["semantic_form"] == "compensation"
+                    }),
+                "{id} points to a compensation template"
+            ),
             "operation" | "hybrid_transition" => {}
             _ => panic!("unexpected target kind {kind}"),
         }
@@ -8798,8 +8817,8 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
     let reader_cases = vectors["reader_cases"].as_array().unwrap();
     assert_eq!(
         reader_cases.len(),
-        4,
-        "all branch identity defects are covered"
+        8,
+        "all target ownership defects are covered"
     );
     for row in reader_cases {
         let id = row["id"].as_str().unwrap();
@@ -8807,26 +8826,42 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
             member.is_valid(&row["member"]),
             "{id} is a schema-valid semantic defect"
         );
-        let (expected_code, expected_cause) = if id == "FT-15-wrong-kind-parallel" {
-            ("invalid_model_binding", "malformed-declaration")
-        } else {
-            ("missing_declaration", "missing-name")
+        let (expected_code, expected_cause, expected_locus) = match id {
+            "FT-15-wrong-kind-parallel" => (
+                "invalid_model_binding",
+                "malformed-declaration",
+                "/target/parallel",
+            ),
+            "FT-16-absent-branch-label" => {
+                ("missing_declaration", "missing-name", "/target/branch")
+            }
+            "FT-17-other-clause-root"
+            | "FT-18-other-clause-attempt"
+            | "FT-20-other-clause-compensation" => {
+                ("missing_declaration", "missing-name", "/target/node")
+            }
+            "FT-19-other-clause-parallel" => {
+                ("missing_declaration", "missing-name", "/target/parallel")
+            }
+            _ => ("missing_declaration", "missing-name", "/target/parallel"),
         };
         assert_eq!(row["expected"]["code"], expected_code, "{id}");
         assert_eq!(row["expected"]["cause"], expected_cause, "{id}");
-        assert!(
-            !row["expected"]["locus"].as_str().unwrap().is_empty(),
-            "{id}"
-        );
+        assert_eq!(row["expected"]["locus"], expected_locus, "{id}");
         let target = &row["member"]["target"];
-        let controls = row["target_context"]["controls"].as_array().unwrap();
-        let matching = controls
-            .iter()
-            .find(|node| node["node_id"] == target["parallel"]);
+        let context = &row["target_context"];
+        let controls = context["controls"].as_array().unwrap();
+        let target_id = if target["kind"] == "parallel_branch" {
+            &target["parallel"]
+        } else {
+            &target["node"]
+        };
+        let matching = controls.iter().find(|node| &node["node_id"] == target_id);
         match id {
             "FT-13-missing-parallel" => assert!(matching.is_none(), "{id} target node is absent"),
             "FT-14-foreign-parallel" => {
-                assert!(matching.is_none(), "{id} target package is foreign")
+                assert_eq!(target["parallel"]["package"], "foreign", "{id}");
+                assert!(matching.is_none(), "{id} target package is foreign");
             }
             "FT-15-wrong-kind-parallel" => {
                 assert_eq!(matching.unwrap()["operator"], "sequence", "{id}")
@@ -8842,11 +8877,78 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
                     "{id} branch label is absent"
                 );
             }
+            "FT-17-other-clause-root" => {
+                let other = &context["other_protocols"][0]["protocol"];
+                assert_eq!(other["node_id"], target["node"], "{id}");
+                assert_ne!(context["protocol"]["node_id"], target["node"], "{id}");
+                assert_eq!(
+                    target["node"]["package"], context["protocol"]["node_id"]["package"],
+                    "{id} identity is in the same package"
+                );
+            }
+            "FT-18-other-clause-attempt" => {
+                let other = &context["other_protocols"][0];
+                let attempt = other["controls"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|node| node["node_id"] == target["node"])
+                    .expect("the other clause owns this attempt");
+                assert_eq!(attempt["operator"], "attempt", "{id}");
+                assert_eq!(other["protocol"]["node_tag"], "protocol", "{id}");
+                assert_eq!(
+                    other["protocol"]["semantic_form"], "protocol_clause",
+                    "{id}"
+                );
+                assert_ne!(context["protocol"]["node_id"], target["node"], "{id}");
+                assert_eq!(
+                    target["node"]["package"], context["protocol"]["node_id"]["package"],
+                    "{id}"
+                );
+            }
+            "FT-19-other-clause-parallel" => {
+                let other = &context["other_protocols"][0];
+                let parallel = other["controls"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|node| node["node_id"] == target["parallel"])
+                    .expect("the other clause owns this parallel");
+                assert_eq!(parallel["operator"], "parallel", "{id}");
+                assert_eq!(other["protocol"]["node_tag"], "protocol", "{id}");
+                assert_eq!(
+                    other["protocol"]["semantic_form"], "protocol_clause",
+                    "{id}"
+                );
+                assert!(
+                    parallel["branches"]
+                        .as_array()
+                        .unwrap()
+                        .contains(&target["branch"]),
+                    "{id} label exists in the other clause"
+                );
+                assert_ne!(context["protocol"]["node_id"], target["parallel"], "{id}");
+                assert_eq!(
+                    target["parallel"]["package"], context["protocol"]["node_id"]["package"],
+                    "{id}"
+                );
+            }
+            "FT-20-other-clause-compensation" => {
+                assert_eq!(
+                    row["target_context"]["other_protocols"][0]["compensations"][0]["node_id"],
+                    target["node"],
+                    "{id}"
+                );
+                assert_ne!(context["protocol"]["node_id"], target["node"], "{id}");
+                assert_eq!(
+                    target["node"]["package"], context["protocol"]["node_id"]["package"],
+                    "{id}"
+                );
+            }
             _ => panic!("unexpected reader case {id}"),
         }
     }
 }
-
 /// The three steps of FR-370 "Fairness resolution" for one fairness member;
 /// `Ok` names the type whose operation it resolves to.
 fn fairness_resolution(
