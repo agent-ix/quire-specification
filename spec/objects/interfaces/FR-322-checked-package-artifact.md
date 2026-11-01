@@ -1072,6 +1072,8 @@ A frame body refusal, meaning-join or canonical-order
   are consecutive from zero: a row with ordinal `k` witnesses that every
   ordinal below `k` requires its own row. A missing predecessor refuses
   `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations`.
+  Existing row shape, join, duplicate-key and canonical-order refusals SHALL
+  precede this array-level missing-predecessor check.
   A lone ordinal-zero row is a complete one-term capture; it does not witness
   an unrecorded successor. This final coordinate distinguishes multiple semantic terms
   represented by one graph application node; unlike equality's always-empty
