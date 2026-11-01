@@ -341,8 +341,9 @@ meaning and no type is inferred. The identity is a member of the
   gives structural-conformance meaning (FR-151), never a
   `dispatch_call` binding -- is `operator-ineligible`/`ill_typed` here. The
   checked-term dispatch sidecar names the selected operation as a typed
-  `{declaring: <model NodeRef>, operation: <original member name>}` witness,
-  since the member itself has no semantic graph node (FR-322-AC-290).
+  `{declaring: <eligible model NodeRef>, operation: <original member name>}`
+  witness, since the member itself has no semantic graph node; relationship
+  declaring nodes are ineligible (FR-322-AC-290).
   FR-208 separately pins a declaring-node cause for three of those other forms:
   `unsupported_construct`/`declaration-form` on a `record_value_type`
   (FR-208-AC-4, which cannot declare an operation at all) and

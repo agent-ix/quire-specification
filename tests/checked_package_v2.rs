@@ -19065,7 +19065,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             selected_operation.is_valid(&wire["operation"]),
             "{id} carries a typed selected-operation witness"
         );
-        assert_eq!(wire["operation"]["declaring"]["path"][0], "model");
+        assert_eq!(
+            wire["operation"]["declaring"]["path"][0],
+            "model",
+            "{id} uses an eligible model declaring node (FR-322-AC-25)"
+        );
         assert!(wire["operation"]["operation"].is_string());
         assert!(
             wire["operation"].get("path").is_none(),
@@ -19307,6 +19311,7 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 );
                 assert!(selected_operation.is_valid(&value["operation"]));
                 assert_eq!(value["operation"]["operation"], "absent");
+                assert_eq!(case["expected_code"], "invalid_package");
                 assert_eq!(case["expected_cause"], "invalid-value");
                 assert_eq!(
                     case["locus"],
