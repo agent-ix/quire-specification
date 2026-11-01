@@ -31,6 +31,23 @@ fn validator() -> jsonschema::Validator {
         .expect("ZoneCertificate definition compiles")
 }
 
+fn task_search_validator() -> jsonschema::Validator {
+    let registry = jsonschema::Registry::new()
+        .add(
+            "urn:quire:checked-package:v2",
+            parsed(CHECKED_PACKAGE_SCHEMA),
+        )
+        .expect("checked-package schema registers")
+        .add("urn:quire:backend-provider:v1", parsed(SCHEMA))
+        .expect("backend-provider schema registers")
+        .prepare()
+        .expect("registry prepares");
+    jsonschema::options()
+        .with_registry(&registry)
+        .build(&json!({"$ref": "urn:quire:backend-provider:v1#/$defs/TaskSearchEvidence"}))
+        .expect("TaskSearchEvidence definition compiles")
+}
+
 fn vectors() -> Vec<Value> {
     let file = parsed(VECTORS);
     file["vectors"].as_array().expect("vectors").clone()
@@ -45,12 +62,22 @@ fn vector(id: &str) -> Value {
 fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
     let valid = validator();
     let rows = vectors();
-    assert_eq!(rows.len(), 3);
+    assert_eq!(rows.len(), 5);
     for row in &rows {
         let id = row["id"].as_str().unwrap();
         let document = &row["document"];
         assert!(valid.is_valid(document), "{id} is a ZoneCertificate");
         let first = jcs_canonicalize(document).expect("canonicalizes");
+        assert_eq!(
+            String::from_utf8(first.clone()).unwrap(),
+            row["canonical_text"].as_str().unwrap(),
+            "{id}: published canonical text"
+        );
+        assert_eq!(
+            first.len(),
+            row["byte_length"].as_u64().unwrap() as usize,
+            "{id}: published byte length"
+        );
         let second = jcs_canonicalize(&parsed(&document.to_string())).expect("canonicalizes");
         assert_eq!(first, second, "{id}: equal values give byte-equal certificates");
         // Members in code-unit order, no insignificant whitespace, no trailing newline.
@@ -65,6 +92,69 @@ fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
     assert!(zc10.starts_with("{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":"), "admitted first, its members ascending");
     assert!(zc10.ends_with(",\"scale\":\"1\"}"), "scale last");
     assert!(zc10.contains("\"initials\":[0],\"nodes\":"), "initials before nodes");
+}
+
+#[trace("TC-371", "FR-418-AC-11", "FR-418-AC-13")]
+#[test]
+fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identities() {
+    let valid = validator();
+    let zc19 = vector("ZC-19")["document"].clone();
+    assert!(
+        valid.is_valid(&zc19),
+        "ZC-19 admits a periodic finite-template certificate"
+    );
+    let template = &zc19["edges"][0]["transition"];
+    assert_eq!(template["type"], "task-transition-template");
+    assert!(template.get("job").is_none());
+    assert!(template.get("generation").is_none());
+    assert!(template.get("demand").is_none());
+    assert!(template.get("jitter").is_none());
+    assert!(template.get("deadline").is_none());
+
+    let malformed = parsed(VECTORS);
+    for case in malformed["malformed_vectors"].as_array().expect("malformed vectors") {
+        let id = case["id"].as_str().unwrap();
+        let mut document = vector(case["base"].as_str().unwrap())["document"].clone();
+        let pointer = case["pointer"].as_str().unwrap();
+        *document.pointer_mut(pointer).expect("mutation pointer exists") = case["value"].clone();
+        assert!(!valid.is_valid(&document), "{id}: malformed finite template is refused");
+    }
+    for case in malformed["task_reader_vectors"].as_array().expect("task reader vectors") {
+        let id = case["id"].as_str().unwrap();
+        let mut document = vector(case["base"].as_str().unwrap())["document"].clone();
+        let pointer = case["pointer"].as_str().unwrap();
+        *document
+            .pointer_mut(pointer)
+            .expect("mutation pointer exists") = case["value"].clone();
+        assert!(
+            valid.is_valid(&document),
+            "{id}: semantic mismatch retains valid wire shape"
+        );
+        assert_eq!(case["expected"]["code"], "certificate-rejected", "{id}");
+        assert_eq!(case["expected"]["rule"], "successor-missing", "{id}");
+    }
+
+    let task_identity = json!({
+        "type":"task-transition", "action":"dispatch", "taskset":"S", "task":"A",
+        "job":0, "slot":0, "generation":0,
+        "release":{"type":"transition","operation":"Task::release","receiver":null,"arguments":[]},
+        "source_transition":null,
+        "demand":{"numerator":"1","denominator":"1"},
+        "jitter":{"numerator":"0","denominator":"1"},
+        "deadline":{"numerator":"2","denominator":"1"}
+    });
+    let frontier = json!({
+        "type":"task-search-frontier",
+        "identity":{"node_id":{"ordinal":0,"package":"example","path":["Example","TaskSet"]},"model":"example","ordinal":0},
+        "nodes":[{"state":{"key":zc19["nodes"][0]["state"]["key"]},"depth":0,"zone":[],"expanded":false}],
+        "edges":[{"node":0,"transition":task_identity,"target":0}],
+        "frontier":[{"node":0,"reason":"depth-limit","open":["successors"]}],
+        "limit":{"type":"limit-reached","limit":"max_depth","value":1,"setting":"analysis.max_depth"}
+    });
+    assert!(
+        task_search_validator().is_valid(&frontier),
+        "task search frontiers retain exact identities for replay"
+    );
 }
 
 #[trace("TC-371", "FR-418-AC-7")]

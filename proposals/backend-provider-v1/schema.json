@@ -173,6 +173,31 @@
       ],
       "additionalProperties": false
     },
+    "TaskTransitionTemplate": {
+      "description": "FR-418/FR-419: finite certificate identity for one task-product edge or bounded subtraction. job_rank and slot name a live job in the recomputed source or target state; exact occurrence, generation, demand, jitter and deadline remain replay-derived and are not certificate identities.",
+      "type": "object",
+      "required": ["type", "action", "taskset", "task", "job_rank", "slot", "release", "source_transition"],
+      "properties": {
+        "type": {"const": "task-transition-template"},
+        "action": {"enum": ["activate", "release", "dispatch", "preempt", "resume", "complete", "budget-change", "deadline-miss"]},
+        "taskset": {"$ref": "#/$defs/Nonempty"},
+        "task": {"$ref": "#/$defs/Nonempty"},
+        "job_rank": {"description": "Zero-based canonical rank among this task's live jobs in the source state, except activation which names the new job in the target state.", "$ref": "#/$defs/Count"},
+        "slot": {"description": "Finite candidate slot bound to job_rank by the recomputed product state.", "$ref": "#/$defs/Count"},
+        "release": {"$ref": "#/$defs/SourceTransitionIdentity"},
+        "source_transition": {"description": "Source operation that enables this task step; null for an autonomous scheduler action.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/SourceTransitionIdentity"}]},
+        "priority": {"$ref": "#/$defs/Count"}
+      },
+      "additionalProperties": false
+    },
+    "CertificateTransitionIdentity": {
+      "description": "FR-418: a certificate edge uses a source identity or the finite task template; exact task-transition identities remain on replay and search frontiers.",
+      "oneOf": [
+        {"$ref": "#/$defs/SourceTransitionIdentity"},
+        {"properties": {"type": {"const": "protocol-transition"}}, "required": ["type"], "additionalProperties": false},
+        {"$ref": "#/$defs/TaskTransitionTemplate"}
+      ]
+    },
 
     "DiagnosticCause": {
       "description": "FR-272: a typed diagnostic cause: its code family, its closed variant and, keyed by FR-272 payload names, the payload the variant requires.",
@@ -1294,7 +1319,7 @@
     },
     "DbmBound": {"description": "FR-418: one DBM entry: a scaled integer bound with its strictness, or infinity.", "oneOf": [{"const": "infinity"}, {"type": "object", "required": ["bound", "strict"], "properties": {"bound": {"$ref": "#/$defs/IntegerString"}, "strict": {"type": "boolean"}}, "additionalProperties": false}]},
     "ZoneCertificate": {
-      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initials, admitted and refinement carry QSL FR-244's additive members; task_product carries the bounded-subtraction/diagonal product proof. An absent optional member is omitted, never null.",
+      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initials, admitted and refinement carry QSL FR-244's additive members; task_product carries the bounded-subtraction/diagonal product proof. Task-product edges and subtractions use finite task-transition templates; exact task identities remain in replayable search evidence. An absent optional member is omitted, never null.",
       "type": "object",
       "required": ["identity", "scale", "bounds", "nodes", "edges", "initials", "admitted"],
       "properties": {
@@ -1302,7 +1327,7 @@
         "scale": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"},
         "bounds": {"description": "FR-418: the LU bounds (QSL lu_bounds), one entry per discrete state and clock, ordered by the state's first node in nodes then by clock index; an absent bound is infinity.", "type": "array", "items": {"type": "object", "required": ["state", "clock", "lower", "upper"], "properties": {"state": {"$ref": "#/$defs/State"}, "clock": {"$ref": "#/$defs/Nonempty"}, "lower": {"$ref": "#/$defs/DbmBound"}, "upper": {"$ref": "#/$defs/DbmBound"}}, "additionalProperties": false}},
         "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "automaton", "zone"], "properties": {"state": {"$ref": "#/$defs/State"}, "automaton": {"description": "FR-418: a claim-automaton state; in a refinement form an index into refinement.positions, the reserved index positions.len() naming no position (QSL FR-244).", "$ref": "#/$defs/Count"}, "locked": {"description": "FR-418: present, as true, exactly on a locked node; never false.", "const": true}, "zone": {"description": "FR-418: the canonical DBM as rows, entry [i][j] bounding x_i - x_j, index 0 the reference clock.", "type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}}, "additionalProperties": false}},
-        "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
+        "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/CertificateTransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
         "initials": {"description": "FR-418: the position in nodes of the initial node of each initial state, in the subject's initial-state order.", "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
         "admitted": {"description": "FR-418: the ADR-026 TD-6 witness: the start node and the positions in edges of a path of certificate edges.", "type": "object", "required": ["start", "edges"], "properties": {"start": {"$ref": "#/$defs/Count"}, "edges": {"type": "array", "items": {"$ref": "#/$defs/Count"}}}, "additionalProperties": false},
         "components": {"description": "FR-418: per node, its component index.", "type": "array", "items": {"$ref": "#/$defs/Count"}},
@@ -1314,7 +1339,7 @@
       "additionalProperties": false
     },
     "TaskProductCertificate": {
-      "description": "FR-418/FR-419: finite refined-region product evidence for fixed-work task automata. Each queue-bound row carries normalized BCET and the applicable WCET as equal work_lower/work_upper values; the checker recompiles these values from the admitted task product and compares them before checking zones.",
+      "description": "FR-418/FR-419: finite refined-region product evidence for fixed-work task automata. Each queue-bound row carries normalized BCET and the applicable WCET as equal work_lower/work_upper values; the checker recompiles these values from the admitted task product and compares them before checking zones. Edge and subtraction identities are finite TaskTransitionTemplate values; exact prefix identities are reconstructed during replay.",
       "type": "object",
       "required": ["abstraction", "queue_bounds", "clock_ceilings", "diagonal_constraints", "subtractions", "time_progress"],
       "properties": {
@@ -1323,7 +1348,7 @@
         "queue_bounds": {"type": "array", "items": {"type": "object", "required": ["taskset", "task", "arrival", "interarrival", "relative_deadline", "max_jitter", "work_lower", "work_upper", "max_jobs"], "properties": {"taskset": {"$ref": "#/$defs/Nonempty"}, "task": {"$ref": "#/$defs/Nonempty"}, "arrival": {"enum": ["periodic", "sporadic"]}, "interarrival": {"$ref": "#/$defs/Rational"}, "relative_deadline": {"$ref": "#/$defs/Rational"}, "max_jitter": {"$ref": "#/$defs/Rational"}, "work_lower": {"$ref": "#/$defs/Rational"}, "work_upper": {"$ref": "#/$defs/Rational"}, "max_jobs": {"$ref": "#/$defs/PositiveCount"}}, "additionalProperties": false}},
         "clock_ceilings": {"type": "array", "items": {"type": "object", "required": ["clock", "maximum"], "properties": {"clock": {"$ref": "#/$defs/Nonempty"}, "maximum": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}},
         "diagonal_constraints": {"type": "array", "items": {"type": "object", "required": ["left", "operator", "right", "constant"], "properties": {"left": {"$ref": "#/$defs/Nonempty"}, "operator": {"enum": ["<", "<=", ">", ">="]}, "right": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "#/$defs/IntegerString"}}, "additionalProperties": false}},
-        "subtractions": {"type": "array", "items": {"type": "object", "required": ["transition", "clock", "constant"], "properties": {"transition": {"$ref": "#/$defs/TaskTransitionIdentity"}, "clock": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}}
+        "subtractions": {"type": "array", "items": {"type": "object", "required": ["transition", "clock", "constant"], "properties": {"transition": {"$ref": "#/$defs/TaskTransitionTemplate"}, "clock": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}}
       },
       "additionalProperties": false
     },

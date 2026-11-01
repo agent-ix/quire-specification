@@ -167,6 +167,23 @@ explicitly specified task-set policy. EDF jobs whose task omits priority have
 no priority member in their derived identity; no default priority is
 assigned. A scheduler slot is storage for that job, not its identity; moving a
 job in the queue or reusing a slot after completion does not rename a live job.
+
+The exact identity above is retained in every replayed task step and timed
+witness. It is not the identity of an FR-418 finite certificate edge. A
+certificate edge uses the finite `TaskTransitionTemplate` defined by FR-418:
+its `job_rank` and `slot` bind one live job in the source product state (or
+the newly allocated job in an activation's target state), while the exact
+source-transition occurrence and slot generation are instantiated only when
+the checker replays a concrete path. The reader's finite closure treats two
+product states as equivalent when their active jobs correspond by a
+task-preserving bijection that preserves phase, clock associations, queue
+order and activation order; completed jobs are absent from both states and
+may be renamed. Thus absolute occurrence and generation counters, which can
+grow on a periodic cycle, do not enter the finite state key. This quotient
+never merges two live jobs or changes an exact replay identity. The reader
+recomputes the finite successor relation under the quotient, and FR-364
+reconstructs exact job occurrences and generations along any counterexample
+prefix before accepting its replay evidence.
 Each source declaration `release S.τ on M::o;` resolves `S` and `τ` to exactly
 one task-set declaration in `S`; a missing or ambiguous task binding is an
 invalid task automaton. The source operation is that task's **activation**.
@@ -339,6 +356,7 @@ establish completeness for the fixed-work class.
 | FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test |
 | FR-419-AC-10 | Each of these parses and refuses at check time with `invalid_timed_model`/`invalid-task-set`, never `invalid_syntax`: `taskset Empty { }` (naming `Empty`); a task with `bcet -1 ms`; a task with `bcet 2 ms` and `wcet 1 ms`; a `hi` task with `bcet 4 ms`, `wcet 2 ms`, `wcet_hi 3 ms`; a task with `jitter -1 ms`; a task with `blocking -1 ms`; a `lo` task with `wcet_hi 2 ms`; a task with `blocking 1 ms` under `edf`; a task with `jitter 1 ms` under `edf`; a task with `deadline 5 ms` and `periodic 4 ms` under `amc` (each naming the task). A task set with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms`, under `edf`, reports `t1`'s and `t2`'s task-set defects in that order, then the claim's two `edf` defects in the same order. | Test |
 | FR-419-AC-11 | An EDF task may omit priority and its task-transition identity omits the member; EDF selects the earliest absolute deadline and resolves ties by canonical task name in Unicode scalar value order, source activation transition identity and occurrence. Source declaration order and fixed priority do not affect EDF tie order. A declared priority, if present, is carried and checked but does not change EDF order. A forged priority, a priority on a task that declares none, or an EDF ready order inconsistent with deadlines/ties is refused; fixed-priority task identities require and replay the checked declared priority. | Test (TC-372) |
+| FR-419-AC-12 | Replaying a fixed-work task-product certificate template across a periodic cycle instantiates successive absolute activation occurrences without renumbering any live job; after completion, reusing its finite rank/slot preserves the identities of all other live jobs and gives the new job the next exact prefix occurrence. Replayed deadline-miss evidence carries those exact occurrences and generations, and a template whose source transition, live-job rank or slot does not match the recomputed path is rejected. | Test (TC-371) |
 
 ## Dependencies
 
