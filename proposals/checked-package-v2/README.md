@@ -48,12 +48,15 @@ structures, but any external consumer receives only the contract.
   (`{package, path, ordinal}`).
 - `checked-term-data-vectors.json` publishes the closed `checked_term_data`
   carrier vectors for producer-captured equality decisions, protocol semantic
-  locations and model dispatch candidate tables. All three use the same exact
-  local application/occurrence identity; protocol locations add a per-term
-  ordinal, while dispatch candidates retain producer order and structural
-  FR-150 `EffectiveId` selection keys (never checked-package `NodeRef`s). Positive and
-  malformed cases exercise schema shape, structural joins and the unavailable
-  versus empty-table distinction (FR-322-AC-288 to AC-292).
+  locations and model dispatch candidate tables. Equality decisions use the
+  local root application/occurrence plus a typed `term_path` through application
+  arguments, aggregate members and binding values, so nested equality
+  applications keep distinct identities; protocol locations use a
+  separate producer-assigned per-term ordinal. Dispatch candidates retain
+  producer order and structural FR-150 `EffectiveId` selection keys (never
+  checked-package `NodeRef`s).
+  Positive and malformed cases exercise schema shape, path joins and the
+  unavailable versus empty-table distinction (FR-322-AC-288 to AC-292).
 - `fixtures/positive-extension-nodes.json` is a V2 package carrying the
   `retention Audit { subject: "audit", days: 30 }` form of a selected
   extension as one `extension`/`extension_form` node, its two clause subnodes

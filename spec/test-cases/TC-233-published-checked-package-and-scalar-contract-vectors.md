@@ -702,3 +702,15 @@ empty-`internal` and third-key mutations fail the schema at that value; the
 two out-of-order mutations refuse `invalid_package`/`invalid-value` at the later
 entry's pointer and the two repeats refuse `invalid_package`/`conflicting-definition`
 with both entries as loci (FR-322-AC-77).
+
+The checked-term-data vectors admit top-level equality rows and two nested
+equality rows under one `and` root plus an equality under `or`, distinguished by
+typed `term_path` selectors. Positive vectors also traverse an aggregate member
+and a binding value. A path to a non-equality application in a distinct
+checked-term context refuses `invalid_package`/`invalid-value` at the exact
+path-step pointer; duplicate
+(`application`, `occurrence`, `term_path`) rows refuse
+`invalid_package`/`conflicting-definition` at the later row. Work accounting
+charges every typed path segment; the 29-unit boundary admits and one fewer unit
+exhausts at the final path segment without a partial data view
+(FR-322-AC-288, AC-289, AC-292).
