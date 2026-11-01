@@ -35,3 +35,9 @@ Review found one medium evidence/semantic defect. `EQ-R6-path-to-non-equality` i
 ## Re-review at a2a3d2f977594396491805eb4e1c93becfdafabe
 
 The typed `argument`, `member`, and `binding_value` selectors resolve the earlier contract gap for general `CheckedTerm` traversal, and the positive vectors cover those forms. FND-001 remains unresolved: EQ-R6 reuses EQ-08's `and-equality-root` / expression occurrence 0 / argument[0] identity, so the claimed non-equality terminal is not grounded in a distinct example.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 1b1b7fac: EQ-R6 uses the distinct `non-equality-path-root` and an explicit checked-term tree; the test verifies argument[0] selects an `or` term, not equality. |

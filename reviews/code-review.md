@@ -39,3 +39,10 @@ The typed `argument`, `member`, and `binding_value` path selectors now align wit
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-002 | low | The new binding-value assertion is not rustfmt-formatted; focused rustfmt reports a diff at the changed line. | tests/checked_package_v2.rs:19025 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 1b1b7fac: EQ-R6 now has a distinct root application and checked-term context whose argument[0] is an `or` application; TC-233 asserts that root/path, the non-equality terminal, and the exact refusal code, cause, and pointer. |
+| FND-002 | fixed | 1b1b7fac: rustfmt reformatted the binding-value assertion across three lines. |

@@ -35,3 +35,9 @@ Review found one medium evidence/semantic defect. `EQ-R6-path-to-non-equality` i
 ## Re-review at a2a3d2f977594396491805eb4e1c93becfdafabe
 
 The new path forms have positive schema-vector coverage. FND-001 remains unresolved: EQ-R6's application/occurrence/path matches positive EQ-08, and `tc_233_checked_term_data_vectors_cover_the_shared_carrier` still asserts only schema validity, operator, and path for the purported refusal.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 1b1b7fac: the EQ-R6 vector now publishes the distinct tree and exact refusal metadata, and the test asserts the selected term and exact code/cause/locus. |

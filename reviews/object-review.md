@@ -33,3 +33,9 @@ Review found one medium evidence/semantic defect. `EQ-R6-path-to-non-equality` i
 ## Re-review at a2a3d2f977594396491805eb4e1c93becfdafabe
 
 The equality identity object is now application + occurrence + typed term path, with argument/member/binding-value selectors; protocol identity remains separate through `term_ordinal`. FND-001 remains unresolved because EQ-R6's tuple is identical to the positive EQ-08 tuple while claiming a non-equality terminal.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 1b1b7fac: EQ-R6 now keys to `non-equality-path-root`; its explicit root tree resolves argument[0] to `or`, distinct from the positive EQ-08 identity. |

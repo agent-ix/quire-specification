@@ -35,3 +35,9 @@ Review found one medium evidence/semantic defect. `EQ-R6-path-to-non-equality` i
 ## Re-review at a2a3d2f977594396491805eb4e1c93becfdafabe
 
 The closed typed selectors now distinguish application arguments, aggregate members, and binding values. FND-001 remains unresolved because the path-to-non-equality case still aliases a positive equality path; the test checks its shape but not that traversal terminates at a different term kind.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 1b1b7fac: the path-to-non-equality case now supplies a distinct checked-term context, and the test verifies the selected terminal operator and exact path-step refusal locus. |
