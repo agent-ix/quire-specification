@@ -32,6 +32,9 @@
         "$ref": "#/$defs/SourceMapEntry"
       }
     },
+    "checked_term_data": {
+      "$ref": "#/$defs/CheckedTermData"
+    },
     "refinement_step_rows": {
       "type": "array",
       "minItems": 1,
@@ -12208,6 +12211,410 @@
         },
         "offset": {
           "$ref": "#/$defs/Rational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CheckedTermData": {
+      "type": "object",
+      "required": [
+        "equality_decisions",
+        "protocol_locations",
+        "dispatch_tables"
+      ],
+      "properties": {
+        "equality_decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EqualityDecision"
+          }
+        },
+        "protocol_locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProtocolSemanticLocation"
+          }
+        },
+        "dispatch_tables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DispatchCandidateTable"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "EqualityDecision": {
+      "type": "object",
+      "required": [
+        "application",
+        "occurrence",
+        "operator",
+        "left",
+        "right",
+        "schedule",
+        "units",
+        "enum_members"
+      ],
+      "properties": {
+        "application": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/Occurrence"
+        },
+        "operator": {
+          "enum": [
+            "equal",
+            "not_equal"
+          ]
+        },
+        "left": {
+          "$ref": "#/$defs/EqualityOperandDecision"
+        },
+        "right": {
+          "$ref": "#/$defs/EqualityOperandDecision"
+        },
+        "schedule": {
+          "enum": [
+            "text",
+            "enum",
+            "quantity",
+            "plan"
+          ]
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResolvedEqualityUnit"
+          }
+        },
+        "enum_members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EqualityEnumMember"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "EqualityOperandDecision": {
+      "type": "object",
+      "required": [
+        "operand",
+        "source_type",
+        "conversion_target"
+      ],
+      "properties": {
+        "operand": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "source_type": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "conversion_target": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/NodeRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResolvedEqualityUnit": {
+      "type": "object",
+      "required": [
+        "quantity_type",
+        "unit",
+        "form"
+      ],
+      "properties": {
+        "quantity_type": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "unit": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "form": {
+          "$ref": "#/$defs/ResolvedEqualityUnitForm"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResolvedEqualityUnitForm": {
+      "oneOf": [
+        { "$ref": "#/$defs/DeclaredEqualityUnitForm" },
+        { "$ref": "#/$defs/CompoundEqualityUnitForm" }
+      ]
+    },
+    "DeclaredEqualityUnitForm": {
+      "type": "object",
+      "required": ["kind", "dimension_node", "dimension_terms", "root_unit", "path"],
+      "properties": {
+        "kind": { "const": "declared" },
+        "dimension_node": { "$ref": "#/$defs/NodeRef" },
+        "dimension_terms": { "type": "array", "items": { "$ref": "#/$defs/UnitDimensionTerm" } },
+        "root_unit": { "$ref": "#/$defs/NodeRef" },
+        "path": { "type": "array", "items": { "$ref": "#/$defs/UnitConversionEdge" } }
+      },
+      "additionalProperties": false
+    },
+    "CompoundEqualityUnitForm": {
+      "type": "object",
+      "required": ["kind", "dimension_terms", "terms"],
+      "properties": {
+        "kind": { "const": "compound" },
+        "dimension_terms": { "type": "array", "items": { "$ref": "#/$defs/UnitDimensionTerm" } },
+        "terms": { "type": "array", "items": { "$ref": "#/$defs/CompoundEqualityUnitTerm" } }
+      },
+      "additionalProperties": false
+    },
+    "UnitDimensionTerm": {
+      "type": "object",
+      "required": ["dimension", "exponent"],
+      "properties": {
+        "dimension": { "$ref": "#/$defs/NodeRef" },
+        "exponent": { "$ref": "#/$defs/IntegerString" }
+      },
+      "additionalProperties": false
+    },
+    "CompoundEqualityUnitTerm": {
+      "type": "object",
+      "required": ["root_unit", "exponent"],
+      "properties": {
+        "root_unit": { "$ref": "#/$defs/NodeRef" },
+        "exponent": { "$ref": "#/$defs/IntegerString" }
+      },
+      "additionalProperties": false
+    },
+    "UnitConversionEdge": {
+      "type": "object",
+      "required": ["target", "scale", "offset"],
+      "properties": {
+        "target": { "$ref": "#/$defs/NodeRef" },
+        "scale": { "$ref": "#/$defs/Rational" },
+        "offset": { "$ref": "#/$defs/Rational" }
+      },
+      "additionalProperties": false
+    },
+    "EqualityEnumMember": {
+      "type": "object",
+      "required": [
+        "enum_type",
+        "member",
+        "case",
+        "ordinal",
+        "ordered"
+      ],
+      "properties": {
+        "enum_type": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "member": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "case": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ordered": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolSemanticLocation": {
+      "type": "object",
+      "required": [
+        "application",
+        "occurrence",
+        "term_ordinal",
+        "location"
+      ],
+      "properties": {
+        "application": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/Occurrence"
+        },
+        "term_ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "location": {
+          "$ref": "#/$defs/ProtocolLocation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolLocation": {
+      "type": "object",
+      "required": [
+        "origin",
+        "path"
+      ],
+      "properties": {
+        "origin": {
+          "$ref": "#/$defs/ProtocolLocationOrigin"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyOrdinal"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolLocationOrigin": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "name"
+          ],
+          "properties": {
+            "kind": {
+              "const": "type_declaration"
+            },
+            "name": {
+              "$ref": "#/$defs/Nonempty"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "protocol",
+            "attempt"
+          ],
+          "properties": {
+            "kind": {
+              "const": "protocol_attempt"
+            },
+            "protocol": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DispatchCandidateTable": {
+      "type": "object",
+      "required": [
+        "application",
+        "occurrence",
+        "operation",
+        "context",
+        "candidates"
+      ],
+      "properties": {
+        "application": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/Occurrence"
+        },
+        "operation": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "context": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DispatchCandidate"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "DispatchCandidate": {
+      "type": "object",
+      "required": [
+        "selection_key",
+        "operation_body",
+        "effective_precondition"
+      ],
+      "properties": {
+        "selection_key": {
+          "$ref": "#/$defs/EffectiveId"
+        },
+        "operation_body": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "effective_precondition": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/NodeRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "EffectiveId": {
+      "type": "object",
+      "required": [
+        "owner_effective_type",
+        "original"
+      ],
+      "properties": {
+        "owner_effective_type": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/EffectiveId"
+            }
+          ]
+        },
+        "original": {
+          "type": "object",
+          "required": [
+            "package",
+            "node"
+          ],
+          "properties": {
+            "package": {
+              "type": "string",
+              "minLength": 1
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

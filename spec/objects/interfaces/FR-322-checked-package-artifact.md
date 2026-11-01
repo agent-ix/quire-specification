@@ -1012,6 +1012,87 @@ A frame body refusal, meaning-join or canonical-order
   `invalid_package`/`invalid-value` at that `source_map` entry. These checks
   compare two wire carriers; the reader does not parse raw QSL source to
   verify that a producer supplied the true original row region.
+- `checked_term_data` — an optional, closed producer-captured carrier for facts
+  that a later typed read must return without repeating the producer's check.
+  When present it has exactly three arrays, `equality_decisions`,
+  `protocol_locations` and `dispatch_tables`; any may be empty. When absent it
+  means all three arrays are empty. It adds no semantic graph node and does
+  not change any node id. All three arrays use the same structural application
+  identity: the local application `node_id` and one exact occurrence key
+  (`role`, `ordinal`) belonging to that application. The package name binds
+  that key to this checked package; a node from another package cannot satisfy
+  it.
+  `equality_decisions` is keyed by the local application `node_id` and one of
+  that node's exact `occurrences` keys (`role`, `ordinal`). Each row retains the
+  `equal` or `not_equal` operator, the two original operand positions in order,
+  each operand's source type and producer-selected conversion target (or
+  `null`), the selected `text`, `enum`, `quantity` or `plan` schedule, the
+  resolved top-level quantity unit facts, and the filtered enum member facts.
+  The two operand positions are exactly 0 and 1; the reader joins them to the
+  application arguments and checks their source types and the operation
+  identity, but does not choose or repeat the conversion or schedule. A unit
+  fact records the quantity type, resolved unit, normalized base-dimension
+  terms, and exact unit-table form: a declared unit's dimension node, root,
+  and ordered conversion edges, or a compound unit's canonical root-unit
+  terms with exponents. An enum fact records the enum declaration, exact
+  member identity, case, producer-selected ordinal and ordered-enum flag.
+  Only units named by a top-level quantity operand and only
+  members of the compared enum are retained; irrelevant unit or enum tables
+  are empty. An enum schedule carries its complete filtered member index; a
+  non-enum schedule carries no enum members. A non-quantity schedule carries
+  no unit rows.
+
+  `protocol_locations` maps a local application occurrence to the semantic
+  location of each selected protocol term represented there. Its key is the
+  application `node_id`, an exact application occurrence key, and a
+  producer-assigned zero-based `term_ordinal`, unique within that application
+  occurrence. This final coordinate distinguishes multiple semantic terms
+  represented by one graph application node; it is not a source-map ordinal or
+  a source position. `location` preserves the producer's semantic origin and
+  child-index path. Its closed origin is either a named type declaration or a
+  protocol attempt identified by the protocol and attempt positions in the
+  compilation. These values are captured from the checked semantic term and
+  are never derived from `source_map` regions, display names, or a package
+  selected outside this checked package.
+
+  `dispatch_tables` retains the producer's admitted candidate table for a
+  selected model-operation dispatch. A table names the exact application and
+  occurrence, selected operation identity, and receiver context identity. Its
+  `candidates` array is in producer order; the array order is semantic and is
+  never sorted by the reader. Each candidate records the receiver's exact
+  selection key as the structural `EffectiveId`
+  `{owner_effective_type, original}` of FR-150, the candidate operation's body
+  handle, and its effective precondition body handle, or `null` when the
+  effective precondition has no body. `EffectiveId.original` remains the
+  original `{package, node}` declaration key. This selection key is not a
+  checked-package `NodeRef`; the reader compares the captured identity
+  componentwise with the candidate's admitted effective declaration identity.
+  It does not derive the key from a name, graph node id or reverse lookup. A
+  present empty array is the producer's captured empty candidate set;
+  an absent table is unavailable. Candidate selection keys are unique within
+  one table. The reader joins all handles by exact node identity and checks
+  that the table names the application and selected operation it accompanies.
+  It does not choose a candidate, evaluate a precondition, derive candidates
+  by name, or reconstruct the dispatch table from the graph.
+
+  The producer writes these rows from the same checking stage that emits the
+  checked package. A row is local to the root package: its application must be
+  a local `expression`/application node, the occurrence must be present on
+  that node and in `source_map`, and no dependency package may satisfy the
+  join. Equality rows and dispatch tables are unique by (`application`,
+  `occurrence`); protocol rows are unique by (`application`, `occurrence`,
+  `term_ordinal`). Each array is ordered by application node id, then
+  occurrence role and ordinal; protocol rows then order by `term_ordinal`.
+  Dispatch candidate order within one table remains the producer order. The
+  reader validates these structural joins
+  and preserves the captured facts exactly. A missing equality row remains
+  unavailable to an IR consumer; it does not cause a schedule, unit table or
+  enum index to be fabricated. A producer or reader SHALL NOT rebuild these
+  facts by type-checking the graph, projecting value types, consulting an
+  operation catalog, searching source text or resolving an arbitrary source
+  package. Every inspected row and every nested unit or enum fact is charged
+  to the caller's finite work limit before inspection; exhaustion returns the
+  attempted work and first uncharged locus without a partial data view.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -3484,6 +3565,11 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-286 | Two `protocol_reference` carriers with one body target refuse `invalid_semantic_graph`, with no cause, at the later carrier's `/semantic_graph/nodes/{n}/node_id`, in node-id order, in the graph-shape step before the cycle check: `K23`, the `K16` node set plus a second carrier of `Flow` at path `["R"]`, ordinal `1`, is refused at that second carrier even though its `node_id` differs from the first's. A grouped carrier and an acyclic carrier to different targets are not refused. | Test (TC-946; K23) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 | FR-322-AC-287 | A source that declares the dimension equivalences `E0` = `B ~ C` then `E1` = `A ~ B` (so source order is the reverse of the order of their node ids) is emitted with two `scalar_type`/`dimension_equivalence` nodes, each with exactly one occurrence, role `anchor`: `E0`'s at ordinal `0` and `E1`'s at ordinal `1`, each with its own declaration's region. A third equivalence declared between them in the source moves the later one's ordinal to `2`. | Test (TC-233) |
+| FR-322-AC-288 | `checked_term_data` is absent when no facts are retained and otherwise has exactly `equality_decisions`, `protocol_locations` and `dispatch_tables` arrays; each may be empty. Equality records for text, enum, top-level declared and compound quantity, and structural plan schedules preserve the exact application/occurrence, operator, ordered operand positions, source types, nullable conversion targets and selected schedule. The enum record carries the compared enum's exact declaration and member identities, case, ordinal and ordered flag. Quantity records carry normalized dimension terms and either a declared unit's exact root and conversion-edge path or a compound unit's canonical root terms and exponents. A dispatch record preserves the selected operation, receiver context and candidates in producer order, with each candidate's selection key, operation-body handle and nullable effective-precondition body handle. A protocol location preserves its application/occurrence, per-term ordinal, named type-declaration or protocol-attempt origin and child-index path. These records do not alter semantic graph nodes or ids. | Test |
+| FR-322-AC-289 | The reader joins each equality row to exactly one local expression/application node and its exact source occurrence, then checks the operation identity, both original argument positions and their source types. A row targeting an absent or foreign node, a non-application, a missing/wrong occurrence, a different operator, or a changed operand/type refuses `invalid_package`/`invalid-value` at the first mismatching sidecar member. Duplicate (`application`, `occurrence`) keys refuse `invalid_package`/`conflicting-definition` at the later row with both loci. An equality application without a captured row remains admitted and has no fabricated decision. | Test |
+| FR-322-AC-290 | A dispatch record joins to exactly one local call application and its exact occurrence, selected operation identity and receiver context; every candidate body and effective-precondition handle joins to the admitted package, and each candidate selection key is the exact FR-150 structural `EffectiveId` (`owner_effective_type`, `original`) supplied by the producer and matches the candidate's admitted effective declaration identity. It is not a `NodeRef` and is never inferred from a name or reverse-mapped from a graph node. Selection keys are unique. The reader preserves candidate array order. An absent or foreign operation/context/body/effective identity, mismatched effective identity, wrong call application or occurrence, duplicate dispatch key or duplicate selection key refuses with a named typed outcome at the first mismatching row; it neither selects a candidate nor evaluates a precondition. An absent table is unavailable, while a present empty table is the captured empty candidate set. | Test |
+| FR-322-AC-291 | Each protocol location row joins to one local expression/application node and one of its exact source occurrences; two terms sharing that application and occurrence have distinct `term_ordinal` values and preserve their different semantic locations. A foreign or absent node, non-application, missing occurrence, duplicate per-term key, duplicate term ordinal or malformed origin refuses at the first mismatching row; no location is inferred from a source region, display name or selected dependency. | Test |
+| FR-322-AC-292 | `checked-term-data-vectors.json` publishes positive text, enum, declared-quantity, compound-quantity and plan equality records, two protocol terms at one application occurrence, and ordered and empty dispatch candidate sets whose selection keys use the structural FR-150 `EffectiveId`. Schema-invalid cases include a checked-package `NodeRef` used as an effective identity, missing identity members and extra identity fields. Schema-valid reader mutations cover wrong operator/operand/type/occurrence, foreign application and effective identity, mismatched effective identity, duplicate equality/protocol/dispatch key, duplicate selection key, missing protocol-term mapping and absent precondition join. Reader-level mutations have the expected refusal code, cause and exact JSON pointer. Read work charges every sidecar row and nested unit, enum and candidate entry before inspection; its 17-unit exact boundary succeeds and a one-less limit refuses `resource_exhausted` at the first uncharged row with no partial view. | Test (TC-233) |
 
 ## Dependencies
 
@@ -3510,5 +3596,8 @@ Accepted complete-V1 boundary value contract.
 
 ## References
 
+- Tickets: Linear STD-613, STD-614 and STD-615 (the shared checked-term-data
+  carrier for equality decisions, protocol semantic locations and dispatch
+  candidate tables).
 - Tickets: Linear QSL-290, QSL-638 (the node `owner` member), QSL-659 (record-valued model fields) and
   QSL-692 (settled derived type forms for StateModel lowering).
