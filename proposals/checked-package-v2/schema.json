@@ -12577,7 +12577,7 @@
           "$ref": "#/$defs/Occurrence"
         },
         "operation": {
-          "$ref": "#/$defs/NodeRef"
+          "$ref": "#/$defs/SelectedOperationWitness"
         },
         "context": {
           "$ref": "#/$defs/NodeRef"
@@ -12587,6 +12587,22 @@
           "items": {
             "$ref": "#/$defs/DispatchCandidate"
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "SelectedOperationWitness": {
+      "type": "object",
+      "required": [
+        "declaring",
+        "operation"
+      ],
+      "properties": {
+        "declaring": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "operation": {
+          "$ref": "#/$defs/Identifier"
         }
       },
       "additionalProperties": false

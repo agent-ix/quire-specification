@@ -18946,6 +18946,7 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let equality = schema_for_def(&schema, "EqualityDecision");
     let location = schema_for_def(&schema, "ProtocolSemanticLocation");
     let dispatch = schema_for_def(&schema, "DispatchCandidateTable");
+    let selected_operation = schema_for_def(&schema, "SelectedOperationWitness");
     let candidate = schema_for_def(&schema, "DispatchCandidate");
     let effective_id = schema_for_def(&schema, "EffectiveId");
     let carrier = schema_for_def(&schema, "CheckedTermData");
@@ -19060,6 +19061,16 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         let id = wire["id"].as_str().unwrap().to_owned();
         wire.as_object_mut().unwrap().remove("id");
         assert!(dispatch.is_valid(&wire), "{id} is a valid dispatch table");
+        assert!(
+            selected_operation.is_valid(&wire["operation"]),
+            "{id} carries a typed selected-operation witness"
+        );
+        assert_eq!(wire["operation"]["declaring"]["path"][0], "model");
+        assert!(wire["operation"]["operation"].is_string());
+        assert!(
+            wire["operation"].get("path").is_none(),
+            "operation members have no graph path"
+        );
         for item in wire["candidates"].as_array().unwrap() {
             assert!(candidate.is_valid(item), "{id} candidate is closed");
             assert!(
@@ -19287,6 +19298,19 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 assert_eq!(
                     value["candidates"][0]["selection_key"]["original"]["node"],
                     "DifferentCandidate"
+                );
+            }
+            "DT-R6-operation-names-no-member" => {
+                assert!(
+                    dispatch.is_valid(value),
+                    "a non-member name is structurally valid but semantically refused"
+                );
+                assert!(selected_operation.is_valid(&value["operation"]));
+                assert_eq!(value["operation"]["operation"], "absent");
+                assert_eq!(case["expected_cause"], "invalid-value");
+                assert_eq!(
+                    case["locus"],
+                    "/checked_term_data/dispatch_tables/0/operation"
                 );
             }
             "DT-R2-missing-precondition" => {

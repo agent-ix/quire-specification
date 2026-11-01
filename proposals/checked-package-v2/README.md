@@ -339,8 +339,11 @@ meaning and no type is inferred. The identity is a member of the
   ordered feature signatures
   [FR-152's Systems-model roles table](../../spec/functional/type-model/FR-152-bind-systems-model-structures.md#systems-model-roles)
   gives structural-conformance meaning (FR-151), never a
-  `dispatch_call` binding -- is `operator-ineligible`/`ill_typed` here. FR-208
-  separately pins a declaring-node cause for three of those other forms:
+  `dispatch_call` binding -- is `operator-ineligible`/`ill_typed` here. The
+  checked-term dispatch sidecar names the selected operation as a typed
+  `{declaring: <model NodeRef>, operation: <original member name>}` witness,
+  since the member itself has no semantic graph node (FR-322-AC-290).
+  FR-208 separately pins a declaring-node cause for three of those other forms:
   `unsupported_construct`/`declaration-form` on a `record_value_type`
   (FR-208-AC-4, which cannot declare an operation at all) and
   `invalid_model_binding`/`malformed-declaration` on an `event_type`
