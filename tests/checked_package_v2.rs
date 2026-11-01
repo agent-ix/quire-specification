@@ -18949,21 +18949,38 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let effective_id = schema_for_def(&schema, "EffectiveId");
     let carrier = schema_for_def(&schema, "CheckedTermData");
     let structural_identity = parsed_fixture(STRUCTURAL_IDENTITY_SCHEMA);
-    assert_eq!(schema["$defs"]["EffectiveId"], structural_identity["$defs"]["EffectiveId"]);
+    assert_eq!(
+        schema["$defs"]["EffectiveId"],
+        structural_identity["$defs"]["EffectiveId"]
+    );
 
-    for row in vectors["positive"]["equality_decisions"].as_array().unwrap() {
+    for row in vectors["positive"]["equality_decisions"]
+        .as_array()
+        .unwrap()
+    {
         let mut wire = row.clone();
         let id = wire["id"].as_str().unwrap().to_owned();
         wire.as_object_mut().unwrap().remove("id");
-        assert!(equality.is_valid(&wire), "{id} is a valid equality decision");
+        assert!(
+            equality.is_valid(&wire),
+            "{id} is a valid equality decision"
+        );
     }
-    for row in vectors["positive"]["protocol_locations"].as_array().unwrap() {
+    for row in vectors["positive"]["protocol_locations"]
+        .as_array()
+        .unwrap()
+    {
         let mut wire = row.clone();
         let id = wire["id"].as_str().unwrap().to_owned();
         wire.as_object_mut().unwrap().remove("id");
-        assert!(location.is_valid(&wire), "{id} is a valid protocol location");
+        assert!(
+            location.is_valid(&wire),
+            "{id} is a valid protocol location"
+        );
     }
-    let location_rows = vectors["positive"]["protocol_locations"].as_array().unwrap();
+    let location_rows = vectors["positive"]["protocol_locations"]
+        .as_array()
+        .unwrap();
     let shared_terms = location_rows
         .windows(2)
         .find(|pair| {
@@ -18971,7 +18988,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 && pair[0]["occurrence"] == pair[1]["occurrence"]
         })
         .expect("two protocol terms share one application occurrence");
-    assert_ne!(shared_terms[0]["term_ordinal"], shared_terms[1]["term_ordinal"]);
+    assert_ne!(
+        shared_terms[0]["term_ordinal"],
+        shared_terms[1]["term_ordinal"]
+    );
     assert_ne!(shared_terms[0]["location"], shared_terms[1]["location"]);
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
@@ -18981,7 +19001,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         assert!(dispatch.is_valid(&wire), "{id} is a valid dispatch table");
         for item in wire["candidates"].as_array().unwrap() {
             assert!(candidate.is_valid(item), "{id} candidate is closed");
-            assert!(effective_id.is_valid(&item["selection_key"]), "{id} key is an EffectiveId");
+            assert!(
+                effective_id.is_valid(&item["selection_key"]),
+                "{id} key is an EffectiveId"
+            );
         }
     }
     let rows_without_case_ids = |name: &str| {
@@ -19001,22 +19024,54 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         "protocol_locations": rows_without_case_ids("protocol_locations"),
         "dispatch_tables": rows_without_case_ids("dispatch_tables"),
     });
-    assert!(carrier.is_valid(&package_carrier), "all three arrays share one closed carrier");
+    assert!(
+        carrier.is_valid(&package_carrier),
+        "all three arrays share one closed carrier"
+    );
 
-    let candidates = vectors["positive"]["dispatch_tables"][0]["candidates"].as_array().unwrap();
-    assert_eq!(candidates[0]["selection_key"]["original"]["node"], "FastService");
-    assert_eq!(candidates[1]["selection_key"]["original"]["node"], "SafeService");
-    for name in ["equality_decisions", "protocol_locations", "dispatch_tables"] {
+    let candidates = vectors["positive"]["dispatch_tables"][0]["candidates"]
+        .as_array()
+        .unwrap();
+    assert_eq!(
+        candidates[0]["selection_key"]["original"]["node"],
+        "FastService"
+    );
+    assert_eq!(
+        candidates[1]["selection_key"]["original"]["node"],
+        "SafeService"
+    );
+    for name in [
+        "equality_decisions",
+        "protocol_locations",
+        "dispatch_tables",
+    ] {
         let paths = vectors["positive"][name]
-            .as_array().unwrap().iter()
-            .map(|row| row["application"]["path"].as_array().unwrap().iter()
-                .map(Value::as_str).collect::<Option<Vec<_>>>().unwrap().join("/"))
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                row["application"]["path"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(Value::as_str)
+                    .collect::<Option<Vec<_>>>()
+                    .unwrap()
+                    .join("/")
+            })
             .collect::<Vec<_>>();
-        assert!(paths.windows(2).all(|pair| pair[0] <= pair[1]), "{name} rows use canonical application order");
+        assert!(
+            paths.windows(2).all(|pair| pair[0] <= pair[1]),
+            "{name} rows use canonical application order"
+        );
     }
-    assert!(vectors["positive"]["equality_decisions"]
-        .as_array().unwrap().iter()
-        .any(|row| row["units"][0]["form"]["kind"] == "compound"));
+    assert!(
+        vectors["positive"]["equality_decisions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|row| row["units"][0]["form"]["kind"] == "compound")
+    );
     let enum_member = &vectors["positive"]["equality_decisions"][1]["enum_members"][0];
     assert!(is_node_id(&enum_member["member"]));
     assert!(enum_member["ordered"].is_boolean());
@@ -19030,27 +19085,48 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             "EffectiveId" => &effective_id,
             other => panic!("unknown schema-negative target {other}"),
         };
-        assert!(!validator.is_valid(&case["value"]), "{} is malformed wire", case["id"]);
+        assert!(
+            !validator.is_valid(&case["value"]),
+            "{} is malformed wire",
+            case["id"]
+        );
         assert_eq!(case["expected_code"], "malformed_wire");
-        assert!(case["locus"].as_str().unwrap().starts_with("/checked_term_data/"));
+        assert!(
+            case["locus"]
+                .as_str()
+                .unwrap()
+                .starts_with("/checked_term_data/")
+        );
     }
     for case in vectors["reader_refusals"].as_array().unwrap() {
         let value = &case["value"];
         match case["id"].as_str().unwrap() {
             "EQ-R1-foreign-application" => {
-                assert!(equality.is_valid(value), "foreign application remains structurally valid");
+                assert!(
+                    equality.is_valid(value),
+                    "foreign application remains structurally valid"
+                );
                 assert_eq!(value["application"]["package"], "foreign");
             }
             "EQ-R2-wrong-operand-type" => {
-                assert!(equality.is_valid(value), "wrong operand type remains structurally valid");
+                assert!(
+                    equality.is_valid(value),
+                    "wrong operand type remains structurally valid"
+                );
                 assert_ne!(value["left"]["source_type"], value["right"]["source_type"]);
             }
             "EQ-R3-wrong-operator" => {
-                assert!(equality.is_valid(value), "wrong operator remains structurally valid");
+                assert!(
+                    equality.is_valid(value),
+                    "wrong operator remains structurally valid"
+                );
                 assert_eq!(value["operator"], "not_equal");
             }
             "EQ-R4-wrong-occurrence" => {
-                assert!(equality.is_valid(value), "wrong occurrence remains structurally valid");
+                assert!(
+                    equality.is_valid(value),
+                    "wrong occurrence remains structurally valid"
+                );
                 assert_eq!(value["occurrence"]["ordinal"], 9);
             }
             "EQ-R5-duplicate-key" => {
@@ -19074,45 +19150,104 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 assert_ne!(rows[0]["term_ordinal"], shared_terms[1]["term_ordinal"]);
             }
             "DT-R1-duplicate-selection-key" => {
-                assert!(dispatch.is_valid(value), "duplicate key remains structurally valid");
-                assert_eq!(value["candidates"][0]["selection_key"], value["candidates"][1]["selection_key"]);
+                assert!(
+                    dispatch.is_valid(value),
+                    "duplicate key remains structurally valid"
+                );
+                assert_eq!(
+                    value["candidates"][0]["selection_key"],
+                    value["candidates"][1]["selection_key"]
+                );
             }
             "DT-R3-wrong-occurrence" => {
-                assert!(dispatch.is_valid(value), "wrong occurrence remains structurally valid");
+                assert!(
+                    dispatch.is_valid(value),
+                    "wrong occurrence remains structurally valid"
+                );
                 assert_eq!(value["occurrence"]["ordinal"], 9);
             }
             "DT-R4-foreign-effective-selection-key" => {
-                assert!(dispatch.is_valid(value), "foreign effective key remains structurally valid");
+                assert!(
+                    dispatch.is_valid(value),
+                    "foreign effective key remains structurally valid"
+                );
                 assert!(effective_id.is_valid(&value["candidates"][0]["selection_key"]));
-                assert_eq!(value["candidates"][0]["selection_key"]["original"]["package"], "foreign");
+                assert_eq!(
+                    value["candidates"][0]["selection_key"]["original"]["package"],
+                    "foreign"
+                );
             }
             "DT-R5-mismatched-effective-selection-key" => {
-                assert!(dispatch.is_valid(value), "mismatched effective key remains structurally valid");
+                assert!(
+                    dispatch.is_valid(value),
+                    "mismatched effective key remains structurally valid"
+                );
                 assert!(effective_id.is_valid(&value["candidates"][0]["selection_key"]));
-                assert_eq!(value["candidates"][0]["selection_key"]["original"]["node"], "DifferentCandidate");
+                assert_eq!(
+                    value["candidates"][0]["selection_key"]["original"]["node"],
+                    "DifferentCandidate"
+                );
             }
             "DT-R2-missing-precondition" => {
-                assert!(candidate.is_valid(value), "foreign precondition remains structurally valid");
+                assert!(
+                    candidate.is_valid(value),
+                    "foreign precondition remains structurally valid"
+                );
                 assert_eq!(value["effective_precondition"]["path"][1], "Missing");
             }
             other => panic!("unknown reader-refusal vector {other}"),
         }
-        assert!(case["expected_code"].is_string(), "{} has a typed reader refusal", case["id"]);
-        assert!(case["locus"].as_str().unwrap().starts_with("/checked_term_data/"));
+        assert!(
+            case["expected_code"].is_string(),
+            "{} has a typed reader refusal",
+            case["id"]
+        );
+        assert!(
+            case["locus"]
+                .as_str()
+                .unwrap()
+                .starts_with("/checked_term_data/")
+        );
     }
     let work = &vectors["work_limit"];
-    let row_count = vectors["positive"]["equality_decisions"].as_array().unwrap().len()
-        + vectors["positive"]["protocol_locations"].as_array().unwrap().len()
-        + vectors["positive"]["dispatch_tables"].as_array().unwrap().len();
+    let row_count = vectors["positive"]["equality_decisions"]
+        .as_array()
+        .unwrap()
+        .len()
+        + vectors["positive"]["protocol_locations"]
+            .as_array()
+            .unwrap()
+            .len()
+        + vectors["positive"]["dispatch_tables"]
+            .as_array()
+            .unwrap()
+            .len();
     let unit_count: usize = vectors["positive"]["equality_decisions"]
-        .as_array().unwrap().iter().map(|row| row["units"].as_array().unwrap().len()).sum();
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| row["units"].as_array().unwrap().len())
+        .sum();
     let enum_count: usize = vectors["positive"]["equality_decisions"]
-        .as_array().unwrap().iter().map(|row| row["enum_members"].as_array().unwrap().len()).sum();
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| row["enum_members"].as_array().unwrap().len())
+        .sum();
     let candidate_count: usize = vectors["positive"]["dispatch_tables"]
-        .as_array().unwrap().iter().map(|row| row["candidates"].as_array().unwrap().len()).sum();
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| row["candidates"].as_array().unwrap().len())
+        .sum();
     assert_eq!(row_count + unit_count + enum_count + candidate_count, 17);
     assert_eq!(work["exact_limit"], 17);
     assert_eq!(work["exact_result"], "admitted");
     assert_eq!(work["one_less_limit"], 16);
-    assert!(work["one_less_result"].as_str().unwrap().contains("no partial data view"));
+    assert!(
+        work["one_less_result"]
+            .as_str()
+            .unwrap()
+            .contains("no partial data view")
+    );
 }
