@@ -27,15 +27,17 @@ fn main() {
     println!("cargo:rerun-if-changed=spec/test-cases");
     let mut out = String::from("pub static QUALIFICATION_VECTORS: &[QualificationVector] = &[\n");
     for (variant, prefix, tc) in CASES {
-        let path = std::fs::read_dir(&dir)
+        let mut paths: Vec<_> = std::fs::read_dir(&dir)
             .expect("read spec/test-cases")
             .map(|e| e.expect("dir entry").path())
-            .find(|p| {
+            .filter(|p| {
                 p.file_name()
                     .and_then(|n| n.to_str())
                     .is_some_and(|n| n.starts_with(prefix) && n.ends_with(".md"))
             })
-            .unwrap_or_else(|| panic!("no authored file for {tc}"));
+            .collect();
+        assert_eq!(paths.len(), 1, "{tc}: expected exactly one authored file");
+        let path = paths.remove(0);
         println!("cargo:rerun-if-changed={}", path.display());
         let text = std::fs::read_to_string(&path).expect("read test case");
         let mut in_vectors = false;

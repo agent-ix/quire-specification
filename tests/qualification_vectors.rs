@@ -15,23 +15,32 @@ const DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/spec/test-cases");
 
 fn authored(tc: TestCase) -> String {
     let prefix = format!("{}-", tc.id());
-    let path = std::fs::read_dir(DIR)
+    let paths: Vec<_> = std::fs::read_dir(DIR)
         .unwrap()
         .map(|e| e.unwrap().path())
-        .find(|p| {
+        .filter(|p| {
             p.file_name()
                 .and_then(|n| n.to_str())
                 .is_some_and(|n| n.starts_with(&prefix))
         })
-        .unwrap();
-    std::fs::read_to_string(path).unwrap()
+        .collect();
+    assert_eq!(
+        paths.len(),
+        1,
+        "{} must have exactly one authored file",
+        tc.id()
+    );
+    std::fs::read_to_string(&paths[0]).unwrap()
 }
+
+/// Authored vector rows per test case, in `TestCase::ALL` order.
+const ROWS: [usize; 5] = [25, 18, 70, 18, 36];
 
 #[test]
 #[trace("TC-185", "TC-186", "TC-187", "TC-192", "TC-193")]
 fn api_exports_every_authored_vector_row_exactly_once() {
     let mut total = 0;
-    for tc in TestCase::ALL {
+    for (tc, rows) in TestCase::ALL.into_iter().zip(ROWS) {
         let text = authored(tc);
         // Independent row discovery: a table whose header starts `| Vector |`.
         let mut expected_ids = Vec::new();
@@ -53,6 +62,7 @@ fn api_exports_every_authored_vector_row_exactly_once() {
         }
         let got: Vec<&str> = vectors_of(tc).map(|v| v.id).collect();
         assert_eq!(got, expected_ids, "{} ids", tc.id());
+        assert_eq!(got.len(), rows, "{} row count", tc.id());
         let unique: BTreeSet<_> = got.iter().collect();
         assert_eq!(unique.len(), got.len(), "{} ids are unique", tc.id());
         for v in vectors_of(tc) {
