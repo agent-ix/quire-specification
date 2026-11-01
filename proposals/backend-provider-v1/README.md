@@ -33,8 +33,14 @@ consumer holds a copy of this schema.
   `RefinementFailure` definition (the seven model kinds and the protocol
   relation kinds `RefusalNotPermitted` and `TerminalSuccessMismatch`) and the
   product and replay cases of those two kinds (TC-318, TC-431 BP-55).
+- `task-priority-vectors.json` holds the optional-priority identity and
+  policy-order vectors for FR-419/FR-364. The Rust qualification test checks
+  each carrier against the wire schema, checks priority against the declared
+  task value, and recomputes the authored EDF/fixed-priority vector orders.
 - `tests/backend_provider_v1.rs` validates every vector against the schema
   and checks the package-bytes rule (TC-431).
+- `tests/task_priority_vectors.rs` runs the FR-419/FR-364 priority vectors;
+  these QSpec checks do not replace the independent QSL strict-reader tests.
 
 ## Stages
 

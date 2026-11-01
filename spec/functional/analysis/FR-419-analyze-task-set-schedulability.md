@@ -15,6 +15,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-416
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-482
+    type: references
   - target: ix://agent-ix/quire-specification/TC-372
     type: verifies
 ---
@@ -157,9 +161,11 @@ have been replayed under FR-181 and FR-364.
 Each release creates one job with a stable identity: the task-set and task
 declarations, the source release transition identity, and that release's
 zero-based occurrence among transitions with that identity in the replayed
-prefix. A job keeps this identity, its task priority, release time and absolute
-deadline until completion or removal by an explicitly specified task-set
-policy. A scheduler slot is storage for that job, not its identity; moving a
+prefix. A job keeps this identity, its declared priority when present,
+release time and absolute deadline until completion or removal by an
+explicitly specified task-set policy. EDF jobs whose task omits priority have
+no priority member in their derived identity; no default priority is
+assigned. A scheduler slot is storage for that job, not its identity; moving a
 job in the queue or reusing a slot after completion does not rename a live job.
 Each source declaration `release S.τ on M::o;` resolves `S` and `τ` to exactly
 one task-set declaration in `S`; a missing or ambiguous task binding is an
@@ -203,10 +209,18 @@ provenance and job identity that enables it. Exceeding a finite analysis slot
 cap is a search/frontier signal, not a task transition or a counterexample
 step. These derived transitions do not claim to be source-model operations.
 
-The product has one processor. At a delay of `d`, the running job receives
+The product has one processor. Under fixed-priority policy, the ready job with
+the smallest declared numeric priority runs; equal priorities are rejected
+at claim admission. Under EDF, the ready job with the earliest absolute
+deadline runs, independent of any declared priority. Equal-deadline jobs are
+ordered by ascending canonical task name in Unicode scalar value order
+(FR-482), then by canonical source activation transition identity and
+zero-based occurrence. Source declaration order and fixed priority do not
+affect EDF ties. This tie rule is part of the checked task product and replay.
+At a delay of `d`, the running job receives
 exactly `d` service and every waiting or preempted job receives zero service;
 all source and auxiliary clocks still advance by `d`. A preemption preserves
-the suspended job's accumulated service, priority, identity and absolute
+the suspended job's accumulated service, optional declared priority, identity and absolute
 deadline. Completion removes that job and makes the next policy-selected job
 eligible to run. A release or scheduler action takes zero time unless its
 transition explicitly carries a positive delay. A source completion-feedback
@@ -252,7 +266,7 @@ mode change is enabled only by an admitted source transition whose post-state
 enters `HI` mode. The task product synchronizes with that transition and then
 emits one derived `budget-change` for each active `HI` job, carrying the exact
 allowance increase `budget_delta = C(HI) - C(LO)`. It preserves `d`, remaining
-actual work, accumulated service, job identity, priority and absolute deadline.
+actual work, accumulated service, job identity, optional declared priority and absolute deadline.
 Reaching service `C(LO)` alone never changes the source mode. If `d` equals
 the service at that threshold, the job completes and has no budget-change
 step. If `d` exceeds the threshold and no `LO` to `HI` source transition is
@@ -324,6 +338,7 @@ establish completeness for the fixed-work class.
 | FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test |
 | FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test |
 | FR-419-AC-10 | Each of these parses and refuses at check time with `invalid_timed_model`/`invalid-task-set`, never `invalid_syntax`: `taskset Empty { }` (naming `Empty`); a task with `bcet -1 ms`; a task with `bcet 2 ms` and `wcet 1 ms`; a `hi` task with `bcet 4 ms`, `wcet 2 ms`, `wcet_hi 3 ms`; a task with `jitter -1 ms`; a task with `blocking -1 ms`; a `lo` task with `wcet_hi 2 ms`; a task with `blocking 1 ms` under `edf`; a task with `jitter 1 ms` under `edf`; a task with `deadline 5 ms` and `periodic 4 ms` under `amc` (each naming the task). A task set with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms`, under `edf`, reports `t1`'s and `t2`'s task-set defects in that order, then the claim's two `edf` defects in the same order. | Test |
+| FR-419-AC-11 | An EDF task may omit priority and its task-transition identity omits the member; EDF selects the earliest absolute deadline and resolves ties by canonical task name in Unicode scalar value order, source activation transition identity and occurrence. Source declaration order and fixed priority do not affect EDF tie order. A declared priority, if present, is carried and checked but does not change EDF order. A forged priority, a priority on a task that declares none, or an EDF ready order inconsistent with deadlines/ties is refused; fixed-priority task identities require and replay the checked declared priority. | Test (TC-372) |
 
 ## Dependencies
 

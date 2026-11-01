@@ -528,6 +528,7 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
 /// validates schema structure only; the requirement assigns exhaustive product
 /// closure and successor recomputation to the independent reader.
 #[trace("TC-431", "FR-418-AC-11")]
+#[trace("TC-371", "FR-418-AC-12")]
 #[test]
 fn tc_431_task_product_finite_gate_schema_is_typed() {
     let task_product = definition("TaskProductCertificate");
@@ -552,6 +553,12 @@ fn tc_431_task_product_finite_gate_schema_is_typed() {
         "subtractions": []
     });
     assert!(task_product.is_valid(&valid), "typed finite-product gate validates");
+    let mut policy_override = valid.clone();
+    policy_override["policy"] = serde_json::json!("edf");
+    assert!(
+        !task_product.is_valid(&policy_override),
+        "policy is derived from the bound checked claim, not a task_product member"
+    );
     for bad in [
         serde_json::json!({"method": "product-no-time-stops/v1", "live_job_cap": 1, "closure": "recompute-all-reachable-successors/v1"}),
         serde_json::json!({"method": "closed-finite-product/v1", "live_job_cap": 0, "closure": "recompute-all-reachable-successors/v1"}),
