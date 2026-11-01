@@ -19575,18 +19575,21 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     assert_eq!(library_at, 3);
 }
 
-/// FR-322-AC-288 to AC-292 (TC-233): equality facts identify their root
+/// FR-322-AC-288 to AC-292 and AC-296..297 (TC-233): equality facts identify their root
 /// application NodeRef and occurrence with an empty term path; parent forms
 /// reference distinct child applications. Protocol locations use per-term
 /// ordinals, dispatch facts exact application occurrences, and malformed
-/// closed shapes fail the authored schema.
+/// closed shapes fail the authored schema. Dispatch candidate witnesses bind
+/// operation/key handles, and probabilistic claims retain declaration identity.
 #[trace(
     "TC-233",
     "FR-322-AC-288",
     "FR-322-AC-289",
     "FR-322-AC-290",
     "FR-322-AC-291",
-    "FR-322-AC-292"
+    "FR-322-AC-292",
+    "FR-322-AC-296",
+    "FR-322-AC-297"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -19597,6 +19600,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let dispatch = schema_for_def(&schema, "DispatchCandidateTable");
     let selected_operation = schema_for_def(&schema, "SelectedOperationWitness");
     let candidate = schema_for_def(&schema, "DispatchCandidate");
+    let probabilistic_claim = schema_for_def(&schema, "ProbabilisticClaimDeclaration");
+    assert!(schema["$defs"]["ClaimNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
+        .as_array()
+        .unwrap()
+        .contains(&json!("probabilistic_claim")));
     let effective_id = schema_for_def(&schema, "EffectiveId");
     let carrier = schema_for_def(&schema, "CheckedTermData");
     let structural_identity = parsed_fixture(STRUCTURAL_IDENTITY_SCHEMA);
@@ -19782,12 +19790,65 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         );
         for item in wire["candidates"].as_array().unwrap() {
             assert!(candidate.is_valid(item), "{id} candidate is closed");
+            assert_eq!(
+                item["selected_operation"], wire["operation"],
+                "{id} candidate witness joins the table's exact selected operation"
+            );
             assert!(
                 effective_id.is_valid(&item["selection_key"]),
                 "{id} key is an EffectiveId"
             );
         }
     }
+    let probabilistic_rows = vectors["positive"]["probabilistic_claims"]
+        .as_array()
+        .unwrap();
+    for row in probabilistic_rows {
+        let mut wire = row.clone();
+        let id = wire["id"].as_str().unwrap().to_owned();
+        wire.as_object_mut().unwrap().remove("id");
+        wire.as_object_mut().unwrap().remove("display_name");
+        wire.as_object_mut().unwrap().remove("source_span");
+        let resolved_node = wire.as_object_mut().unwrap().remove("resolved_node").unwrap();
+        assert!(
+            probabilistic_claim.is_valid(&wire),
+            "{id} is a valid probabilistic claim identity"
+        );
+        assert_eq!(wire["occurrence"]["role"], "claim");
+        assert_eq!(resolved_node["node_id"], wire["declaration"]);
+        assert_eq!(resolved_node["node_tag"], "claim");
+        assert_eq!(resolved_node["semantic_form"], "probabilistic_claim");
+        assert!(resolved_node["occurrences"].as_array().unwrap().contains(&wire["occurrence"]));
+    }
+    assert_eq!(
+        probabilistic_rows[0]["display_name"], probabilistic_rows[1]["display_name"]
+    );
+    assert_eq!(
+        probabilistic_rows[0]["source_span"], probabilistic_rows[1]["source_span"]
+    );
+    assert_ne!(
+        probabilistic_rows[0]["declaration"], probabilistic_rows[1]["declaration"],
+        "same display name and source span retain separate declaration identities"
+    );
+    let claim_order = &vectors["probabilistic_claim_order"];
+    assert_eq!(claim_order["identity_key"], json!(["declaration", "occurrence"]));
+    assert_eq!(claim_order["must_remain_distinct"], true);
+    let claim_node_key = |node: &Value| {
+        (
+            node["package"].as_str().unwrap().to_owned(),
+            node["path"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|segment| segment.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>(),
+            node["ordinal"].as_u64().unwrap(),
+        )
+    };
+    assert!(probabilistic_rows.windows(2).all(|pair| {
+        claim_node_key(&pair[0]["declaration"])
+            <= claim_node_key(&pair[1]["declaration"])
+    }));
     let rows_without_case_ids = |name: &str| {
         vectors["positive"][name]
             .as_array()
@@ -19804,10 +19865,21 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         "equality_decisions": rows_without_case_ids("equality_decisions"),
         "protocol_locations": rows_without_case_ids("protocol_locations"),
         "dispatch_tables": rows_without_case_ids("dispatch_tables"),
+        "probabilistic_claims": probabilistic_rows
+            .iter()
+            .map(|row| {
+                let mut wire = row.clone();
+                for key in ["id", "display_name", "source_span"] {
+                    wire.as_object_mut().unwrap().remove(key);
+                }
+                wire.as_object_mut().unwrap().remove("resolved_node");
+                wire
+            })
+            .collect::<Vec<_>>(),
     });
     assert!(
         carrier.is_valid(&package_carrier),
-        "all three arrays share one closed carrier"
+        "all four arrays share one closed carrier"
     );
 
     let candidates = vectors["positive"]["dispatch_tables"][0]["candidates"]
@@ -19867,6 +19939,7 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             "DispatchCandidateTable" => &dispatch,
             "DispatchCandidate" => &candidate,
             "EffectiveId" => &effective_id,
+            "ProbabilisticClaimDeclaration" => &probabilistic_claim,
             other => panic!("unknown schema-negative target {other}"),
         };
         assert!(
@@ -20047,6 +20120,69 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                     "/checked_term_data/dispatch_tables/0/operation"
                 );
             }
+            "DT-R7-candidate-operation-witness-mismatch" => {
+                assert!(dispatch.is_valid(value), "mismatch remains structurally valid");
+                assert!(selected_operation.is_valid(
+                    &value["candidates"][0]["selected_operation"]
+                ));
+                assert_ne!(
+                    value["operation"], value["candidates"][0]["selected_operation"]
+                );
+                assert_eq!(case["expected_code"], "invalid_package");
+                assert_eq!(case["expected_cause"], "invalid-value");
+                assert_eq!(
+                    case["locus"],
+                    "/checked_term_data/dispatch_tables/0/candidates/0/selected_operation"
+                );
+            }
+            id if id.starts_with("PC-R") => {
+                let rows = value.as_array().map(Vec::as_slice).unwrap_or_else(|| {
+                    std::slice::from_ref(value)
+                });
+                assert!(rows.iter().all(|row| {
+                    let mut wire = row.clone();
+                    for key in ["id", "display_name", "source_span", "resolved_node"] {
+                        wire.as_object_mut().unwrap().remove(key);
+                    }
+                    probabilistic_claim.is_valid(&wire)
+                }),
+                    "{} is a schema-valid semantic refusal", case["id"]);
+                assert_eq!(case["expected_code"], "invalid_package");
+                assert_eq!(case["checked_claim_context"]["package"], "example");
+                match id {
+                    "PC-R1-foreign-node" => {
+                        assert_eq!(rows[0]["declaration"]["package"], "foreign");
+                        assert_eq!(case["expected_cause"], "invalid-value");
+                    }
+                    "PC-R2-wrong-kind-node" => {
+                        assert_eq!(rows[0]["declaration"]["path"][1], "other");
+                        assert_eq!(case["expected_cause"], "invalid-value");
+                    }
+                    "PC-R3-absent-local-node" => {
+                        assert_eq!(rows[0]["declaration"]["package"], "example");
+                        assert_eq!(case["expected_cause"], "invalid-value");
+                    }
+                    "PC-R4-duplicate-declaration-occurrence-row" => {
+                        assert_eq!(rows[0]["declaration"], rows[1]["declaration"]);
+                        assert_ne!(rows[0]["occurrence"], rows[1]["occurrence"]);
+                        let occurrences =
+                            &case["checked_claim_context"]["declarations"][0]["occurrences"];
+                        assert!(occurrences.as_array().unwrap().contains(&rows[0]["occurrence"]));
+                        assert!(occurrences.as_array().unwrap().contains(&rows[1]["occurrence"]));
+                        assert_eq!(case["expected_cause"], "conflicting-definition");
+                    }
+                    "PC-R5-duplicate-identity-key" => {
+                        assert_eq!(rows[0]["declaration"], rows[1]["declaration"]);
+                        assert_eq!(rows[0]["occurrence"], rows[1]["occurrence"]);
+                        assert_eq!(case["expected_cause"], "conflicting-definition");
+                    }
+                    "PC-R6-invalid-mapping" => {
+                        assert_eq!(rows[0]["occurrence"]["ordinal"], 9);
+                        assert_eq!(case["expected_cause"], "invalid-value");
+                    }
+                    other => panic!("unknown probabilistic claim refusal {other}"),
+                }
+            }
             "DT-R2-missing-precondition" => {
                 assert!(
                     candidate.is_valid(value),
@@ -20080,6 +20216,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         + vectors["positive"]["dispatch_tables"]
             .as_array()
             .unwrap()
+            .len()
+        + vectors["positive"]["probabilistic_claims"]
+            .as_array()
+            .unwrap()
             .len();
     let unit_count: usize = vectors["positive"]["equality_decisions"]
         .as_array()
@@ -20107,11 +20247,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .sum();
     assert_eq!(
         row_count + unit_count + enum_count + candidate_count + term_path_segments,
-        24
+        26
     );
-    assert_eq!(work["exact_limit"], 24);
+    assert_eq!(work["exact_limit"], 26);
     assert_eq!(work["exact_result"], "admitted");
-    assert_eq!(work["one_less_limit"], 23);
+    assert_eq!(work["one_less_limit"], 25);
     assert!(
         work["one_less_result"]
             .as_str()

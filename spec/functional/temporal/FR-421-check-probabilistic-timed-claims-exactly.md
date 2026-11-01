@@ -40,7 +40,8 @@ clause ([FR-420](../analysis/FR-420-sample-stochastic-timed-models.md)).
 
 An [FR-411](../analysis/FR-411-settle-probabilistic-claims-exactly.md) exact
 verdict over the digital process, or `unsupported` with `strict-clock-constraint`,
-`delay-distribution`, `not-stochastic`, `zero-delay-cycle` or `timed-form-shape`.
+`delay-distribution`, `not-stochastic`, `zero-delay-cycle`, `timed-form-shape`
+or `punctual-interval`.
 
 ## Behavior
 
@@ -91,7 +92,24 @@ Unbounded reachability and until over state predicates; deadline events
 closed, by one extra digital clock that no step resets, capped at `D + 1`; and
 `expected elapsed until holds(B)`, each delay move carrying one unit of time
 as its reward. Any other timed form settles `unsupported`,
-`timed-form-shape{locus}`.
+`timed-form-shape{locus}` at the unsupported form's exact formula node and
+member. The explicitly admitted deadline intervals are closed `[0,D]`,
+including the punctual boundary `[0,0]`. A punctual interval in any other form
+settles `unsupported`, `punctual-interval{locus}` at the exact interval operator
+and interval member, consistent with FR-416's typed cause.
+
+For an elapsed-time claim, `timed-form-shape{locus}` identifies the unsupported
+elapsed operator or formula member under that claim. For a punctual-interval
+claim, `punctual-interval{locus}` identifies the exact interval operator and
+bound member under that claim. Before reporting either cause, the provider SHALL
+resolve the probabilistic claim's exact `{declaration NodeRef, occurrence}`
+through `checked_term_data.probabilistic_claims`; the locus is a member of that
+resolved declaration's body and occurrence, not a lookup by display text. If two
+claims have equal display names or source spans, the provider preserves their
+distinct declaration identities and reports against the selected identity. A
+missing, foreign, wrong-kind or mismatched claim identity is an FR-322
+checked-package refusal before FR-421 evaluation, not an FR-421 unsupported
+result.
 
 ### Time divergence
 

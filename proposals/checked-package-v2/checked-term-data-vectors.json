@@ -954,6 +954,17 @@
         },
         "candidates": [
           {
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            },
             "selection_key": {
               "owner_effective_type": null,
               "original": {
@@ -982,6 +993,17 @@
             }
           },
           {
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            },
             "selection_key": {
               "owner_effective_type": null,
               "original": {
@@ -1218,6 +1240,88 @@
           }
         }
       }
+    ],
+    "probabilistic_claims": [
+      {
+        "id": "PC-01-equal-name-span-left",
+        "display_name": "Deadline",
+        "source_span": {
+          "start": 24,
+          "end": 41
+        },
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "Deadline",
+            "expected-elapsed"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        },
+        "resolved_node": {
+          "node_id": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "expected-elapsed"
+            ],
+            "ordinal": 0
+          },
+          "node_tag": "claim",
+          "semantic_form": "probabilistic_claim",
+          "occurrences": [
+            {
+              "role": "claim",
+              "ordinal": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "PC-02-equal-name-span-right",
+        "display_name": "Deadline",
+        "source_span": {
+          "start": 24,
+          "end": 41
+        },
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "Deadline",
+            "probability-lte"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 1
+        },
+        "resolved_node": {
+          "node_id": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "probability-lte"
+            ],
+            "ordinal": 0
+          },
+          "node_tag": "claim",
+          "semantic_form": "probabilistic_claim",
+          "occurrences": [
+            {
+              "role": "claim",
+              "ordinal": 1
+            }
+          ]
+        }
+      }
     ]
   },
   "schema_invalid": [
@@ -1443,7 +1547,18 @@
             },
             "effective_precondition": null
           }
-        ]
+        ],
+        "selected_operation": {
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
+        }
       }
     },
     {
@@ -1684,6 +1799,47 @@
           }
         ]
       }
+    },
+    {
+      "id": "PC-S1-missing-occurrence",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "remove required occurrence",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/probabilistic_claims/0/occurrence",
+      "value": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "Deadline",
+            "probability-lte"
+          ],
+          "ordinal": 0
+        }
+      }
+    },
+    {
+      "id": "PC-S2-extra-member",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "add an unrecognized source_name member",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/probabilistic_claims/0",
+      "value": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "Deadline",
+            "probability-lte"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        },
+        "source_name": "Deadline"
+      }
     }
   ],
   "reader_refusals": [
@@ -1916,6 +2072,17 @@
                 "requires"
               ],
               "ordinal": 0
+            },
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
             }
           },
           {
@@ -1935,7 +2102,18 @@
               ],
               "ordinal": 0
             },
-            "effective_precondition": null
+            "effective_precondition": null,
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            }
           }
         ]
       }
@@ -1973,6 +2151,17 @@
             "requires"
           ],
           "ordinal": 0
+        },
+        "selected_operation": {
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         }
       }
     },
@@ -2245,6 +2434,17 @@
                 "requires"
               ],
               "ordinal": 0
+            },
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
             }
           },
           {
@@ -2264,7 +2464,18 @@
               ],
               "ordinal": 0
             },
-            "effective_precondition": null
+            "effective_precondition": null,
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            }
           }
         ]
       }
@@ -2373,6 +2584,17 @@
                 "requires"
               ],
               "ordinal": 0
+            },
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
             }
           },
           {
@@ -2392,7 +2614,18 @@
               ],
               "ordinal": 0
             },
-            "effective_precondition": null
+            "effective_precondition": null,
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            }
           }
         ]
       }
@@ -2464,6 +2697,17 @@
                 "requires"
               ],
               "ordinal": 0
+            },
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
             }
           },
           {
@@ -2483,7 +2727,18 @@
               ],
               "ordinal": 0
             },
-            "effective_precondition": null
+            "effective_precondition": null,
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            }
           }
         ]
       }
@@ -2761,6 +3016,754 @@
           "term_path": []
         }
       ]
+    },
+    {
+      "id": "DT-R7-candidate-operation-witness-mismatch",
+      "target": "DispatchCandidateTable",
+      "mutation": "candidate witness differs from table operation",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/selected_operation",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "other"
+            },
+            "selection_key": {
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "FastService"
+              }
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            }
+          },
+          {
+            "selected_operation": {
+              "declaring": {
+                "package": "example",
+                "path": [
+                  "model",
+                  "Service"
+                ],
+                "ordinal": 0
+              },
+              "operation": "run"
+            },
+            "selection_key": {
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "SafeService"
+              }
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "PC-R1-foreign-node",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "declaration names a foreign package",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/probabilistic_claims/0/declaration",
+      "value": {
+        "declaration": {
+          "package": "foreign",
+          "path": [
+            "claim",
+            "Deadline",
+            "expected-elapsed"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        }
+      },
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              },
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "other"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "analysis_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "PC-R2-wrong-kind-node",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "declaration resolves to a claim node of another semantic form",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/probabilistic_claims/0/declaration",
+      "value": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "other"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        }
+      },
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              },
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "other"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "analysis_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "PC-R3-absent-local-node",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "declaration is absent from this package",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/probabilistic_claims/0/declaration",
+      "value": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "missing-local-claim"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        }
+      },
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              },
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "other"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "analysis_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "PC-R4-duplicate-declaration-occurrence-row",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "second row names the same claim declaration with a second valid occurrence",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/checked_term_data/probabilistic_claims/1",
+      "value": [
+        {
+          "id": "PC-01-equal-name-span-left",
+          "display_name": "Deadline",
+          "source_span": {
+            "start": 24,
+            "end": 41
+          },
+          "declaration": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "expected-elapsed"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          },
+          "resolved_node": {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        },
+        {
+          "declaration": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "expected-elapsed"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 1
+          }
+        }
+      ],
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              },
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "other"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "analysis_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "PC-R5-duplicate-identity-key",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "exact declaration-occurrence key repeats",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/checked_term_data/probabilistic_claims/1",
+      "value": [
+        {
+          "id": "PC-01-equal-name-span-left",
+          "display_name": "Deadline",
+          "source_span": {
+            "start": 24,
+            "end": 41
+          },
+          "declaration": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "expected-elapsed"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          },
+          "resolved_node": {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "PC-01-equal-name-span-left",
+          "display_name": "Deadline",
+          "source_span": {
+            "start": 24,
+            "end": 41
+          },
+          "declaration": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "expected-elapsed"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          },
+          "resolved_node": {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        }
+      ],
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              },
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "other"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "analysis_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "PC-R6-invalid-mapping",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "occurrence does not belong to the named probabilistic claim declaration",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/probabilistic_claims/0/occurrence",
+      "value": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "Deadline",
+            "expected-elapsed"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 9
+        }
+      },
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              },
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "other"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "analysis_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "work_limit": {
@@ -2768,12 +3771,25 @@
       "each checked_term_data row",
       "each nested resolved unit fact",
       "each nested enum member fact",
-      "each dispatch candidate"
+      "each dispatch candidate",
+      "each probabilistic claim declaration row"
     ],
-    "equation": "17 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 0 equality term_path segments = 24 work units",
-    "exact_limit": 24,
+    "equation": "19 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 0 equality term_path segments = 26 work units",
+    "exact_limit": 26,
     "exact_result": "admitted",
-    "one_less_limit": 23,
-    "one_less_result": "resource_exhausted at the final dispatch candidate with no partial data view"
+    "one_less_limit": 25,
+    "one_less_result": "resource_exhausted at the final probabilistic claim declaration row with no partial data view"
+  },
+  "probabilistic_claim_order": {
+    "identity_key": [
+      "declaration",
+      "occurrence"
+    ],
+    "canonical_order": "ascending structural NodeRef declaration, then occurrence role and ordinal",
+    "equal_name_span_control": [
+      "PC-01-equal-name-span-left",
+      "PC-02-equal-name-span-right"
+    ],
+    "must_remain_distinct": true
   }
 }

@@ -5503,7 +5503,8 @@
                 "state_graph",
                 "step_relation",
                 "schedulability",
-                "synthesis_request"
+                "synthesis_request",
+                "probabilistic_claim"
               ]
             }
           }
@@ -12698,7 +12699,8 @@
       "required": [
         "equality_decisions",
         "protocol_locations",
-        "dispatch_tables"
+        "dispatch_tables",
+        "probabilistic_claims"
       ],
       "properties": {
         "equality_decisions": {
@@ -12717,6 +12719,12 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/DispatchCandidateTable"
+          }
+        },
+        "probabilistic_claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProbabilisticClaimDeclaration"
           }
         }
       },
@@ -13008,6 +13016,22 @@
         }
       ]
     },
+    "ProbabilisticClaimDeclaration": {
+      "type": "object",
+      "required": [
+        "declaration",
+        "occurrence"
+      ],
+      "properties": {
+        "declaration": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/Occurrence"
+        }
+      },
+      "additionalProperties": false
+    },
     "DispatchCandidateTable": {
       "type": "object",
       "required": [
@@ -13058,11 +13082,15 @@
     "DispatchCandidate": {
       "type": "object",
       "required": [
+        "selected_operation",
         "selection_key",
         "operation_body",
         "effective_precondition"
       ],
       "properties": {
+        "selected_operation": {
+          "$ref": "#/$defs/SelectedOperationWitness"
+        },
         "selection_key": {
           "$ref": "#/$defs/EffectiveId"
         },

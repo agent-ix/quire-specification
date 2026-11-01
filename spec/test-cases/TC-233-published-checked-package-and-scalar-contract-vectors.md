@@ -710,6 +710,13 @@ nodes; the reader does not traverse those references to locate an equality.
 A non-empty `term_path` that attempts to traverse a reference refuses
 `invalid_package`/`invalid-value` at the first path segment. Duplicate
 (`application`, `occurrence`, empty `term_path`) rows refuse
-`invalid_package`/`conflicting-definition` at the later row. The 24-unit work
-boundary admits; one fewer unit refuses at the final dispatch candidate with no
-partial data view (FR-322-AC-288, AC-289, AC-292).
+`invalid_package`/`conflicting-definition` at the later row. Each dispatch
+candidate repeats its table's exact selected-operation witness and pairs it
+with its structural `EffectiveId` key, body and nullable precondition; a
+mismatched row witness refuses at that member. Probabilistic-claim rows retain
+the exact declaration `NodeRef` and `claim` occurrence. The positive claim
+control gives two distinct declaration nodes equal display names and source
+spans, while malformed rows cover absent, foreign, wrong-kind and mismapped
+identities, missing occurrences and duplicate keys. The 26-unit work boundary
+admits; one fewer unit refuses at the final probabilistic-claim row with no
+partial data view (FR-322-AC-288..292, AC-296..297).
