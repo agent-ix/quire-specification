@@ -2139,3 +2139,134 @@ fn tc_431_the_request_has_a_memory_member_and_its_identity_includes_it() {
     document["request"]["memory"][0]["model"] = "weak".into();
     assert_ne!(errors(&validator(), &document), Vec::<String>::new(), "only sc, tso and ra are models");
 }
+
+const REFINEMENT_FAILURE_VECTORS: &str =
+    include_str!("../proposals/backend-provider-v1/refinement-failure-vectors.json");
+
+/// FR-379-AC-14: the `RefinementFailure` definition admits the seven model
+/// kinds and the two protocol relation kinds, each with exactly its members.
+#[trace("TC-431", "FR-379-AC-14")]
+#[test]
+fn tc_431_refinement_failure_wire_kinds_are_closed() {
+    let vectors = parsed(REFINEMENT_FAILURE_VECTORS);
+    let validator = definition("RefinementFailure");
+    let positive = vectors["wire"]["positive"].as_array().expect("positive wire cases");
+    let kinds: BTreeSet<&str> = positive.iter().map(|case| case["failure"]["kind"].as_str().expect("kind")).collect();
+    assert_eq!(kinds.len(), 9, "exactly the nine kinds are covered: {kinds:?}");
+    for case in positive {
+        assert_eq!(errors(&validator, &case["failure"]), Vec::<String>::new(), "{}", case["name"]);
+    }
+    for case in vectors["wire"]["adverse"].as_array().expect("adverse wire cases") {
+        assert_ne!(errors(&validator, &case["failure"]), Vec::<String>::new(), "{} is refused", case["name"]);
+    }
+}
+
+fn labels(value: &Value) -> Vec<Value> {
+    value.as_array().expect("label list").clone()
+}
+
+fn has(list: &[Value], label: &Value) -> bool {
+    list.contains(label)
+}
+
+/// A member is stable when it enables no internal step.
+fn stable(member: &Value) -> bool {
+    !member["internal_enabled"].as_bool().expect("internal_enabled")
+}
+
+fn terminal(member: &Value) -> bool {
+    stable(member) && labels(&member["enabled"]).is_empty()
+}
+
+/// The reference evaluator of FR-379 "Protocol relation failures" at one
+/// product state: the failure reported, or none.
+fn relation_failure(product: &Value) -> Option<Value> {
+    if product.get("incoming_step_failure").is_some() {
+        return None;
+    }
+    let position = product["position"].clone();
+    let concrete = &product["concrete"];
+    let visible = labels(&concrete["visible"]);
+    let concrete_stable = !concrete["stutter_enabled"].as_bool().expect("stutter_enabled");
+    let members = product["abstract"].as_array().expect("abstract members");
+    let stable_members: Vec<&Value> = members.iter().filter(|member| stable(member)).collect();
+    if concrete_stable && !stable_members.is_empty() {
+        let mut qualifying: Vec<Value> = labels(&stable_members[0]["enabled"])
+            .into_iter()
+            .filter(|label| {
+                stable_members.iter().all(|member| has(&labels(&member["enabled"]), label)) && !has(&visible, label)
+            })
+            .collect();
+        qualifying.sort_by_key(|label| jcs_canonicalize(label).expect("canonical label"));
+        if let Some(label) = qualifying.first() {
+            return Some(serde_json::json!({"kind": "RefusalNotPermitted", "position": position, "label": label}));
+        }
+    }
+    let intended = concrete["intended"].as_bool().expect("intended");
+    let concrete_terminal = !concrete["stutter_enabled"].as_bool().expect("stutter_enabled") && visible.is_empty();
+    let success = |member: &&Value| terminal(member) && member["intended"].as_bool().expect("intended");
+    let direction = if concrete_terminal && intended && !members.iter().any(|m| success(&m)) {
+        "concrete-only"
+    } else if concrete_terminal && !intended && members.iter().all(|m| success(&m)) {
+        "abstract-only"
+    } else {
+        return None;
+    };
+    Some(serde_json::json!({"kind": "TerminalSuccessMismatch", "position": position, "direction": direction}))
+}
+
+/// Replay of a recorded failure over a product state: the result label.
+fn replay_relation_failure(product: &Value, recorded: &Value, loop_steps: u64) -> &'static str {
+    if loop_steps > 0 {
+        return "invalid_runtime_input/invalid-value";
+    }
+    let Some(computed) = relation_failure(product) else {
+        return "replay-parity";
+    };
+    if computed["kind"] != recorded["kind"] || computed["position"] != recorded["position"] {
+        return "replay-parity";
+    }
+    let holds = if recorded["kind"] == "RefusalNotPermitted" {
+        let label = &recorded["label"];
+        let concrete_visible = labels(&product["concrete"]["visible"]);
+        product["abstract"]
+            .as_array()
+            .expect("abstract members")
+            .iter()
+            .filter(|member| stable(member))
+            .all(|member| has(&labels(&member["enabled"]), label))
+            && !has(&concrete_visible, label)
+    } else {
+        computed["direction"] == recorded["direction"]
+    };
+    if holds { "reproduced-with-evaluated-witness" } else { "replay-parity" }
+}
+
+/// FR-379-AC-8 to AC-13: the product and replay vectors of the two protocol
+/// relation failures.
+#[trace("TC-318", "FR-379-AC-8")]
+#[trace("TC-318", "FR-379-AC-9")]
+#[trace("TC-318", "FR-379-AC-10")]
+#[trace("TC-318", "FR-379-AC-11")]
+#[trace("TC-318", "FR-379-AC-12")]
+#[trace("TC-318", "FR-379-AC-13")]
+#[trace("TC-318", "FR-177-AC-7")]
+#[test]
+fn tc_318_protocol_relation_failure_vectors() {
+    let vectors = parsed(REFINEMENT_FAILURE_VECTORS);
+    let products = vectors["products"].as_array().expect("products");
+    let validator = definition("RefinementFailure");
+    for product in products {
+        let computed = relation_failure(product);
+        let expected = product["expected"].clone();
+        assert_eq!(computed.clone().unwrap_or(Value::Null), expected, "{}", product["name"]);
+        if let Some(failure) = computed {
+            assert_eq!(errors(&validator, &failure), Vec::<String>::new(), "{} is a wire failure", product["name"]);
+        }
+    }
+    for replay in vectors["replays"].as_array().expect("replays") {
+        let product = products.iter().find(|p| p["name"] == replay["product"]).expect("replay product");
+        let result = replay_relation_failure(product, &replay["recorded"], replay["loop_steps"].as_u64().expect("loop_steps"));
+        assert_eq!(result, replay["expected"].as_str().expect("expected"), "{}", replay["name"]);
+    }
+}

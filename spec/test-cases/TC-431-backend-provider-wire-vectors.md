@@ -23,6 +23,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-438
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-379
+    type: verifies
 ---
 
 # TC-431: The backend provider wire schema admits its positive vectors and refuses its adverse ones
@@ -90,6 +92,7 @@ bytes against the checked package they carry. Runs as
 | BP-50 | BP-49's unit | No `time-lock-freedom` item is settled or written for the subject, including over a timed model | FR-368-AC-25 |
 | BP-51 | `tc_431_a_derived_item_is_keyed_by_its_anchor_node_and_kind`: `derived-items-request`'s derived items 3 to 6 looked up in the package it carries; a copy of the package with an added `model`/`deadlock_freedom` node over the `model_root` anchor; then four retargetings of item 3, one at a time: its `claim.node` (with its `infinite-trace` domain node moved with it) to item 5's protocol clause node, to item 0's `temporal`/`formula` claim node, and to `{package: "acme/orders", path: ["model", "model_root"], ordinal: 1}`, which is absent from the graph; and its `claim.occurrence` alone to `{role: "declaration", ordinal: 0}` | Items 3 and 4 resolve to the `model`/`model_root` node `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` at occurrence `generated` 0. Items 5 and 6 resolve to the `protocol`/`protocol_clause` node `{package: "example", path: ["Example", "Handshake"], ordinal: 0}` at occurrence `declaration` 0. Each pair has one `subject` and differs only in `item_kind`. For each item, no node other than its anchor has a `semantic_form` naming its kind; the copy with the added node fails the checked-package schema and the no-node check finds the added node. The schema admits each retargeted request, and the reader refuses each one before consumption | FR-322-AC-276, FR-322-AC-277, FR-366-AC-11, FR-429-AC-17, FR-417-AC-7, FR-438-AC-9 |
 | BP-52 | `limit-reached-max-clocks` with a task-search edge from the initial product node to a reachable successor, plus single mutations deleting that edge, adding an impossible edge, leaving a below-limit reachable node unexpanded, changing `limit-reached.value` or `.setting`, changing `task_search.limit`, changing task/job identity, exact demand or activation jitter, changing the task transition to `queue-overflow`, and moving the result from `incomplete` to `proved` | The positive envelope's wire shape is schema-admitted; this vector does not exercise task-search replay. Frontier replay and the prohibition on proving absence from bounded evidence remain normative in FR-331 and are for the downstream QSL reader tests. | — |
+| BP-55 | `proposals/backend-provider-v1/refinement-failure-vectors.json`: the wire cases, then the product cases (`tc_431_refinement_failure_wire_kinds_are_closed`, `tc_318_protocol_relation_failure_vectors`) | Each positive wire case, the seven original kinds and the two protocol relation kinds with a closed `ObservationLabel`, is admitted by `RefinementFailure`; each adverse case (an unknown kind, a missing or extra member, a number-valued or negative `position`, an unknown `direction`, an open label) is refused; each product case yields exactly its expected failure or none, and each replay case its expected result | FR-379-AC-8, FR-379-AC-10, FR-379-AC-12, FR-379-AC-13, FR-379-AC-14 |
 
 ## Expected Results
 

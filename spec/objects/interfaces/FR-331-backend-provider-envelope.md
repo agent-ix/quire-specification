@@ -774,7 +774,7 @@ probabilistic engine's is `exact_prob`.
   assignments `{type: "assignments", values}`, one FR-181 typed value per
   parameter node; an FR-364 `TemporalCounterexample`, whose timed steps carry
   `delay` and which carries `final_delay` for kind `time-lock` (FR-417) and
-  `refinement_failure` for a refinement item (FR-379); an FR-413
+  `refinement_failure` for a refinement item (FR-379: the seven model kinds, and on a protocol abstract subject also `RefusalNotPermitted{position, label}` and `TerminalSuccessMismatch{position, direction}`, with `label` an `ObservationLabel`; none of these is a step verdict); an FR-413
   `ProbabilisticCounterexample`; an FR-393 `GraphEvidence`; an FR-400
   `HyperCounterexample`; or, on an `operation-contract` item, a
   `contract-counterexample` ([FR-485](../../functional/ir-proof/FR-485-check-operation-contract-items.md)

@@ -19,6 +19,14 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-363
     type: references
+  - target: ix://agent-ix/quire-specification/FR-177
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-432
+    type: references
 ---
 
 # FR-379: Report and replay refinement verdicts and counterexamples
@@ -98,13 +106,76 @@ A safety failure is a finite prefix ending at its failing step. A liveness
 failure is a lasso fair under `F_C`. The counterexample carries concrete
 steps only: no mapped state, history value or candidate set.
 
+**Protocol relation failures.** A refinement whose abstract subject is a
+protocol clause ([FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md))
+adds two kinds, for the refusal-set and terminal-success checks of
+[FR-177](../protocol/FR-177-check-protocol-refinement.md). A model abstract
+subject never yields them, and the seven kinds above keep their members and
+rules unchanged.
+
+| Kind | Members | Rule failed |
+| --- | --- | --- |
+| `RefusalNotPermitted` | `position`, `label` (an `ObservationLabel`: `step`, the FR-432 class spelling of the step with no alias, and `binder`, the step's complete binder record in effective field order, each entry `{field, value}` with a typed value) | the concrete state at `position` refuses `label`, which no stable member of the candidate set refuses |
+| `TerminalSuccessMismatch` | `position`, `direction` (`concrete-only` or `abstract-only`) | concrete and abstract terminal success disagree at `position` |
+
+Both are safety failures: the prefix is the `position` concrete steps that
+reach the failing product state, the empty prefix at position 0, and there is
+no loop. `position` counts the steps of the prefix, so it is the index of the
+state the check reads, where the step kinds above name the index of the
+failing step's post-state. The checks run on the product of FR-377, with no
+fairness filter, at every reachable product state whose incoming step rule
+passed (position 0 when the initial-state rule passed), so they read no `F_A`
+and run with hidden abstract fields. At a product state, `c` is its concrete
+state and `S` its candidate set, closed under the refinement's internal steps.
+
+- `c` is **stable** when no enabled concrete step has a `stutter` or `any`
+  row. A member of `S` is stable when no enabled abstract step is on the
+  internal list.
+- `c` **refuses** a label `l` when it is stable and no enabled concrete step
+  is visible with label `l`. A member **refuses** `l` when it is stable and
+  no enabled abstract step carries `l`.
+- `c` is **terminal success** when no concrete step of any kind is enabled
+  and the concrete model marks the state intended
+  ([FR-366](../temporal/FR-366-check-deadlock-freedom.md)). A member of `S`
+  is terminal success when it is a terminal protocol state that is intended
+  ([FR-429](../protocol/FR-429-report-protocol-deadlocks.md)). These two
+  `terminal` members are read here, for a protocol abstract subject, and
+  are still not read by a model refinement (FR-377). An undefined `terminal
+  when` predicate settles by the FR-366 and FR-429 rules unchanged.
+
+`RefusalNotPermitted{position, label}` fails when `c` is stable, `S` has a
+stable member, every stable member of `S` enables an abstract step carrying
+`label`, and `c` refuses `label`. When several labels qualify the reported
+`label` is the least by the bytes of its canonical (RFC 8785) encoding, so the
+finder is deterministic; replay accepts any qualifying `label`.
+`TerminalSuccessMismatch{position, direction}` fails with `concrete-only` when
+`c` is terminal success and no member of `S` is, and with `abstract-only` when
+no concrete step is enabled at `c`, `c` is not intended, and every member of
+`S` is terminal success. A concrete state that still enables a step while
+every member is terminal success is decided by the step rules and divergence
+check, not here. Where both kinds fail at one state, `RefusalNotPermitted` is
+reported; where any step rule fails on the incoming step, that failure is
+reported instead, and among product states the first failing one in the
+canonical breadth-first order of the explored product is reported.
+
 **Replay.** Replay recompiles the concrete package and the abstract
 subject's package, re-executes the concrete steps through the concrete
 successor relation ([FR-181](../runtime/FR-181-simulate-finite-executions.md)),
 recomputes history values, `map` and candidate sets along the trace, and
 reruns the step function at the failing position; for `Undefined` it
 re-evaluates `row` at `position` and agrees when it is the undefined value with
-the item's locus and catalogued reason. For a lasso it checks the
+the item's locus and catalogued reason. For `RefusalNotPermitted` and `TerminalSuccessMismatch` it
+recomputes `S` over the prefix with the protocol system, then at the prefix's
+last state recomputes the stable, refuses and terminal-success classifications
+above and agrees when the recorded failure holds exactly: for `RefusalNotPermitted`
+the recorded `label` is carried by an enabled abstract step of every stable
+member of `S`, `S` has a stable member and `c` refuses it; for
+`TerminalSuccessMismatch` the recorded `direction` condition holds. Replay
+recomputes no earlier failure of any kind, and a recorded `position` that is
+not the prefix's step count, a label no recomputation supports or a recomputed
+state with no failure is a recomputed failure of a different kind or position.
+A counterexample of these two kinds that carries a loop is refused
+`invalid_runtime_input`/`invalid-value`. For a lasso it checks the
 loop fair under `F_C`, recomputes history values and candidate sets over the
 prefix and one pass of the loop, and evaluates the violated `F_A` constraint
 over the loop. Replay refuses `invalid_runtime_input`/`invalid-value` when
@@ -126,12 +197,19 @@ unchanged.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-379-AC-1 | Each outcome of the verdict table settles exactly its FR-341 label, FR-243 basis and cause, and a per-step simulation failure never settles `refuted`. | Test (TC-312, TC-315) |
-| FR-379-AC-2 | A refutation carries exactly one `refinement_failure` member of the seven kinds with its listed members; a safety failure is a finite prefix ending at its failing step and a liveness failure is a lasso fair under `F_C`; the counterexample carries concrete steps only. | Test (TC-312, TC-313) |
+| FR-379-AC-2 | A refutation carries exactly one `refinement_failure` member of the seven kinds with their listed members, or on a protocol abstract subject of the nine kinds of both tables; a safety failure is a finite prefix ending at its failing step and a liveness failure is a lasso fair under `F_C`; the counterexample carries concrete steps only. | Test (TC-312, TC-313) |
 | FR-379-AC-3 | Replay re-executes the concrete steps, recomputes history values, `map` and candidate sets, reruns the step function at the failing position, and settles `reproduced-with-evaluated-witness` and the item `refuted` when it agrees. | Test (TC-315) |
 | FR-379-AC-4 | A lasso whose history values or candidate set at the loop's last position differ from those at its entry is refused `invalid_runtime_input`/`invalid-value`. | Test (TC-315) |
 | FR-379-AC-5 | A replay that recomputes a different failure kind, or the same kind at a different position, settles the item `inconclusive`, cause `replay-parity`. | Test (TC-315) |
 | FR-379-AC-6 | A mapping row undefined at a reachable state settles `refuted`, cause `undefined-evaluation`, naming the row, the state, the expression locus and the catalogued reason, with an `Undefined` counterexample ending at that state that replays to the same undefined value; a row refused or incomplete there settles `inconclusive`, cause `mapping-undetermined`, naming the row, the state and the reaching prefix. | Test (TC-315, TC-316, TC-311) |
 | FR-379-AC-7 | The lost-update counter refutes with `AbstractStepRejected{position: 4, transition: inc(c), cause: Postcondition}` after the prefix `beginA`, `beginB`, `commitA`, `commitB`, and replay recomputes the mapped values 0, 0, 0, 1, 1 and the same failure. | Test (TC-312) |
+| FR-379-AC-8 | Over a protocol abstract subject, a stable concrete state that refuses a label every stable member of the candidate set enables fails `RefusalNotPermitted{position, label}` with `position` the prefix's step count, and the reported `label` is the least qualifying label by canonical encoding. | Test (TC-318, TC-431) |
+| FR-379-AC-9 | `RefusalNotPermitted` is not reported when some stable member of the candidate set refuses the label, when the candidate set has no stable member, when the concrete state enables a `stutter` or `any` step, or when a concrete step visible with the label is enabled. | Test (TC-318) |
+| FR-379-AC-10 | A terminal-success concrete state with no terminal-success member of the candidate set fails `TerminalSuccessMismatch{position, direction: concrete-only}`, and a terminal non-intended concrete state with every member terminal success fails it with `abstract-only`. | Test (TC-318, TC-431) |
+| FR-379-AC-11 | `TerminalSuccessMismatch` is not reported when some member of the candidate set is terminal success (`concrete-only`), when some member is not (`abstract-only`), or when the concrete state enables a step. | Test (TC-318) |
+| FR-379-AC-12 | A failing step rule on the incoming step is reported instead of a protocol relation failure at its post-state, and where both relation kinds fail at one state `RefusalNotPermitted` is reported; a model abstract subject never yields either kind. | Test (TC-318, TC-431) |
+| FR-379-AC-13 | Replay of `RefusalNotPermitted` or `TerminalSuccessMismatch` recomputes the candidate set and the classifications at the prefix's last state and settles `reproduced-with-evaluated-witness` and the item `refuted` when the recorded failure holds; a recorded `position` that differs from the prefix's step count, a label no stable member enables or the concrete state does not refuse, a `direction` that does not hold, or no recomputed failure settles `inconclusive`, cause `replay-parity`; a loop on these kinds is refused `invalid_runtime_input`/`invalid-value`. | Test (TC-318, TC-431) |
+| FR-379-AC-14 | The `RefinementFailure` wire definition admits exactly the nine kinds with their members, `ObservationLabel` is closed, and the seven original kinds keep their wire shapes. | Test (TC-431) |
 
 ## Dependencies
 
@@ -144,6 +222,12 @@ unchanged.
   carries the result and counterexample.
 - [FR-181](../runtime/FR-181-simulate-finite-executions.md) owns the
   successor relation replay re-executes.
+- [FR-177](../protocol/FR-177-check-protocol-refinement.md) names the
+  refusal-set and terminal-success checks, and
+  [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md),
+  [FR-366](../temporal/FR-366-check-deadlock-freedom.md) and
+  [FR-429](../protocol/FR-429-report-protocol-deadlocks.md) supply the labels,
+  internal list and intended-terminal classification they read.
 - The model-subject temporal requirement (its counterexample, replay and
   inconclusive-cause vocabulary) is a normative prerequisite.
 
@@ -151,5 +235,6 @@ unchanged.
 
 - Design: quire-spec-language ADR-020 (RC-1 to RC-3, RE-4, QS-6) and the
   "Strength" paragraph of its §5.
-- Tickets: Linear STD-133; paired QSL-367. The model-subject temporal
+- Tickets: Linear STD-133; paired QSL-367; STD-631 for the protocol relation
+  failures, asked by QSL-1442 for QSL-1439 and QSL FR-148. The model-subject temporal
   requirement is Linear STD-131.
