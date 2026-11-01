@@ -2552,9 +2552,65 @@
                       }
                     },
                     "else": {
-                      "properties": {
-                        "body": {
-                          "$ref": "#/$defs/SemanticTerm"
+                      "if": {
+                        "properties": {
+                          "node_tag": {
+                            "const": "state"
+                          },
+                          "semantic_form": {
+                            "const": "operation_anchor"
+                          }
+                        },
+                        "required": [
+                          "node_tag",
+                          "semantic_form"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "body": {
+                            "$ref": "#/$defs/OperationAnchorBody"
+                          }
+                        }
+                      },
+                      "else": {
+                        "if": {
+                          "properties": {
+                            "node_tag": {
+                              "const": "timed_model"
+                            },
+                            "semantic_form": {
+                              "enum": [
+                                "clock_guard",
+                                "time_invariant"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "node_tag",
+                            "semantic_form"
+                          ]
+                        },
+                        "then": {
+                          "properties": {
+                            "body": {
+                              "oneOf": [
+                                {
+                                  "$ref": "#/$defs/TimedGuardBody"
+                                },
+                                {
+                                  "$ref": "#/$defs/TimedInvariantBody"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "else": {
+                          "properties": {
+                            "body": {
+                              "$ref": "#/$defs/SemanticTerm"
+                            }
+                          }
                         }
                       },
                       "allOf": [
@@ -8020,6 +8076,26 @@
         }
       ]
     },
+    "TimedBinderBinding": {
+      "type": "object",
+      "required": [
+        "term",
+        "name",
+        "value"
+      ],
+      "properties": {
+        "term": {
+          "const": "binding"
+        },
+        "name": {
+          "const": "binders"
+        },
+        "value": {
+          "$ref": "#/$defs/TimedNonemptyReferenceArray"
+        }
+      },
+      "additionalProperties": false
+    },
     "TimedGuardPart": {
       "type": "object",
       "required": [
@@ -8031,33 +8107,69 @@
           "const": "aggregate"
         },
         "members": {
-          "type": "array",
-          "minItems": 2,
-          "prefixItems": [
+          "oneOf": [
             {
-              "type": "object",
-              "required": [
-                "term",
-                "name",
-                "value"
-              ],
-              "properties": {
-                "term": {
-                  "const": "binding"
-                },
-                "name": {
-                  "const": "predicate"
-                },
-                "value": {
-                  "$ref": "#/$defs/ReferenceTermShape"
+              "type": "array",
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "predicate"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/ReferenceTermShape"
+                    }
+                  },
+                  "additionalProperties": false
                 }
-              },
-              "additionalProperties": false
+              ],
+              "items": {
+                "$ref": "#/$defs/ReferenceTermShape"
+              }
+            },
+            {
+              "type": "array",
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "predicate"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/ReferenceTermShape"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "$ref": "#/$defs/TimedBinderBinding"
+                }
+              ],
+              "items": {
+                "$ref": "#/$defs/ReferenceTermShape"
+              }
             }
-          ],
-          "items": {
-            "$ref": "#/$defs/ReferenceTermShape"
-          }
+          ]
         }
       },
       "additionalProperties": false
@@ -8150,49 +8262,103 @@
           "const": "aggregate"
         },
         "members": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "prefixItems": [
+          "oneOf": [
             {
-              "type": "object",
-              "required": [
-                "term",
-                "name",
-                "value"
-              ],
-              "properties": {
-                "term": {
-                  "const": "binding"
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "predicate"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/ReferenceTermShape"
+                    }
+                  },
+                  "additionalProperties": false
                 },
-                "name": {
-                  "const": "predicate"
-                },
-                "value": {
-                  "$ref": "#/$defs/ReferenceTermShape"
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "bounds"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/TimedNonemptyReferenceArray"
+                    }
+                  },
+                  "additionalProperties": false
                 }
-              },
-              "additionalProperties": false
+              ]
             },
             {
-              "type": "object",
-              "required": [
-                "term",
-                "name",
-                "value"
-              ],
-              "properties": {
-                "term": {
-                  "const": "binding"
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "predicate"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/ReferenceTermShape"
+                    }
+                  },
+                  "additionalProperties": false
                 },
-                "name": {
-                  "const": "bounds"
+                {
+                  "$ref": "#/$defs/TimedBinderBinding"
                 },
-                "value": {
-                  "$ref": "#/$defs/TimedNonemptyReferenceArray"
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "bounds"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/TimedNonemptyReferenceArray"
+                    }
+                  },
+                  "additionalProperties": false
                 }
-              },
-              "additionalProperties": false
+              ]
             }
           ]
         }
@@ -8387,6 +8553,62 @@
           ]
         }
       },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {},
+                  {
+                    "properties": {
+                      "name": {
+                        "const": "binders"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 3,
+                "prefixItems": [
+                  {},
+                  {
+                    "$ref": "#/$defs/TimedBinderBinding"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "bounds"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/TimedNonemptyReferenceArray"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "TimedParameterConstraintBody": {

@@ -13806,12 +13806,28 @@ fn timed_aggregate_order_refusal_ruled(package: &Value, path_key: bool, member_k
             }
             Some("clock_guard") if nested => {
                 for (part, entry) in members_of(1).iter().enumerate() {
-                    let constraints = entry["members"].as_array().unwrap()[1..].to_vec();
+                    let constraints = entry["members"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .filter(|member| member["term"] == "reference")
+                        .cloned()
+                        .collect();
                     lists.push((format!("/semantic_graph/nodes/{at}/body/members/1/value/members/{part}/members"), constraints, 1));
                 }
             }
             Some("time_invariant") if nested => {
-                lists.push((format!("/semantic_graph/nodes/{at}/body/members/1/value/members"), members_of(1), 0));
+                let bounds = node["body"]["members"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|member| member["name"] == "bounds")
+                    .unwrap()["value"]["members"]
+                    .as_array()
+                    .unwrap()
+                    .clone();
+                let bounds_index = node["body"]["members"].as_array().unwrap().iter().position(|member| member["name"] == "bounds").unwrap();
+                lists.push((format!("/semantic_graph/nodes/{at}/body/members/{bounds_index}/value/members"), bounds, 0));
             }
             _ => continue,
         }
@@ -14359,9 +14375,9 @@ fn tc_935_selection_vector_disagreement_is_detected() {
 }
 
 /// Every switch of the clause oracle; the mutation test pins each to a vector.
-const TIMED_CLAUSE_RULES: [&str; 22] = [
+const TIMED_CLAUSE_RULES: [&str; 23] = [
     "state-anchor-types", "path-key", "member-key", "unlisted", "nested-order", "anchor-kind", "anchor-model", "no-point", "parameter-declared", "parameter-clock",
-    "owner-type", "slot-count", "slot-domain", "part-predicate", "same-anchor",
+    "owner-type", "slot-count", "slot-domain", "part-predicate", "same-anchor", "quantified-binders",
     "invariant-predicate", "invariant-bound", "frame-modifies", "binders", "condition", "one-guard", "root-constraints",
 ];
 
@@ -14551,7 +14567,8 @@ fn timed_clause_refusal(
                     if on("part-predicate") && !boolean(&target(&members[0]["value"])) {
                         return refuse(format!("/members/1/value/members/{part}/members/0/value/target"));
                     }
-                    for (k, member) in members.iter().enumerate().skip(1) {
+                    let constraints: Vec<OrderedId> = members.iter().filter(|m| m["term"] == "reference").map(&target).collect();
+                    for (k, member) in members.iter().enumerate().skip(1).filter(|(_, m)| m["term"] == "reference") {
                         let constraint = target(member);
                         let at_member = format!("/members/1/value/members/{part}/members/{k}/target");
                         let named = node(&constraint).filter(|n| n["semantic_form"] == "clock_constraint");
@@ -14563,13 +14580,32 @@ fn timed_clause_refusal(
                             return refuse(at_member);
                         }
                     }
+                    if let Some((member_index, binder_binding)) = members.iter().enumerate().find(|(_, m)| m["name"] == "binders") {
+                        let mut slots = Vec::new();
+                        for constraint in &constraints {
+                            if let Some(named) = node(constraint).filter(|n| word(n, 0) == "place") {
+                                slots.extend(bound(named, "slots")["members"].as_array().unwrap().iter().map(&target));
+                            }
+                        }
+                        let mut previous = None;
+                        for (k, binder) in binder_binding["value"]["members"].as_array().unwrap().iter().enumerate() {
+                            let id = target(binder);
+                            let position = slots.iter().position(|slot| *slot == id);
+                            let is_parameter = node(&id).is_some_and(|n| n["semantic_form"] == "parameter");
+                            if on("quantified-binders") && !(is_parameter && position.is_some() && position > previous) {
+                                return refuse(format!("/members/1/value/members/{part}/members/{member_index}/value/members/{k}/target"));
+                            }
+                            previous = position;
+                        }
+                    }
                 }
             }
             "time_invariant" => {
                 if on("invariant-predicate") && !boolean(&target(&clause["body"]["members"][0]["value"])) {
                     return refuse("/members/0/value/target".into());
                 }
-                for (k, member) in clause["body"]["members"][1]["value"]["members"].as_array().unwrap().iter().enumerate() {
+                let bounds = bound(clause, "bounds");
+                for (k, member) in bounds["members"].as_array().unwrap().iter().enumerate() {
                     let constraint = target(member);
                     let at_member = format!("/members/1/value/members/{k}/target");
                     let named = node(&constraint).filter(|n| n["semantic_form"] == "clock_constraint");
@@ -14579,6 +14615,24 @@ fn timed_clause_refusal(
                     used.insert(constraint);
                     if on("invariant-bound") && !(word(named, 0) == "place" && ["lt", "le"].contains(&word(named, 4).as_str())) {
                         return refuse(at_member);
+                    }
+                }
+                if let Some((member_index, binder_binding)) = clause["body"]["members"].as_array().unwrap().iter().enumerate().find(|(_, m)| m["name"] == "binders") {
+                    let mut slots = Vec::new();
+                    for member in bounds["members"].as_array().unwrap() {
+                        if let Some(named) = node(&target(member)).filter(|n| word(n, 0) == "place") {
+                            slots.extend(bound(named, "slots")["members"].as_array().unwrap().iter().map(&target));
+                        }
+                    }
+                    let mut previous = None;
+                    for (k, binder) in binder_binding["value"]["members"].as_array().unwrap().iter().enumerate() {
+                        let id = target(binder);
+                        let position = slots.iter().position(|slot| *slot == id);
+                        let is_parameter = node(&id).is_some_and(|n| n["semantic_form"] == "parameter");
+                        if on("quantified-binders") && !(is_parameter && position.is_some() && position > previous) {
+                            return refuse(format!("/members/{member_index}/value/members/{k}/target"));
+                        }
+                        previous = position;
                     }
                 }
             }
@@ -14664,10 +14718,12 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
             }
             continue;
         }
-        // CL-03's anchor carries an `execution_point`, which the V2 schema's generic `SemanticTerm` body rule
-        // rejects for every node (a gap that predates this change), so only that vector skips schema validity.
-        if !valid && case["schema"] != "anchor-point-schema-gap" {
-            defects.push(format!("{id}: schema-invalid"));
+        if !valid {
+            let errors: Vec<String> = validator
+                .iter_errors(&package)
+                .map(|error| format!("{error} at {}", error.instance_path()))
+                .collect();
+            defects.push(format!("{id}: schema-invalid {errors:?}"));
         }
         let got = timed_clause_refusal(&package, &document, skip);
         match case["expected"].as_str().unwrap() {
@@ -14695,19 +14751,19 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
     defects
 }
 
-#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-342-AC-11")]
+#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-294", "FR-342-AC-10", "FR-342-AC-11", "FR-415-AC-24")]
 #[test]
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=56).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=61).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
 
 /// Each rule of the clause oracle is pinned by a published vector: switching
 /// the rule off makes the replay disagree with exactly that vector.
-#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265")]
+#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-294")]
 #[test]
 fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
     let pinned = [
@@ -14732,6 +14788,7 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
         ("part-predicate", "CL-22"),
         ("invariant-predicate", "CL-23"),
         ("invariant-bound", "CL-24"),
+        ("quantified-binders", "CL-58"),
         ("anchor-model", "CL-25"),
         ("state-anchor-types", "CL-54"),
         ("member-key", "CL-33"),

@@ -469,7 +469,7 @@ and two nodes declaring one name refuse as `ambiguous-name`
 - `timed-clause-node-vectors.json` publishes the clause forms (`clock_guard`,
   `clock_reset`, `time_invariant`, `clock_constraint`, in both kinds) of
   FR-322 "Clause nodes" as the `forms` field tables and the replayable
-  `CL-01`..`CL-56` cases, the `QN-01`, `QN-02` quantified refusals and the `excluded_forms` producer cases (`GJ-01`..`GJ-03`, `CW-01`..`CW-05`, `SD-01`, `SD-02`: a guard disjunct with no clock constraint, a clock write that is not a reset to a constant, a selection reset reading element data) (FR-322-AC-261..FR-322-AC-267, FR-342-AC-11, FR-415-AC-25, TC-367
+  `CL-01`..`CL-61` cases (including quantified guard and invariant binder joins in `CL-57`..`CL-60`) and the `excluded_forms` producer cases (`GJ-01`..`GJ-03`, `CW-01`..`CW-05`, `SD-01`, `SD-02`: a guard disjunct with no clock constraint, a clock write that is not a reset to a constant, a selection reset reading element data) (FR-322-AC-261..FR-322-AC-268, FR-322-AC-294, FR-342-AC-10, FR-342-AC-11, FR-415-AC-24, FR-415-AC-25, TC-367
   CK-32..CK-38). A `clock_place` is exactly `model`, `path` and `resolved_path` (the `guards` field is removed; `CL-27` refuses a `guards` binding). The member keys that order nodes of one source region are structural (a term is keyed by its form and body shape, never by a source region), and `CL-33`..`CL-53` pin each component. `fixtures/positive-timed-clause-nodes.json` is the complete
   package that carries one node of each form and `domain-package-acme-timed-clauses.json`
   its selected document (paired in `selected-documents.json`); the cases are RFC 6902 patches on that package.
