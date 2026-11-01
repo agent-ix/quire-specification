@@ -1,0 +1,983 @@
+{
+  "version": "quire.model-option-type-vectors/v1",
+  "note": "STD-627. Option value types (FR-154 \"Option value types\"): a type definition of kind option with one inner typeRef, named by package identity; typeRef stays the three forms. domain_package is the FR-154 projection in the style of model-tuple-union-vectors.json (identity, version, object_types, tuple_types, variant_types); this file defines the further collections it needs: units, record_types, option_types (node, inner), aliases (node, target), sequence_types (node, items), map_types (node, values), reference_types (node, target), namespaces and constraints (identity, keyword, appliesTo, operands). field_type_cases give the FR-322 step 4 type of a member (forms as in model-tuple-union-vectors.json; same_node_as names the field sharing the composite_type/option node). intake_cases are RFC 6902 patches over domain_package; `at` is a pointer into the patched projection. No reader consumes this file yet: the strict reader and the FCD kind are follow-up work.",
+  "domain_package": {
+    "identity": "acme/optionals",
+    "version": "1.0.0",
+    "units": [
+      {
+        "node": "ix://acme/optionals/unit/ms"
+      }
+    ],
+    "record_types": [
+      {
+        "node": "ix://acme/optionals/Rec",
+        "fields": [
+          {
+            "name": "n",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
+        ]
+      }
+    ],
+    "option_types": [
+      {
+        "node": "ix://acme/optionals/OptInt",
+        "inner": "ix://quire/native/Integer"
+      },
+      {
+        "node": "ix://acme/optionals/OptMs",
+        "inner": "ix://quire/unit/ms"
+      },
+      {
+        "node": "ix://acme/optionals/OptRec",
+        "inner": "ix://acme/optionals/Rec"
+      }
+    ],
+    "aliases": [
+      {
+        "node": "ix://acme/optionals/AO",
+        "target": "ix://acme/optionals/OptInt"
+      },
+      {
+        "node": "ix://acme/optionals/AClock",
+        "target": "ix://quire/native/Clock"
+      }
+    ],
+    "object_types": [
+      {
+        "node": "ix://acme/optionals/Holder",
+        "interfaceFeatures": null,
+        "supertypes": [],
+        "fields": [
+          {
+            "name": "a",
+            "typeRef": "ix://acme/optionals/OptInt",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "b",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "optional",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "c",
+            "typeRef": "ix://acme/optionals/OptMs",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "d",
+            "typeRef": "ix://acme/optionals/OptInt",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          },
+          {
+            "name": "e",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "optional",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          },
+          {
+            "name": "f",
+            "typeRef": "ix://acme/optionals/OptRec",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "g",
+            "typeRef": "ix://acme/optionals/AO",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
+        ],
+        "operations": [
+          {
+            "name": "op",
+            "params": [
+              {
+                "name": "p",
+                "typeRef": "ix://acme/optionals/OptInt"
+              }
+            ],
+            "returns": {
+              "typeRef": "ix://acme/optionals/OptInt"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "field_type_cases": [
+    {
+      "name": "OP-01",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "a",
+      "expected": {
+        "option": {
+          "type": "Integer"
+        }
+      },
+      "same_node_as": "b"
+    },
+    {
+      "name": "OP-02",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "b",
+      "expected": {
+        "option": {
+          "type": "Integer"
+        }
+      },
+      "same_node_as": "a"
+    },
+    {
+      "name": "OP-03",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "c",
+      "expected": {
+        "option": {
+          "type": "Quantity<ms>"
+        }
+      }
+    },
+    {
+      "name": "OP-04",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "d",
+      "expected": {
+        "sequence": {
+          "option": {
+            "type": "Integer"
+          }
+        },
+        "min": "0",
+        "max": "3"
+      }
+    },
+    {
+      "name": "OP-05",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "e",
+      "expected": {
+        "option": {
+          "sequence": {
+            "type": "Integer"
+          },
+          "min": "0",
+          "max": "3"
+        }
+      }
+    },
+    {
+      "name": "OP-06",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "f",
+      "expected": {
+        "option": {
+          "declaration": "Rec"
+        }
+      }
+    },
+    {
+      "name": "OP-07",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "field": "g",
+      "expected": {
+        "option": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "OP-08",
+      "criterion": "FR-322-AC-298",
+      "object": "Holder",
+      "operation": "op",
+      "expected": {
+        "parameters": [
+          {
+            "option": {
+              "type": "Integer"
+            }
+          }
+        ],
+        "result": {
+          "option": {
+            "type": "Integer"
+          }
+        }
+      }
+    }
+  ],
+  "intake_cases": [
+    {
+      "name": "OP-09",
+      "criterion": "FR-154-AC-39",
+      "patch": [],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "OP-10",
+      "criterion": "FR-154-AC-39",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/sequence_types",
+          "value": [
+            {
+              "node": "ix://acme/optionals/SO",
+              "items": "ix://acme/optionals/OptInt"
+            }
+          ]
+        },
+        {
+          "op": "add",
+          "path": "/map_types",
+          "value": [
+            {
+              "node": "ix://acme/optionals/MO",
+              "values": "ix://acme/optionals/OptInt"
+            }
+          ]
+        },
+        {
+          "op": "add",
+          "path": "/tuple_types",
+          "value": [
+            {
+              "node": "ix://acme/optionals/TO",
+              "positions": [
+                {
+                  "ordinal": 0,
+                  "typeRef": "ix://acme/optionals/OptInt"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "op": "add",
+          "path": "/variant_types",
+          "value": [
+            {
+              "node": "ix://acme/optionals/VO",
+              "cases": [
+                {
+                  "name": "Some",
+                  "payloadType": "ix://acme/optionals/OptInt"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "OP-11",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "ix://acme/optionals/OptInt"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-12",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/-",
+          "value": {
+            "node": "ix://acme/optionals/OptOpt",
+            "inner": "ix://acme/optionals/OptInt"
+          }
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/3/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-13",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/-",
+          "value": {
+            "node": "ix://acme/optionals/OptAO",
+            "inner": "ix://acme/optionals/AO"
+          }
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/3/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-14",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "ix://quire/native/Clock"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-15",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "ix://acme/optionals/AClock"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-16",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/namespaces",
+          "value": [
+            {
+              "node": "ix://acme/optionals/Ns"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "ix://acme/optionals/Ns"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-17",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "ix://acme/optionals/Nowhere"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-18",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/presence",
+          "value": "optional"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/0/presence"
+        }
+      }
+    },
+    {
+      "name": "OP-19",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/6/presence",
+          "value": "optional"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/6/presence"
+        }
+      }
+    },
+    {
+      "name": "OP-20",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/presence",
+          "value": "optional"
+        },
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/multiplicity",
+          "value": {
+            "lower": "0",
+            "upper": "3",
+            "ordered": true,
+            "unique": false
+          }
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "OP-21",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/reference_types",
+          "value": [
+            {
+              "node": "ix://acme/optionals/RO",
+              "target": "ix://acme/optionals/OptInt"
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/reference_types/0/target"
+        }
+      }
+    },
+    {
+      "name": "OP-22",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/typeRef",
+          "value": "ix://quire/native/Option"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/0/typeRef"
+        }
+      }
+    },
+    {
+      "name": "OP-23",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/typeRef",
+          "value": "ix://quire/native/Option<Integer>"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/0/typeRef"
+        }
+      }
+    },
+    {
+      "name": "OP-24",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/typeRef",
+          "value": "ix://quire/native/option"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/0/typeRef"
+        }
+      }
+    },
+    {
+      "name": "OP-25",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/option_types/0/inner"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-26",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": null
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-27",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": ""
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-28",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": 7
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-29",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": {}
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-30",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": [
+            "ix://quire/native/Integer"
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-31",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": [
+            "ix://quire/native/Integer",
+            "ix://quire/native/Text"
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-32",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-33",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/option_types/0/inner",
+          "value": "ix://quire/native/Int"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/inner"
+        }
+      }
+    },
+    {
+      "name": "OP-34",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/0/fields",
+          "value": [
+            {
+              "name": "x",
+              "typeRef": "ix://quire/native/Integer",
+              "presence": "required",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              },
+              "redefines": null
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/fields"
+        }
+      }
+    },
+    {
+      "name": "OP-35",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/0/operations",
+          "value": [
+            {
+              "name": "o",
+              "params": [],
+              "returns": null
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/operations"
+        }
+      }
+    },
+    {
+      "name": "OP-36",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/0/supertypes",
+          "value": [
+            "ix://acme/optionals/Rec"
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/supertypes"
+        }
+      }
+    },
+    {
+      "name": "OP-37",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/0/positions",
+          "value": [
+            {
+              "ordinal": 0,
+              "typeRef": "ix://quire/native/Integer"
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/positions"
+        }
+      }
+    },
+    {
+      "name": "OP-38",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/0/items",
+          "value": "ix://quire/native/Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/items"
+        }
+      }
+    },
+    {
+      "name": "OP-39",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/option_types/0/constraints",
+          "value": [
+            {
+              "identity": "ix://acme/optionals/constraint/OptInt-min",
+              "keyword": "min",
+              "appliesTo": "ix://quire/native/Integer",
+              "operands": {
+                "value": "1"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/option_types/0/constraints"
+        }
+      }
+    },
+    {
+      "name": "OP-40",
+      "criterion": "FR-154-AC-41",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/constraints",
+          "value": [
+            {
+              "identity": "ix://acme/optionals/constraint/OptInt-min",
+              "keyword": "min",
+              "appliesTo": "ix://acme/optionals/OptInt",
+              "operands": {
+                "value": "1"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/constraints/0/appliesTo"
+        }
+      }
+    },
+    {
+      "name": "OP-41",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/presence",
+          "value": "optional"
+        },
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/multiplicity",
+          "value": {
+            "lower": "1",
+            "upper": "1",
+            "ordered": true,
+            "unique": false
+          }
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/0/presence"
+        }
+      }
+    }
+  ]
+}

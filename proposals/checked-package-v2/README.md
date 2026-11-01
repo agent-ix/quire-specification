@@ -82,6 +82,12 @@ structures, but any external consumer receives only the contract.
   from the document), the declaration node ids and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them.
+- `model-option-type-vectors.json` publishes the `acme/optionals` projection of
+  option value types (FR-154 "Option value types"; `kind` `option` with one
+  `inner` type reference), the FR-322 step 4 member types of fields typed by
+  them and the intake cases (FR-154-AC-39 to AC-41, FR-322-AC-298, TC-234, TC-280).
+  No strict reader consumes it yet; the FCD `option` kind and the QSL intake and
+  type-projection readers are follow-up work.
 - `contract-package-selection-vectors.json` publishes the typed source-selection
   rows `T`, `D` and `U` and the four compatibility cases of TC-935 (FR-330-AC-10)
   as the authoritative machine-readable form, so a conformance test reads them
