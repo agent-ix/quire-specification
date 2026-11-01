@@ -29,6 +29,10 @@ consumer holds a copy of this schema.
   `failed` (`tool-failure`, `tool-unavailable` after a passing probe, and
   `runtime_invariant` for an IR mapping invariant break).
   Temporal, state-graph, hyperproperty and probabilistic vectors follow.
+- `refinement-failure-vectors.json` holds the wire cases of the FR-379
+  `RefinementFailure` definition (the seven model kinds and the protocol
+  relation kinds `RefusalNotPermitted` and `TerminalSuccessMismatch`) and the
+  product and replay cases of those two kinds (TC-318, TC-431 BP-55).
 - `tests/backend_provider_v1.rs` validates every vector against the schema
   and checks the package-bytes rule (TC-431).
 

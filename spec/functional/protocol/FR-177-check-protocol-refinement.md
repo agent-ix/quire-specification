@@ -73,9 +73,11 @@ states:
   a violation whatever the fairness sets are, where FR-377 reads stutter tails
   only through abstract fairness;
 - **refusal sets**: every implementation refusal is allowed by the matched
-  specification state;
+  specification state; a violation is the `RefusalNotPermitted` refinement
+  failure of [FR-379](../analysis/FR-379-report-and-replay-refinement-counterexamples.md);
 - **terminal success**: implementation terminal success matches specification
-  terminal success;
+  terminal success; a violation is the `TerminalSuccessMismatch` refinement
+  failure of FR-379;
 - **assumption weakening**: implementation environment assumptions are no
   stronger than the specification's.
 
@@ -89,6 +91,7 @@ states:
 | FR-177-AC-4 | Internal-step stuttering preserves correspondence and cannot hide a catastrophic divergence. | Test (TC-208) |
 | FR-177-AC-5 | Failure-set inclusion and assumption weakening are checked independently from visible-trace inclusion. | Test (TC-208) |
 | FR-177-AC-6 | Visible-step matching, internal steps and paired initial states are decided by FR-377's step rules with internal actions as `stutter` steps and observations as step labels; an observable internal loop at a specification state that can move refutes as a divergence under every fairness set, including an empty one, while the same loop in a model refinement with empty abstract fairness holds. | Test (TC-318) |
+| FR-177-AC-7 | A refusal-set violation and a terminal-success mismatch refute with the FR-379 kinds `RefusalNotPermitted` and `TerminalSuccessMismatch`, defined with their payloads, checks and replay there; a permitted refusal and matching terminal success hold. | Test (TC-318) |
 
 ## Dependencies
 

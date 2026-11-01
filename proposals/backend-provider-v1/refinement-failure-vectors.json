@@ -1,0 +1,926 @@
+{
+  "description": "FR-379 protocol relation failures: wire cases of the RefinementFailure definition and the product and replay cases of RefusalNotPermitted and TerminalSuccessMismatch (TC-318, TC-431 BP-55). A product case gives the concrete state's stutter_enabled (an enabled stutter or any step), visible (labels of enabled visible concrete steps) and intended; each abstract member of the candidate set gives internal_enabled, enabled (labels of enabled abstract steps) and intended; terminal means no enabled step of any kind. expected is the failure the check reports, or null.",
+  "wire": {
+    "positive": [
+      {
+        "name": "InitialNotAbstract",
+        "failure": {
+          "kind": "InitialNotAbstract",
+          "initial": 0
+        }
+      },
+      {
+        "name": "StutterChanged",
+        "failure": {
+          "kind": "StutterChanged",
+          "position": 2
+        }
+      },
+      {
+        "name": "NoAbstractMatch",
+        "failure": {
+          "kind": "NoAbstractMatch",
+          "position": 6
+        }
+      },
+      {
+        "name": "AbstractStepRejected",
+        "failure": {
+          "kind": "AbstractStepRejected",
+          "position": 4,
+          "transition": {
+            "type": "transition",
+            "operation": "inc",
+            "receiver": null,
+            "arguments": []
+          },
+          "cause": {
+            "type": "Postcondition"
+          }
+        }
+      },
+      {
+        "name": "Divergence",
+        "failure": {
+          "kind": "Divergence",
+          "constraint": {
+            "kind": "weak",
+            "operation": "inc",
+            "granularity": "whole"
+          }
+        }
+      },
+      {
+        "name": "AbstractUnfair",
+        "failure": {
+          "kind": "AbstractUnfair",
+          "constraint": {
+            "kind": "strong",
+            "operation": "inc",
+            "granularity": "each"
+          }
+        }
+      },
+      {
+        "name": "Undefined",
+        "failure": {
+          "kind": "Undefined",
+          "position": 0,
+          "row": "value"
+        }
+      },
+      {
+        "name": "RefusalNotPermitted",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1,
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "RefusalNotPermitted-binder",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 3,
+          "label": {
+            "step": "Spec::Full::ev",
+            "binder": [
+              {
+                "field": "p",
+                "value": {
+                  "type": "boolean",
+                  "value": true
+                }
+              },
+              {
+                "field": "q",
+                "value": {
+                  "type": "integer",
+                  "value": "3"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "TerminalSuccessMismatch-concrete-only",
+        "failure": {
+          "kind": "TerminalSuccessMismatch",
+          "position": 0,
+          "direction": "concrete-only"
+        }
+      },
+      {
+        "name": "TerminalSuccessMismatch-abstract-only",
+        "failure": {
+          "kind": "TerminalSuccessMismatch",
+          "position": 1,
+          "direction": "abstract-only"
+        }
+      }
+    ],
+    "adverse": [
+      {
+        "name": "unknown-kind",
+        "failure": {
+          "kind": "RefusalSetViolation",
+          "position": 1,
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "refusal-without-label",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1
+        }
+      },
+      {
+        "name": "refusal-without-position",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "refusal-extra-member",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1,
+          "label": {
+            "step": "ack",
+            "binder": []
+          },
+          "direction": "concrete-only"
+        }
+      },
+      {
+        "name": "refusal-negative-position",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": -1,
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "refusal-string-position",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": "1",
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "label-without-binder",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1,
+          "label": {
+            "step": "ack"
+          }
+        }
+      },
+      {
+        "name": "label-extra-member",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1,
+          "label": {
+            "step": "ack",
+            "binder": [],
+            "node": "x"
+          }
+        }
+      },
+      {
+        "name": "label-empty-step",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1,
+          "label": {
+            "step": "",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "label-untyped-binder-value",
+        "failure": {
+          "kind": "RefusalNotPermitted",
+          "position": 1,
+          "label": {
+            "step": "ack",
+            "binder": [
+              {
+                "field": "p",
+                "value": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "terminal-unknown-direction",
+        "failure": {
+          "kind": "TerminalSuccessMismatch",
+          "position": 1,
+          "direction": "both"
+        }
+      },
+      {
+        "name": "terminal-without-direction",
+        "failure": {
+          "kind": "TerminalSuccessMismatch",
+          "position": 1
+        }
+      },
+      {
+        "name": "terminal-with-label",
+        "failure": {
+          "kind": "TerminalSuccessMismatch",
+          "position": 1,
+          "direction": "concrete-only",
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      },
+      {
+        "name": "noabstractmatch-with-label",
+        "failure": {
+          "kind": "NoAbstractMatch",
+          "position": 1,
+          "label": {
+            "step": "ack",
+            "binder": []
+          }
+        }
+      }
+    ]
+  },
+  "products": [
+    {
+      "name": "TC318-4-ready",
+      "description": "Case 4, position 1: ready is stable and refuses ack; idle enables it.",
+      "position": 1,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "idle",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ack",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": {
+        "kind": "RefusalNotPermitted",
+        "position": 1,
+        "label": {
+          "step": "ack",
+          "binder": []
+        }
+      }
+    },
+    {
+      "name": "TC318-4-idle-not-stable",
+      "description": "Case 4, position 0: prep is an enabled stutter step, so the state is not stable.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": true,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "idle",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ack",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "TC318-5-permitted",
+      "description": "Case 5: b refuses ack and is terminal success.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": true
+      },
+      "abstract": [
+        {
+          "name": "idle",
+          "internal_enabled": true,
+          "enabled": [],
+          "intended": false
+        },
+        {
+          "name": "a",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ack",
+              "binder": []
+            }
+          ],
+          "intended": false
+        },
+        {
+          "name": "b",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": true
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "TC318-6-concrete-only",
+      "description": "Case 6: x and y share no label; no member is terminal success.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": true
+      },
+      "abstract": [
+        {
+          "name": "idle",
+          "internal_enabled": true,
+          "enabled": [],
+          "intended": false
+        },
+        {
+          "name": "x",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "p",
+              "binder": []
+            }
+          ],
+          "intended": false
+        },
+        {
+          "name": "y",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "q",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 0,
+        "direction": "concrete-only"
+      }
+    },
+    {
+      "name": "TC318-7-abstract-only",
+      "description": "Case 7: stuck is terminal and not intended; the only member is terminal success.",
+      "position": 1,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "done",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": true
+        }
+      ],
+      "expected": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 1,
+        "direction": "abstract-only"
+      }
+    },
+    {
+      "name": "TC318-8-matching",
+      "description": "Case 8: terminal success on both sides.",
+      "position": 1,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": true
+      },
+      "abstract": [
+        {
+          "name": "done",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": true
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "least-label",
+      "description": "Two qualifying labels a and b; the least by canonical encoding is a.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "b",
+              "binder": []
+            },
+            {
+              "step": "a",
+              "binder": []
+            }
+          ],
+          "intended": false
+        },
+        {
+          "name": "t",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "c",
+              "binder": []
+            },
+            {
+              "step": "a",
+              "binder": []
+            },
+            {
+              "step": "b",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "a",
+          "binder": []
+        }
+      }
+    },
+    {
+      "name": "no-stable-member",
+      "description": "The candidate set has no stable member; the refusal check passes.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": true,
+          "enabled": [
+            {
+              "step": "a",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "concrete-enables-label",
+      "description": "A concrete step visible with the label is enabled.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [
+          {
+            "step": "a",
+            "binder": []
+          }
+        ],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "a",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "concrete-enables-step-all-terminal",
+      "description": "The concrete state still enables a step: not a terminal mismatch (the step rules decide).",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [
+          {
+            "step": "z",
+            "binder": []
+          }
+        ],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "done",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": true
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "both-kinds-refusal-first",
+      "description": "Both kinds fail at the state; RefusalNotPermitted is reported.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": true
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "a",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "a",
+          "binder": []
+        }
+      }
+    },
+    {
+      "name": "step-failure-first",
+      "description": "The incoming step already failed a step rule; no relation failure is reported at its post-state.",
+      "position": 1,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "idle",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ack",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": null,
+      "incoming_step_failure": true
+    },
+    {
+      "name": "abstract-only-not-every-member",
+      "description": "Not every member is terminal success (one is intended, one is not): no abstract-only mismatch.",
+      "position": 1,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "ok",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": true
+        },
+        {
+          "name": "dead",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": false
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "binder-differs",
+      "description": "Labels share step and differ in binder: only the binder 1 label is enabled by every stable member, and the concrete state enables binder 2.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [
+          {
+            "step": "ev",
+            "binder": [
+              {
+                "field": "q",
+                "value": {
+                  "type": "integer",
+                  "value": "2"
+                }
+              }
+            ]
+          }
+        ],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ev",
+              "binder": [
+                {
+                  "field": "q",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                }
+              ]
+            },
+            {
+              "step": "ev",
+              "binder": [
+                {
+                  "field": "q",
+                  "value": {
+                    "type": "integer",
+                    "value": "2"
+                  }
+                }
+              ]
+            }
+          ],
+          "intended": false
+        },
+        {
+          "name": "t",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ev",
+              "binder": [
+                {
+                  "field": "q",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                }
+              ]
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "ev",
+          "binder": [
+            {
+              "field": "q",
+              "value": {
+                "type": "integer",
+                "value": "1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "any-row-enabled-not-stable",
+      "description": "A concrete any row is enabled (stutter_enabled covers stutter and any rows): not stable, no refusal.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": true,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "a",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": null
+    }
+  ],
+  "replays": [
+    {
+      "name": "TC318-4-reproduced",
+      "product": "TC318-4-ready",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 1,
+        "label": {
+          "step": "ack",
+          "binder": []
+        }
+      },
+      "loop_steps": 0,
+      "expected": "reproduced-with-evaluated-witness"
+    },
+    {
+      "name": "TC318-9-wrong-position",
+      "product": "TC318-4-ready",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "ack",
+          "binder": []
+        }
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "TC318-9-unsupported-label",
+      "product": "TC318-4-ready",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 1,
+        "label": {
+          "step": "other",
+          "binder": []
+        }
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "TC318-6-reproduced",
+      "product": "TC318-6-concrete-only",
+      "recorded": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 0,
+        "direction": "concrete-only"
+      },
+      "loop_steps": 0,
+      "expected": "reproduced-with-evaluated-witness"
+    },
+    {
+      "name": "TC318-9-wrong-direction",
+      "product": "TC318-6-concrete-only",
+      "recorded": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 0,
+        "direction": "abstract-only"
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "no-failure-recomputed",
+      "product": "TC318-8-matching",
+      "recorded": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 1,
+        "direction": "concrete-only"
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "any-qualifying-label",
+      "product": "least-label",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "b",
+          "binder": []
+        }
+      },
+      "loop_steps": 0,
+      "expected": "reproduced-with-evaluated-witness"
+    },
+    {
+      "name": "different-kind",
+      "product": "TC318-4-ready",
+      "recorded": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 1,
+        "direction": "concrete-only"
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "TC318-9-loop",
+      "product": "TC318-4-ready",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 1,
+        "label": {
+          "step": "ack",
+          "binder": []
+        }
+      },
+      "loop_steps": 1,
+      "expected": "invalid_runtime_input/invalid-value"
+    },
+    {
+      "name": "label-enabled-by-concrete",
+      "product": "concrete-enables-label",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "a",
+          "binder": []
+        }
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "terminal-kind-holds-where-refusal-also-fails",
+      "product": "both-kinds-refusal-first",
+      "recorded": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 0,
+        "direction": "concrete-only"
+      },
+      "loop_steps": 0,
+      "expected": "reproduced-with-evaluated-witness"
+    }
+  ]
+}

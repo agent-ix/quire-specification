@@ -738,8 +738,20 @@
           {"type": "object", "required": ["type"], "properties": {"type": {"const": "Postcondition"}}, "additionalProperties": false}
         ]}}, "required": ["kind", "position", "transition", "cause"], "additionalProperties": false},
         {"properties": {"kind": {"enum": ["Divergence", "AbstractUnfair"]}, "constraint": {"$ref": "#/$defs/Fairness"}}, "required": ["kind", "constraint"], "additionalProperties": false},
-        {"properties": {"kind": {"const": "Undefined"}, "position": {"$ref": "#/$defs/Count"}, "row": {"$ref": "#/$defs/Nonempty"}}, "required": ["kind", "position", "row"], "additionalProperties": false}
+        {"properties": {"kind": {"const": "Undefined"}, "position": {"$ref": "#/$defs/Count"}, "row": {"$ref": "#/$defs/Nonempty"}}, "required": ["kind", "position", "row"], "additionalProperties": false},
+        {"properties": {"kind": {"const": "RefusalNotPermitted"}, "position": {"$ref": "#/$defs/Count"}, "label": {"$ref": "#/$defs/ObservationLabel"}}, "required": ["kind", "position", "label"], "additionalProperties": false},
+        {"properties": {"kind": {"const": "TerminalSuccessMismatch"}, "position": {"$ref": "#/$defs/Count"}, "direction": {"enum": ["concrete-only", "abstract-only"]}}, "required": ["kind", "position", "direction"], "additionalProperties": false}
       ]
+    },
+    "ObservationLabel": {
+      "description": "FR-379, FR-432: the observation label of an abstract protocol step: `step`, the alias-free class spelling of the step's node, operation or class as FR-432 spells an internal-list entry, and `binder`, the step's complete binder record in effective field order, one entry per field with the field's typed value.",
+      "type": "object",
+      "required": ["step", "binder"],
+      "properties": {
+        "step": {"$ref": "#/$defs/Nonempty"},
+        "binder": {"type": "array", "items": {"type": "object", "required": ["field", "value"], "properties": {"field": {"$ref": "#/$defs/Nonempty"}, "value": {"$ref": "#/$defs/TypedValue"}}, "additionalProperties": false}}
+      },
+      "additionalProperties": false
     },
     "GraphStep": {"description": "FR-393: a model trace step.", "type": "object", "required": ["type", "transition", "post_state"], "properties": {"type": {"const": "step"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/State"}}, "additionalProperties": false},
     "ModelPath": {"description": "FR-393 ModelPath.", "type": "object", "required": ["type", "initial", "steps"], "properties": {"type": {"const": "model-path"}, "initial": {"$ref": "#/$defs/Decimal"}, "steps": {"type": "array", "items": {"$ref": "#/$defs/GraphStep"}}}, "additionalProperties": false},
