@@ -50,7 +50,8 @@ structures, but any external consumer receives only the contract.
   carrier vectors for producer-captured equality decisions, protocol semantic
   locations and model dispatch candidate tables. All three use the same exact
   local application/occurrence identity; protocol locations add a per-term
-  ordinal, while dispatch candidates retain producer order. Positive and
+  ordinal, while dispatch candidates retain producer order and structural
+  FR-150 `EffectiveId` selection keys (never checked-package `NodeRef`s). Positive and
   malformed cases exercise schema shape, structural joins and the unavailable
   versus empty-table distinction (FR-322-AC-288 to AC-292).
 - `fixtures/positive-extension-nodes.json` is a V2 package carrying the

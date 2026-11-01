@@ -18946,7 +18946,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let location = schema_for_def(&schema, "ProtocolSemanticLocation");
     let dispatch = schema_for_def(&schema, "DispatchCandidateTable");
     let candidate = schema_for_def(&schema, "DispatchCandidate");
+    let effective_id = schema_for_def(&schema, "EffectiveId");
     let carrier = schema_for_def(&schema, "CheckedTermData");
+    let structural_identity = parsed_fixture(STRUCTURAL_IDENTITY_SCHEMA);
+    assert_eq!(schema["$defs"]["EffectiveId"], structural_identity["$defs"]["EffectiveId"]);
 
     for row in vectors["positive"]["equality_decisions"].as_array().unwrap() {
         let mut wire = row.clone();
@@ -18978,6 +18981,7 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         assert!(dispatch.is_valid(&wire), "{id} is a valid dispatch table");
         for item in wire["candidates"].as_array().unwrap() {
             assert!(candidate.is_valid(item), "{id} candidate is closed");
+            assert!(effective_id.is_valid(&item["selection_key"]), "{id} key is an EffectiveId");
         }
     }
     let rows_without_case_ids = |name: &str| {
@@ -19000,8 +19004,8 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     assert!(carrier.is_valid(&package_carrier), "all three arrays share one closed carrier");
 
     let candidates = vectors["positive"]["dispatch_tables"][0]["candidates"].as_array().unwrap();
-    assert_eq!(candidates[0]["selection_key"]["path"][1], "FastService");
-    assert_eq!(candidates[1]["selection_key"]["path"][1], "SafeService");
+    assert_eq!(candidates[0]["selection_key"]["original"]["node"], "FastService");
+    assert_eq!(candidates[1]["selection_key"]["original"]["node"], "SafeService");
     for name in ["equality_decisions", "protocol_locations", "dispatch_tables"] {
         let paths = vectors["positive"][name]
             .as_array().unwrap().iter()
@@ -19023,6 +19027,7 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             "ProtocolSemanticLocation" => &location,
             "DispatchCandidateTable" => &dispatch,
             "DispatchCandidate" => &candidate,
+            "EffectiveId" => &effective_id,
             other => panic!("unknown schema-negative target {other}"),
         };
         assert!(!validator.is_valid(&case["value"]), "{} is malformed wire", case["id"]);
@@ -19075,6 +19080,16 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             "DT-R3-wrong-occurrence" => {
                 assert!(dispatch.is_valid(value), "wrong occurrence remains structurally valid");
                 assert_eq!(value["occurrence"]["ordinal"], 9);
+            }
+            "DT-R4-foreign-effective-selection-key" => {
+                assert!(dispatch.is_valid(value), "foreign effective key remains structurally valid");
+                assert!(effective_id.is_valid(&value["candidates"][0]["selection_key"]));
+                assert_eq!(value["candidates"][0]["selection_key"]["original"]["package"], "foreign");
+            }
+            "DT-R5-mismatched-effective-selection-key" => {
+                assert!(dispatch.is_valid(value), "mismatched effective key remains structurally valid");
+                assert!(effective_id.is_valid(&value["candidates"][0]["selection_key"]));
+                assert_eq!(value["candidates"][0]["selection_key"]["original"]["node"], "DifferentCandidate");
             }
             "DT-R2-missing-precondition" => {
                 assert!(candidate.is_valid(value), "foreign precondition remains structurally valid");

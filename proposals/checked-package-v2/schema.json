@@ -12563,7 +12563,7 @@
       ],
       "properties": {
         "selection_key": {
-          "$ref": "#/$defs/NodeRef"
+          "$ref": "#/$defs/EffectiveId"
         },
         "operation_body": {
           "$ref": "#/$defs/NodeRef"
@@ -12577,6 +12577,44 @@
               "type": "null"
             }
           ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "EffectiveId": {
+      "type": "object",
+      "required": [
+        "owner_effective_type",
+        "original"
+      ],
+      "properties": {
+        "owner_effective_type": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/EffectiveId"
+            }
+          ]
+        },
+        "original": {
+          "type": "object",
+          "required": [
+            "package",
+            "node"
+          ],
+          "properties": {
+            "package": {
+              "type": "string",
+              "minLength": 1
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

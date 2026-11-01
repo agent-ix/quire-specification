@@ -633,12 +633,11 @@
         "candidates": [
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "FastService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "FastService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -662,12 +661,11 @@
           },
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "SafeService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "SafeService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -891,12 +889,11 @@
         "candidates": [
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "FastService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "FastService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -921,12 +918,11 @@
           },
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "SafeService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "SafeService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -989,6 +985,49 @@
         },
         "schedule": "text",
         "units": []
+      }
+    },
+    {
+      "id": "DT-S2-node-ref-not-effective-id",
+      "target": "EffectiveId",
+      "mutation": "use checked NodeRef in place of FR-150 EffectiveId",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/selection_key",
+      "value": {
+        "package": "example",
+        "path": [
+          "model",
+          "FastService"
+        ],
+        "ordinal": 0
+      }
+    },
+    {
+      "id": "DT-S3-missing-original-node",
+      "target": "EffectiveId",
+      "mutation": "remove original.node",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/selection_key",
+      "value": {
+        "owner_effective_type": null,
+        "original": {
+          "package": "example"
+        }
+      }
+    },
+    {
+      "id": "DT-S4-extra-name",
+      "target": "EffectiveId",
+      "mutation": "add display_name to structural identity",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/selection_key",
+      "value": {
+        "owner_effective_type": null,
+        "original": {
+          "package": "example",
+          "node": "FastService"
+        },
+        "display_name": "FastService"
       }
     }
   ],
@@ -1194,12 +1233,11 @@
         "candidates": [
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "FastService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "FastService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -1223,12 +1261,11 @@
           },
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "FastService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "FastService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -1253,12 +1290,11 @@
       "locus": "/checked_term_data/dispatch_tables/0/candidates/0/effective_precondition",
       "value": {
         "selection_key": {
-          "package": "example",
-          "path": [
-            "model",
-            "FastService"
-          ],
-          "ordinal": 0
+          "owner_effective_type": null,
+          "original": {
+            "package": "example",
+            "node": "FastService"
+          }
         },
         "operation_body": {
           "package": "example",
@@ -1520,12 +1556,11 @@
         "candidates": [
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "FastService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "FastService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -1549,12 +1584,11 @@
           },
           {
             "selection_key": {
-              "package": "example",
-              "path": [
-                "model",
-                "SafeService"
-              ],
-              "ordinal": 0
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "SafeService"
+              }
             },
             "operation_body": {
               "package": "example",
@@ -1603,6 +1637,184 @@
           }
         }
       ]
+    },
+    {
+      "id": "DT-R4-foreign-effective-selection-key",
+      "target": "DispatchCandidateTable",
+      "mutation": "selection_key.original.package is outside the admitted effective view",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/selection_key",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selection_key": {
+              "owner_effective_type": null,
+              "original": {
+                "package": "foreign",
+                "node": "FastService"
+              }
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            }
+          },
+          {
+            "selection_key": {
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "SafeService"
+              }
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "DT-R5-mismatched-effective-selection-key",
+      "target": "DispatchCandidateTable",
+      "mutation": "selection_key does not equal candidate effective declaration identity",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/selection_key",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selection_key": {
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "DifferentCandidate"
+              }
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            }
+          },
+          {
+            "selection_key": {
+              "owner_effective_type": null,
+              "original": {
+                "package": "example",
+                "node": "SafeService"
+              }
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      }
     }
   ],
   "work_limit": {
