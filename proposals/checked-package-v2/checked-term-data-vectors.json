@@ -1,0 +1,1621 @@
+{
+  "positive": {
+    "equality_decisions": [
+      {
+        "id": "EQ-05-compound-quantity",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "compound-quantity-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "compound_unit",
+              "unit",
+              "metre",
+              "2",
+              "unit",
+              "second",
+              "-1"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "compound_unit",
+              "unit",
+              "metre",
+              "2",
+              "unit",
+              "second",
+              "-1"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "quantity",
+        "units": [
+          {
+            "quantity_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "compound_unit",
+                "unit",
+                "metre",
+                "2",
+                "unit",
+                "second",
+                "-1"
+              ],
+              "ordinal": 0
+            },
+            "unit": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "compound_unit",
+                "unit",
+                "metre",
+                "2",
+                "unit",
+                "second",
+                "-1"
+              ],
+              "ordinal": 0
+            },
+            "form": {
+              "kind": "compound",
+              "dimension_terms": [
+                {
+                  "dimension": {
+                    "package": "example",
+                    "path": [
+                      "dimension",
+                      "Length"
+                    ],
+                    "ordinal": 0
+                  },
+                  "exponent": "2"
+                },
+                {
+                  "dimension": {
+                    "package": "example",
+                    "path": [
+                      "dimension",
+                      "Time"
+                    ],
+                    "ordinal": 0
+                  },
+                  "exponent": "-1"
+                }
+              ],
+              "terms": [
+                {
+                  "root_unit": {
+                    "package": "example",
+                    "path": [
+                      "unit",
+                      "metre"
+                    ],
+                    "ordinal": 0
+                  },
+                  "exponent": "2"
+                },
+                {
+                  "root_unit": {
+                    "package": "example",
+                    "path": [
+                      "unit",
+                      "second"
+                    ],
+                    "ordinal": 0
+                  },
+                  "exponent": "-1"
+                }
+              ]
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      {
+        "id": "EQ-02-enum",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "enum-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "not_equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "enum",
+              "Color"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "enum",
+              "Color"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "enum",
+        "units": [],
+        "enum_members": [
+          {
+            "enum_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "enum",
+                "Color"
+              ],
+              "ordinal": 0
+            },
+            "case": "Blue",
+            "ordinal": 0,
+            "member": {
+              "package": "example",
+              "path": [
+                "enum_value",
+                "Blue"
+              ],
+              "ordinal": 0
+            },
+            "ordered": false
+          },
+          {
+            "enum_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "enum",
+                "Color"
+              ],
+              "ordinal": 0
+            },
+            "case": "Green",
+            "ordinal": 1,
+            "member": {
+              "package": "example",
+              "path": [
+                "enum_value",
+                "Green"
+              ],
+              "ordinal": 0
+            },
+            "ordered": false
+          }
+        ]
+      },
+      {
+        "id": "EQ-03-quantity",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "quantity-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "unit",
+              "ms"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "unit",
+              "s"
+            ],
+            "ordinal": 0
+          }
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "unit",
+              "s"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "quantity",
+        "units": [
+          {
+            "quantity_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "unit",
+                "ms"
+              ],
+              "ordinal": 0
+            },
+            "unit": {
+              "package": "example",
+              "path": [
+                "unit",
+                "ms"
+              ],
+              "ordinal": 0
+            },
+            "form": {
+              "kind": "declared",
+              "dimension_node": {
+                "package": "example",
+                "path": [
+                  "dimension",
+                  "Time"
+                ],
+                "ordinal": 0
+              },
+              "dimension_terms": [
+                {
+                  "dimension": {
+                    "package": "example",
+                    "path": [
+                      "dimension",
+                      "Time"
+                    ],
+                    "ordinal": 0
+                  },
+                  "exponent": "1"
+                }
+              ],
+              "root_unit": {
+                "package": "example",
+                "path": [
+                  "unit",
+                  "s"
+                ],
+                "ordinal": 0
+              },
+              "path": [
+                {
+                  "target": {
+                    "package": "example",
+                    "path": [
+                      "unit",
+                      "s"
+                    ],
+                    "ordinal": 0
+                  },
+                  "scale": {
+                    "numerator": "1",
+                    "denominator": "1000"
+                  },
+                  "offset": {
+                    "numerator": "0",
+                    "denominator": "1"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "quantity_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "unit",
+                "s"
+              ],
+              "ordinal": 0
+            },
+            "unit": {
+              "package": "example",
+              "path": [
+                "unit",
+                "s"
+              ],
+              "ordinal": 0
+            },
+            "form": {
+              "kind": "declared",
+              "dimension_node": {
+                "package": "example",
+                "path": [
+                  "dimension",
+                  "Time"
+                ],
+                "ordinal": 0
+              },
+              "dimension_terms": [
+                {
+                  "dimension": {
+                    "package": "example",
+                    "path": [
+                      "dimension",
+                      "Time"
+                    ],
+                    "ordinal": 0
+                  },
+                  "exponent": "1"
+                }
+              ],
+              "root_unit": {
+                "package": "example",
+                "path": [
+                  "unit",
+                  "s"
+                ],
+                "ordinal": 0
+              },
+              "path": [
+                {
+                  "target": {
+                    "package": "example",
+                    "path": [
+                      "unit",
+                      "s"
+                    ],
+                    "ordinal": 0
+                  },
+                  "scale": {
+                    "numerator": "1",
+                    "denominator": "1"
+                  },
+                  "offset": {
+                    "numerator": "0",
+                    "denominator": "1"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      {
+        "id": "EQ-04-plan",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "record-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "model",
+              "Record"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "model",
+              "Record"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "plan",
+        "units": [],
+        "enum_members": []
+      },
+      {
+        "id": "EQ-01-text",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": []
+      }
+    ],
+    "protocol_locations": [
+      {
+        "id": "PL-03-declaration",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "application",
+            "protocol-declaration-term"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 3
+        },
+        "term_ordinal": 0,
+        "location": {
+          "origin": {
+            "kind": "type_declaration",
+            "name": "Handshake"
+          },
+          "path": [
+            1
+          ]
+        }
+      },
+      {
+        "id": "PL-01-root",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "application",
+            "shared-protocol-node"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 0,
+        "location": {
+          "origin": {
+            "kind": "protocol_attempt",
+            "protocol": 0,
+            "attempt": 0
+          },
+          "path": []
+        }
+      },
+      {
+        "id": "PL-02-child",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "application",
+            "shared-protocol-node"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 1,
+        "location": {
+          "origin": {
+            "kind": "protocol_attempt",
+            "protocol": 0,
+            "attempt": 0
+          },
+          "path": [
+            2,
+            0
+          ]
+        }
+      }
+    ],
+    "dispatch_tables": [
+      {
+        "id": "DT-01-two-candidates",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "FastService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            }
+          },
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "SafeService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      },
+      {
+        "id": "DT-02-empty-candidate-set",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "empty-dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 1
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "absent"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": []
+      }
+    ]
+  },
+  "schema_invalid": [
+    {
+      "id": "EQ-S1-unknown-schedule",
+      "target": "EqualityDecision",
+      "mutation": "replace schedule with unknown",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/equality_decisions/0/schedule",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "numeric",
+        "units": [],
+        "enum_members": []
+      }
+    },
+    {
+      "id": "EQ-S2-extra-member",
+      "target": "EqualityDecision",
+      "mutation": "add unrecognized member",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/equality_decisions/0",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": [],
+        "unexpected": true
+      }
+    },
+    {
+      "id": "PL-S1-unknown-origin",
+      "target": "ProtocolSemanticLocation",
+      "mutation": "replace origin kind with source_region",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/protocol_locations/0/location/origin",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "application",
+            "shared-protocol-node"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 0,
+        "location": {
+          "origin": {
+            "kind": "source_region",
+            "protocol": 0,
+            "attempt": 0
+          },
+          "path": []
+        }
+      }
+    },
+    {
+      "id": "DT-S1-extra-candidate-member",
+      "target": "DispatchCandidate",
+      "mutation": "add a display_name member",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "FastService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            },
+            "display_name": "FastService.run"
+          },
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "SafeService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "EQ-S3-missing-members",
+      "target": "EqualityDecision",
+      "mutation": "remove required enum_members member",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/equality_decisions/0",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": []
+      }
+    }
+  ],
+  "reader_refusals": [
+    {
+      "id": "EQ-R1-foreign-application",
+      "target": "EqualityDecision",
+      "mutation": "application package is foreign",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/equality_decisions/0/application",
+      "value": {
+        "application": {
+          "package": "foreign",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": []
+      }
+    },
+    {
+      "id": "EQ-R2-wrong-operand-type",
+      "target": "EqualityDecision",
+      "mutation": "source_type differs from the argument's admitted type",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/equality_decisions/0/left/source_type",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": []
+      }
+    },
+    {
+      "id": "PL-R1-duplicate-term",
+      "target": "ProtocolSemanticLocation",
+      "mutation": "duplicate application, occurrence and term_ordinal",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/checked_term_data/protocol_locations/1",
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "application",
+              "shared-protocol-node"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": []
+          }
+        },
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "application",
+              "shared-protocol-node"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "DT-R1-duplicate-selection-key",
+      "target": "DispatchCandidateTable",
+      "mutation": "two candidates have one selection_key",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/1/selection_key",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "FastService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            }
+          },
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "FastService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "DT-R2-missing-precondition",
+      "target": "DispatchCandidate",
+      "mutation": "effective_precondition names no local function body",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/dispatch_tables/0/candidates/0/effective_precondition",
+      "value": {
+        "selection_key": {
+          "package": "example",
+          "path": [
+            "model",
+            "FastService"
+          ],
+          "ordinal": 0
+        },
+        "operation_body": {
+          "package": "example",
+          "path": [
+            "function",
+            "FastService",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "effective_precondition": {
+          "package": "example",
+          "path": [
+            "function",
+            "Missing",
+            "run",
+            "requires"
+          ],
+          "ordinal": 0
+        }
+      }
+    },
+    {
+      "id": "EQ-R3-wrong-operator",
+      "target": "EqualityDecision",
+      "mutation": "operator differs from the admitted application",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/equality_decisions/0/operator",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "not_equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": []
+      }
+    },
+    {
+      "id": "EQ-R4-wrong-occurrence",
+      "target": "EqualityDecision",
+      "mutation": "occurrence is not declared by the application",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/equality_decisions/0/occurrence",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 9
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": []
+      }
+    },
+    {
+      "id": "EQ-R5-duplicate-key",
+      "target": "EqualityDecision[]",
+      "mutation": "duplicate application and occurrence key",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/checked_term_data/equality_decisions/1",
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "binary",
+              "text-equality"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "operator": "equal",
+          "left": {
+            "operand": 0,
+            "source_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "conversion_target": null
+          },
+          "right": {
+            "operand": 1,
+            "source_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "conversion_target": null
+          },
+          "schedule": "text",
+          "units": [],
+          "enum_members": []
+        },
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "binary",
+              "text-equality"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "operator": "equal",
+          "left": {
+            "operand": 0,
+            "source_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "conversion_target": null
+          },
+          "right": {
+            "operand": 1,
+            "source_type": {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "conversion_target": null
+          },
+          "schedule": "text",
+          "units": [],
+          "enum_members": []
+        }
+      ]
+    },
+    {
+      "id": "DT-R3-wrong-occurrence",
+      "target": "DispatchCandidateTable",
+      "mutation": "occurrence is not declared by the call application",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/dispatch_tables/0/occurrence",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 9
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": [
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "FastService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": {
+              "package": "example",
+              "path": [
+                "function",
+                "FastService",
+                "run",
+                "requires"
+              ],
+              "ordinal": 0
+            }
+          },
+          {
+            "selection_key": {
+              "package": "example",
+              "path": [
+                "model",
+                "SafeService"
+              ],
+              "ordinal": 0
+            },
+            "operation_body": {
+              "package": "example",
+              "path": [
+                "function",
+                "SafeService",
+                "run"
+              ],
+              "ordinal": 0
+            },
+            "effective_precondition": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "PL-R2-missing-term-mapping",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "selected protocol application has no row for its second semantic term",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations",
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "application",
+              "shared-protocol-node"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": []
+          }
+        }
+      ]
+    }
+  ],
+  "work_limit": {
+    "charged_in_order": [
+      "each checked_term_data row",
+      "each nested resolved unit fact",
+      "each nested enum member fact",
+      "each dispatch candidate"
+    ],
+    "equation": "10 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates = 17 work units",
+    "exact_limit": 17,
+    "exact_result": "admitted",
+    "one_less_limit": 16,
+    "one_less_result": "resource_exhausted at the final dispatch candidate with no partial data view"
+  }
+}
