@@ -12756,6 +12756,27 @@ fn published_positive_packages() -> Vec<(String, Value)> {
         .collect()
 }
 
+const TEMPORAL_PROFILE_CLOCK_KINDS: [(&str, &str); 3] = [
+    (
+        "quire.temporal.event-position.false-extension/v1",
+        "event_position",
+    ),
+    (
+        "quire.temporal.fixed-sample.false-extension/v1",
+        "fixed_sample",
+    ),
+    (
+        "quire.temporal.timestamped-event.finite-window/v1",
+        "timestamped_event",
+    ),
+];
+
+fn temporal_clock_kind(profile: &str) -> Option<&'static str> {
+    TEMPORAL_PROFILE_CLOCK_KINDS
+        .iter()
+        .find_map(|(known_profile, kind)| (*known_profile == profile).then_some(*kind))
+}
+
 /// Every published positive checked-package fixture carries the typed row
 /// required by each temporal clause whose selected profile configures a clock.
 /// This is the producer-side fixture invariant for FR-322-AC-294; the separate
@@ -12763,13 +12784,6 @@ fn published_positive_packages() -> Vec<(String, Value)> {
 #[trace("TC-134", "TC-233", "FR-322-AC-294")]
 #[test]
 fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
-    let expected_kind = |profile: &str| match profile {
-        "quire.temporal.event-position.false-extension/v1" => Some("event_position"),
-        "quire.temporal.fixed-sample.false-extension/v1" => Some("fixed_sample"),
-        "quire.temporal.timestamped-event.finite-window/v1" => Some("timestamped_event"),
-        _ => None,
-    };
-
     for (name, package) in published_positive_packages() {
         let nodes = package["semantic_graph"]["nodes"]
             .as_array()
@@ -12785,7 +12799,7 @@ fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
                     .iter()
                     .find(|law| law["role"] == "temporal_profile")?["definition"]["identity"]
                     .as_str()?;
-                expected_kind(profile).map(|kind| (node, profile, kind))
+                temporal_clock_kind(profile).map(|kind| (node, profile, kind))
             })
             .collect::<Vec<_>>();
         let bindings = package["temporal_bindings"].as_array();
@@ -16103,15 +16117,20 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
     let package_validator = jsonschema::validator_for(&schema).expect("checked package schema");
     let binding_validator = schema_for_def(&schema, "TemporalBinding");
     let positive = vectors["positive"].as_array().expect("positive vectors");
-    assert_eq!(positive.len(), 3, "one positive per configuration alternative");
-
-    let expected_profiles = [
-        ("event_position", "quire.temporal.event-position.false-extension/v1"),
-        ("fixed_sample", "quire.temporal.fixed-sample.false-extension/v1"),
-        ("timestamped_event", "quire.temporal.timestamped-event.finite-window/v1"),
-    ];
-    for (case, (kind, profile)) in positive.iter().zip(expected_profiles) {
-        assert_eq!(case["profile"], profile, "{}", case["id"]);
+    assert_eq!(
+        positive.len(),
+        TEMPORAL_PROFILE_CLOCK_KINDS.len(),
+        "one positive per configuration alternative"
+    );
+    let mut seen_profiles = BTreeSet::new();
+    for case in positive {
+        let profile = case["profile"].as_str().expect("profile id");
+        let kind = temporal_clock_kind(profile).expect("vector profile has a clock kind");
+        assert!(
+            seen_profiles.insert(profile),
+            "{} profile is unique",
+            case["id"]
+        );
         assert_eq!(case["clock"]["kind"], kind, "{}", case["id"]);
         let package = temporal_clock_package(case);
         assert!(
@@ -16141,6 +16160,14 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
         );
         assert_eq!(clause["body"]["arguments"][1]["value"], binding["clock_name"]);
     }
+    assert_eq!(
+        seen_profiles,
+        TEMPORAL_PROFILE_CLOCK_KINDS
+            .iter()
+            .map(|(profile, _)| *profile)
+            .collect(),
+        "the vectors cover every clock-configured profile"
+    );
 
     let multi = &vectors["multi_clause_positive"];
     let clock_names = multi["clock_names"].as_array().expect("clock names");
