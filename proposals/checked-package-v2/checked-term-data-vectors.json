@@ -876,13 +876,15 @@
           "ordinal": 0
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "run"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -958,13 +960,15 @@
           "ordinal": 1
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "absent"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -1134,13 +1138,15 @@
           "ordinal": 0
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "run"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -1200,6 +1206,46 @@
             "effective_precondition": null
           }
         ]
+      }
+    },
+    {
+      "id": "DT-S5-invented-operation-node-path",
+      "target": "DispatchCandidateTable",
+      "mutation": "use an invented graph NodeRef for a model operation member",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/dispatch_tables/0/operation",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service",
+            "run"
+          ],
+          "ordinal": 0
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": []
       }
     },
     {
@@ -1587,13 +1633,15 @@
           "ordinal": 0
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "run"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -1914,13 +1962,15 @@
           "ordinal": 9
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "run"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -2037,13 +2087,15 @@
           "ordinal": 0
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "run"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -2126,13 +2178,15 @@
           "ordinal": 0
         },
         "operation": {
-          "package": "example",
-          "path": [
-            "model",
-            "Service",
-            "run"
-          ],
-          "ordinal": 0
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "run"
         },
         "context": {
           "package": "example",
@@ -2191,6 +2245,49 @@
             "effective_precondition": null
           }
         ]
+      }
+    },
+    {
+      "id": "DT-R6-operation-names-no-member",
+      "target": "DispatchCandidateTable",
+      "mutation": "name a model operation that the declaring type does not declare",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/dispatch_tables/0/operation",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "dispatch"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operation": {
+          "declaring": {
+            "package": "example",
+            "path": [
+              "model",
+              "Service"
+            ],
+            "ordinal": 0
+          },
+          "operation": "absent"
+        },
+        "context": {
+          "package": "example",
+          "path": [
+            "model",
+            "Service"
+          ],
+          "ordinal": 0
+        },
+        "candidates": []
       }
     },
     {
