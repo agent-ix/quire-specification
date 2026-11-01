@@ -2207,7 +2207,7 @@ fn relation_failure(product: &Value) -> Option<Value> {
     let success = |member: &&Value| terminal(member) && member["intended"].as_bool().expect("intended");
     let direction = if concrete_terminal && intended && !members.iter().any(|m| success(&m)) {
         "concrete-only"
-    } else if concrete_terminal && !intended && members.iter().all(|m| success(&m)) {
+    } else if concrete_terminal && !intended && !members.is_empty() && members.iter().all(|m| success(&m)) {
         "abstract-only"
     } else {
         return None;
@@ -2216,28 +2216,34 @@ fn relation_failure(product: &Value) -> Option<Value> {
 }
 
 /// Replay of a recorded failure over a product state: the result label.
+/// Holding is checked per recorded kind, as FR-379 states.
 fn replay_relation_failure(product: &Value, recorded: &Value, loop_steps: u64) -> &'static str {
     if loop_steps > 0 {
         return "invalid_runtime_input/invalid-value";
     }
-    let Some(computed) = relation_failure(product) else {
-        return "replay-parity";
-    };
-    if computed["kind"] != recorded["kind"] || computed["position"] != recorded["position"] {
+    if product.get("incoming_step_failure").is_some() || recorded["position"] != product["position"] {
         return "replay-parity";
     }
-    let holds = if recorded["kind"] == "RefusalNotPermitted" {
-        let label = &recorded["label"];
-        let concrete_visible = labels(&product["concrete"]["visible"]);
-        product["abstract"]
-            .as_array()
-            .expect("abstract members")
-            .iter()
-            .filter(|member| stable(member))
-            .all(|member| has(&labels(&member["enabled"]), label))
-            && !has(&concrete_visible, label)
-    } else {
-        computed["direction"] == recorded["direction"]
+    let concrete = &product["concrete"];
+    let visible = labels(&concrete["visible"]);
+    let members = product["abstract"].as_array().expect("abstract members");
+    let success = |member: &&Value| terminal(member) && member["intended"].as_bool().expect("intended");
+    let concrete_terminal = !concrete["stutter_enabled"].as_bool().expect("stutter_enabled") && visible.is_empty();
+    let intended = concrete["intended"].as_bool().expect("intended");
+    let holds = match recorded["kind"].as_str().expect("kind") {
+        "RefusalNotPermitted" => {
+            let label = &recorded["label"];
+            let stable_members: Vec<&Value> = members.iter().filter(|m| stable(m)).collect();
+            !concrete["stutter_enabled"].as_bool().expect("stutter_enabled")
+                && !stable_members.is_empty()
+                && stable_members.iter().all(|m| has(&labels(&m["enabled"]), label))
+                && !has(&visible, label)
+        }
+        "TerminalSuccessMismatch" => match recorded["direction"].as_str().expect("direction") {
+            "concrete-only" => concrete_terminal && intended && !members.iter().any(|m| success(&m)),
+            _ => concrete_terminal && !intended && !members.is_empty() && members.iter().all(|m| success(&m)),
+        },
+        _ => false,
     };
     if holds { "reproduced-with-evaluated-witness" } else { "replay-parity" }
 }

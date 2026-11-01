@@ -640,6 +640,146 @@
       ],
       "expected": null,
       "incoming_step_failure": true
+    },
+    {
+      "name": "abstract-only-not-every-member",
+      "description": "Not every member is terminal success (one is intended, one is not): no abstract-only mismatch.",
+      "position": 1,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "ok",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": true
+        },
+        {
+          "name": "dead",
+          "internal_enabled": false,
+          "enabled": [],
+          "intended": false
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "binder-differs",
+      "description": "Labels share step and differ in binder: only the binder 1 label is enabled by every stable member, and the concrete state enables binder 2.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": false,
+        "visible": [
+          {
+            "step": "ev",
+            "binder": [
+              {
+                "field": "q",
+                "value": {
+                  "type": "integer",
+                  "value": "2"
+                }
+              }
+            ]
+          }
+        ],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ev",
+              "binder": [
+                {
+                  "field": "q",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                }
+              ]
+            },
+            {
+              "step": "ev",
+              "binder": [
+                {
+                  "field": "q",
+                  "value": {
+                    "type": "integer",
+                    "value": "2"
+                  }
+                }
+              ]
+            }
+          ],
+          "intended": false
+        },
+        {
+          "name": "t",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "ev",
+              "binder": [
+                {
+                  "field": "q",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                }
+              ]
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "ev",
+          "binder": [
+            {
+              "field": "q",
+              "value": {
+                "type": "integer",
+                "value": "1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "any-row-enabled-not-stable",
+      "description": "A concrete any row is enabled (stutter_enabled covers stutter and any rows): not stable, no refusal.",
+      "position": 0,
+      "concrete": {
+        "stutter_enabled": true,
+        "visible": [],
+        "intended": false
+      },
+      "abstract": [
+        {
+          "name": "s",
+          "internal_enabled": false,
+          "enabled": [
+            {
+              "step": "a",
+              "binder": []
+            }
+          ],
+          "intended": false
+        }
+      ],
+      "expected": null
     }
   ],
   "replays": [
@@ -756,6 +896,31 @@
       },
       "loop_steps": 1,
       "expected": "invalid_runtime_input/invalid-value"
+    },
+    {
+      "name": "label-enabled-by-concrete",
+      "product": "concrete-enables-label",
+      "recorded": {
+        "kind": "RefusalNotPermitted",
+        "position": 0,
+        "label": {
+          "step": "a",
+          "binder": []
+        }
+      },
+      "loop_steps": 0,
+      "expected": "replay-parity"
+    },
+    {
+      "name": "terminal-kind-holds-where-refusal-also-fails",
+      "product": "both-kinds-refusal-first",
+      "recorded": {
+        "kind": "TerminalSuccessMismatch",
+        "position": 0,
+        "direction": "concrete-only"
+      },
+      "loop_steps": 0,
+      "expected": "reproduced-with-evaluated-witness"
     }
   ]
 }
