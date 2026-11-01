@@ -1744,7 +1744,7 @@ constraints ("Reference conformance" below).
    operands of one equivalence may be of different packages (a consistent
    multi-package graph; the order compares the resolved node id's `package`, then
    `path` element by element, then `ordinal`). A reader checks the operands in
-   listed order, each before the pair rules below: an operand's `package` absent
+   listed order, at step 7 of the first-refusal order beside the `dependency_reference` checks and before the pair rules below: an operand's `package` absent
    from the importing package's direct `dependency_selections` (a package in the
    derived closure only, a package in no selection or the importing package
    itself) refuses `missing_declaration`/`missing-selection` at the operand's
@@ -1771,7 +1771,7 @@ constraints ("Reference conformance" below).
    path equality with a `declaration` only where a declaration exists, which it
    does not here (the published
    fixture's path `["scalar_type", "dimension_equivalence", <first id>, <second id>]`
-   is an example convention only). It depends on exactly those two nodes, and its one occurrence has role
+   is an example convention only). It depends on exactly its local operands (a package operand joins through `dependency_selections`, never `dependencies`), and its one occurrence has role
    `anchor` and the ordinal of the declaration among the equivalence
    declarations of its source in source order, with the declaration's region.
    A reader recomputes the equivalence classes from these nodes alone: the
