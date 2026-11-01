@@ -11643,7 +11643,7 @@
         }
       ],
       "schema": "valid",
-      "rule": "FR-322-AC-294",
+      "rule": "FR-322-AC-295",
       "expected": "refused",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
