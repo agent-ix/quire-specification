@@ -1,6 +1,6 @@
 {
   "version": "quire.model-option-type-vectors/v1",
-  "note": "STD-627. Option value types (FR-154 \"Option value types\"): a type definition of kind option with one inner typeRef, named by package identity; typeRef stays the three forms. domain_package is the FR-154 projection (option_types carry node and inner; aliases, sequence_types, map_types, reference_types, tuple_types and variant_types as in model-tuple-union-vectors.json). field_type_cases give the FR-322 step 4 type of a member (expected option/sequence/type/declaration forms as in model-tuple-union-vectors.json; same_node_as names the field sharing the composite_type/option node). intake_cases are RFC 6902 patches over domain_package; `at` is a pointer into the patched projection. No reader consumes this file yet: the strict reader and the FCD kind are follow-up work.",
+  "note": "STD-627. Option value types (FR-154 \"Option value types\"): a type definition of kind option with one inner typeRef, named by package identity; typeRef stays the three forms. domain_package is the FR-154 projection in the style of model-tuple-union-vectors.json (identity, version, object_types, tuple_types, variant_types); this file defines the further collections it needs: units, record_types, option_types (node, inner), aliases (node, target), sequence_types (node, items), map_types (node, values), reference_types (node, target), namespaces and constraints (identity, keyword, appliesTo, operands). field_type_cases give the FR-322 step 4 type of a member (forms as in model-tuple-union-vectors.json; same_node_as names the field sharing the composite_type/option node). intake_cases are RFC 6902 patches over domain_package; `at` is a pointer into the patched projection. No reader consumes this file yet: the strict reader and the FCD kind are follow-up work.",
   "domain_package": {
     "identity": "acme/optionals",
     "version": "1.0.0",
@@ -948,6 +948,34 @@
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
           "at": "/constraints/0/appliesTo"
+        }
+      }
+    },
+    {
+      "name": "OP-41",
+      "criterion": "FR-154-AC-40",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/presence",
+          "value": "optional"
+        },
+        {
+          "op": "replace",
+          "path": "/object_types/0/fields/0/multiplicity",
+          "value": {
+            "lower": "1",
+            "upper": "1",
+            "ordered": true,
+            "unique": false
+          }
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/object_types/0/fields/0/presence"
         }
       }
     }
