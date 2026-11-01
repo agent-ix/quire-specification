@@ -30,7 +30,7 @@ tool authors use it as the shared reference.
 | `proposals/` | Draft grammar, profiles, JSON schemas and the vector and fixture files that specify them. One folder per proposal. |
 | `docs/` | [The atomic V1 capability inventory](docs/v1-capability-inventory.md), which is the binding statement of scope, and [the complete architecture](docs/v1-complete-architecture.md). |
 | `plan/`, `reviews/` | Delivery plans and review records for the work above. |
-| `src/lib.rs` | A dependency-free Rust library that exposes two authored documents as constants: the package-selection vectors and the native diagnostics catalog. |
+| `src/lib.rs` | A dependency-free Rust library that exposes authored documents as constants and the 167 vector rows of TC-185, TC-186, TC-187, TC-192 and TC-193 as a typed table (`QUALIFICATION_VECTORS`), generated at build time from the authored test cases. |
 | `tests/` | The qualification tests. |
 
 <picture>
