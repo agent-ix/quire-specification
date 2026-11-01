@@ -59,6 +59,9 @@
     "Decimal": {"description": "A non-negative decimal string: 0 or [1-9][0-9]* (FR-392 seed, FR-393 and FR-400 decimals).", "$ref": "urn:quire:checked-package:v2#/$defs/NonNegativeIntegerString"},
     "IntegerString": {"$ref": "urn:quire:checked-package:v2#/$defs/IntegerString"},
     "Rational": {"$ref": "urn:quire:checked-package:v2#/$defs/Rational"},
+    "PositiveRational": {"description": "FR-364: a strictly positive exact rational with canonical integer-string numerator and positive denominator.", "type": "object", "required": ["numerator", "denominator"], "properties": {"numerator": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}, "denominator": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false},
+    "AffineRational": {"description": "FR-364 queue-growth witness: exact value base + cycle * cycle_stride + cohort * cohort_stride; cycle and cohort are independent non-negative integer indices.", "type": "object", "required": ["base", "cycle_stride", "cohort_stride"], "properties": {"base": {"$ref": "#/$defs/Rational"}, "cycle_stride": {"$ref": "#/$defs/Rational"}, "cohort_stride": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false},
+    "AffineCount": {"description": "FR-364 queue-growth witness: exact natural number base + cycle * cycle_stride + cohort * cohort_stride; cycle and cohort are independent non-negative integer indices.", "type": "object", "required": ["base", "cycle_stride", "cohort_stride"], "properties": {"base": {"$ref": "#/$defs/Count"}, "cycle_stride": {"$ref": "#/$defs/Count"}, "cohort_stride": {"$ref": "#/$defs/Count"}}, "additionalProperties": false},
     "Package": {"description": "FR-331 (defined): a checked package named by its identity string, the package name member; two packages are the same exactly when their JSON values are equal.", "$ref": "#/$defs/Nonempty"},
     "NodeId": {"$ref": "urn:quire:checked-package:v2#/$defs/NodeId"},
     "Occurrence": {"$ref": "urn:quire:checked-package:v2#/$defs/Occurrence"},
@@ -569,7 +572,7 @@
       "additionalProperties": false
     },
     "TemporalCounterexample": {
-      "description": "FR-364 TemporalCounterexample; FR-417 time-lock kind and final_delay; FR-379 refinement_failure.",
+      "description": "FR-364 TemporalCounterexample; FR-417 time-lock kind and final_delay; FR-379 refinement_failure; queue_growth is the task-product inductive divergence witness.",
       "type": "object",
       "required": ["trace", "kind", "initial_state", "prefix", "loop", "over_binding", "fairness", "interval", "trace_position"],
       "properties": {
@@ -578,6 +581,7 @@
         "initial_state": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/Count"}]},
         "prefix": {"type": "array", "items": {"$ref": "#/$defs/TraceStep"}},
         "loop": {"type": "array", "items": {"$ref": "#/$defs/TraceStep"}},
+        "queue_growth": {"$ref": "#/$defs/QueueGrowthWitness"},
         "over_binding": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
         "fairness": {"type": "array", "items": {"$ref": "#/$defs/Fairness"}},
         "interval": {"oneOf": [
@@ -591,6 +595,7 @@
       },
       "allOf": [
         {"if": {"properties": {"kind": {"const": "time-lock"}}, "required": ["kind"]}, "then": {"required": ["final_delay"]}, "else": {"not": {"required": ["final_delay"]}}},
+        {"if": {"required": ["queue_growth"]}, "then": {"properties": {"trace": {"const": "model"}, "kind": {"const": "formula"}, "loop": {"maxItems": 0}, "prefix": {"minItems": 1}}}},
         {
           "description": "FR-364: the arms are coupled. Observed arm: null initial_state and over_binding, document steps, kind formula or an undefined-evaluation envelope whose where carries no model-arm state key. Model arm: a non-null initial_state, model steps, and an envelope whose where carries no document.",
           "if": {"properties": {"trace": {"const": "observed"}}, "required": ["trace"]},
@@ -615,6 +620,103 @@
           }}
         }
       ],
+      "additionalProperties": false
+    },
+    "QueueGrowthJob": {
+      "description": "FR-364: one symbolic live-job occurrence in a regular queue word; affine occurrence and generation identify distinct jobs in each iteration.",
+      "type": "object",
+      "required": ["ref", "taskset", "task", "occurrence", "generation", "queue_position", "demand", "remaining", "activation_offset", "deadline_offset", "jitter", "priority", "allowance", "status"],
+      "properties": {
+        "ref": {"$ref": "#/$defs/Nonempty"},
+        "taskset": {"$ref": "#/$defs/Nonempty"},
+        "task": {"$ref": "#/$defs/Nonempty"},
+        "occurrence": {"$ref": "#/$defs/AffineCount"},
+        "generation": {"$ref": "#/$defs/AffineCount"},
+        "queue_position": {"$ref": "#/$defs/AffineCount"},
+        "demand": {"$ref": "#/$defs/Rational"},
+        "remaining": {"$ref": "#/$defs/Rational"},
+        "activation_offset": {"$ref": "#/$defs/AffineRational"},
+        "deadline_offset": {"$ref": "#/$defs/AffineRational"},
+        "jitter": {"$ref": "#/$defs/Rational"},
+        "priority": {"$ref": "#/$defs/Count"},
+        "allowance": {"$ref": "#/$defs/Rational"},
+        "status": {"enum": ["pending-jitter", "ready", "running", "preempted"]}
+      },
+      "additionalProperties": false
+    },
+    "QueueGrowthWord": {
+      "description": "FR-364: the regular queue word prefix · growth_block^(k+block_offset) · suffix, evaluated at cycle k+cycle_offset for all k >= 0. Prefix job affine cohort index is 0; a growth-block copy uses its zero-based copy index; suffix uses k+block_offset.",
+      "type": "object",
+      "required": ["cycle_offset", "block_offset", "prefix", "growth_block", "suffix"],
+      "properties": {
+        "cycle_offset": {"$ref": "#/$defs/Count"},
+        "block_offset": {"$ref": "#/$defs/Count"},
+        "prefix": {"type": "array", "items": {"$ref": "#/$defs/QueueGrowthJob"}},
+        "growth_block": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/QueueGrowthJob"}},
+        "suffix": {"type": "array", "items": {"$ref": "#/$defs/QueueGrowthJob"}}
+      },
+      "additionalProperties": false
+    },
+    "QueueGrowthStep": {
+      "description": "FR-364: one representative task-product transition in the inductive cycle. The transition occurrence is the k=0 instance and is lifted by job_ref/identity_map. ready_order is the complete symbolic policy order at each scheduler selection.",
+      "type": "object",
+      "required": ["transition", "job_ref", "delay", "ready_order"],
+      "properties": {
+        "transition": {"$ref": "#/$defs/QueueGrowthTransition"},
+        "job_ref": {"$ref": "#/$defs/Nonempty"},
+        "delay": {"$ref": "#/$defs/Rational"},
+        "service": {"$ref": "#/$defs/Rational"},
+        "ready_order": {"$ref": "#/$defs/QueueGrowthWord"}
+      },
+      "additionalProperties": false
+    },
+    "QueueGrowthTransition": {
+      "description": "FR-364: symbolic task-transition identity for an unbounded queue; occurrence, generation and virtual position are affine in the queue-word iteration and do not invent a finite slot.",
+      "type": "object",
+      "required": ["type", "action", "taskset", "task", "job_ref", "occurrence", "generation", "virtual_position", "release_transition", "source_transition", "demand", "jitter", "deadline_offset", "priority"],
+      "properties": {
+        "type": {"const": "task-queue-growth-transition"},
+        "action": {"enum": ["activate", "release", "dispatch", "preempt", "resume", "complete", "budget-change", "deadline-miss"]},
+        "taskset": {"$ref": "#/$defs/Nonempty"},
+        "task": {"$ref": "#/$defs/Nonempty"},
+        "job_ref": {"$ref": "#/$defs/Nonempty"},
+        "occurrence": {"$ref": "#/$defs/AffineCount"},
+        "generation": {"$ref": "#/$defs/AffineCount"},
+        "virtual_position": {"$ref": "#/$defs/AffineCount"},
+        "release_transition": {"$ref": "#/$defs/SourceTransitionIdentity"},
+        "source_transition": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/SourceTransitionIdentity"}]},
+        "demand": {"$ref": "#/$defs/Rational"},
+        "jitter": {"$ref": "#/$defs/Rational"},
+        "deadline_offset": {"$ref": "#/$defs/AffineRational"},
+        "priority": {"$ref": "#/$defs/Count"},
+        "budget_delta": {"$ref": "#/$defs/Rational"}
+      },
+      "allOf": [
+        {"if": {"properties": {"action": {"const": "budget-change"}}, "required": ["action"]}, "then": {"required": ["budget_delta"]}, "else": {"not": {"required": ["budget_delta"]}}}
+      ],
+      "additionalProperties": false
+    },
+    "QueueGrowthWitness": {
+      "description": "FR-364: one-cycle induction proving an infinite legal task-product continuation with unbounded queue and elapsed time.",
+      "type": "object",
+      "required": ["version", "stem", "source_entry", "source_exit", "clock_order", "region_entry", "region_exit", "elapsed", "before", "after", "cycle", "iteration_shift", "identity_map", "fresh_releases", "backlog_growth"],
+      "properties": {
+        "version": {"const": "queue-growth/v1"},
+        "stem": {"description": "FR-364: finite typed product path from the concrete missed state to the inductive queue-word entry.", "type": "array", "items": {"$ref": "#/$defs/QueueGrowthStep"}},
+        "source_entry": {"$ref": "#/$defs/State"},
+        "source_exit": {"$ref": "#/$defs/State"},
+        "clock_order": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Nonempty"}},
+        "region_entry": {"type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}},
+        "region_exit": {"type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}},
+        "elapsed": {"$ref": "#/$defs/PositiveRational"},
+        "before": {"$ref": "#/$defs/QueueGrowthWord"},
+        "after": {"$ref": "#/$defs/QueueGrowthWord"},
+        "cycle": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/QueueGrowthStep"}},
+        "iteration_shift": {"$ref": "#/$defs/PositiveCount"},
+        "identity_map": {"type": "array", "items": {"type": "object", "required": ["from_ref", "from_index_start", "from_index_end", "to_ref", "to_index_start", "to_index_stride", "cycle_shift"], "properties": {"from_ref": {"$ref": "#/$defs/Nonempty"}, "from_index_start": {"$ref": "#/$defs/Count"}, "from_index_end": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/Count"}, {"const": "word-end"}]}, "to_ref": {"$ref": "#/$defs/Nonempty"}, "to_index_start": {"$ref": "#/$defs/Count"}, "to_index_stride": {"$ref": "#/$defs/PositiveCount"}, "cycle_shift": {"$ref": "#/$defs/PositiveCount"}}, "additionalProperties": false}},
+        "fresh_releases": {"type": "array", "items": {"type": "object", "required": ["job_ref", "release", "task_transition", "queue_ref", "queue_index"], "properties": {"job_ref": {"$ref": "#/$defs/Nonempty"}, "release": {"$ref": "#/$defs/SourceTransitionIdentity"}, "task_transition": {"$ref": "#/$defs/QueueGrowthTransition"}, "queue_ref": {"$ref": "#/$defs/Nonempty"}, "queue_index": {"$ref": "#/$defs/AffineCount"}}, "additionalProperties": false}},
+        "backlog_growth": {"$ref": "#/$defs/PositiveCount"}
+      },
       "additionalProperties": false
     },
     "TraceStep": {
@@ -1202,9 +1304,10 @@
     "TaskProductCertificate": {
       "description": "FR-418/FR-419: finite refined-region product evidence for fixed-work task automata. Each queue-bound row carries normalized BCET and the applicable WCET as equal work_lower/work_upper values; the checker recompiles these values from the admitted task product and compares them before checking zones.",
       "type": "object",
-      "required": ["abstraction", "queue_bounds", "clock_ceilings", "diagonal_constraints", "subtractions"],
+      "required": ["abstraction", "queue_bounds", "clock_ceilings", "diagonal_constraints", "subtractions", "time_progress"],
       "properties": {
         "abstraction": {"const": "bounded-subtraction-diagonal/v1"},
+        "time_progress": {"description": "FR-418/FR-419: finite exact-mode gate. The reader recompiles and exhaustively explores all reachable refined product regions up to live_job_cap, recomputes every successor, and accepts only a closed graph with no attempted allocation above the cap; it then derives positive-delay SCCs itself. This declaration is not proof by itself.", "type": "object", "required": ["method", "live_job_cap", "closure"], "properties": {"method": {"const": "closed-finite-product/v1"}, "live_job_cap": {"$ref": "#/$defs/PositiveCount"}, "closure": {"const": "recompute-all-reachable-successors/v1"}}, "additionalProperties": false},
         "queue_bounds": {"type": "array", "items": {"type": "object", "required": ["taskset", "task", "arrival", "interarrival", "relative_deadline", "max_jitter", "work_lower", "work_upper", "max_jobs"], "properties": {"taskset": {"$ref": "#/$defs/Nonempty"}, "task": {"$ref": "#/$defs/Nonempty"}, "arrival": {"enum": ["periodic", "sporadic"]}, "interarrival": {"$ref": "#/$defs/Rational"}, "relative_deadline": {"$ref": "#/$defs/Rational"}, "max_jitter": {"$ref": "#/$defs/Rational"}, "work_lower": {"$ref": "#/$defs/Rational"}, "work_upper": {"$ref": "#/$defs/Rational"}, "max_jobs": {"$ref": "#/$defs/PositiveCount"}}, "additionalProperties": false}},
         "clock_ceilings": {"type": "array", "items": {"type": "object", "required": ["clock", "maximum"], "properties": {"clock": {"$ref": "#/$defs/Nonempty"}, "maximum": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}},
         "diagonal_constraints": {"type": "array", "items": {"type": "object", "required": ["left", "operator", "right", "constant"], "properties": {"left": {"$ref": "#/$defs/Nonempty"}, "operator": {"enum": ["<", "<=", ">", ">="]}, "right": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "#/$defs/IntegerString"}}, "additionalProperties": false}},

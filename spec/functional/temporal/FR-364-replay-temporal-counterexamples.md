@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/TC-372
     type: verifies
+  - target: ix://agent-ix/quire-specification/TC-431
+    type: verifies
   - target: ix://agent-ix/quire-specification/US-011
     type: implements
   - target: ix://agent-ix/quire-specification/FR-161
@@ -61,7 +63,7 @@ A replay settlement: `reproduced-with-evaluated-witness` with the item
 | Liveness | A lasso: a prefix, possibly empty, and a non-empty loop that re-enters at its first position. A model behaviour that ends at a terminal state is the lasso whose loop is the one terminal stutter step. |
 | Deadlock ([FR-366](FR-366-check-deadlock-freedom.md)) | A finite prefix from an initial state to the deadlocked state. Model arm only. |
 | Undefined evaluation ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)) | A finite prefix to the position at which an expression evaluates undefined, for every property form; `loop` is empty. |
-| Task-automaton deadline miss ([FR-419](../analysis/FR-419-analyze-task-set-schedulability.md)) | A prefix to a concrete job-specific missed-deadline state, with `trace_position` at that state, followed by a nonempty timed loop with positive total delay. Queue-cap overflow is internal and is never a counterexample state. The loop witnesses that the missed-deadline prefix has a time-divergent extension; a prefix without a checked loop does not refute the timed claim. |
+| Task-automaton deadline miss ([FR-419](../analysis/FR-419-analyze-task-set-schedulability.md)) | A prefix to a concrete job-specific missed-deadline state, with `trace_position` at that state, followed by exactly one checked continuation: either a finite timed loop with positive total delay, or a `queue_growth` induction witness. Queue-cap overflow is internal and is never a counterexample state. A continuation witness must establish a legal time-divergent extension; a prefix without one does not refute the timed claim. |
 
 ### Wire form
 
@@ -77,6 +79,7 @@ this table does not list refuses before replay.
 | `initial_state` | model arm: the zero-based index of the behaviour's initial state in the subject's ordered list of initial states; observed arm: `null` |
 | `prefix` | the ordered steps of the prefix |
 | `loop` | the ordered steps of the loop; empty for a finite prefix |
+| `queue_growth` | present only for a task-automaton deadline-miss counterexample whose divergent continuation has an unbounded live queue; the inductive witness below; absent for every other counterexample and mutually exclusive with a nonempty `loop` |
 | `over_binding` | model arm: the reference of the object the clause's `over` parameter is bound to, `null` for `kind: deadlock`; observed arm: `null` |
 | `fairness` | the item's resolved fairness set, each member `{kind, operation, granularity}` with `kind` `weak` or `strong` and `granularity` `whole` or `each`, in fairness-set order; empty for `kind: deadlock` |
 | `final_delay` | for `kind: time-lock` only (and then required): the exact rational delay that reaches the time-locked state ([FR-417](FR-417-settle-time-lock-freedom.md)); absent for every other kind |
@@ -107,26 +110,96 @@ concrete missed-deadline product state of a named live job: its absolute
 deadline has been reached and its exact remaining demand is positive. An
 internal queue-cap overflow is not an endpoint and does not itself refute. If
 overflow occurs, the producer must derive an actual missed-deadline state from
-the legal task trace and provide that trace and state here. The loop begins at that
-state and is a concrete positive-delay product path whose final state has the
-same source state and canonical scheduler control as its entry and whose
-clock valuations belong to the same FR-418 refined region. Its exact delays
-sum to a strictly positive rational. Repeating that region cycle gives a
-time-divergent continuation. When a completed slot is reused on the loop, the
-replayer alpha-renames the next iteration's job occurrence while preserving
-task declaration, slot, generation relation, demand choice and transition
-provenance; immutable live-job identities may not be merged. The selected
-demands, activation jitter and every mode-change allowance delta in the
-represented prefix and loop are carried by their task-transition identities
-and are checked as exact rationals. The source activation is checked against
-the bound task's periodic or sporadic inter-arrival rule; the actual release
-is exactly the selected jitter after nominal activation, and the absolute
-deadline remains nominal activation plus `D`. Each `LO` job's selected `d` is in `[BCET,C]`; each `HI` job's selected
-`d` is in `[BCET,C(HI)]`. A `HI` job has LO-mode allowance `C(LO)` until an
-admitted source transition enters HI mode. Reaching service `C(LO)` alone
-does not change mode. A completed job at the threshold has no update; an
-incomplete job with no enabled LO-to-HI source transition remains at that
-allowance. A source-authorized `budget-change` carries exactly
+the legal task trace and provide that trace and state here. Exactly one of a
+finite `loop` or `queue_growth` is then present. The finite loop is a concrete
+positive-delay product path whose final state has the same source state and
+canonical scheduler control as its entry and whose clock valuations belong to
+the same FR-418 refined region. Its exact delays sum to a strictly positive
+rational. When a completed slot is reused on the loop, the replayer
+alpha-renames the next iteration's job occurrence while preserving task
+declaration, slot, generation relation, demand choice and transition
+provenance; immutable live-job identities may not be merged.
+
+`queue_growth` is a second, inductive continuation form for a queue that grows
+without bound, where a finite full-state loop cannot close. It contains a
+finite `stem` from the concrete miss state to the inductive entry, symbolic
+queue words `before` and `after`, an exact finite cycle script, the source
+control and FR-418 refined clock region at both cycle boundaries, the positive
+elapsed time, and the occurrence/generation renaming. A symbolic
+queue word is `prefix · growth_block^(k+b) · suffix` for every integer
+`k >= 0`, evaluated at cycle `k+c`; `b` is `block_offset` and `c` is
+`cycle_offset`. The nonempty `growth_block` is the repeated cohort. Each job
+template records its task declaration, occurrence, generation, virtual queue
+position and nominal activation/deadline offsets using two-index affine forms
+`base + cycle*k + cohort*i`, where outer cycle `k` and repeated-block copy
+index `i` are independent natural numbers. Prefix templates use `i=0`, each
+repeated-block copy uses its zero-based copy index, and suffix templates use
+`i=k+b`. It also records selected fixed
+work, remaining work, jitter, priority, current service allowance and
+scheduler status. The script names every release,
+dispatch, preemption, resumption, service amount, completion, budget change
+and source feedback transition in the cycle; it states the exact symbolic
+policy order among all ready template jobs and identifies the concrete missed
+job only in the prefix. Each fresh cycle activation carries both its exact
+source release-transition identity and its derived task-transition identity.
+
+The witness states a positive integer `iteration_shift = s`. The `before`
+word has `cycle_offset=0` and a finite `block_offset=b`; `after` has
+`cycle_offset=s` and `block_offset=b+s`. It satisfies
+`after(k) = before(k+s)` for every integer `k >= 0`, after applying the
+declared identity map and exact two-index affine clock/identity updates. This
+is checked as an equality of regular queue words and every per-job field, not
+just a cardinality comparison. The checker derives `backlog_growth` as
+`s * length(growth_block)`; a supplied value that differs refuses. Every
+retained old occurrence maps injectively to one output occurrence with the
+same task declaration, exact demand, slot-generation lineage and source
+provenance. Each map entry identifies its source and destination template and
+affine cycle/cohort mapping with an explicit source cohort index range and
+destination function `(k,i) -> (k+s,i+δ)` (or an explicit prefix/suffix
+mapping); distinct live inputs cannot map to one output. The union of map
+domains covers every retained source occurrence exactly once. A consumed head
+has no map only when the cycle contains its exact completion and feedback.
+Every newly appended occurrence is outside all map ranges and has one matching
+fresh release identity. For the representative overload, `before(k)` is
+`head · G^(k+1)`, where `head` and each `G` job have two units of demand. The
+finite stem completes the concrete missed job 0 over `[1,2]` and admits job 2,
+so induction starts at `t=2` with head job 1 and `G` job 2. Each two-unit
+cycle serves and completes its head, admits the next periodic job at `t=3`
+and the following one at `t=4`, and makes the old first `G` job the next head.
+Thus `after(k)` is `head' · G^(k+2)`, where `head'` is the old first `G` job,
+and `after(k) = before(k+1)`. The two-index occurrence/deadline formulas
+advance by two source periods per cycle and one period per cohort copy. The
+live queue grows by one.
+
+The checker verifies the cycle against the product transition rules and proves
+the one-cycle lifting rule for every `k`: source control and refined region
+return; each old live occurrence is either preserved by the injective
+renaming or removed by its replayed completion; each new occurrence has a
+unique task/release identity and generation; each service/completion and
+source-feedback edge is enabled in the stated scheduler order; the output word
+is exactly the declared `after` transform; and `after` has strictly more live
+jobs than `before`. The renaming is injective over every retained live job and
+cannot merge two identities. Clock-region and per-template clock updates are
+recomputed, including saturation, diagonal guards, bounded subtraction and
+nominal deadlines. The exact cycle delays sum to a positive rational. These
+checks establish by induction an infinite legal product run with unbounded
+queue growth and unbounded elapsed time. A source-only time-progress premise,
+a queue-cap overflow, or a finite trace that does not prove this lifting rule
+is not a continuation witness. A reader refuses a malformed or non-liftable
+certificate before settling `refuted`.
+
+The selected demands, activation jitter and every mode-change allowance delta
+in the represented prefix and cycle are carried by their task-transition
+identities and checked as exact rationals. The source activation is checked
+against the bound task's periodic or sporadic inter-arrival rule; actual
+release is exactly the selected jitter after nominal activation, and the
+absolute deadline remains nominal activation plus `D`. Each `LO` job's
+selected `d` is in `[BCET,C]`; each `HI` job's selected `d` is in
+`[BCET,C(HI)]`. A `HI` job has LO-mode allowance `C(LO)` until an admitted
+source transition enters HI mode. Reaching service `C(LO)` alone does not
+change mode. A completed job at the threshold has no update; an incomplete
+job with no enabled LO-to-HI source transition remains at that allowance. A
+source-authorized `budget-change` carries exactly
 `budget_delta = C(HI)-C(LO)`, leaves actual `d` and remaining work unchanged,
 and preserves job identity, priority and deadline.
 
@@ -200,11 +273,38 @@ The replayer SHALL, in this order:
    leave a non-negative clock. A deadline-miss refutation also requires the
    exact time-divergent continuation checked by FR-418; a queue-cap overflow
    is never a counterexample endpoint, and a missed-deadline state without
-   such a continuation does not refute the timed claim.
+   such a continuation does not refute the timed claim. When `queue_growth` is
+   present, replay its `stem` immediately after the prefix and require its last
+   product state to equal the witness's `source_entry`, `region_entry` and
+   `before(0)` queue valuation exactly.
    Observed arm: the trace is the steps' documents in order.
-3. For an ordinary lasso, check that the loop's last step returns to the
-   loop's entry (model arm: its post-state is the entry state; observed arm:
-   its document is the entry document), else refuse
+3. For a `queue_growth` witness, require an empty finite `loop` and check its
+   source entry and exit state and DBM are equal, its DBM clock order and
+   matrix dimensions are canonical, and `elapsed` equals the exact sum of its
+   cycle delays and is strictly positive. Instantiate the queue words at
+   `k=0`, execute every cycle step using the task-product transition relation,
+   and check every ready-order word against the declared fixed-priority or EDF
+   ordering, including ties. Verify that all releases obey their task's
+   inter-arrival and jitter constraints; each service amount is charged only
+   to the selected running job; completions and feedback cite the exact
+   enabling identities; deadlines, demands, allowances, bounded subtractions
+   and refined clock regions agree with the source and FR-415 semantics. Then
+   check the symbolic lifting obligations: every retained job has exactly one
+   destination under the injective occurrence/generation map; every removed
+   job is completed in the script; every fresh job is a legal release with a
+   fresh identity; the transformed output word equals `before(k+iteration_shift)`
+   after the injective identity map for every `k >= 0`; and the cycle's
+   source/clock-region and per-template affine clock updates preserve this
+   recurrence. It derives the positive backlog growth from the iteration shift
+   and growth-block length. The checker must prove the cycle script's guards, policy choice,
+   feedback and queue transform by the stated word induction, not by sampling
+   a finite number of repetitions. Any failed obligation refuses
+   `invalid_runtime_input`/`invalid-value`; a valid witness denotes an infinite
+   time-divergent continuation. It does not by itself replay or replace the
+   finite concrete miss prefix.
+4. If `queue_growth` is absent, for an ordinary lasso check that the loop's
+   last step returns to the loop's entry (model arm: its post-state is the
+   entry state; observed arm: its document is the entry document), else refuse
    `invalid_runtime_input`/`invalid-value`. For a task-automaton deadline-miss
    lasso, check instead that the final source-plus-scheduler control equals
    the loop entry modulo canonical live-slot alpha-renaming, the exact clock
@@ -259,7 +359,7 @@ counterexamples an engine returned.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-364-AC-1 | A liveness refutation is a lasso with a non-empty loop, a safety refutation a finite prefix with an empty `loop`, a terminated behaviour's refutation a lasso whose loop is the one terminal stutter step, and a deadlock refutation a finite prefix ending at the deadlocked state with `kind: deadlock`. | Test (TC-295, TC-297) |
-| FR-364-AC-2 | A counterexample carries exactly the members `trace`, `kind`, `initial_state`, `prefix`, `loop`, `over_binding`, `fairness` and `trace_position`, plus the required `final_delay` of a `time-lock` counterexample and the `refinement_failure` of a refinement item; each model-arm step carries its FR-181 transition identity or the terminal-stutter identity and its post-state key; each observed-arm step carries its document position; each fairness member carries its kind, operation and granularity. A missing, extra or mistyped member, or an arm or kind the wire-form table does not list, refuses before replay. | Test (TC-295) |
+| FR-364-AC-2 | A counterexample carries exactly the members `trace`, `kind`, `initial_state`, `prefix`, `loop`, `over_binding`, `fairness` and `trace_position`, plus the required `final_delay` of a `time-lock` counterexample, `refinement_failure` of a refinement item, or `queue_growth` of an unbounded task-miss continuation; each model-arm step carries its FR-181 transition identity or the terminal-stutter identity and its post-state key; each observed-arm step carries its document position; each fairness member carries its kind, operation and granularity. A missing, extra or mistyped member, or an arm or kind the wire-form table does not list, refuses before replay. | Test |
 | FR-364-AC-3 | A valid formula counterexample replays through the model, passes the fairness check and evaluates false at `trace_position`, settling `reproduced-with-evaluated-witness` and the item `refuted`. | Test (TC-293, TC-295) |
 | FR-364-AC-4 | A loop whose last post-state is not its entry state, a step whose transition is not enabled, and a terminal stutter step at a non-terminal state refuse `invalid_runtime_input`/`invalid-value`. | Test (TC-295) |
 | FR-364-AC-5 | A lasso that fails a weak or a strong constraint of its fairness set, with enabledness recomputed from the model, refuses as an unfair lasso naming the constraint and settles no `refuted`. | Test (TC-295, TC-299) |
@@ -269,7 +369,9 @@ counterexamples an engine returned.
 | FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step position the provision does not hold refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-295) |
 | FR-364-AC-10 | The wire schema admits an observed-arm formula counterexample (null `initial_state` and `over_binding`, two `document` steps) and an observed-arm undefined-evaluation envelope whose `where` carries `position`, `document` and `locus`; it refuses an observed-arm counterexample that names an initial state, carries an `over_binding`, carries a model-arm step in its `prefix` or in its `loop`, has `kind` `deadlock`, has `kind` `time-lock` with its `final_delay`, or has an envelope whose `where` carries `state_key` or `state_keys`; and it refuses a model-arm counterexample that has a null `initial_state`, carries a `document` step in its `prefix` or in its `loop`, or has an envelope whose `where` carries `document`. | Test (TC-431) |
 | FR-364-AC-11 | A task-derived counterexample replays the exact release occurrence, selected demand within its `[BCET, WCET]` interval, absolute deadline, priority, slot generation, scheduler actions, delays, clock subtractions, source feedback and any source-authorized budget allowance delta; changing any identity field, a subtraction result or a budget delta refuses `invalid_runtime_input`/`invalid-value`, and a miss without a verified time-divergent continuation settles no `refuted`. | Test |
-| FR-364-AC-12 | A task-miss lasso has a prefix ending only at a concrete job-specific deadline-miss state with positive remaining demand, followed by a positive-delay loop whose final product state has the same source/scheduler control and refined region as its entry, modulo permitted completed-slot alpha-renaming; queue-cap overflow is rejected as a counterexample endpoint and may refute only after a concrete miss is derived and replayed. Replay rejects a zero-delay loop, a different region, an altered demand/budget delta, a changed deadline/priority, or a job identity merge. A time-lock-only prefix has no such loop and does not refute the task claim. | Test |
+| FR-364-AC-12 | A task-miss counterexample ends its prefix only at a concrete job-specific deadline-miss state with positive remaining demand and carries exactly one continuation: a finite positive-delay loop closing on source/scheduler control and refined region modulo permitted slot alpha-renaming, or a valid `queue_growth` one-cycle induction proving a positive elapsed cycle, legal policy-ordered service/releases/completions/feedback, injective occurrence/generation renaming and strictly positive backlog growth for every iteration. Queue-cap overflow is never an endpoint. A time-lock-only prefix has neither valid continuation and does not refute. | Test |
+| FR-364-AC-13 | A `queue_growth` witness for periodic `T=1`, exact work `W=2`, `D=1` replays the miss at `t=1`, a stem completing job 0 and activating job 2 by `t=2`, and a two-time-unit cycle that completes the head, admits releases at `t=3` and `t=4`, returns to the same source/clock region, and satisfies `after(k)=before(k+1)` for every `k>=0`, adding one queued job per cycle. The reader rejects an altered elapsed cycle, source-control or region mismatch, service/work balance change, priority-order inversion, missing completion feedback or source release identity, non-fresh occurrence/generation, slot/virtual-position mismatch or non-injective identity map. | Test |
+| FR-364-AC-14 | The backend-provider schema admits the typed RT-25 `queue_growth` wire vector and refuses omission of `iteration_shift`, zero `elapsed`, and a simultaneous nonempty `loop`; the vector test recomputes the two-unit cycle delay, work balance, positive backlog increment, and verifies `after(k)=before(k+1)` by affine queue-word expansion for the authored index range. These are wire/vector checks only; downstream QSL implementation tests own behavioral trace tags for FR-364-AC-12/13. | Test |
 
 ## Dependencies
 

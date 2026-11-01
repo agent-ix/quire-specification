@@ -221,26 +221,22 @@ singleton case `BCET_i = WCET_i` in the task-automata notation). The task-set
 exact fixed-work route admits a `HI` task only when `BCET = C(LO) = C(HI)`;
 mode-change products with unequal budgets remain on bounded exploration. Other existing source/product
 constraints may also establish a singleton if the reader proves them for every
-job. A WCET `C_i` alone never implies an exact demand. Queue capacity comes
-from the task-set activation bound above, not from WCET. An existing sound
-reduction may also select an exact finite procedure when its proven policy and
-feedback premises cover the admitted model. Otherwise, the analyzer uses
-bounded exploration. The exact fixed-work lowering allocates at most
-`ceil(D_i / T_i)+1` slots for type `i`, in addition to the scheduler's finite
-control. More than that many simultaneously live
-instances raises an internal queue-cap frontier. This signal is not itself a
-miss or a refutation: the analyzer must derive a concrete job-specific
-deadline-miss state from the legal task trace, replay that trace, and check its
-time-divergent continuation before returning `refuted`. If it cannot derive
-and replay that deadline miss, it returns `incomplete`, never a queue-overflow
-counterexample. The fixed-work product is decided by the
+job. A WCET `C_i` alone never implies an exact demand. The exact decision
+procedure is selected only when the FR-418 reader verifies a finite closed product: it recompiles the source/task product, uses the declared finite `live_job_cap`, and exhaustively enumerates every reachable source control, refined clock region, scheduler state, arrival/jitter phase and queue state up to that cap. It recomputes every legal source, periodic/sporadic activation, jitter, service, completion and feedback successor. The certificate is accepted only if every reachable successor is represented and no reachable attempted allocation exceeds `live_job_cap`; the reader computes positive-delay SCCs from the resulting closed graph. The cap and method label are inputs to this recomputation, not proof assertions. This provides a terminating decision procedure for the verified finite product and makes no universal claim over unbounded queue languages. The paper's no-time-stops premise is handled by graph analysis: only a checked positive-delay continuation establishes time-divergence, while time-locked branches remain under FR-417. If the finite graph does not close within the declared cap, the exact route is unavailable; the task remains admitted and uses bounded exploration, which may return replayable `incomplete`. A queue-growth witness may still establish a particular divergent refutation, but does not establish completeness or authorize `proved`.
+
+The exact fixed-work lowering proposes at most `ceil(D_i / T_i)+1` slots for type `i`, in addition to finite scheduler control. This is a candidate finite cap, not an assumption about post-miss queues: if exploration reaches an attempted allocation beyond it, the reader rejects the finite-product certificate and the analyzer uses the bounded route (or a separately replayed queue-growth refutation). Queue-cap overflow is internal and never a miss or counterexample endpoint. A concrete refutation still requires FR-364 to replay the actual job-specific deadline miss and a checked positive-delay continuation. An existing sound reduction may select another exact finite procedure only when its policy and feedback premises cover the admitted model. The fixed-work product is decided by the
 bounded-subtraction construction: each task instance has unit-rate service and
 deadline clocks; diagonal clock constraints compare service/deadline values;
 completion subtracts the completed job's fixed work from suspended-job service
 clocks. A subtraction of constant `c` is enabled only in `c <= x <= M_x` and
 leaves `x - c >= 0`; FR-415 fixes and validates every clock ceiling `M_x`.
 These clocks never have a rate other than one. The resulting finite refined
-region graph is the exact decision procedure for this class.
+region graph is exact for fixed work only after FR-418 has verified closure
+under the declared finite live-job cap. A fixed-work task automaton remains
+admitted when that finite closure cannot be established, but it uses sound
+bounded exploration and may settle `incomplete`, never `unsupported` or a
+permanent refusal. It may refute only with a concrete miss and a checked FR-364
+continuation.
 
 For a task automaton using a task-set member's execution bounds, each activated
 `LO` job selects one exact rational total demand `d` in `[BCET, C]`; each
@@ -292,12 +288,27 @@ is reported separately by FR-417 and is not a deadline miss unless the claim's
 time-divergent scope is witnessed.
 
 The paper's fixed-work proof assumes that the underlying timed automaton has
-no time-stops. This product does not inherit that assumption: FR-416 limits the
-claim to time-divergent behaviours, FR-417 reports time-locks, and every
-deadline-miss counterexample must include a separately checked time-divergent
-continuation. A finite-slot cap is only an internal search signal; it is never
-the counterexample endpoint. A time-lock-only path or slot-cap signal without
-a replayed deadline miss and checked continuation is not a refutation.
+no time-stops. This product does not inherit that assumption automatically:
+FR-416 limits the claim to time-divergent behaviours and FR-417 reports
+time-locks. The exact fixed-work path is selected only after the verifier
+checks closure of the finite product described above. Every deadline-miss
+counterexample still includes a separately replayed time-divergent
+continuation. A finite-slot cap is only an internal search signal; it is
+never the counterexample endpoint. A time-lock-only path or slot-cap signal
+without a replayed deadline miss and checked continuation is not a refutation.
+
+For fixed work with a verified closed finite product, settlement distinguishes
+three cases: a reachable miss with a checked finite loop or FR-364
+`queue_growth` witness settles `refuted`; a miss whose continuations are
+time-locked only is reported through FR-417 and does not refute; and no miss on
+any time-divergent behavior settles `proved`. If the declared exact-mode cap
+overflows, the certificate does not close and that run uses bounded
+exploration; it may settle `incomplete` with replayable FR-331 frontier
+evidence. The exact finite graph constructs checked continuation witnesses
+for its refutations. A fixed-work task automaton for which finite product
+closure cannot be established remains admitted on the bounded-search route.
+A queue-growth induction can replay one unbounded continuation but does not
+establish completeness for the fixed-work class.
 
 ## Acceptance Criteria
 
@@ -308,7 +319,7 @@ a replayed deadline miss and checked continuation is not a refutation.
 | FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test |
 | FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test |
 | FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority`, `amc` or `response` claim over a task with no `priority`, and a `fixed_priority`, `amc` or `response` claim over two tasks of equal priority, refuse `invalid_timed_model`/`invalid-task-set` naming that task (both tasks for the clash), and an `edf` claim over the same sets is admitted; a non-positive `D` and a `LO` task with dual budgets refuse the same way. | Test |
-| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim; interval demand with completion feedback and preemption is searched soundly, and a negative bounded search settles `incomplete`, `limit-reached`, never `proved` or `unsupported`. | Test |
+| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim only when FR-418 verifies a closed finite product; interval demand with completion feedback and preemption is searched soundly, and a negative bounded search settles `incomplete`, `limit-reached`, never `proved` or `unsupported`. | Test |
 | FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test |
 | FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test |
 | FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test |
@@ -318,6 +329,8 @@ a replayed deadline miss and checked continuation is not a refutation.
 | FR-419-AC-13 | At an enabled source `LO` to `HI` transition, each affected live HI job retains its selected demand, identity, priority and absolute deadline; its allowance increases by exactly `C(HI)-C(LO)`, without changing remaining actual work. Reaching the LO threshold alone does not change mode; an incomplete job with no enabled source mode transition remains at its LO allowance, and a job whose demand equals the threshold completes without a budget-change step. | Test |
 | FR-419-AC-14 | Queue-cap overflow is an internal frontier signal and never a task-transition identity or counterexample endpoint. It may lead to `refuted` only after the producer derives and FR-364 replays a concrete job-specific deadline miss and checks a positive-delay, repeatable divergent continuation; overflow, a time-lock-only path, or a miss without that continuation does not refute. | Test |
 | FR-419-AC-15 | Every task-automaton source release operation resolves to exactly one task-set task; repeated operations cannot bypass shared per-task activation timing. Periodic activations occur exactly every `T`, sporadic activations no sooner than `T`; selected `j∈[0,J]` delays scheduler readiness while the deadline remains nominal activation plus `D`. The model's source guard/invariant can make a required periodic activation impossible, yielding FR-417 time-lock rather than a fabricated activation. Ambiguous/missing binding, an early sporadic event and an out-of-range jitter are rejected; the nonzero-jitter boundary replays consistently with response `R+J`. | Test |
+| FR-419-AC-16 | With a verified closed finite product, the exact fixed-work analyzer distinguishes (a) a concrete miss with a replayed finite loop or `queue_growth` continuation (`refuted`), (b) a miss with only time-locked continuations (FR-417 reports the time-lock; the miss does not refute), and (c) no miss on any time-divergent behavior (`proved`). If any reachable successor is missing or an allocation exceeds the declared cap, the finite certificate fails and the task remains admitted on bounded exploration, which may return replayable `incomplete`. | Test |
+| FR-419-AC-17 | The FR-418 reader recompiles and exhaustively explores every reachable source control, refined clock region, scheduler state, arrival/jitter phase and queue state up to `live_job_cap`; it recomputes all release, jitter, service, completion and feedback successors, accepts only a closed graph with no cap overflow, and derives positive-delay SCCs from that graph. A missing successor, altered cap, source-only time-progress assertion or unverified graph closure fails the exact-mode check. Fixed-work inputs without this finite closure remain admitted to bounded exploration and are never refused as unsupported. | Test |
 
 ## Dependencies
 
