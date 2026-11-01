@@ -20180,6 +20180,18 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                         assert_eq!(rows[0]["occurrence"]["ordinal"], 9);
                         assert_eq!(case["expected_cause"], "invalid-value");
                     }
+                    "PC-R7-reversed-canonical-order" => {
+                        assert!(
+                            claim_node_key(&rows[0]["declaration"])
+                                > claim_node_key(&rows[1]["declaration"]),
+                            "the refusal vector reverses structural declaration order"
+                        );
+                        assert_eq!(case["expected_cause"], "invalid-semantic-graph");
+                        assert_eq!(
+                            case["locus"],
+                            "/checked_term_data/probabilistic_claims/1"
+                        );
+                    }
                     other => panic!("unknown probabilistic claim refusal {other}"),
                 }
             }

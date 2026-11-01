@@ -13,6 +13,8 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-416
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: depends_on
 ---
 
 # FR-421: Check probabilistic timed claims exactly through digital clocks
@@ -141,6 +143,7 @@ with the scaled constants and is bounded only by the request's `max_states`.
 | FR-421-AC-4 | A strict guard settles `unsupported`, `strict-clock-constraint`; a `uniform` or `exponential` delay under a workload, or any `delay` declaration under every scheduler, settles `delay-distribution`; a zero-delay cycle settles `zero-delay-cycle`; an unadmitted timed form settles `timed-form-shape`. | Test (TC-374) |
 | FR-421-AC-5 | Under a workload whose every racing delay is `discrete`, the timed subject is a Markov chain and the exact value of the all-`discrete` `RareLate` variant is `1/20`. | Test (TC-374) |
 | FR-421-AC-6 | Under a workload, an operation with no `delay` declaration has its delay chosen by the scheduler, and the bound compares the minimum or maximum over those choices: on the all-`discrete` `RareLate` variant with `reply`'s delay free, the maximum is `1/2` and the minimum 0, and `probability <= 0.01` settles `refuted` with a witness scheduler that takes `reply`'s delay 3 ms. | Test (TC-374) |
+| FR-421-AC-7 | For two probabilistic claims with equal display names and source spans but distinct declaration identities, an unsupported elapsed form settles `unsupported`, `timed-form-shape{locus}` at the unsupported formula/member of the selected declaration, and a non-admitted punctual interval settles `unsupported`, `punctual-interval{locus}` at that declaration's exact interval operator/member. The selected declaration and its `claim` occurrence are resolved through FR-322-AC-297; the result retains the selected NodeRef and occurrence. | Test (TC-374) |
 
 ## Dependencies
 
@@ -151,6 +154,9 @@ with the scaled constants and is bounded only by the request's `max_states`.
   timed model and delays.
 - [FR-416](FR-416-evaluate-timed-temporal-claims.md) supplies the timed
   profile.
+- [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  supplies the checked probabilistic claim declaration identity and occurrence
+  through `checked_term_data.probabilistic_claims` (FR-322-AC-297).
 
 ## References
 

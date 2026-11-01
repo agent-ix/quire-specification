@@ -3764,6 +3764,139 @@
           }
         ]
       }
+    },
+    {
+      "id": "PC-R7-reversed-canonical-order",
+      "target": "ProbabilisticClaimDeclaration",
+      "mutation": "two valid probabilistic claim rows appear in reverse structural declaration order",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-semantic-graph",
+      "locus": "/checked_term_data/probabilistic_claims/1",
+      "value": [
+        {
+          "id": "PC-02-equal-name-span-right",
+          "display_name": "Deadline",
+          "source_span": {
+            "start": 24,
+            "end": 41
+          },
+          "declaration": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "probability-lte"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 1
+          },
+          "resolved_node": {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "PC-01-equal-name-span-left",
+          "display_name": "Deadline",
+          "source_span": {
+            "start": 24,
+            "end": 41
+          },
+          "declaration": {
+            "package": "example",
+            "path": [
+              "claim",
+              "Deadline",
+              "expected-elapsed"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          },
+          "resolved_node": {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          }
+        }
+      ],
+      "checked_claim_context": {
+        "package": "example",
+        "declarations": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "expected-elapsed"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 0
+              }
+            ]
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "claim",
+                "Deadline",
+                "probability-lte"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "claim",
+            "semantic_form": "probabilistic_claim",
+            "occurrences": [
+              {
+                "role": "claim",
+                "ordinal": 1
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "work_limit": {
@@ -3790,6 +3923,12 @@
       "PC-01-equal-name-span-left",
       "PC-02-equal-name-span-right"
     ],
-    "must_remain_distinct": true
+    "must_remain_distinct": true,
+    "reversed_order_refusal": {
+      "vector": "PC-R7-reversed-canonical-order",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-semantic-graph",
+      "locus": "/checked_term_data/probabilistic_claims/1"
+    }
   }
 }
