@@ -19218,7 +19218,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let equality_rows = vectors["positive"]["equality_decisions"]
         .as_array()
         .unwrap();
-    assert!(equality_rows.iter().all(|row| row["term_path"] == json!([])));
+    assert!(
+        equality_rows
+            .iter()
+            .all(|row| row["term_path"] == json!([]))
+    );
     let nested_ids = [
         "EQ-06-nested-and",
         "EQ-08-nested-and-first",
@@ -19238,7 +19242,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         })
         .collect();
     for row in &nested_rows {
-        assert_eq!(row["term_path"], json!([]), "nested equality is rooted at its own application NodeRef");
+        assert_eq!(
+            row["term_path"],
+            json!([]),
+            "nested equality is rooted at its own application NodeRef"
+        );
     }
     for left in 0..nested_rows.len() {
         for right in left + 1..nested_rows.len() {
@@ -19266,7 +19274,13 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     assert_eq!(and_arguments[3]["node"], nested_rows[6]["application"]);
     let fixture_e_rows = and_graph["fixture_e_rows"].as_array().unwrap();
     assert_eq!(fixture_e_rows.len(), 4);
-    assert_eq!(fixture_e_rows.iter().map(|row| row["row"].as_u64().unwrap()).collect::<Vec<_>>(), [8, 12, 15, 17]);
+    assert_eq!(
+        fixture_e_rows
+            .iter()
+            .map(|row| row["row"].as_u64().unwrap())
+            .collect::<Vec<_>>(),
+        [8, 12, 15, 17]
+    );
     let fixture_e_ids: Vec<&Value> = fixture_e_rows
         .iter()
         .map(|row| {
@@ -19281,7 +19295,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     }
     for left in 0..fixture_e_ids.len() {
         for right in left + 1..fixture_e_ids.len() {
-            assert_ne!(fixture_e_ids[left]["application"], fixture_e_ids[right]["application"]);
+            assert_ne!(
+                fixture_e_ids[left]["application"],
+                fixture_e_ids[right]["application"]
+            );
         }
     }
     let or_graph = graph_vectors
@@ -19289,19 +19306,31 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .find(|graph| graph["id"] == "EQ-G2-equality-under-or")
         .expect("equality child under or");
     assert_eq!(or_graph["parent_body"]["arguments"][0]["kind"], "reference");
-    assert_eq!(or_graph["parent_body"]["arguments"][0]["node"], nested_rows[2]["application"]);
+    assert_eq!(
+        or_graph["parent_body"]["arguments"][0]["node"],
+        nested_rows[2]["application"]
+    );
     let member_graph = graph_vectors
         .iter()
         .find(|graph| graph["id"] == "EQ-G3-equality-in-aggregate-member")
         .expect("equality child in aggregate member");
-    assert_eq!(member_graph["parent_body"]["members"][0]["kind"], "reference");
-    assert_eq!(member_graph["parent_body"]["members"][0]["node"], nested_rows[3]["application"]);
+    assert_eq!(
+        member_graph["parent_body"]["members"][0]["kind"],
+        "reference"
+    );
+    assert_eq!(
+        member_graph["parent_body"]["members"][0]["node"],
+        nested_rows[3]["application"]
+    );
     let binding_graph = graph_vectors
         .iter()
         .find(|graph| graph["id"] == "EQ-G4-equality-in-binding-value")
         .expect("equality child in binding value");
     assert_eq!(binding_graph["parent_body"]["value"]["kind"], "reference");
-    assert_eq!(binding_graph["parent_body"]["value"]["node"], nested_rows[4]["application"]);
+    assert_eq!(
+        binding_graph["parent_body"]["value"]["node"],
+        nested_rows[4]["application"]
+    );
     for row in vectors["positive"]["protocol_locations"]
         .as_array()
         .unwrap()
