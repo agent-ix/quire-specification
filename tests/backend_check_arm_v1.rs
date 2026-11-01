@@ -418,6 +418,10 @@ fn eval(e: &Value, vars: &HashMap<String, i128>, cx: &Ctx) -> Result<i128, Fail>
                     let (a, d) = (arg(1)?, arg(2)?);
                     if d == 0 { Err(Fail::Undefined(None)) } else { Ok(a.div_euclid(d)) }
                 }
+                "mod" => {
+                    let (a, d) = (arg(1)?, arg(2)?);
+                    if d == 0 { Err(Fail::Undefined(None)) } else { Ok(a.rem_euclid(d)) }
+                }
                 ">" => b(arg(1)? > arg(2)?),
                 "<" => b(arg(1)? < arg(2)?),
                 "<=" => b(arg(1)? <= arg(2)?),
