@@ -16136,7 +16136,7 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
             "duplicate-row" => {
                 let row = package["temporal_bindings"][0].clone();
                 package["temporal_bindings"].as_array_mut().unwrap().push(row);
-                "/temporal_bindings/1".to_owned()
+                "/temporal_bindings/1/declaration".to_owned()
             }
             "clock-name-mismatch" => {
                 package["temporal_bindings"][0]["clock_name"] = json!("other-clock");
