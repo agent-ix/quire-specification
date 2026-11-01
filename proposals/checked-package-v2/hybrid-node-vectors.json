@@ -6608,18 +6608,18 @@
           "laws": [],
           "leaves": [],
           "member": {
-            "declaration": {
-              "package": "example",
-              "path": [
-                "Braking2",
-                "Moving"
-              ],
-              "ordinal": 0
-            },
             "fairness_kind": "weak",
             "granularity": "whole",
             "kind": "fairness",
-            "name": "Stopped"
+            "target": {
+              "declaration": {
+                "package": "example",
+                "path": ["Braking2", "Moving"],
+                "ordinal": 0
+              },
+              "kind": "hybrid_transition",
+              "name": "Stopped"
+            }
           },
           "mode": null
         },

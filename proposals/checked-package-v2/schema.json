@@ -668,6 +668,67 @@
         }
       }
     },
+    "TemporalFairnessTarget": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "declaration", "name"],
+          "properties": {
+            "kind": {"const": "operation"},
+            "declaration": {"$ref": "#/$defs/NodeId"},
+            "name": {"$ref": "#/$defs/Identifier"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "node"],
+          "properties": {
+            "kind": {"const": "protocol_root"},
+            "node": {"$ref": "#/$defs/NodeId"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "node"],
+          "properties": {
+            "kind": {"const": "attempt_node"},
+            "node": {"$ref": "#/$defs/NodeId"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "parallel", "branch"],
+          "properties": {
+            "kind": {"const": "parallel_branch"},
+            "parallel": {"$ref": "#/$defs/NodeId"},
+            "branch": {"$ref": "#/$defs/Identifier"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "node"],
+          "properties": {
+            "kind": {"const": "compensation_template"},
+            "node": {"$ref": "#/$defs/NodeId"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "declaration", "name"],
+          "properties": {
+            "kind": {"const": "hybrid_transition"},
+            "declaration": {"$ref": "#/$defs/NodeId"},
+            "name": {"$ref": "#/$defs/Identifier"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
     "TemporalFormulaBody": {
       "type": "object",
       "required": [
@@ -4227,8 +4288,7 @@
             "kind",
             "fairness_kind",
             "granularity",
-            "declaration",
-            "name"
+            "target"
           ],
           "properties": {
             "kind": {
@@ -4246,11 +4306,8 @@
                 "each"
               ]
             },
-            "declaration": {
-              "$ref": "#/$defs/NodeId"
-            },
-            "name": {
-              "$ref": "#/$defs/Identifier"
+            "target": {
+              "$ref": "#/$defs/TemporalFairnessTarget"
             }
           },
           "additionalProperties": false

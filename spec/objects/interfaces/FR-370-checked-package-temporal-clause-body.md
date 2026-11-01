@@ -25,6 +25,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-481
     type: references
+  - target: ix://agent-ix/quire-specification/FR-464
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: references
 ---
 
 # FR-370: Checked-package temporal clause body and temporal operation identities
@@ -135,16 +139,33 @@ it is `invalid-value` under every profile and never
 ([FR-322](FR-322-checked-package-artifact.md)).
 
 The `fairness` member is `{kind: "fairness", fairness_kind, granularity,
-declaration, name}`: `fairness_kind` is `weak` or `strong`, `granularity` is
-`whole` or `each`, and `declaration` and `name` name the operation's declaring
-`model`/`object_type` node and the operation. The member holds the resolved form,
-so `fair Op` and `fair weak whole Op` encode identically.
+target}`: `fairness_kind` is `weak` or `strong`, `granularity` is `whole` or
+`each`, and `target` is one closed, typed identity:
+
+- `{kind: "operation", declaration, name}` names an operation by its
+  declaring `model`/`object_type` node id and operation identifier;
+- `{kind: "protocol_root", node}` names a `protocol`/`protocol_clause` node;
+- `{kind: "attempt_node", node}` names an attempt control node;
+- `{kind: "parallel_branch", parallel, branch}` names one branch of the
+  exact `protocol`/`control` parallel node by that node's structural id and
+  the branch label;
+- `{kind: "compensation_template", node}` names a compensation-template
+  declaration node;
+- `{kind: "hybrid_transition", declaration, name}` names a hybrid transition
+  by its declaring hybrid model or mode node id and transition identifier.
+
+Each `node`, `parallel` or `declaration` is the exact structural `NodeId` of
+its target; the reader does not reverse-map a display name or a source region
+to an identity. The branch label is paired with its parallel node id, since a
+branch position has no semantic graph node of its own. The member holds the
+resolved form, so `fair Op` and
+`fair weak whole Op` encode identically.
 
 ## Fairness resolution
 
-A hybrid claim's fairness members name hybrid transitions and resolve by
+A hybrid claim's `hybrid_transition` target resolves by
 [FR-481](FR-481-checked-package-hybrid-model-nodes.md) "Hybrid claims"; every
-other fairness member's `name` resolves by [FR-322](FR-322-checked-package-artifact.md)
+`operation` target's `name` resolves by [FR-322](FR-322-checked-package-artifact.md)
 "Model-owned members" steps 2 and 3 among the **effective** operation
 members of its `declaration` node, the set
 [FR-362](../../functional/temporal/FR-362-apply-fairness-constraints.md)
@@ -153,7 +174,25 @@ redefinitions applied. An operation the declaring type only inherits is
 admitted and resolves to its most derived redefinition.
 [FR-342](FR-342-checked-package-operation-anchor-body.md)'s refusal of an
 inherited-only operation belongs to an operation anchor and does not apply
-to a fairness member. For one member, in this order:
+to a fairness member. A protocol-root target's `node` resolves to the exact
+`protocol`/`protocol_clause` of the clause being checked. An attempt target
+resolves to a `protocol`/`control` node whose profile operator is `attempt`; a
+compensation target resolves to a `protocol`/`compensation` node. A
+branch target's `parallel` resolves to a `protocol`/`control` node whose
+profile operator is `parallel`, and its `branch` equals one of that node's
+labels in its `branches` binding. Each target belongs to the protocol clause
+the fairness clause is over. An absent identity or an existing identity owned
+by another protocol clause in the same package refuses
+`missing_declaration`/`missing-name` at the target identity (`/target/node`
+for protocol root, attempt and compensation; `/target/parallel` for a branch).
+A foreign-package identity has the same outcome and locus. A target present
+in the named protocol but with the wrong protocol family or control operator
+refuses `invalid_model_binding`/`malformed-declaration` at its target
+identity. A branch label absent from the named parallel refuses
+`missing_declaration`/`missing-name` at `/target/branch`. The reader first
+checks package identity, then protocol-clause ownership, then target kind and,
+for a parallel branch, label membership. For an operation member, resolution
+proceeds in this order:
 
 1. **Declaring node.** The `declaration` target is a `model` node with
    `semantic_form` `object_type`, else `invalid_model_binding`/
@@ -293,6 +332,8 @@ applications' catalog checks at the operation step.
 | FR-370-AC-11 | A fairness member naming an operation its `object_type` declaring node only inherits is admitted and resolves to the most derived redefinition; a name matching two effective operations refuses `ambiguous_declaration`/`ambiguous-name`; a declaring node no selected owner matches refuses `missing_declaration`/`missing-selection`; and a `declaration` naming a `systems_interface` model node or a non-model node refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-303) |
 | FR-370-AC-12 | A reference to a `temporal`/`formula` node from a state clause's condition, and a reference to a `temporal`/`fairness` node from a clause's formula argument, refuse `ill_typed`/`operator-ineligible` located at the referencing node; a diagnostic whose `details` reference a `temporal`/`formula`, `temporal`/`fairness` or `expression`/`case` node refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`; a `details` term that is an application of the `temporal_formula`, `temporal_fairness` or `case` operator class refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}/operator`; a `details` term holding several such applications refuses at the first in document pre-order, so a `temporal_formula` application with a nested `case` argument refuses at `/diagnostics/entries/{e}/details/{d}/operator` and an aggregate of a `temporal_formula` application and then a `case` application at `/diagnostics/entries/{e}/details/{d}/members/0/operator`; and `details` referencing a `composite_type`/`union` or `value`/`union_value` node are admitted. | Test (TC-303) |
 | FR-370-AC-13 | A `temporal` clause written with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the token standing where `over` is required, and produces no node; a `quire.op.temporal.clause` application whose argument 1 is absent, `null` or a non-reference term (such as the clause's clock text literal) fails the published schema. | Test (TC-180, TC-303) |
+| FR-370-AC-14 | A fairness member's `target` discriminant and identity fields match exactly one target variant: operation, protocol root, attempt node, parallel branch, compensation template or hybrid transition. The vectors admit one member of every variant and reject an absent or unknown discriminant, a missing operation declaration, a branch label without its parallel identity, an extra target identity field and a negative node ordinal. | Test (TC-303) |
+| FR-370-AC-15 | A protocol-root target resolves to the clause's exact protocol node, an attempt and a compensation target resolve to exact nodes owned by that clause, and a parallel-branch target resolves only when its exact parallel control and branch label both belong to that clause. An absent or foreign-package identity, or an existing same-package target owned by another protocol clause, refuses `missing_declaration`/`missing-name` at `/target/node` or `/target/parallel`; a local target with the wrong protocol family or control operator refuses `invalid_model_binding`/`malformed-declaration` at the same target field; and an absent label on a local parallel refuses `missing_declaration`/`missing-name` at `/target/branch`. The reader checks package identity, clause ownership, target kind and branch-label membership in that order. | Test (TC-303) |
 
 ## Published artifacts and the operation catalog
 

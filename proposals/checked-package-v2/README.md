@@ -57,6 +57,10 @@ structures, but any external consumer receives only the contract.
   checked-package `NodeRef`s).
   Positive and malformed cases exercise schema shape, path joins and the
   unavailable versus empty-table distinction (FR-322-AC-288 to AC-292).
+- `temporal-fairness-target-vectors.json` publishes complete fairness members
+  for operation, protocol-root, attempt-node, parallel-branch,
+  compensation-template and hybrid-transition targets, plus closed-shape
+  mutations rejected by the V2 `OperationMember` schema (FR-322-AC-293).
 - `fixtures/positive-extension-nodes.json` is a V2 package carrying the
   `retention Audit { subject: "audit", days: 30 }` form of a selected
   extension as one `extension`/`extension_form` node, its two clause subnodes

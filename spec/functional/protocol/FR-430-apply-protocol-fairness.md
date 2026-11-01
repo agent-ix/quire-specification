@@ -11,6 +11,8 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-426
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: depends_on
 ---
 
 # FR-430: Apply scheduler and authored fairness over protocol steps
@@ -85,12 +87,18 @@ refuses `ambiguous_declaration`/`ambiguous-name`.
 
 Each member of a fairness set over a protocol subject is
 `{"kind":"weak"|"strong","target":<target>,"granularity":"whole"|"each","origin":"authored"|"scheduler"|"memory"}`,
-with `target` `{"type":"operation","name":"<qualified-name>"}`,
-`{"type":"attempt-node","node":"<node>"}`,
-`{"type":"thread-target","node":"<node>"|null,"branch":"<label>"|null}` (both
-null for the root) or `{"type":"template","name":"<qualified-name>"}`, or the
-target a memory model gives (a `tso` flush is `weak` and `each`; the `ra` visibility member is `strong` and `whole`, FR-437). The set is ordered by the JCS bytes of its
-members.
+with `target` a typed identity. An authored operation uses
+`{"kind":"operation","declaration":<NodeId>,"name":"<identifier>"}`;
+The checked-package target union, including the protocol-root, attempt,
+parallel-branch, compensation-template and hybrid-transition identities, is
+defined normatively by FR-370, “The `fairness` member.” This requirement
+selects the protocol target variants for authored protocol constraints and
+derived scheduler constraints; it does not define a second wire shape. Each
+identity is the exact structural id from the checked package, and every
+protocol target must belong to the named protocol clause. Memory members use
+the target forms FR-436 and FR-437 define (a `tso` flush is `weak` and `each`;
+the `ra` visibility member is `strong` and `whole`). The set is ordered by
+the JCS bytes of its members.
 
 ### Machine closure
 
