@@ -12774,9 +12774,10 @@ fn every_positive_fixture_lists_dependencies_in_structural_node_id_order() {
             let dependencies = node["dependencies"]
                 .as_array()
                 .expect("positive fixture node dependencies are an array");
-            if dependencies.windows(2).any(|pair| {
-                node_id_order(&pair[0], &pair[1]) != std::cmp::Ordering::Less
-            }) {
+            if dependencies
+                .windows(2)
+                .any(|pair| node_id_order(&pair[0], &pair[1]) != std::cmp::Ordering::Less)
+            {
                 failures.push(format!(
                     "{name} node {position}: dependencies are not unique and structurally node-id ascending"
                 ));
@@ -17847,11 +17848,7 @@ fn tc_233_descending_structural_dependencies_refuse_at_the_dependency_list() {
             format!("/semantic_graph/nodes/{position}/dependencies"),
             "{id}"
         );
-        let defects = dependency_defects(
-            id,
-            &structural_base,
-            &malformed,
-        );
+        let defects = dependency_defects(id, &structural_base, &malformed);
         assert!(
             defects.iter().any(|defect| defect.contains(&format!(
                 "node {position}: dependencies are not unique and node-id ascending"
