@@ -3650,6 +3650,36 @@
         }
       ]
     },
+    "EqualityTermPathStep": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "index"],
+          "properties": {
+            "kind": { "const": "argument" },
+            "index": { "$ref": "#/$defs/KeyOrdinal" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "index"],
+          "properties": {
+            "kind": { "const": "member" },
+            "index": { "$ref": "#/$defs/KeyOrdinal" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": { "const": "binding_value" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
     "BeyondSafeIntegerString": {
       "type": "string",
       "pattern": "^[1-9][0-9]{15,}$",
@@ -12267,7 +12297,7 @@
         "term_path": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/KeyOrdinal"
+            "$ref": "#/$defs/EqualityTermPathStep"
           }
         },
         "operator": {

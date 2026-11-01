@@ -2,6 +2,60 @@
   "positive": {
     "equality_decisions": [
       {
+        "id": "EQ-09-nested-member",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "aggregate",
+            "member-equality-root"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": [],
+        "term_path": [
+          {
+            "kind": "member",
+            "index": 0
+          },
+          {
+            "kind": "argument",
+            "index": 0
+          }
+        ]
+      },
+      {
         "id": "EQ-08-nested-and-first",
         "application": {
           "package": "example",
@@ -45,7 +99,10 @@
         "units": [],
         "enum_members": [],
         "term_path": [
-          0
+          {
+            "kind": "argument",
+            "index": 0
+          }
         ]
       },
       {
@@ -92,7 +149,10 @@
         "units": [],
         "enum_members": [],
         "term_path": [
-          1
+          {
+            "kind": "argument",
+            "index": 1
+          }
         ]
       },
       {
@@ -370,7 +430,10 @@
         "units": [],
         "enum_members": [],
         "term_path": [
-          0
+          {
+            "kind": "argument",
+            "index": 0
+          }
         ]
       },
       {
@@ -660,6 +723,59 @@
         "units": [],
         "enum_members": [],
         "term_path": []
+      },
+      {
+        "id": "EQ-10-nested-binding-value",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binding",
+            "binding-equality-root"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": [],
+        "term_path": [
+          {
+            "kind": "binding_value"
+          },
+          {
+            "kind": "argument",
+            "index": 1
+          }
+        ]
       }
     ],
     "protocol_locations": [
@@ -1227,6 +1343,62 @@
         "schedule": "text",
         "units": [],
         "enum_members": []
+      }
+    },
+    {
+      "id": "EQ-S5-unknown-term-path-kind",
+      "target": "EqualityDecision",
+      "mutation": "term_path has an unrecognized selector kind",
+      "expected_code": "malformed_wire",
+      "locus": "/checked_term_data/equality_decisions/0/term_path/0",
+      "value": {
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "text-equality"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": [],
+        "term_path": [
+          {
+            "kind": "child",
+            "index": 0
+          }
+        ]
       }
     }
   ],
@@ -2071,7 +2243,10 @@
         "units": [],
         "enum_members": [],
         "term_path": [
-          0
+          {
+            "kind": "argument",
+            "index": 0
+          }
         ]
       }
     },
@@ -2126,7 +2301,10 @@
           "units": [],
           "enum_members": [],
           "term_path": [
-            1
+            {
+              "kind": "argument",
+              "index": 0
+            }
           ]
         },
         {
@@ -2172,7 +2350,10 @@
           "units": [],
           "enum_members": [],
           "term_path": [
-            1
+            {
+              "kind": "argument",
+              "index": 0
+            }
           ]
         }
       ]
@@ -2186,10 +2367,10 @@
       "each dispatch candidate",
       "each term_path segment"
     ],
-    "equation": "13 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 3 term_path segments = 23 work units",
-    "exact_limit": 23,
+    "equation": "15 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 7 term_path segments = 29 work units",
+    "exact_limit": 29,
     "exact_result": "admitted",
-    "one_less_limit": 22,
+    "one_less_limit": 28,
     "one_less_result": "resource_exhausted at the final equality term_path segment with no partial data view"
   }
 }

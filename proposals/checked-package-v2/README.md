@@ -49,8 +49,9 @@ structures, but any external consumer receives only the contract.
 - `checked-term-data-vectors.json` publishes the closed `checked_term_data`
   carrier vectors for producer-captured equality decisions, protocol semantic
   locations and model dispatch candidate tables. Equality decisions use the
-  local root application/occurrence plus a child-index `term_path`, so nested
-  equality applications keep distinct identities; protocol locations use a
+  local root application/occurrence plus a typed `term_path` through application
+  arguments, aggregate members and binding values, so nested equality
+  applications keep distinct identities; protocol locations use a
   separate producer-assigned per-term ordinal. Dispatch candidates retain
   producer order and structural FR-150 `EffectiveId` selection keys (never
   checked-package `NodeRef`s).

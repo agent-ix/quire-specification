@@ -705,10 +705,11 @@ with both entries as loci (FR-322-AC-77).
 
 The checked-term-data vectors admit top-level equality rows and two nested
 equality rows under one `and` root plus an equality under `or`, distinguished by
-their `term_path`. A path to a
+typed `term_path` selectors. Positive vectors also traverse an aggregate member
+and a binding value. A path to a
 non-equality application refuses `invalid_package`/`invalid-value`; duplicate
 (`application`, `occurrence`, `term_path`) rows refuse
 `invalid_package`/`conflicting-definition` at the later row. Work accounting
-charges every path segment; the 23-unit boundary admits and one fewer unit
+charges every typed path segment; the 29-unit boundary admits and one fewer unit
 exhausts at the final path segment without a partial data view
 (FR-322-AC-288, AC-289, AC-292).

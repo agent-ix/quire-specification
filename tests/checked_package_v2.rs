@@ -18975,27 +18975,55 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .find(|row| row["id"] == "EQ-06-nested-and")
         .expect("nested equality under and");
     assert_eq!(nested_and["application"]["path"][2], "and-equality-root");
-    assert_eq!(nested_and["term_path"], json!([1]));
+    assert_eq!(
+        nested_and["term_path"],
+        json!([{"kind": "argument", "index": 1}])
+    );
     let nested_and_first = equality_rows
         .iter()
         .find(|row| row["id"] == "EQ-08-nested-and-first")
         .expect("first nested equality under and");
     assert_eq!(nested_and_first["application"], nested_and["application"]);
     assert_eq!(nested_and_first["occurrence"], nested_and["occurrence"]);
-    assert_eq!(nested_and_first["term_path"], json!([0]));
+    assert_eq!(
+        nested_and_first["term_path"],
+        json!([{"kind": "argument", "index": 0}])
+    );
     assert_ne!(nested_and_first["term_path"], nested_and["term_path"]);
     let and_paths: Vec<Value> = equality_rows
         .iter()
         .filter(|row| row["application"] == nested_and["application"])
         .map(|row| row["term_path"].clone())
         .collect();
-    assert_eq!(and_paths, [json!([0]), json!([1])]);
+    assert_eq!(
+        and_paths,
+        [
+            json!([{"kind": "argument", "index": 0}]),
+            json!([{"kind": "argument", "index": 1}])
+        ]
+    );
     let nested_or = equality_rows
         .iter()
         .find(|row| row["id"] == "EQ-07-nested-or")
         .expect("nested equality under or");
     assert_eq!(nested_or["application"]["path"][2], "or-equality-root");
-    assert_eq!(nested_or["term_path"], json!([0]));
+    assert_eq!(
+        nested_or["term_path"],
+        json!([{"kind": "argument", "index": 0}])
+    );
+    let nested_member = equality_rows
+        .iter()
+        .find(|row| row["id"] == "EQ-09-nested-member")
+        .expect("nested equality through aggregate member");
+    assert_eq!(nested_member["term_path"][0]["kind"], "member");
+    assert_eq!(nested_member["term_path"][0]["index"], 0);
+    assert_eq!(nested_member["term_path"][1]["kind"], "argument");
+    let nested_binding = equality_rows
+        .iter()
+        .find(|row| row["id"] == "EQ-10-nested-binding-value")
+        .expect("nested equality through binding value");
+    assert_eq!(nested_binding["term_path"][0], json!({"kind": "binding_value"}));
+    assert_eq!(nested_binding["term_path"][1]["kind"], "argument");
     for row in vectors["positive"]["protocol_locations"]
         .as_array()
         .unwrap()
@@ -19175,7 +19203,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                     "the path row is structurally valid"
                 );
                 assert_eq!(value["operator"], "equal");
-                assert_eq!(value["term_path"], json!([0]));
+                assert_eq!(
+                    value["term_path"],
+                    json!([{"kind": "argument", "index": 0}])
+                );
             }
             "EQ-R7-duplicate-path" => {
                 let rows = value.as_array().unwrap();
@@ -19297,11 +19328,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .sum();
     assert_eq!(
         row_count + unit_count + enum_count + candidate_count + term_path_segments,
-        23
+        29
     );
-    assert_eq!(work["exact_limit"], 23);
+    assert_eq!(work["exact_limit"], 29);
     assert_eq!(work["exact_result"], "admitted");
-    assert_eq!(work["one_less_limit"], 22);
+    assert_eq!(work["one_less_limit"], 28);
     assert!(
         work["one_less_result"]
             .as_str()
