@@ -49,7 +49,9 @@ structures, but any external consumer receives only the contract.
 - `checked-term-data-vectors.json` publishes the closed `checked_term_data`
   carrier vectors for producer-captured equality decisions, protocol semantic
   locations and model dispatch candidate tables. FR-322-AC-288..292 define
-  the equality row contract. Protocol locations use a producer-assigned
+  the equality row contract; FR-322-AC-297 defines probabilistic claim
+  identity and canonical row order, including the reversed-order refusal.
+  Protocol locations use a producer-assigned
   per-term ordinal. Dispatch candidates retain producer order and structural
   FR-150 `EffectiveId` selection keys (never checked-package `NodeRef`s).
   Positive and malformed cases exercise wire shapes, joins, and the unavailable
