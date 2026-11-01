@@ -8,7 +8,7 @@
           "path": [
             "expression",
             "aggregate",
-            "member-equality-root"
+            "member-equality-child"
           ],
           "ordinal": 0
         },
@@ -44,16 +44,7 @@
         "schedule": "text",
         "units": [],
         "enum_members": [],
-        "term_path": [
-          {
-            "kind": "member",
-            "index": 0
-          },
-          {
-            "kind": "argument",
-            "index": 0
-          }
-        ]
+        "term_path": []
       },
       {
         "id": "EQ-08-nested-and-first",
@@ -62,7 +53,7 @@
           "path": [
             "expression",
             "binary",
-            "and-equality-root"
+            "and-equality-left"
           ],
           "ordinal": 0
         },
@@ -98,12 +89,7 @@
         "schedule": "text",
         "units": [],
         "enum_members": [],
-        "term_path": [
-          {
-            "kind": "argument",
-            "index": 0
-          }
-        ]
+        "term_path": []
       },
       {
         "id": "EQ-06-nested-and",
@@ -112,7 +98,7 @@
           "path": [
             "expression",
             "binary",
-            "and-equality-root"
+            "and-equality-right"
           ],
           "ordinal": 0
         },
@@ -148,12 +134,97 @@
         "schedule": "text",
         "units": [],
         "enum_members": [],
-        "term_path": [
-          {
-            "kind": "argument",
-            "index": 1
-          }
-        ]
+        "term_path": []
+      },
+      {
+        "id": "EQ-TC1070-E-row-15",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "and-equality-row-15"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": [],
+        "term_path": []
+      },
+      {
+        "id": "EQ-TC1070-E-row-17",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "and-equality-row-17"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "operator": "equal",
+        "left": {
+          "operand": 0,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "right": {
+          "operand": 1,
+          "source_type": {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ],
+            "ordinal": 0
+          },
+          "conversion_target": null
+        },
+        "schedule": "text",
+        "units": [],
+        "enum_members": [],
+        "term_path": []
       },
       {
         "id": "EQ-05-compound-quantity",
@@ -393,7 +464,7 @@
           "path": [
             "expression",
             "binary",
-            "or-equality-root"
+            "or-equality-child"
           ],
           "ordinal": 0
         },
@@ -429,12 +500,7 @@
         "schedule": "text",
         "units": [],
         "enum_members": [],
-        "term_path": [
-          {
-            "kind": "argument",
-            "index": 0
-          }
-        ]
+        "term_path": []
       },
       {
         "id": "EQ-03-quantity",
@@ -731,7 +797,7 @@
           "path": [
             "expression",
             "binding",
-            "binding-equality-root"
+            "binding-equality-child"
           ],
           "ordinal": 0
         },
@@ -767,15 +833,7 @@
         "schedule": "text",
         "units": [],
         "enum_members": [],
-        "term_path": [
-          {
-            "kind": "binding_value"
-          },
-          {
-            "kind": "argument",
-            "index": 1
-          }
-        ]
+        "term_path": []
       }
     ],
     "protocol_locations": [
@@ -979,6 +1037,186 @@
           "ordinal": 0
         },
         "candidates": []
+      }
+    ],
+    "equality_application_graphs": [
+      {
+        "id": "EQ-G1-four-TC1070-equalities-under-and",
+        "parent_application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "and-equality-root"
+          ],
+          "ordinal": 0
+        },
+        "parent_body": {
+          "kind": "application",
+          "operator": "and",
+          "arguments": [
+            {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "binary",
+                  "and-equality-left"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "binary",
+                  "and-equality-right"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "binary",
+                  "and-equality-row-15"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "binary",
+                  "and-equality-row-17"
+                ],
+                "ordinal": 0
+              }
+            }
+          ]
+        },
+        "fixture_e_rows": [
+          {
+            "fixture": "TC-1070 Fixture E",
+            "row": 8,
+            "equality_id": "EQ-08-nested-and-first"
+          },
+          {
+            "fixture": "TC-1070 Fixture E",
+            "row": 12,
+            "equality_id": "EQ-06-nested-and"
+          },
+          {
+            "fixture": "TC-1070 Fixture E",
+            "row": 15,
+            "equality_id": "EQ-TC1070-E-row-15"
+          },
+          {
+            "fixture": "TC-1070 Fixture E",
+            "row": 17,
+            "equality_id": "EQ-TC1070-E-row-17"
+          }
+        ]
+      },
+      {
+        "id": "EQ-G2-equality-under-or",
+        "parent_application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "or-equality-root"
+          ],
+          "ordinal": 0
+        },
+        "parent_body": {
+          "kind": "application",
+          "operator": "or",
+          "arguments": [
+            {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "binary",
+                  "or-equality-child"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "kind": "variable",
+              "name": "other-condition"
+            }
+          ]
+        }
+      },
+      {
+        "id": "EQ-G3-equality-in-aggregate-member",
+        "parent_application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "aggregate",
+            "aggregate-root"
+          ],
+          "ordinal": 0
+        },
+        "parent_body": {
+          "kind": "aggregate",
+          "members": [
+            {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "aggregate",
+                  "member-equality-child"
+                ],
+                "ordinal": 0
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "EQ-G4-equality-in-binding-value",
+        "parent_application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binding",
+            "binding-root"
+          ],
+          "ordinal": 0
+        },
+        "parent_body": {
+          "kind": "binding",
+          "value": {
+            "kind": "reference",
+            "node": {
+              "package": "example",
+              "path": [
+                "expression",
+                "binding",
+                "binding-equality-child"
+              ],
+              "ordinal": 0
+            }
+          }
+        }
       }
     ]
   },
@@ -2293,7 +2531,7 @@
     {
       "id": "EQ-R6-path-to-non-equality",
       "target": "EqualityDecision",
-      "mutation": "term_path reaches a non-equality application in the distinct logical-term context",
+      "mutation": "term_path attempts to traverse through a reference to a separate non-equality application node",
       "expected_code": "invalid_package",
       "expected_cause": "invalid-value",
       "locus": "/checked_term_data/equality_decisions/0/term_path/0",
@@ -2303,7 +2541,7 @@
           "path": [
             "expression",
             "binary",
-            "non-equality-path-root"
+            "reference-path-root"
           ],
           "ordinal": 0
         },
@@ -2352,7 +2590,7 @@
           "path": [
             "expression",
             "binary",
-            "non-equality-path-root"
+            "reference-path-root"
           ],
           "ordinal": 0
         },
@@ -2361,6 +2599,35 @@
           "operator": "and",
           "arguments": [
             {
+              "kind": "reference",
+              "node": {
+                "package": "example",
+                "path": [
+                  "expression",
+                  "binary",
+                  "non-equality-child"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "kind": "variable",
+              "name": "guard-condition"
+            }
+          ]
+        },
+        "referenced_nodes": [
+          {
+            "node": {
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                "non-equality-child"
+              ],
+              "ordinal": 0
+            },
+            "checked_term": {
               "kind": "application",
               "operator": "or",
               "arguments": [
@@ -2373,27 +2640,31 @@
                   "name": "right-condition"
                 }
               ]
-            },
-            {
-              "kind": "variable",
-              "name": "guard-condition"
             }
-          ]
-        },
+          }
+        ],
         "selected_path": [
           {
             "kind": "argument",
             "index": 0
           }
         ],
-        "terminal_kind": "application",
-        "terminal_operator": "or"
+        "terminal_kind": "reference",
+        "terminal_node": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "non-equality-child"
+          ],
+          "ordinal": 0
+        }
       }
     },
     {
       "id": "EQ-R7-duplicate-path",
       "target": "EqualityDecision[]",
-      "mutation": "duplicate application, occurrence, and term_path key",
+      "mutation": "duplicate application and occurrence key with the required empty root term_path",
       "expected_code": "invalid_package",
       "expected_cause": "conflicting-definition",
       "locus": "/checked_term_data/equality_decisions/1",
@@ -2440,12 +2711,7 @@
           "schedule": "text",
           "units": [],
           "enum_members": [],
-          "term_path": [
-            {
-              "kind": "argument",
-              "index": 0
-            }
-          ]
+          "term_path": []
         },
         {
           "application": {
@@ -2489,12 +2755,7 @@
           "schedule": "text",
           "units": [],
           "enum_members": [],
-          "term_path": [
-            {
-              "kind": "argument",
-              "index": 0
-            }
-          ]
+          "term_path": []
         }
       ]
     }
@@ -2504,13 +2765,12 @@
       "each checked_term_data row",
       "each nested resolved unit fact",
       "each nested enum member fact",
-      "each dispatch candidate",
-      "each term_path segment"
+      "each dispatch candidate"
     ],
-    "equation": "15 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 7 term_path segments = 29 work units",
-    "exact_limit": 29,
+    "equation": "17 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 0 equality term_path segments = 24 work units",
+    "exact_limit": 24,
     "exact_result": "admitted",
-    "one_less_limit": 28,
-    "one_less_result": "resource_exhausted at the final equality term_path segment with no partial data view"
+    "one_less_limit": 23,
+    "one_less_result": "resource_exhausted at the final dispatch candidate with no partial data view"
   }
 }
