@@ -2,7 +2,6 @@
 id: FR-418
 title: "Zone certificate and its checker"
 type: FR
-object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/TC-371
     type: verifies
@@ -59,12 +58,12 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 | `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` (FR-479) binding the proof to the exact subject and claim. For a task-automaton proof, this binding selects the checked schedulability claim and therefore its policy; policy is not supplied as an independent certificate or `task_product` value. |
 | `scale` | The common denominator the constants were scaled by. |
 | `bounds` | The per-clock lower and upper bounds `L` and `U`, per discrete state, used by the simulation test. |
-| `nodes` | A finite list of nodes `(s, q, Z)`: discrete state key, claim-automaton state, canonical DBM. |
-| `edges` | For each node and each transition identity enabled from it, the index of a target node. |
+| `nodes` | A finite list of nodes `(s, q, Z)`: discrete state key, claim-automaton state, canonical DBM. For a task-product certificate, `s` is the complete source-plus-scheduler product key modulo the finite live-job renaming below. |
+| `edges` | For each node and each recomputed source transition or finite task-transition template enabled from it, the index of a target node. |
 | `initials` | Nonempty. The position in `nodes` of the initial node of each initial state of the subject, in the subject's initial-state order (FR-361): the node that covers that state's initial symbolic state. A form with one initial state lists one position. QSL FR-244 reads its single `initial` as `initials[0]`; the wire carries no `initial` member. |
 | `admitted` | The ADR-026 TD-6 witness: a start node (in a refinement form, any positioned `initials[i]`, so a time-locked first initial state does not decide it) and a path of certificate edges to a quiescent node or to a node of a component with a cycle of positive total delay (QSL FR-244 `admitted`). |
 | `refinement` | Present only for the safety half of a timed refinement (QSL FR-430): the refinement part below. |
-| `task_product` | Present only for a fixed-work task-automaton proof: the `bounded-subtraction-diagonal/v1` abstraction name, a structured `time_progress` finite-product gate, each task's enforced arrival kind, minimum interarrival, nominal relative deadline and maximum candidate slot bound, the `BCET` and applicable WCET as equal `work_lower`/`work_upper`, each auxiliary clock ceiling `M_x`, all diagonal constraints and each typed subtraction transition and constant. |
+| `task_product` | Present only for a fixed-work task-automaton proof: the `bounded-subtraction-diagonal/v1` abstraction name, a structured `time_progress` finite-product gate, each task's enforced arrival kind, minimum interarrival, nominal relative deadline and maximum candidate slot bound, the `BCET` and applicable WCET as equal `work_lower`/`work_upper`, each auxiliary clock ceiling `M_x`, all diagonal constraints and each typed `TaskTransitionTemplate` subtraction transition and constant. |
 
 QSL FR-244 names `identity`, `bounds` and a node's `automaton` as `obligation`,
 `lu_bounds` and `automaton_state`; the wire spellings here are the ones the
@@ -83,6 +82,44 @@ the task-product carrier. For EDF, absolute deadline controls order and ties
 use the FR-419 canonical-task-name/source-activation/occurrence rule; source
 declaration order and declared priority do not affect ties. A checked declared
 priority is retained as job provenance but ignored for EDF order.
+
+### Finite task-transition identity
+
+`TaskTransitionIdentity` (FR-419) remains the exact identity in replayed task
+steps and timed witnesses: it carries the zero-based activation occurrence,
+the slot generation, selected jitter and absolute deadline. Those values are
+concrete prefix data and are never renumbered in a witness.
+
+An FR-418 finite task-product certificate uses a `TaskTransitionTemplate` for
+each task edge and bounded-subtraction row. It carries `action`, `taskset`,
+`task`, `job_rank`, `slot`, the source `release` transition, the optional
+`source_transition`, and `priority` exactly when the checked task declares
+one. `job_rank` is the zero-based position of that job among the task's live
+jobs, ordered by source activation transition identity and then the exact
+occurrence in the path represented by the source node. `slot` binds that rank
+to one of the task's finite candidate slots. On an activation edge, rank and
+slot name the newly live job in the target node; on every other edge they name
+the affected live job in the source node. The template carries no global job
+occurrence, slot generation, demand, jitter or absolute deadline. The reader
+derives those from the checked task, source path and clock region. It refuses
+an out-of-range rank or slot, a slot bound to another live job, or a template
+whose action is not enabled.
+
+The task state key and every edge template identify active jobs by a finite,
+canonical bijection between each task's live jobs and its ranks and slots.
+When a job completes, its exact identity leaves the product state; a later
+activation may reuse its finite rank and slot. This is capture-avoiding
+renaming: no live job changes identity, and the equivalence preserves each
+live job's task, phase, running/ready order, clock association and source
+activation order. Completed-job occurrence and generation counters do not
+enter the finite closure because no future transition reads them after that
+job has left the state. The reader recomputes successors modulo this
+renaming, and derives positive-delay SCCs only from that closed quotient.
+When a concrete counterexample is replayed, FR-364 instantiates every template
+along its actual path, counts source activations from the prefix, and checks
+the exact occurrence, generation, jitter, deadline and service values. A
+finite certificate therefore never asserts an unbounded counter value or
+stands in for replay evidence.
 
 For a task-automaton certificate, each node's `state` is the complete
 source-plus-scheduler product key. Its DBM uses the canonical clock order:
@@ -254,8 +291,9 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence`, `refinement` or `task_product` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
 | FR-418-AC-9 | `identity` is the structural obligation identity, and in a refinement form the part's `refinement_node` is a `node_id` and `concrete_package` and `abstract_package` are package identities; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
 | FR-418-AC-10 | Every certificate lists `initials` (nonempty), and a refinement-form certificate lists, in its part, `positions` (nonempty) and `taken`, so a refinement part with empty `positions` is not a `ZoneCertificate`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initials` or `admitted`, or with an `initial` member, is not a `ZoneCertificate`; nor is a refinement part whose node-id member is named `refinement` or `node` rather than `refinement_node`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
-| FR-418-AC-11 | The `TaskProductCertificate` schema admits `abstraction: bounded-subtraction-diagonal/v1`, the structured `time_progress` object with method `closed-finite-product/v1`, a positive `live_job_cap` and closure label `recompute-all-reachable-successors/v1`, plus the queue-bound, clock-ceiling, diagonal-constraint and subtraction arrays; it refuses an unknown method, zero cap or a producer-asserted closure label. This criterion covers wire shape only; the reader's exhaustive finite-product closure and SCC checks are normative in the behavior above. | Test |
+| FR-418-AC-11 | The `TaskProductCertificate` schema admits `abstraction: bounded-subtraction-diagonal/v1`, the structured `time_progress` object with method `closed-finite-product/v1`, a positive `live_job_cap` and closure label `recompute-all-reachable-successors/v1`, plus the queue-bound, clock-ceiling, diagonal-constraint and subtraction arrays; each task-scheduler edge and subtraction uses a finite `TaskTransitionTemplate`, source-operation edges retain their source identity, and task-search frontier edges retain exact `TaskTransitionIdentity`; the schema refuses an exact task identity, an occurrence or generation added to a template, an unknown method, zero cap or a producer-asserted closure label. This criterion covers wire shape only; the reader's exhaustive finite-product closure and SCC checks are normative in the behavior above. | Test (TC-371) |
 | FR-418-AC-12 | For a task-automaton certificate, the reader derives the scheduler policy from the checked claim named by `identity`, recomputes every policy successor and refuses an edge inconsistent with that policy; `task_product` carries no policy override. An EDF certificate with absent task priorities is admitted with no synthesized priorities, and a forged priority or ready order is refused. | Test (TC-371, TC-372) |
+| FR-418-AC-13 | In a fixed-work task certificate, every task-scheduler edge and bounded-subtraction row uses a finite `TaskTransitionTemplate`, while source-operation edges retain their source identity; the reader closes the source-plus-scheduler graph modulo capture-avoiding renaming of completed jobs, accepts a periodic cycle whose absolute activation occurrence grows on each traversal, and refuses a template with an out-of-range or mismatched live-job rank/slot. Concrete replay instantiates the template with the exact prefix occurrence and generation, including when a completed slot is reused. | Test (TC-371) |
 
 ## Dependencies
 

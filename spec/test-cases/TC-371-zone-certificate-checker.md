@@ -23,7 +23,7 @@ Accept valid zone certificates and reject or refuse invalid ones, recomputing ev
 
 ## Test Procedure
 
-Run each vector through the real local Rust boundary of the frontend or provider named by the requirement, and compare the complete typed result (value, cause and payload) with the expected result. Mutations start from ZC-01's certificate. ZC-10 to ZC-13 check the certificate's wire and canonical bytes (FR-418 "Canonical bytes") against the `ZoneCertificate` definition of the FR-331 schema and the vectors in `proposals/backend-provider-v1/zone-certificate-vectors.json`; they run in `tests/zone_certificate_wire.rs`. Tag those tests `#[trace("TC-371", "FR-418-AC-n")]`.
+Run each vector through the real local Rust boundary of the frontend or provider named by the requirement, and compare the complete typed result (value, cause and payload) with the expected result. Mutations start from ZC-01's certificate. ZC-10 to ZC-13 and ZC-19 to ZC-25 check the certificate's wire and canonical bytes (FR-418 "Canonical bytes") against the `ZoneCertificate` definition of the FR-331 schema and the vectors in `proposals/backend-provider-v1/zone-certificate-vectors.json`; they run in `tests/zone_certificate_wire.rs`. ZC-19 supplies the two-state finite periodic task cycle, ZC-23 supplies completed-job renaming while another task job stays live, and ZC-24..25 supply schema-valid task-reader refusals. Tag those tests `#[trace("TC-371", "FR-418-AC-n")]`.
 
 ## Models
 
@@ -53,9 +53,25 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-16 | ZC-15 with, in turn, its queue bound, one clock ceiling, one diagonal constraint, or the subtraction guard/constant omitted or changed; one subtraction enabled below `c` or above `M_x`, or yielding a negative value | Each is rejected at the task product/certificate locus; the checker recomputes all values from the admitted task set and product |
 | ZC-17 | ZC-15 with a reachable deadline-miss node having a verified positive-delay continuation; then a deadline-miss node with no such continuation and marked `locked`; then a task-product certificate containing a queue-cap overflow node | The first certificate is rejected as `bad-state`; the locked time-lock-only path does not refute the timed claim and remains separately reportable by FR-417; the queue-cap overflow node is not a legal task-product state and the checker refuses the certificate |
 | ZC-18 | A fixed-work EDF task-product certificate bound by `identity` to its checked claim, for two equal-deadline jobs whose tasks declare no priorities and whose source declaration order is `b`, `a`; then the same certificate with the first dispatch edge reversed; then a task-product carrying an extra `policy: fixed-priority` member | The reader derives EDF from the bound claim, admits the certificate only when every recomputed successor follows absolute deadline and the FR-419 canonical-task-name/activation/occurrence tie rule (`a` before `b`), independent of source declaration order, and does not synthesize task priorities. The reversed edge is `certificate-rejected` for a missing or incorrect successor; the extra policy member is not a `TaskProductCertificate` |
+| ZC-19 | A two-state fixed-work periodic cycle: an activation template creates rank 0/slot 0 in the target, a completion template names that live job in the source, and the task has period 2, demand 1 and deadline 2 | The finite certificate closes after one activation/completion cycle although each replayed traversal has the next exact activation occurrence; concrete replay reconstructs the exact occurrence, generation, jitter, deadline and service values for every step |
+| ZC-20 | ZC-19 with its certificate edge replaced by a complete exact `TaskTransitionIdentity` carrying `job` and `generation` | Not a `ZoneCertificate`; finite certificate edges do not carry exact global occurrence or generation |
+| ZC-21 | ZC-19 with `job` added to the finite activation template | Not a `ZoneCertificate`; a finite template has a closed shape with no global job occurrence |
+| ZC-22 | ZC-19 with its bounded-subtraction `transition` replaced by a complete exact `TaskTransitionIdentity` | Not a `ZoneCertificate`; bounded-subtraction rows use the same finite template identity as task-scheduler edges |
+| ZC-23 | Task A completes while task B remains live, then A activates again using rank 0/slot 0 | The finite task certificate preserves B's identity and order across A's completion and reuse. Exact replay emits A's first occurrence and next occurrence with the appropriate slot generations while B remains unchanged |
+| ZC-24 | ZC-23 with the activation template's `job_rank` set beyond the recomputed live-job range | `certificate-rejected`, `successor-missing` at node 1 |
+| ZC-25 | ZC-23 with the completion template's `slot` changed to a slot not bound to its live job | `certificate-rejected`, `successor-missing` at node 0 |
 
 ## Expected Results
 
 Each certificate is accepted, rejected or refused exactly as stated.
+
+For ZC-19 and ZC-23 the reader recomputes all task successors modulo the
+canonical live-job bijection. The periodic cycle does not compare concrete
+occurrence or generation counters when deciding finite closure. Replay follows
+each concrete source transition and instantiates the template with the exact
+next occurrence and slot generation; ZC-23 proves that after completion it may
+reuse that rank and slot without changing another live job's identity.
+Changing the template's task, source operation, action, live-job rank or slot so
+it no longer matches the recomputed successor refuses the certificate.
 
 A refinement part with an empty `positions`, an `initial` member, an `initials` member inside the part, or its node id under the name `refinement` or `node` (the part's member is `refinement_node`) is not a `ZoneCertificate` (FR-418-AC-10).
