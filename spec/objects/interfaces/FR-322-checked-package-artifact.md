@@ -1085,6 +1085,9 @@ A frame body refusal, meaning-join or canonical-order
   compilation. These values are captured from the checked semantic term and
   are never derived from `source_map` regions, display names, or a package
   selected outside this checked package.
+  When a supplied `location.origin.kind` names neither closed origin variant,
+  the reader SHALL refuse `malformed_wire` at that `kind` member, not at the
+  containing origin object.
 
   `dispatch_tables` retains the producer's admitted candidate table for a
   selected model-operation dispatch. A table names the exact application and

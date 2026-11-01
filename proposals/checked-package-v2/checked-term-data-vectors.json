@@ -1329,7 +1329,7 @@
       "target": "ProtocolSemanticLocation",
       "mutation": "replace origin kind with source_region",
       "expected_code": "malformed_wire",
-      "locus": "/checked_term_data/protocol_locations/0/location/origin",
+      "locus": "/checked_term_data/protocol_locations/0/location/origin/kind",
       "value": {
         "application": {
           "package": "example",
