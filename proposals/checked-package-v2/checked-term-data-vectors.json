@@ -2196,17 +2196,17 @@
     {
       "id": "EQ-R6-path-to-non-equality",
       "target": "EqualityDecision",
-      "mutation": "term_path resolves to a non-equality application",
+      "mutation": "term_path reaches a non-equality application in the distinct logical-term context",
       "expected_code": "invalid_package",
       "expected_cause": "invalid-value",
-      "locus": "/checked_term_data/equality_decisions/0/term_path",
+      "locus": "/checked_term_data/equality_decisions/0/term_path/0",
       "value": {
         "application": {
           "package": "example",
           "path": [
             "expression",
             "binary",
-            "and-equality-root"
+            "non-equality-path-root"
           ],
           "ordinal": 0
         },
@@ -2248,6 +2248,49 @@
             "index": 0
           }
         ]
+      },
+      "checked_term_context": {
+        "root_application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            "non-equality-path-root"
+          ],
+          "ordinal": 0
+        },
+        "checked_term": {
+          "kind": "application",
+          "operator": "and",
+          "arguments": [
+            {
+              "kind": "application",
+              "operator": "or",
+              "arguments": [
+                {
+                  "kind": "variable",
+                  "name": "left-condition"
+                },
+                {
+                  "kind": "variable",
+                  "name": "right-condition"
+                }
+              ]
+            },
+            {
+              "kind": "variable",
+              "name": "guard-condition"
+            }
+          ]
+        },
+        "selected_path": [
+          {
+            "kind": "argument",
+            "index": 0
+          }
+        ],
+        "terminal_kind": "application",
+        "terminal_operator": "or"
       }
     },
     {

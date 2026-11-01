@@ -19022,7 +19022,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .iter()
         .find(|row| row["id"] == "EQ-10-nested-binding-value")
         .expect("nested equality through binding value");
-    assert_eq!(nested_binding["term_path"][0], json!({"kind": "binding_value"}));
+    assert_eq!(
+        nested_binding["term_path"][0],
+        json!({"kind": "binding_value"})
+    );
     assert_eq!(nested_binding["term_path"][1]["kind"], "argument");
     for row in vectors["positive"]["protocol_locations"]
         .as_array()
@@ -19206,6 +19209,24 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 assert_eq!(
                     value["term_path"],
                     json!([{"kind": "argument", "index": 0}])
+                );
+                let context = &case["checked_term_context"];
+                assert_eq!(context["root_application"], value["application"]);
+                assert_eq!(context["selected_path"], value["term_path"]);
+                let selected_term = &context["checked_term"]["arguments"][0];
+                assert_eq!(context["checked_term"]["kind"], "application");
+                assert_eq!(context["checked_term"]["operator"], "and");
+                assert_eq!(selected_term["kind"], "application");
+                assert_eq!(selected_term["operator"], "or");
+                assert_ne!(selected_term["operator"], "equal");
+                assert_ne!(selected_term["operator"], "not_equal");
+                assert_eq!(context["terminal_kind"], selected_term["kind"]);
+                assert_eq!(context["terminal_operator"], selected_term["operator"]);
+                assert_eq!(case["expected_code"], "invalid_package");
+                assert_eq!(case["expected_cause"], "invalid-value");
+                assert_eq!(
+                    case["locus"],
+                    "/checked_term_data/equality_decisions/0/term_path/0"
                 );
             }
             "EQ-R7-duplicate-path" => {
