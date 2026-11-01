@@ -119,13 +119,17 @@ Declaration refusals:
 | An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An operation parameter's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of the parameter's identity `<operation identity>/<param>`, on a parameter not refused as a repeated identity of its operation (checked after that row and before the frame entries) | `invalid_model_binding`/`malformed-declaration` |
 | A field's or an operation's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of its identity `<owner identity>/<member name>`, on a member not refused as a repeated identity of its owner (checked after the "Two nodes share one identity" row below) | `invalid_model_binding`/`malformed-declaration` |
-| A field, parameter, result, alias `target`, sequence `items`, map `values`, tuple position `typeRef` or variant case `payloadType` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and a package value type identity (including a tuple's owner-nested identity). This row validates reference form only: tuple position admission is further restricted by FR-322, which refuses Clock as `invalid_model_binding`/`malformed-declaration`; variant payload admission is governed by AC-25. | `invalid_model_binding`/`malformed-declaration` |
+| A field, parameter, result, alias `target`, sequence `items`, map `values`, option `inner`, tuple position `typeRef` or variant case `payloadType` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and a package value type identity (including a tuple's owner-nested identity). This row validates reference form only: tuple position admission is further restricted by FR-322, which refuses Clock as `invalid_model_binding`/`malformed-declaration`; variant payload admission is governed by AC-25. | `invalid_model_binding`/`malformed-declaration` |
 | `ix://quire/unit/<name>` as a reference `target` (a quantity has no identity, so no reference names one), a constraint on a clock whose keyword is neither `min` nor `max`, a constraint on a unit whose keyword is neither `min` nor `max`, or a clock member (a field or parameter typed `ix://quire/native/Clock`, or a result of that type) that breaks the clock member shape below | `invalid_model_binding`/`malformed-declaration` |
 | A dimension or unit node with a malformed member or a unit-graph defect: a `name` outside `^[A-Za-z][A-Za-z0-9_]*$`, a non-boolean `base`, an `identity` that is not `ix://<package identity>/dimension/<name>` or `ix://<package identity>/unit/<name>`, a base dimension with terms, a term exponent that is not a canonical integer string, `0` or outside `i128`, terms out of order or repeated, a term cycle, a `scale` or `offset` that is not a canonical rational string or is outside `i128`, a zero `scale`, a `target` in another dimension, a second root of one dimension, a root whose `scale` is not `1` or `offset` not `0`, a target cycle, a `dimension` or `target` that is not an identity, or a missing or malformed `origin` | `invalid_model_binding`/`malformed-declaration` |
 | A dimension term's `dimension`, a unit's `dimension` or a unit's `target` names no dimension or unit node of the package | `missing_declaration`/`missing-name` |
 | A supertype, field type, tuple position `typeRef`, subsets, redefines, relationship end, frame entry, population member, `occurrenceField`, transition `from`, `to`, `trigger`, `guard` or `emits` entry, step `consumes` or `emits` entry, `persists` entry or namespace `members` entry names no node or member of the package | `missing_declaration`/`missing-name` |
 | A node of a business model meaning (FR-208) declares a form that meaning does not support: a non-empty `supertypes` or a `quire` clause of a persistence interface or namespace, an operation of a record value type, or an operation contract of a persistence interface | `unsupported_construct`/`declaration-form` |
 | A tuple value type (FR-208) has no position, a position index is not a contiguous zero-based ordinal, a position has no `typeRef`, its type is unsupported, or the type declares fields, identity fields, operations, supertypes or clauses | `invalid_model_binding`/`malformed-declaration` |
+| An option value type ("Option value types" below) whose `inner` is absent, `null`, empty, not a string, an array, or an object; whose `inner` names (directly or through an alias chain) an option value type, `ix://quire/native/Clock` or a node that is no value type (an event type, state machine, process, persistence interface or namespace); that declares fields, identity fields, operations, supertypes, clauses, positions, variants, `items`, `values` or `target` member, or a non-empty `constraints`; or a constraint whose `appliesTo` names an option value type | `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.inner` (at the declared member's path for a declared member, `TypeDefinition.constraints` for a constraint of the type and `Constraint.appliesTo` for a constraint naming it) |
+| An option value type's `inner` is a well-formed package type identity that names no node of the package | `missing_declaration`/`missing-name` at `TypeDefinition.inner` |
+| A field of option value type (directly or through an alias chain) with presence `optional` and multiplicity `{1, 1, false, true}`, which would be `Option<Option<T>>` | `invalid_model_binding`/`malformed-declaration` at `Field.presence` |
+| A `reference` whose `target` names an option value type (a reference names an object) | `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.target` |
 | A variant case's `payloadType` is unresolved or names a type not admitted as a value type | `unsupported_construct`/`declaration-form` |
 | A variant type (FR-208) declares no case, a case has no source span, a case's identity is not the variant slot identity of its owner and its name, or its construct's shape is not `enumeration` | `invalid_model_binding`/`malformed-declaration` |
 | Two nodes share one identity, including two dimensions or two units with one identity (the refusal names the shared identity at the later node's `Dimension.identity` or `Unit.identity`), two fields of one owner (the refusal names the shared identity at `TypeDefinition.fields[j]`), two operations of one owner or a field and an operation of one owner (at `TypeDefinition.operations[k]`; in a field and operation pair the operation, declared after the fields, is the one refused), two parameters of one operation (at `TypeDefinition.operations[k].params[s]`), two tuple positions with one ordinal identity (at the later position's path), two variant cases of one type or of different types (at the later case node's owner's `TypeDefinition.variants[i]`), two states of one owner with one name (the refusal names the shared identity at `TypeDefinition.states[i]`), two steps of one owner with one name (the refusal names the process at `TypeDefinition.steps[i]`), or a clause, state, transition or step whose member name is also the name of a field or operation of its owner (a state or transition names its own identity at `TypeDefinition.states[i]` or `TypeDefinition.transitions[i]`, the later declaration in document order, operations before states) | `invalid_model_binding`/`conflicting-binding` |
@@ -267,6 +271,45 @@ Intake does not check which construct owns an admitted clock member or whether
 the model declares a time source; QSL FR-230 and FR-415 check those where the
 clock is used.
 
+**Option value types.** A `typeRef` is one of the three forms above and never
+carries a type argument, so `Option<T>` is not spelled in a `typeRef`:
+`ix://quire/native/Option` and every `typeRef` that embeds a second reference are
+outside the set and refuse `invalid_model_binding`/`malformed-declaration`. An
+**option value type** is a type definition node of `kind` `option` (beside
+`alias`, `sequence`, `map` and `reference`) with exactly one member `inner`, a
+string `typeRef` of the three forms. It denotes `Option<T>`, `T` the type `inner`
+names: an absent value, or one present `T` value (FR-322 "Model-owned members"). It
+is one type definition node, builds one original declaration keyed by its package
+identity and IR node identity, and is named by `ix://<package identity>/<artifact
+id>` like any package type, so it is admitted at every position that takes a package
+type: a field, parameter or result `typeRef`, an alias `target`, a sequence `items`,
+a map `values`, a tuple position `typeRef` and a variant case `payloadType`. `inner`
+may name a native value type other than `Clock`, a unit (`Option<Quantity<u>>`), or
+any package value type, including a record, tuple, variant, sequence, map or
+reference type and an alias of those; a unit bound on `inner` bounds each present
+value. `inner` never names an option value type, directly or through an alias
+chain: `Option<Option<T>>` has no spelling, and intake does not flatten one. A
+clock place is optional by presence alone (FR-415 "Clock places"), so `inner`
+never names `Clock` or an alias of it either.
+
+*Presence and option.* Presence `optional` on a field is the member-level
+spelling and an option value type is the type-level spelling of one type. A field
+of option type `O` over `T` with presence `required` and multiplicity `{1, 1,
+false, true}` and a field of `T` with presence `optional` and the same multiplicity
+have the same type `Option<T>`, the same `composite_type`/`option` node, the same
+equality and the same values; neither adds a meaning the other lacks, and a
+reader derives no difference between them. They differ in reach only: presence
+exists only on a field, so an optional element, map value, tuple position, variant
+payload, alias target or parameter is expressed by an option value type and by no
+other means. Wrapping is single: presence `optional` on a field of option type
+with multiplicity `{1, 1, false, true}` is the refused `Option<Option<T>>`, while
+a collection multiplicity wraps the option type (`Sequence<Option<T>>[0, 3]`) and
+presence `optional` on a collection field wraps the collection
+(`Option<Sequence<T>[0, 3]>`), both admitted. Failures of one option type report
+in the order shape members, `constraints`, `inner` form, `inner` resolution, `inner`
+kind (nesting, `Clock`, non-value type), and a field's presence refusal reports
+after the field's `typeRef` refusals.
+
 `ix://quire/unit/<name>` is admitted at every position that takes a type:
 a field, parameter or result `typeRef`, an alias `target`, a sequence `items`,
 a map `values` and a variant case `payloadType` (a payload follows the same
@@ -291,7 +334,7 @@ at `Constraint.operands`, and a `min` greater than a `max` with the same
 The bound constrains every member of the selected package that is typed by `u`
 (or, when `appliesTo` is an alias, typed by that alias or an alias of it): a
 field, an operation parameter or result, and each element of a sequence, each
-value of a map and each present value of an optional member of that type. The
+value of a map and each present value of an optional member or of an option value type of that type. The
 magnitude of such a value is an exact rational in `u`, and the value satisfies
 `min c` exactly when its magnitude is at least `c` and `max c` exactly when it is
 at most `c`, so a magnitude equal to `c` satisfies both; no unit conversion is
@@ -650,6 +693,9 @@ Admission checks are decided before the first charge.
 | FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version. | Test (TC-234) |
 | FR-154-AC-37 | Two documents supplied under one domain package identity, whether or not they differ, refuse `invalid_package`/`conflicting-definition` before intake, naming both; a selection whose identity no supplied document has refuses `missing_import`/`missing-selection` at the identity string. | Test (TC-234) |
 | FR-154-AC-38 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-154-AC-39 | An option value type `OptInt` (`kind` `option`, `inner` `ix://quire/native/Integer`) is admitted as one type definition node and one original declaration keyed `(acme/optionals, ix://acme/optionals/OptInt)`, with no declaration for the native `inner` and no declaration key naming `quire/native`; it is admitted as a field `typeRef`, an operation parameter `typeRef`, an operation result `typeRef`, an alias `target`, a sequence `items`, a map `values`, a tuple position `typeRef` and a variant case `payloadType`, and the same shape is admitted over `ix://quire/unit/ms` (`Option<Quantity<ms>>`, left unresolved by intake), over a package value type, record, tuple, variant and object-reference type, and over an alias of each. A field typed `OptInt` with presence `required` and multiplicity `{1, 1, false, true}` and a field typed `ix://quire/native/Integer` with presence `optional` and the same multiplicity are both admitted and are the same type `Option<Integer>`; a field typed `OptInt` with multiplicity `{0, 3, true, false}` is `Sequence<Option<Integer>>[0, 3]` and one typed `ix://quire/native/Integer` with presence `optional` and that multiplicity is `Option<Sequence<Integer>[0, 3]>`, both admitted. | Test (TC-234) |
+| FR-154-AC-40 | An option value type whose `inner` is an option value type, whose `inner` is an alias of one, and whose `inner` is itself, each refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.inner` and are not flattened; a field typed by an option value type, or by an alias of one, with presence `optional` and multiplicity `{1, 1, false, true}` refuses `invalid_model_binding`/`malformed-declaration` at `Field.presence`, and the same field with presence `required`, or with presence `optional` and multiplicity `{0, 3, true, false}`, is admitted; an option value type whose `inner` is `ix://quire/native/Clock` or an alias of it, or names an event type, state machine, process, persistence interface or namespace, refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.inner`, and an option over `ix://quire/native/Integer`, a unit and a package value type is admitted; a `reference` whose `target` is an option value type refuses at `TypeDefinition.target`; a field typed `ix://quire/native/Option`, `ix://quire/native/Option<Integer>` or `ix://quire/native/option` refuses `invalid_model_binding`/`malformed-declaration` at `Field.typeRef`. | Test (TC-234) |
+| FR-154-AC-41 | An option value type with no `inner`, a `null`, empty, numeric or object `inner`, an `inner` array of one element and an `inner` array of two elements each refuse `invalid_model_binding`/`malformed-declaration` once at `TypeDefinition.inner`; an `inner` that is `Integer` with no URI or `ix://quire/native/Int` refuses the same at `TypeDefinition.inner`; an `inner` that is a well-formed package identity naming no node refuses `missing_declaration`/`missing-name` at `TypeDefinition.inner`; an option value type that declares a field, an operation, a supertype, a position, an `items` member or a non-empty `constraints`, and a constraint whose `appliesTo` is an option value type, each refuse `invalid_model_binding`/`malformed-declaration` at that member's path, `TypeDefinition.constraints` or `Constraint.appliesTo`; a refused option value type raises no refusal at the fields that name it, and its refusals report in the order shape members, `constraints`, `inner` form, `inner` resolution, `inner` kind. | Test (TC-234) |
 
 ## Dependencies
 

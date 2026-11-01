@@ -29,6 +29,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-116
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-298
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-144-AC-27
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-144-AC-28
@@ -191,6 +193,7 @@ process or state machine.
 | MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
 | MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
 | MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
+| MT-25 | `field` `a`, an option value type over native `Integer` with presence `required`; `field` `b`, native `Integer` with presence `optional`; `field` `d`, the option value type with `[0, 3]`, ordered, not unique (`field_type_cases` OP-01 to OP-08 of `model-option-type-vectors.json`, package `acme/optionals`) | `Option<Integer>` and `Option<Integer>` over one `composite_type`/`option` node; `Sequence<Option<Integer>>[0, 3]` | FR-322-AC-298, FR-154-AC-39 |
 | MT-20 | `field` `blob`, native `Bytes`; `field` `blob2`, native `Bytes` carrying a `maxLength` constraint | Each: `Bytes` over one `scalar_type`/`bytes` node, distinct from `String` and `Text` | FR-322-AC-102 |
 | MT-21 | `field` `meta`, native `JsonObject` | `JsonObject` over `scalar_type`/`json_object` | FR-322-AC-102 |
 | MT-22 | `field` `blobs`, native `Bytes`, `[0, unbounded]`, unordered, unique | `Set<Bytes>` | FR-322-AC-102 |
