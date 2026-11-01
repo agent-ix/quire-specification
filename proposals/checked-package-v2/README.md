@@ -48,15 +48,12 @@ structures, but any external consumer receives only the contract.
   (`{package, path, ordinal}`).
 - `checked-term-data-vectors.json` publishes the closed `checked_term_data`
   carrier vectors for producer-captured equality decisions, protocol semantic
-  locations and model dispatch candidate tables. Equality decisions use the
-  local root application/occurrence plus a typed `term_path` through application
-  arguments, aggregate members and binding values, so nested equality
-  applications keep distinct identities; protocol locations use a
-  separate producer-assigned per-term ordinal. Dispatch candidates retain
-  producer order and structural FR-150 `EffectiveId` selection keys (never
-  checked-package `NodeRef`s).
-  Positive and malformed cases exercise schema shape, path joins and the
-  unavailable versus empty-table distinction (FR-322-AC-288 to AC-292).
+  locations and model dispatch candidate tables. FR-322-AC-288..292 define
+  the equality row contract. Protocol locations use a producer-assigned
+  per-term ordinal. Dispatch candidates retain producer order and structural
+  FR-150 `EffectiveId` selection keys (never checked-package `NodeRef`s).
+  Positive and malformed cases exercise wire shapes, joins, and the unavailable
+  versus empty-table distinction (FR-322-AC-288 to AC-292).
 - `temporal-fairness-target-vectors.json` publishes complete fairness members
   for operation, protocol-root, attempt-node, parallel-branch,
   compensation-template and hybrid-transition targets, plus closed-shape

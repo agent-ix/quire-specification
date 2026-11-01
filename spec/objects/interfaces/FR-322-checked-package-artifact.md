@@ -1030,21 +1030,21 @@ A frame body refusal, meaning-join or canonical-order
   application. The package name binds that key to this checked package; a node
   from another package cannot satisfy it. Each row family adds its own
   discriminator to that root identity.
-  `equality_decisions` is keyed by the local root application `node_id`, one
-  of that node's exact `occurrences` keys (`role`, `ordinal`), and `term_path`.
-  The root is the expression application at the occurrence; `term_path` is a
-  sequence of typed child selectors through the producer-retained `CheckedTerm`
-  tree. An `argument` selector carries a zero-based index into an application's
-  arguments; a `member` selector carries a zero-based index into an aggregate's
-  members; `binding_value` selects a binding's value and has no index. Each
-  selector SHALL be valid for the current term kind and address an existing
-  child. Traversal follows the selected child term itself, including nested
-  application terms; it does not jump to a graph node by searching an operand
-  or type identity. The empty path selects the root application. The final
-  term SHALL be an equality or inequality application (`equal` or `not_equal`),
-  and the row's `operator`, ordered operands and source types SHALL match that
-  term. Thus two nested equality applications below one root occurrence have
-  separate rows even when their application nodes are structurally shared.
+  `equality_decisions` is keyed by the local equality application `node_id`,
+  one of that node's exact `occurrences` keys (`role`, `ordinal`), and an empty
+  `term_path`. The root is the equality or inequality expression application
+  at that occurrence. `term_path` remains a required wire member as an empty
+  array root marker; a non-empty path is refused as `invalid_package`/
+  `invalid-value` at its first segment. The reader does not traverse a
+  `CheckedTerm` tree, follow a reference to another graph node, or infer an
+  equality identity from a path or name. Every composite application is its
+  own graph node, so an equality beneath an `and`, `or`, aggregate or binding
+  form has a separate application `NodeRef`; the parent body references that
+  child node, and the equality row joins directly to the child node with an
+  empty `term_path`. Each row's `operator`, ordered operands and source types
+  SHALL match that root equality or inequality application (`equal` or
+  `not_equal`). Thus multiple equalities beneath one parent have separate rows
+  keyed by their respective application nodes, each with an empty path.
   Each row retains the
   `equal` or `not_equal` operator, the two original operand positions in order,
   each operand's source type and producer-selected conversion target (or
@@ -1069,8 +1069,9 @@ A frame body refusal, meaning-join or canonical-order
   application `node_id`, an exact application occurrence key, and a
   producer-assigned zero-based `term_ordinal`, unique within that application
   occurrence. This final coordinate distinguishes multiple semantic terms
-  represented by one graph application node; unlike equality's `term_path`, it
-  is a producer-assigned row ordinal, not an argument path, source-map ordinal
+  represented by one graph application node; unlike equality's always-empty
+  `term_path` root marker, it is a producer-assigned row ordinal, not an
+  argument path, source-map ordinal
   or source position. `location` preserves the producer's semantic origin and
   child-index path. Its closed origin is either a named type declaration or a
   protocol attempt identified by the protocol and attempt positions in the
@@ -1114,13 +1115,13 @@ A frame body refusal, meaning-join or canonical-order
   a local `expression`/application node, the occurrence must be present on
   that node and in `source_map`, and no dependency package may satisfy the
   join. Equality rows are unique by (`application`, `occurrence`, `term_path`);
-  dispatch tables by (`application`, `occurrence`); protocol rows by
+  because every equality `term_path` is empty, this permits at most one row per
+  equality application occurrence. Dispatch tables are unique by
+  (`application`, `occurrence`); protocol rows by
   (`application`, `occurrence`, `term_ordinal`). Each array is ordered by
-  application node id, then occurrence role and ordinal. Equality rows then
-  order by `term_path` lexicographically: compare each step's `kind` by its
-  exact string value, compare `index` numerically when both steps carry one,
-  and place a shorter equal-prefix path first. Protocol rows then order by
-  `term_ordinal`.
+  application node id, then occurrence role and ordinal. Equality ordering ends
+  at the occurrence key because the required `term_path` is always empty.
+  Protocol rows then order by `term_ordinal`.
   Dispatch candidate order within one table remains the producer order. The
   reader validates these structural joins
   and preserves the captured facts exactly. A missing equality row remains
@@ -1128,9 +1129,9 @@ A frame body refusal, meaning-join or canonical-order
   enum index to be fabricated. A producer or reader SHALL NOT rebuild these
   facts by type-checking the graph, projecting value types, consulting an
   operation catalog, searching source text or resolving an arbitrary source
-  package. Every inspected row, equality `term_path` segment and nested unit
-  or enum fact is charged
-  to the caller's finite work limit before inspection; exhaustion returns the
+  package. Every inspected row and nested unit or enum fact is charged to the
+  caller's finite work limit before inspection. Equality `term_path` is always
+  empty, so it contributes zero path-segment work. Exhaustion returns the
   attempted work and first uncharged locus without a partial data view.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
