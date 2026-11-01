@@ -30,3 +30,9 @@ Integrity analysis of the edited carrier requirements and corresponding TC-233 t
 ## Verdict
 
 **CONDITIONAL** — the exact work-limit contract must match its vector and test.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-322-AC-292 now states the exact vector boundary: `The vectors contain 17 sidecar rows, 3 unit facts, 2 enum facts and 2 dispatch candidates, with zero equality `term_path` segments, for an exact 24-unit boundary; admission succeeds at 24 units. A 23-unit limit refuses `resource_exhausted` at `/checked_term_data/dispatch_tables/0/candidates/1`, the final charged candidate, with no partial data view.` |

@@ -26,3 +26,13 @@ Code-review and Rust lane of QSpec PR #560: the changed TC-233 vector assertion 
 ## Verdict
 
 **CONDITIONAL** — one formatting finding blocks style cleanliness.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The changed TC-233 assertion block is now rustfmt-formatted: `    assert!(
+        equality_rows
+            .iter()
+            .all(|row| row["term_path"] == json!([]))
+    );` |
