@@ -15909,9 +15909,9 @@ fn temporal_clock_package(case: &Value) -> Value {
     package
 }
 
-fn temporal_clock_package_with_two_clauses(case: &Value, second_clock_name: &str) -> Value {
+fn temporal_clock_package_with_two_clauses(case: &Value) -> Value {
     let mut package = temporal_clock_package(case);
-    let (mut second_clause, first_clock_name) = {
+    let mut second_clause = {
         let nodes = package["semantic_graph"]["nodes"]
             .as_array()
             .expect("nodes");
@@ -15921,21 +15921,25 @@ fn temporal_clock_package_with_two_clauses(case: &Value, second_clock_name: &str
                 node["node_tag"] == "temporal" && node["semantic_form"] == "temporal_clause"
             })
             .expect("temporal declaration node");
-        (
-            nodes[index].clone(),
-            nodes[index]["body"]["arguments"][1]["value"]
-                .as_str()
-                .expect("clock name")
-                .to_owned(),
-        )
+        nodes[index].clone()
     };
-    second_clause["body"]["arguments"][1]["value"] = json!(second_clock_name);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let second_formula_id = nodes[28]["node_id"].clone();
+    let previous_formula_id = second_clause["body"]["arguments"][5]["target"].clone();
+    second_clause["body"]["arguments"][5]["target"] = second_formula_id.clone();
+    for dependency in second_clause["dependencies"].as_array_mut().unwrap() {
+        if dependency == &previous_formula_id {
+            *dependency = second_formula_id.clone();
+        }
+    }
     for segment in second_clause["node_id"]["path"]
         .as_array_mut()
         .expect("structural node path")
     {
-        if segment.as_str() == Some(&first_clock_name) {
-            *segment = json!(second_clock_name);
+        if segment == &json!({"node": 29}) {
+            *segment = json!({"node": 28});
         }
     }
     let second_id = second_clause["node_id"].clone();
@@ -15947,13 +15951,19 @@ fn temporal_clock_package_with_two_clauses(case: &Value, second_clock_name: &str
     let first_row = package["temporal_bindings"][0].clone();
     let mut second_row = first_row.clone();
     second_row["declaration"] = second_id;
-    second_row["clock_name"] = json!(second_clock_name);
+    package["temporal_bindings"]
+        .as_array_mut()
+        .expect("rows")
+        .push(second_row);
+    let structural_nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .clone();
     let rows = package["temporal_bindings"].as_array_mut().expect("rows");
-    rows.push(second_row);
     rows.sort_by(|left, right| {
-        left["clock_name"]
-            .as_str()
-            .cmp(&right["clock_name"].as_str())
+        let left_key = structural(&left["declaration"], &structural_nodes);
+        let right_key = structural(&right["declaration"], &structural_nodes);
+        node_id_order(&left_key, &right_key)
     });
     package
 }
@@ -16009,19 +16019,8 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
     let multi = &vectors["multi_clause_positive"];
     let clock_names = multi["clock_names"].as_array().expect("clock names");
     assert_eq!(clock_names.len(), 2, "multi-clause positive has two clauses");
-    let first_clock_name = positive[0]["clock_name"].as_str().unwrap();
-    assert!(
-        clock_names.iter().any(|name| name == first_clock_name),
-        "multi-clause vector includes the source fixture clock"
-    );
-    let additional_clock_name = clock_names
-        .iter()
-        .find(|name| name.as_str() != Some(first_clock_name))
-        .expect("one additional clock name");
-    let package = temporal_clock_package_with_two_clauses(
-        &positive[0],
-        additional_clock_name.as_str().expect("second clock name"),
-    );
+    assert_eq!(clock_names[0], clock_names[1], "clock names agree");
+    let package = temporal_clock_package_with_two_clauses(&positive[0]);
     assert!(
         package_validator.is_valid(&package),
         "{} is a schema-valid package with two clause rows: {:?}",
@@ -16032,27 +16031,49 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
             .collect::<Vec<_>>()
     );
     assert_eq!(multi["schema"], "valid");
-    let row_order: Vec<_> = package["temporal_bindings"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .map(|row| row["clock_name"].as_str().unwrap())
-        .collect();
-    let expected_order: Vec<_> = multi["canonical_row_order"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .map(|name| name.as_str().unwrap())
-        .collect();
-    assert_eq!(row_order, expected_order, "rows follow structural NodeRef order");
+    assert_eq!(
+        package["temporal_bindings"].as_array().unwrap().len(),
+        2,
+        "both distinct rows remain present despite identical model/profile/name"
+    );
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
-    for row in package["temporal_bindings"].as_array().unwrap() {
+    let rows = package["temporal_bindings"].as_array().unwrap();
+    assert_ne!(rows[0]["declaration"], rows[1]["declaration"]);
+    let first_structural_key = structural(&rows[0]["declaration"], nodes);
+    let second_structural_key = structural(&rows[1]["declaration"], nodes);
+    assert!(node_id_order(&first_structural_key, &second_structural_key).is_lt());
+    let formula_indices: Vec<_> = rows
+        .iter()
+        .map(|row| {
+            row["declaration"]["path"][7]["node"]
+                .as_u64()
+                .expect("formula node index")
+        })
+        .collect();
+    let expected_formula_indices: Vec<_> = multi["canonical_formula_node_indices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|index| index.as_u64().unwrap())
+        .collect();
+    assert_eq!(formula_indices, expected_formula_indices);
+    for row in rows {
         let declaration = nodes
             .iter()
             .find(|node| node["node_id"] == row["declaration"])
             .expect("each row resolves to its own clause NodeRef");
         assert_eq!(declaration["semantic_form"], "temporal_clause");
         assert_eq!(declaration["body"]["arguments"][1]["value"], row["clock_name"]);
+        assert_eq!(row["clock_name"], clock_names[0]);
+        assert_eq!(
+            declaration["body"]["operation"]["laws"][0]["definition"]["identity"],
+            multi["shared_profile"]
+        );
+        assert_eq!(
+            declaration["body"]["arguments"][0],
+            nodes[8]["body"]["arguments"][0],
+            "both clauses use the same model"
+        );
     }
 
     for case in vectors["schema_refusals"].as_array().expect("schema refusals") {
