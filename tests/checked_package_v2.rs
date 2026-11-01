@@ -14756,7 +14756,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=61).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=62).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }

@@ -11356,6 +11356,299 @@
       ],
       "schema": "invalid",
       "rule": "FR-342-AC-10"
+    },
+    {
+      "id": "CL-62",
+      "subject": "two valid nested collection slot parameters bound in reverse slot order are refused at the second binder",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/members/1/value",
+          "value": {
+            "term": "reference",
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "timed_model",
+                "clock_place",
+                "model",
+                {
+                  "node": 53
+                },
+                "path",
+                "kind",
+                {
+                  "node": 23
+                },
+                "field",
+                "name",
+                "g",
+                "slot",
+                "collection",
+                "sequence",
+                "selector",
+                {
+                  "node": 24
+                },
+                "minimum",
+                "0",
+                "maximum",
+                "unbounded",
+                "resolved_path",
+                "path_step",
+                "declaring_type",
+                "ix://acme/orders/Order",
+                "member_identity",
+                "ix://acme/orders/Order/g",
+                "member_type",
+                "Sequence<Sequence<ix://quire/native/Clock>>",
+                "collection_kind",
+                "1",
+                "Sequence<ix://quire/native/Clock>",
+                "Sequence<Sequence<ix://quire/native/Clock>>[slot]",
+                "2",
+                "ix://quire/native/Clock",
+                "Sequence<ix://quire/native/Clock>[slot]",
+                "none",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/members/3/value",
+          "value": {
+            "term": "aggregate",
+            "members": [
+              {
+                "term": "reference",
+                "target": {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "node": 23
+                    },
+                    "i",
+                    "level",
+                    {
+                      "node": 24
+                    },
+                    "0"
+                  ]
+                }
+              },
+              {
+                "term": "reference",
+                "target": {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "node": 23
+                    },
+                    "e",
+                    "level",
+                    {
+                      "node": 24
+                    },
+                    "0"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/dependencies/0",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "timed_model",
+              "clock_place",
+              "model",
+              {
+                "node": 53
+              },
+              "path",
+              "kind",
+              {
+                "node": 23
+              },
+              "field",
+              "name",
+              "g",
+              "slot",
+              "collection",
+              "sequence",
+              "selector",
+              {
+                "node": 24
+              },
+              "minimum",
+              "0",
+              "maximum",
+              "unbounded",
+              "resolved_path",
+              "path_step",
+              "declaring_type",
+              "ix://acme/orders/Order",
+              "member_identity",
+              "ix://acme/orders/Order/g",
+              "member_type",
+              "Sequence<Sequence<ix://quire/native/Clock>>",
+              "collection_kind",
+              "1",
+              "Sequence<ix://quire/native/Clock>",
+              "Sequence<Sequence<ix://quire/native/Clock>>[slot]",
+              "2",
+              "ix://quire/native/Clock",
+              "Sequence<ix://quire/native/Clock>[slot]",
+              "none",
+              ""
+            ]
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/76/dependencies/1",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "e",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1",
+          "value": {
+            "term": "binding",
+            "name": "binders",
+            "value": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "e",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  }
+                },
+                {
+                  "term": "reference",
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "value",
+                      "parameter",
+                      "name",
+                      {
+                        "node": 23
+                      },
+                      "i",
+                      "level",
+                      {
+                        "node": 24
+                      },
+                      "0"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/dependencies/6",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "e",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/47/dependencies/7",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "node": 23
+              },
+              "i",
+              "level",
+              {
+                "node": 24
+              },
+              "0"
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-294",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1/value/members/1/target",
+      "locus_suffix": "members/1/value/members/0/members/1/value/members/1/target"
     }
   ],
   "excluded_forms": {
