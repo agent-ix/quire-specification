@@ -976,8 +976,9 @@ timed-interval = ( '[' | '(' ), quantity-literal, ',', quantity-literal, ( ']' |
 
 taskset-decl   = 'taskset', ident, '{', { task }, '}' ;
 task           = 'task', ident, ( 'periodic' | 'sporadic' ), signed-quantity,
-                 'deadline', signed-quantity, 'wcet', signed-quantity,
-                 [ 'priority', uint ], [ 'jitter', signed-quantity ],
+                 'deadline', signed-quantity, [ 'bcet', signed-quantity ],
+                 'wcet', signed-quantity, [ 'priority', uint ],
+                 [ 'jitter', signed-quantity ],
                  [ 'blocking', signed-quantity ],
                  ( 'lo', [ 'wcet_hi', signed-quantity ]
                  | 'hi', 'wcet_hi', signed-quantity ), ';' ;
@@ -1028,11 +1029,15 @@ release one job of task `τ` of task set `S`
 ([FR-419](../../spec/functional/analysis/FR-419-analyze-task-set-schedulability.md)).
 In `schedulability-clause`, the first `ident` names the claim and the second
 the task set. A clock read in `clock-bound` or in an operation's precondition
-compares a `Clock` field with a `quantity-literal` of the time dimension. In
-`task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
+compares a `Clock` field with a `quantity-literal` of the time dimension. In `task`, optional `bcet` is the lower bound on actual job demand and is
+normalized to zero when omitted; it appears after `deadline` and before
+`wcet`, at most once. `wcet` is the upper bound `C`, or `C(LO)` for a `hi`
+task whose `wcet_hi` is `C(HI)`. The checker requires `0 <= bcet <= wcet` for
+`lo` tasks and `0 <= bcet <= wcet_hi` for `hi` tasks.
 `taskset-decl` admits a body with no task, `signed-quantity` a negative time
-value and a `lo` task a `wcet_hi`, so the checker, not the recognizer, refuses
-such a task set with `invalid_timed_model`/`invalid-task-set`
+value, a negative `bcet`, `bcet` greater than the task's upper execution bound,
+and a `lo` task a `wcet_hi`, so the checker, not the recognizer, refuses such
+a task set with `invalid_timed_model`/`invalid-task-set`
 ([FR-419](../../spec/functional/analysis/FR-419-analyze-task-set-schedulability.md)).
 A form whose facet is not selected receives `unsupported_construct`. The
 facet of `time-decl`, `time-invariant`, `urgent-decl` and the `Clock` type is

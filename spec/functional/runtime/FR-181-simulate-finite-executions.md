@@ -3,6 +3,8 @@ id: FR-181
 title: "Simulate finite composed executions reproducibly"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
   - target: ix://agent-ix/quire-specification/AD-008
     type: references
   - target: ix://agent-ix/quire-specification/US-011
@@ -319,6 +321,52 @@ the places it carries to their new slots, and adds a fresh place as the equality
 to its constant, so the dimension of a zone is the number of live places of its
 discrete state and is bounded by the model's clock dimension (FR-415 "Cardinality
 bound").
+
+### Task-automaton product states and steps
+
+A task-derived timed subject additionally carries the task scheduler's finite
+control state: the current mode, policy queue order, each live job's task
+declaration, nominal activation identity and occurrence, selected jitter,
+slot generation, priority, absolute deadline and execution-demand phase, and
+whether it is pending jitter, ready, running, preempted or complete. It also
+carries each task's activation-clock phase and the source operation's unique
+task binding. This state is part of the canonical discrete state key.
+The derived auxiliary clocks are those of FR-415 "Task-derived timed
+products"; they are separate from source-model clock places. The number of
+live jobs and auxiliary clocks is finite under FR-419's validated slot bound
+or the active bounded-search limit. A slot is reclaimed only after completion
+or an explicit policy removal; a later job receives a new generation.
+
+Each derived task step has a typed identity distinct from a source operation
+identity. It names the action, task-set and task declarations, job occurrence,
+slot and generation, immutable activation transition, exact selected demand
+and jitter, priority, and original absolute deadline. An activation names the
+source transition that created it; the later actual release names that same
+activation. A scheduler step names the derived transition
+that enabled it, and a source completion-feedback step names both the source
+transition and the derived completion that enabled that transition. The same
+identity and provenance are carried in a timed counterexample. No derived activation, release, dispatch, preemption, resumption, completion,
+budget change or deadline miss is represented as a fabricated source-model
+operation. A finite search slot-cap signal is not a task transition.
+
+During a delay of `d`, every source and auxiliary clock advances by `d`.
+Service is credited only to the job selected as running by the queue policy.
+The product's diagonal constraints and bounded-subtraction transitions
+preserve each suspended job's accumulated service across preemption while its
+clocks continue to advance at unit rate. A completion transition removes one
+job only when its exact selected demand has been met; an HI budget change
+records its exact delta on every affected live job and retains each job's
+release, priority and deadline identity. A deadline is missed only when the
+absolute deadline is reached and the job still has positive remaining
+demand.
+
+The finite fixed-work product may be explored and certified by the exact
+refined-region relation in FR-418. Variable-demand and mode-change products
+may use bounded exploration. A finite counterexample path is not a refutation
+until FR-364 replay validates every demand choice and product transition and
+the bad state has a checked time-divergent continuation. An exhausted bounded
+search with no replayable witness is incomplete; its explored prefix is not a
+proof of the unbounded timed claim.
 
 - A **delay** by real `d >= 0` takes `(s, v)` to `(s, v + d)`. It is admissible
   when `d = 0`, or when `s` is not urgent and every time invariant whose

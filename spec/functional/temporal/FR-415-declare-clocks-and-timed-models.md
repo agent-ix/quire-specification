@@ -3,6 +3,10 @@ id: FR-415
 title: "Declare clocks and timed models"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/TC-371
+    type: verifies
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
   - target: ix://agent-ix/quire-specification/US-008
     type: implements
   - target: ix://agent-ix/quire-specification/FR-013
@@ -74,6 +78,53 @@ use declaration order to select a node. `p` is a positive exact rational
 quantity of `u`. A model with a `time` member is a **timed model**, and its
 model subject is a **timed subject**. A second `time` member refuses with
 `invalid_timed_model`/`duplicate-time-source`.
+
+### Task-derived timed products
+
+The task-automaton product of FR-419 may add **auxiliary clocks** that do not
+come from a checked-package `clock_place`. Each auxiliary clock is identified
+by the task-set declaration, task declaration and role: one shared `arrival`
+phase clock per task; per-job `pending-jitter`, `service` and `deadline`
+clocks keyed by stable job identity. Its value is held in the product valuation and
+is absent from source-model data, source operation frames and user-authored
+clock-place bindings. A product state has finitely many such clocks because
+FR-419 assigns every live job a bounded slot; the product identity includes
+the slot generation so reuse after completion does not alias a prior job.
+
+Every auxiliary clock advances at rate one during every admissible delay,
+including while its job is preempted. The **service accumulated by a job** is
+not the value of a single paused clock: the task product derives it from the
+job's service clock and the diagonal differences between that clock and the
+other live service clocks. Scheduler transitions apply the derived bounded
+subtractions needed to remove service given to another running job. Thus a
+job gains service only on intervals in which it is the scheduled job, although
+all clocks continue to advance at rate one. No task-derived clock has a
+stopwatch rate or a rate of zero.
+
+The task product may test a finite set of diagonal constraints
+`x - y ≺ c`, where `≺` is `<`, `<=`, `>`, or `>=` and `c` is an exact rational
+time constant. These internal constraints do not add diagonal syntax to
+user-authored model clock guards. Each auxiliary clock has a declared positive
+integer ceiling `M_x`, after FR-418's exact common-denominator scaling. A
+product update may subtract a non-negative scaled integer `c` from `x` only
+when its guard proves `c <= x <= M_x`; the post-value is exactly `x - c` and
+is non-negative. A subtraction outside that bounded zone is not a product
+transition. For each clock, `M_x` is at least every scaled guard, invariant,
+deadline, diagonal and subtraction constant compared with that clock; the
+compiled product records this finite maximum and the checker recomputes it.
+The finite region abstraction preserves integer parts through that maximum,
+zero fractional parts and fractional-part order; it also preserves every
+declared diagonal predicate and bounded-subtraction guard side condition.
+FR-418 checks these ceilings, guards and updates from the compiled task
+product.
+
+For variable per-job demand and a mixed-criticality mode change, the product
+records the selected exact rational demand and any exact service-allowance
+delta on the job's identity. A mode change does not reset the job's deadline clock, change
+its priority, or allocate a new job identity. The search may retain the mode
+change as finite phase control and an exact bounded update; the same
+non-negativity, ceiling and replay conditions apply. If the search cannot
+establish a complete finite abstraction, it does not claim proof.
 
 ### Clocks and resets
 

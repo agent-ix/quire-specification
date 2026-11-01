@@ -4,6 +4,10 @@ title: "Zone certificate and its checker"
 type: FR
 object: value_object
 relationships:
+  - target: ix://agent-ix/quire-specification/TC-371
+    type: verifies
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
   - target: ix://agent-ix/quire-specification/US-008
     type: implements
   - target: ix://agent-ix/quire-specification/FR-416
@@ -13,6 +17,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
   - target: ix://agent-ix/quire-specification/FR-331
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-419
     type: references
 ---
 
@@ -54,12 +60,53 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 | `initials` | Nonempty. The position in `nodes` of the initial node of each initial state of the subject, in the subject's initial-state order (FR-361): the node that covers that state's initial symbolic state. A form with one initial state lists one position. QSL FR-244 reads its single `initial` as `initials[0]`; the wire carries no `initial` member. |
 | `admitted` | The ADR-026 TD-6 witness: a start node (in a refinement form, any positioned `initials[i]`, so a time-locked first initial state does not decide it) and a path of certificate edges to a quiescent node or to a node of a component with a cycle of positive total delay (QSL FR-244 `admitted`). |
 | `refinement` | Present only for the safety half of a timed refinement (QSL FR-430): the refinement part below. |
+| `task_product` | Present only for a fixed-work task-automaton proof: the `bounded-subtraction-diagonal/v1` abstraction name, a structured `time_progress` finite-product gate, each task's enforced arrival kind, minimum interarrival, nominal relative deadline and maximum candidate slot bound, the `BCET` and applicable WCET as equal `work_lower`/`work_upper`, each auxiliary clock ceiling `M_x`, all diagonal constraints and each typed subtraction transition and constant. |
 
 QSL FR-244 names `identity`, `bounds` and a node's `automaton` as `obligation`,
 `lu_bounds` and `automaton_state`; the wire spellings here are the ones the
 FR-331 schema carries and QSL FR-245 writes in its loci. A node is marked
 `locked` (QSL FR-244 "Locked nodes") by a `locked` member present, as `true`,
 on exactly that node.
+
+For a task-automaton certificate, each node's `state` is the complete
+source-plus-scheduler product key. Its DBM uses the canonical clock order:
+source clock places, task arrival clocks, pending-release jitter clocks, then
+each task slot's service and nominal-deadline clocks. The checker recompiles
+the task product and requires `task_product` to match its task-slot bounds,
+task-set arrival and exact-work fields, ceilings, diagonal constraints,
+subtraction table and finite-product gate. The `time_progress` object is `{method: "closed-finite-product/v1", live_job_cap, closure: "recompute-all-reachable-successors/v1"}`. Neither the method nor cap is a producer assertion of closure. The reader recompiles the source/task product and exhaustively explores every reachable source control, refined clock region, scheduler control, release/jitter phase and queue state within the declared finite cap. It recomputes periodic/sporadic activation, jitter, service, completion and feedback successors, and accepts exact mode only if every reachable successor is represented and no attempted allocation exceeds the cap. It requires `live_job_cap` to equal the sum of the per-task `max_jobs` rows, then derives positive-delay SCCs from this closed graph; a source-only no-time-stops claim or an overflow edge cannot satisfy the gate. If closure fails, the task remains admitted on FR-419's bounded-search path. A `queue_growth` continuation may replay one concrete divergent refutation but does not establish completeness or permit `proved`.
+For each task `work_lower = work_upper` and the reader
+verifies these equal the normalized `BCET` and applicable WCET.
+Each task's slot bound is `ceil(D_i/T_i)+1` from the compiled enforced nominal
+activation spacing; maximum jitter does not extend the deadline window
+because deadlines start at nominal activation. The checker refuses a bound
+not derived from that task's resolved periodic/sporadic arrival, `T_i`, `D_i`
+and `J_i`.
+It checks each ceiling and exact scaled constant, and proves that every
+reachable subtraction of `c` from `x` is guarded by `c <= x <= M_x`, yields a
+non-negative value, and uses the named clock and transition. The task product
+uses finite refined regions: for each clock up to its ceiling, equivalence
+preserves integer part, zero fractional parts and fractional-part order; every
+declared diagonal predicate keeps its truth value; values above a ceiling are
+represented by their saturated region. The bounded-subtraction side condition
+makes subtraction by a fixed integer preserve this equivalence. The checker
+uses this refined-region relation instead of aLU for task-product successor
+coverage.
+
+For a fixed-work task proof, the finite scheduler control, FR-419's finite job
+slots, finite clock ceilings and finite refined-region partition make the
+product graph finite. A task-product certificate covers its entire reachable
+graph. A bounded search frontier is not a `ZoneCertificate` and cannot prove
+absence of deadline misses. A finite-slot overflow is not a product state or
+certificate node; it stops certification and routes to replayable incomplete
+search evidence. A reachable deadline-miss node is permitted in this proof certificate only
+when it is `locked` and has no reachable time-divergent target; if it has a
+divergent target, the checker rejects the proof certificate as `bad-state`.
+This rule classifies proof certificates only; it is not a task-miss witness.
+Refutation still requires FR-364 to replay the concrete miss and its
+time-divergent continuation. This keeps
+time-locking paths outside FR-416's timed-claim behavior set while FR-417
+continues to report time-locks separately.
 
 It states three facts: the initial symbolic state (the zero valuation, let
 time elapse unless the initial state is urgent, intersected with its time
@@ -111,21 +158,22 @@ and AC-5), and the encoding is a function of the value alone.
 - **Member order.** Object members are in ascending UTF-16 code-unit order of
   their names, at every depth: for the certificate, `admitted`, `bounds`,
   `components`, `divergence`, `edges`, `identity`, `initials`, `nodes`,
-  `reasons`, `refinement`, `scale`. Array elements keep the order the
+  `reasons`, `refinement`, `scale`, `task_product`. Array elements keep the order the
   certificate states: `nodes` in discovery order, `edges` in canonical
   transition order, `bounds` by the first node of its state then by clock
   index, `components`, `divergence` and `zone` rows by node or clock index.
 - **Number encoding.** An index, a count or a position (`node` and `target` of an `edges` entry,
   `automaton`, `components` entries, `divergence` entries, `admitted`
   entries, `initials`) is a JSON integer from 0 to 2^53 − 1. A scaled constant
-  (`scale`, every `bound`) is an integer string `0` or `-?[1-9][0-9]*`,
+  (`scale`, every `bound`, every task-product ceiling, diagonal constant and
+  subtraction constant) is an integer string `0` or `-?[1-9][0-9]*`,
   arbitrary precision, with no `+`, no leading zero and no `-0`; `strict` is a
   boolean. The one string spelling of an unbounded entry, and of an absent LU
   bound, is `"infinity"`. A DBM is its rows of entries, entry `[i][j]`
   bounding `x_i − x_j`, index 0 the reference clock. No number is a fraction
   or has an exponent.
 - **Option encoding.** An absent optional member (`components`, `reasons`,
-  `divergence`, `refinement`, `locked`) is omitted, never `null`; `locked` is
+  `divergence`, `refinement`, `task_product`, `locked`) is omitted, never `null`; `locked` is
   present only as `true`. In an array a position is significant, so the one
   option inside an array, a `taken` entry that is `None`, is `null`.
 - **No embedded digests.** The certificate embeds no digest or hash of the
@@ -148,7 +196,8 @@ and AC-5), and the encoding is a function of the value alone.
 every node with its own DBM operations (canonical form by shortest-path
 closure, emptiness as a negative cycle, guard intersection, reset, time
 elapse, time-invariant intersection, splitting a disjunctive guard into its
-convex parts) in exact arithmetic, checks every coverage by the aLU test,
+convex parts) in exact arithmetic, checks ordinary timed coverage by the aLU
+test and task-product coverage by the refined-region relation,
 checks initial coverage and the badness of every node, checks the component
 numbering and each component's stated reason, and reads no output of the
 search beyond the certificate. It refuses a certificate whose `identity`
@@ -186,9 +235,10 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-5 | A time-lock-freedom certificate states a reachable time-divergent target for every node, and the checker verifies each. | Test (TC-371) |
 | FR-418-AC-6 | The bytes of a zone certificate are the RFC 8785 UTF-8 serialization of its `ZoneCertificate` value with members in ascending code-unit order and arrays in the stated order, and the bytes of ZC-10, ZC-11 and ZC-12 equal the published bytes, byte for byte, across two runs. | Test (TC-371) |
 | FR-418-AC-7 | An index is a JSON integer in 0 to 2^53 − 1 and a scale or a bound an integer string; a bound written as a JSON number, with a leading zero, a `+` or `-0`, or a scale `0`, is not a `ZoneCertificate`, and a bound of 27 digits is carried exactly. | Test (TC-371) |
-| FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence` or `refinement` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
+| FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence`, `refinement` or `task_product` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
 | FR-418-AC-9 | `identity` is the structural obligation identity, and in a refinement form the part's `refinement_node` is a `node_id` and `concrete_package` and `abstract_package` are package identities; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
 | FR-418-AC-10 | Every certificate lists `initials` (nonempty), and a refinement-form certificate lists, in its part, `positions` (nonempty) and `taken`, so a refinement part with empty `positions` is not a `ZoneCertificate`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initials` or `admitted`, or with an `initial` member, is not a `ZoneCertificate`; nor is a refinement part whose node-id member is named `refinement` or `node` rather than `refinement_node`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
+| FR-418-AC-11 | The `TaskProductCertificate` schema admits `abstraction: bounded-subtraction-diagonal/v1`, the structured `time_progress` object with method `closed-finite-product/v1`, a positive `live_job_cap` and closure label `recompute-all-reachable-successors/v1`, plus the queue-bound, clock-ceiling, diagonal-constraint and subtraction arrays; it refuses an unknown method, zero cap or a producer-asserted closure label. This criterion covers wire shape only; the reader's exhaustive finite-product closure and SCC checks are normative in the behavior above. | Test |
 
 ## Dependencies
 
@@ -205,6 +255,12 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 - S. Wimmer and J. von Mutius, TACAS 2020; S. Wimmer, F. Herbreteau and
   J. van de Pol, FORMATS 2020; F. Herbreteau, B. Srivathsan and
   I. Walukiewicz, LICS 2012.
+- E. Fersman, P. Krčál, P. Pettersson and W. Yi, “Task Automata: Schedulability,
+  Decidability and Undecidability,” *Information and Computation* 205(8), 2007,
+  §4 and Theorem 2, DOI 10.1016/j.ic.2007.01.009. This is design evidence for
+  the fixed-computation bounded-subtraction/diagonal product; this requirement
+  separately states the checker obligations for its finite refined-region
+  certificate.
 - Owner ruling recorded on QSL-373: a native zone engine with zone
   certificates for checkable proofs.
 - Ticket: STD-139 (paired with QSL-373).

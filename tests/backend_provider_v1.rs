@@ -467,6 +467,7 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
 #[trace("TC-431", "FR-193-AC-16")]
 #[trace("TC-431", "FR-193-AC-17")]
 #[trace("TC-431", "FR-364-AC-10")]
+#[trace("TC-431", "FR-364-AC-14")]
 #[trace("TC-431", "FR-439-AC-11")]
 #[trace("TC-431", "FR-331-AC-39")]
 #[trace("TC-431", "FR-331-AC-40")]
@@ -521,6 +522,149 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
             );
         }
     }
+}
+
+/// FR-418's finite exact-mode gate has a closed, typed wire shape. This
+/// validates schema structure only; the requirement assigns exhaustive product
+/// closure and successor recomputation to the independent reader.
+#[trace("TC-431", "FR-418-AC-11")]
+#[test]
+fn tc_431_task_product_finite_gate_schema_is_typed() {
+    let task_product = definition("TaskProductCertificate");
+    let valid = serde_json::json!({
+        "abstraction": "bounded-subtraction-diagonal/v1",
+        "time_progress": {
+            "method": "closed-finite-product/v1",
+            "live_job_cap": 1,
+            "closure": "recompute-all-reachable-successors/v1"
+        },
+        "queue_bounds": [{
+            "taskset": "TS", "task": "T", "arrival": "periodic",
+            "interarrival": {"numerator": "1", "denominator": "1"},
+            "relative_deadline": {"numerator": "1", "denominator": "1"},
+            "max_jitter": {"numerator": "0", "denominator": "1"},
+            "work_lower": {"numerator": "1", "denominator": "1"},
+            "work_upper": {"numerator": "1", "denominator": "1"},
+            "max_jobs": 1
+        }],
+        "clock_ceilings": [{"clock": "T.slot0.service", "maximum": "1"}],
+        "diagonal_constraints": [],
+        "subtractions": []
+    });
+    assert!(task_product.is_valid(&valid), "typed finite-product gate validates");
+    for bad in [
+        serde_json::json!({"method": "product-no-time-stops/v1", "live_job_cap": 1, "closure": "recompute-all-reachable-successors/v1"}),
+        serde_json::json!({"method": "closed-finite-product/v1", "live_job_cap": 0, "closure": "recompute-all-reachable-successors/v1"}),
+        serde_json::json!({"method": "closed-finite-product/v1", "live_job_cap": 1, "closure": "producer-asserted/v1"}),
+    ] {
+        let mut candidate = valid.clone();
+        candidate["time_progress"] = bad;
+        assert!(!task_product.is_valid(&candidate), "malformed finite gate is refused");
+    }
+}
+
+/// The task queue-growth vector is a real schema fixture. This test checks
+/// its exact finite wire arithmetic and the affine word recurrence; it does
+/// not stand in for the downstream QSL product/replay implementation.
+#[trace("TC-431", "FR-364-AC-14")]
+#[test]
+fn tc_431_task_queue_growth_vector_has_consistent_affine_cycle() {
+    let whole = validator();
+    let vector = positive("task-queue-growth-overload");
+    let document = composed(&vector);
+    assert!(whole.is_valid(&document), "queue-growth positive wire vector");
+    let witness = &document["counterexamples"][0]["counterexample"]["queue_growth"];
+    let shift = witness["iteration_shift"].as_u64().expect("iteration shift");
+    let before = &witness["before"];
+    let after = &witness["after"];
+    assert_eq!(before["cycle_offset"], 0);
+    assert_eq!(after["cycle_offset"], shift);
+    assert_eq!(after["block_offset"].as_u64().unwrap(),
+        before["block_offset"].as_u64().unwrap() + shift);
+    let block_len = before["growth_block"].as_array().unwrap().len() as u64;
+    assert_eq!(witness["backlog_growth"].as_u64().unwrap(), shift * block_len);
+
+    let rational_sum = |steps: &[Value], member: &str| -> i128 {
+        steps.iter().filter_map(|step| step.get(member)).map(|value| {
+            value["numerator"].as_str().unwrap().parse::<i128>().unwrap()
+                / value["denominator"].as_str().unwrap().parse::<i128>().unwrap()
+        }).sum()
+    };
+    assert_eq!(rational_sum(witness["cycle"].as_array().unwrap(), "delay"), 2,
+        "two unit delays make the exact two-unit cycle");
+    assert_eq!(rational_sum(witness["cycle"].as_array().unwrap(), "service"), 2,
+        "the head receives exactly its two units of work");
+    assert_eq!(witness["elapsed"]["numerator"], "2");
+
+    for cycle in 0..64 {
+        let left = expand_queue_word(after, cycle);
+        let right = expand_queue_word(before, cycle + shift);
+        assert_eq!(left, right, "after({cycle}) equals before({})", cycle + shift);
+    }
+
+    let vector_set = parsed(VECTORS);
+    for name in [
+        "task-queue-growth-missing-shift",
+        "task-queue-growth-zero-elapsed",
+        "task-queue-growth-loop-conflict",
+    ] {
+        let adverse = vector_set["adverse"].as_array().unwrap().iter()
+            .find(|candidate| candidate["name"] == name).expect("queue-growth adverse vector");
+        let mut mutated = document.clone();
+        assert_eq!(apply(&mut mutated, &adverse["patch"][0]), Ok(()), "{name} patch applies");
+        assert!(!whole.is_valid(&mutated), "{name} is refused by schema");
+    }
+}
+
+fn expand_queue_word(word: &Value, cycle: u64) -> Vec<Value> {
+    let cycle_index = cycle + word["cycle_offset"].as_u64().unwrap();
+    let copies = cycle + word["block_offset"].as_u64().unwrap();
+    let mut expanded = Vec::new();
+    for template in word["prefix"].as_array().unwrap() {
+        expanded.push(expand_queue_job(template, cycle_index, 0));
+    }
+    for copy in 0..copies {
+        for template in word["growth_block"].as_array().unwrap() {
+            expanded.push(expand_queue_job(template, cycle_index, copy));
+        }
+    }
+    for template in word["suffix"].as_array().unwrap() {
+        expanded.push(expand_queue_job(template, cycle_index, copies));
+    }
+    expanded
+}
+
+fn expand_queue_job(job: &Value, cycle: u64, cohort: u64) -> Value {
+    let count = |name: &str| -> u64 {
+        let form = &job[name];
+        form["base"].as_u64().unwrap()
+            + cycle * form["cycle_stride"].as_u64().unwrap()
+            + cohort * form["cohort_stride"].as_u64().unwrap()
+    };
+    let rational = |name: &str| -> Value {
+        let form = &job[name];
+        let value = |part: &str| -> (i128, i128) {
+            let rational = &form[part];
+            (rational["numerator"].as_str().unwrap().parse().unwrap(),
+                rational["denominator"].as_str().unwrap().parse().unwrap())
+        };
+        let (b_n, b_d) = value("base");
+        let (c_n, c_d) = value("cycle_stride");
+        let (i_n, i_d) = value("cohort_stride");
+        let den = b_d * c_d * i_d;
+        let num = b_n * c_d * i_d
+            + i128::from(cycle) * c_n * b_d * i_d
+            + i128::from(cohort) * i_n * b_d * c_d;
+        serde_json::json!({"numerator": num.to_string(), "denominator": den.to_string()})
+    };
+    serde_json::json!({
+        "taskset": job["taskset"], "task": job["task"],
+        "occurrence": count("occurrence"), "generation": count("generation"),
+        "queue_position": count("queue_position"), "demand": job["demand"],
+        "remaining": job["remaining"], "activation_offset": rational("activation_offset"),
+        "deadline_offset": rational("deadline_offset"), "jitter": job["jitter"],
+        "priority": job["priority"], "allowance": job["allowance"], "status": job["status"]
+    })
 }
 
 /// Whether a schema error at `error` lies at the patched member: the member
@@ -1620,7 +1764,7 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
     // The names are exactly the property names, at any depth, of the two certificates and
     // the certificate-owned definitions they reference (FR-331 "Certificate member").
     let walked = certificate_member_names();
-    assert_eq!(walked.len(), 50);
+    assert_eq!(walked.len(), 51);
     let enumerated: std::collections::BTreeSet<String> = parsed(SCHEMA)["$defs"]["CertificateRejected"]["oneOf"]
         .as_array().expect("causes").iter()
         .filter_map(|cause| cause["properties"]["at"]["properties"]["member"]["enum"].as_array())

@@ -29,10 +29,10 @@ vectors, and feed the package to the reader.
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| SC-01 | `CtlFp` | one node, `semantic_form` `schedulability`, no `declaration` and no `owner`; body `kind` `schedulable`, `policy` `fixed-priority`, `task` and `bound` the empty aggregate, `tasks` the aggregates of `t1`, `t2`, `t3` in that order, each `arrival` `periodic`, `period` and `deadline` `4`, `6`, `12`, `wcet` `1`, `2`, `5`, `wcet_hi` the empty aggregate, `criticality` `lo`, `priority` `1`, `2`, `3`, `jitter` and `blocking` `0`, every time value typed by the `ms` unit node; one occurrence of role `claim`; `dependencies` `[]` |
+| SC-01 | `CtlFp` | one node, `semantic_form` `schedulability`, no `declaration` and no `owner`; body `kind` `schedulable`, `policy` `fixed-priority`, `task` and `bound` the empty aggregate, `tasks` the aggregates of `t1`, `t2`, `t3` in that order, each `arrival` `periodic`, `period` and `deadline` `4`, `6`, `12`, `bcet` `0`, `wcet` `1`, `2`, `5`, `wcet_hi` the empty aggregate, `criticality` `lo`, `priority` `1`, `2`, `3`, `jitter` and `blocking` `0`, every time value typed by the `ms` unit node; one occurrence of role `claim`; `dependencies` `[]` |
 | SC-02 | `T3` | `kind` `response`, `policy` `fixed-priority`, `task` the text `t3`, `bound` the `quantity` literal `12` |
 | SC-03 | `CtlFp` and `CtlEdf` | different node ids and different obligation identities |
-| SC-04 | `CtlFp` over `Ctl` with `t3`'s `wcet 6 ms` | a different node id and obligation identity |
+| SC-04 | `CtlFp` over `Ctl` with `t3`'s `wcet 6 ms`; separately, with `t3`'s `bcet 1 ms` | a different node id and obligation identity |
 | SC-05 | `CtlFp` over `Ctl` with its tasks listed `t3`, `t1`, `t2`; with `jitter 0 ms` added to `t1`; with other whitespace and comments; with the claim named `Other` | SC-01's node id and obligation identity for each |
 | SC-06 | one unit declaring `CtlFp`'s claim twice, as `CtlFp` and `CtlFp2` | one node with two `claim` occurrences, ordinals 0 and 1 |
 | SC-07 | `Ctl` with `t1` written `hi wcet_hi 2 ms` under `schedulable CtlAmc on Ctl under amc;` | `policy` `amc`; `t1`'s `criticality` `hi` and `wcet_hi` the `quantity` literal `2` |
@@ -48,6 +48,9 @@ vectors, and feed the package to the reader.
 | SC-17 | SC-01 with `t2`'s `jitter` `-1` | `invalid_timed_model`/`invalid-task-set` at `t2`'s aggregate |
 | SC-18 | SC-01 with `t3`'s `priority` `1`; the same edit of `CtlEdf`'s node | `invalid_timed_model`/`invalid-task-set` at `t3`'s aggregate; admitted |
 | SC-19 | SC-01 with `dependencies` naming the `ms` unit node | `invalid_semantic_graph` at the node's `/dependencies` |
+| SC-20 | `Ctl` with `t1 bcet 1 ms wcet 1 ms`, and `t2 bcet 2 ms wcet 2 ms` | The normalized task rows retain `bcet` separately from `wcet`; a positive fixed-work task is selectable when `bcet = wcet` |
+| SC-21 | SC-01 with `t1`'s `bcet -1`; with `t1`'s `bcet 2 ms` and `wcet 1 ms`; with `t1`'s `bcet` member omitted from the node | `invalid_timed_model`/`invalid-task-set` at `t1`'s aggregate for the first two; `invalid_semantic_graph` at `t1`'s aggregate for missing required normalized `bcet` |
+| SC-22 | SC-01 with `t1`'s `bcet 1 ms` and `wcet 1 ms`; a HI task with `bcet 2 ms`, `wcet 2 ms`, `wcet_hi 3 ms`; then a HI task with `bcet 2 ms`, `wcet 2 ms`, `wcet_hi 2 ms` | The lower bound is carried in the task aggregate and changes identity; the first HI task demand remains interval-valued in HI mode; the second is a positive singleton fixed-work task |
 
 ## Expected Results
 
