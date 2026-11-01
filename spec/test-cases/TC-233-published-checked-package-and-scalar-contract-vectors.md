@@ -703,14 +703,13 @@ two out-of-order mutations refuse `invalid_package`/`invalid-value` at the later
 entry's pointer and the two repeats refuse `invalid_package`/`conflicting-definition`
 with both entries as loci (FR-322-AC-77).
 
-The checked-term-data vectors admit top-level equality rows and two nested
-equality rows under one `and` root plus an equality under `or`, distinguished by
-typed `term_path` selectors. Positive vectors also traverse an aggregate member
-and a binding value. A path to a non-equality application in a distinct
-checked-term context refuses `invalid_package`/`invalid-value` at the exact
-path-step pointer; duplicate
-(`application`, `occurrence`, `term_path`) rows refuse
-`invalid_package`/`conflicting-definition` at the later row. Work accounting
-charges every typed path segment; the 29-unit boundary admits and one fewer unit
-exhausts at the final path segment without a partial data view
-(FR-322-AC-288, AC-289, AC-292).
+The checked-term-data vectors admit top-level equality rows and nested equality
+rows keyed to their own application `NodeRef` with an empty `term_path`. Parent
+`and`, `or`, aggregate and binding forms reference their child application
+nodes; the reader does not traverse those references to locate an equality.
+A non-empty `term_path` that attempts to traverse a reference refuses
+`invalid_package`/`invalid-value` at the first path segment. Duplicate
+(`application`, `occurrence`, empty `term_path`) rows refuse
+`invalid_package`/`conflicting-definition` at the later row. The 24-unit work
+boundary admits; one fewer unit refuses at the final dispatch candidate with no
+partial data view (FR-322-AC-288, AC-289, AC-292).
