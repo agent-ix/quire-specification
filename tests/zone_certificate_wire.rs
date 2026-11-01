@@ -58,11 +58,12 @@ fn vector(id: &str) -> Value {
 }
 
 #[trace("TC-371", "FR-418-AC-6")]
+#[trace("TC-371", "FR-418-AC-14")]
 #[test]
 fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
     let valid = validator();
     let rows = vectors();
-    assert_eq!(rows.len(), 5);
+    assert_eq!(rows.len(), 6);
     for row in &rows {
         let id = row["id"].as_str().unwrap();
         let document = &row["document"];
@@ -95,6 +96,7 @@ fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
 }
 
 #[trace("TC-371", "FR-418-AC-11", "FR-418-AC-13")]
+#[trace("TC-371", "FR-418-AC-14")]
 #[test]
 fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identities() {
     let valid = validator();
@@ -132,6 +134,12 @@ fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identiti
         );
         assert_eq!(case["expected"]["code"], "certificate-rejected", "{id}");
         assert_eq!(case["expected"]["rule"], "successor-missing", "{id}");
+        assert!(case["expected"]["at"].is_object(), "{id}: reader refusal has a locus");
+        if id == "ZC-28" {
+            assert_eq!(case["checked_task_model"], "TC-372/CtlFp");
+            assert_eq!(case["expected"]["at"], json!({"node": 0}));
+            assert_eq!(case["value"][0]["transition"]["operation"], "Task::release");
+        }
     }
 
     let task_identity = json!({

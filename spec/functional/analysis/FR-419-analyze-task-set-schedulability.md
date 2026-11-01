@@ -332,8 +332,12 @@ no time-stops. This product does not inherit that assumption automatically:
 FR-416 limits the claim to time-divergent behaviours and FR-417 reports
 time-locks. The exact fixed-work path is selected only after the verifier
 checks closure of the finite product described above. Every deadline-miss
-counterexample still includes a separately replayed time-divergent
-continuation. A finite-slot cap is only an internal search signal; it is
+counterexample is an FR-364 model-arm `TemporalCounterexample`: its prefix
+carries the exact miss step, with each step typed as a source transition or
+`TaskTransitionIdentity`, and its time-divergent continuation is a replayed
+finite loop or `queue_growth` witness. FR-364 replays the miss and continuation
+before the result settles `refuted`. A finite-slot cap is only an internal
+search signal; it is
 never the counterexample endpoint. A time-lock-only path or slot-cap signal
 without a replayed deadline miss and checked continuation is not a refutation.
 
@@ -359,7 +363,7 @@ establish completeness for the fixed-work class.
 | FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test |
 | FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test |
 | FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority`, `amc` or `response` claim over a task with no `priority`, and a `fixed_priority`, `amc` or `response` claim over two tasks of equal priority, refuse `invalid_timed_model`/`invalid-task-set` naming that task (both tasks for the clash), and an `edf` claim over the same sets is admitted; a non-positive `D` and a `LO` task with dual budgets refuse the same way. | Test |
-| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim only when FR-418 verifies a closed finite product; interval demand with completion feedback and preemption is searched soundly, and an unresolved continuous successor or an exhausted task-product work bound settles `incomplete` with replayable FR-331 task-search evidence and respectively `bounded-search-incomplete{reason: unresolved-dynamics}` or `limit-reached`, never `proved` or `unsupported`. A negative deadline-miss result still requires an exact replayed witness. | Test (TC-372) |
+| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim only when FR-418 verifies a closed finite product; a task product with no reachable checked release binding may also be proved by the FR-418 no-release closure; interval demand with completion feedback and preemption is searched soundly, and an unresolved continuous successor or an exhausted task-product work bound settles `incomplete` with replayable FR-331 task-search evidence and respectively `bounded-search-incomplete{reason: unresolved-dynamics}` or `limit-reached`, never `proved` or `unsupported`. A negative deadline-miss result carries an FR-364 model-arm `TemporalCounterexample` whose prefix identifies each step as a source transition or typed `TaskTransitionIdentity`, and FR-364 replays the exact miss and a checked time-divergent continuation before `refuted`. | Test (TC-372) |
 | FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test |
 | FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test |
 | FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test |

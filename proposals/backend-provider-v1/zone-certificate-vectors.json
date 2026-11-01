@@ -913,6 +913,91 @@
       },
       "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":0},\"bounds\":[],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"action\":\"complete\",\"job_rank\":0,\"release\":{\"arguments\":[],\"operation\":\"Task::release\",\"receiver\":null,\"type\":\"transition\"},\"slot\":0,\"source_transition\":null,\"task\":\"A\",\"taskset\":\"S\",\"type\":\"task-transition-template\"}},{\"node\":1,\"target\":2,\"transition\":{\"action\":\"activate\",\"job_rank\":0,\"release\":{\"arguments\":[],\"operation\":\"Task::release\",\"receiver\":null,\"type\":\"transition\"},\"slot\":0,\"source_transition\":{\"arguments\":[],\"operation\":\"Task::release\",\"receiver\":null,\"type\":\"transition\"},\"task\":\"A\",\"taskset\":\"S\",\"type\":\"task-transition-template\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"TaskSet\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":1,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"-1\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"scale\":\"1\",\"task_product\":{\"abstraction\":\"bounded-subtraction-diagonal/v1\",\"clock_ceilings\":[],\"diagonal_constraints\":[],\"queue_bounds\":[{\"arrival\":\"periodic\",\"interarrival\":{\"denominator\":\"1\",\"numerator\":\"2\"},\"max_jitter\":{\"denominator\":\"1\",\"numerator\":\"0\"},\"max_jobs\":1,\"relative_deadline\":{\"denominator\":\"1\",\"numerator\":\"2\"},\"task\":\"A\",\"taskset\":\"S\",\"work_lower\":{\"denominator\":\"1\",\"numerator\":\"1\"},\"work_upper\":{\"denominator\":\"1\",\"numerator\":\"1\"}},{\"arrival\":\"periodic\",\"interarrival\":{\"denominator\":\"1\",\"numerator\":\"3\"},\"max_jitter\":{\"denominator\":\"1\",\"numerator\":\"0\"},\"max_jobs\":1,\"relative_deadline\":{\"denominator\":\"1\",\"numerator\":\"3\"},\"task\":\"B\",\"taskset\":\"S\",\"work_lower\":{\"denominator\":\"1\",\"numerator\":\"1\"},\"work_upper\":{\"denominator\":\"1\",\"numerator\":\"1\"}}],\"subtractions\":[{\"clock\":\"A.service\",\"constant\":\"1\",\"transition\":{\"action\":\"complete\",\"job_rank\":0,\"release\":{\"arguments\":[],\"operation\":\"Task::release\",\"receiver\":null,\"type\":\"transition\"},\"slot\":0,\"source_transition\":null,\"task\":\"A\",\"taskset\":\"S\",\"type\":\"task-transition-template\"}}],\"time_progress\":{\"closure\":\"recompute-all-reachable-successors/v1\",\"live_job_cap\":2,\"method\":\"closed-finite-product/v1\"}}}",
       "byte_length": 2779
+    },
+    {
+      "id": "ZC-26",
+      "description": "Closed timed source product with no reachable task release; variable demand is irrelevant and no scheduler clocks or task edges are present.",
+      "document": {
+        "identity": {
+          "node_id": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "TaskSet"
+            ]
+          },
+          "model": "example",
+          "ordinal": 0
+        },
+        "scale": "1",
+        "bounds": [],
+        "nodes": [
+          {
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
+            "automaton": 0,
+            "zone": [
+              [
+                {
+                  "bound": "0",
+                  "strict": false
+                }
+              ]
+            ]
+          }
+        ],
+        "edges": [],
+        "initials": [
+          0
+        ],
+        "admitted": {
+          "start": 0,
+          "edges": []
+        },
+        "task_product": {
+          "abstraction": "bounded-subtraction-diagonal/v1",
+          "queue_bounds": [
+            {
+              "taskset": "S",
+              "task": "A",
+              "arrival": "periodic",
+              "interarrival": {
+                "numerator": "2",
+                "denominator": "1"
+              },
+              "relative_deadline": {
+                "numerator": "2",
+                "denominator": "1"
+              },
+              "max_jitter": {
+                "numerator": "0",
+                "denominator": "1"
+              },
+              "work_lower": {
+                "numerator": "1",
+                "denominator": "1"
+              },
+              "work_upper": {
+                "numerator": "2",
+                "denominator": "1"
+              },
+              "max_jobs": 1
+            }
+          ],
+          "clock_ceilings": [],
+          "diagonal_constraints": [],
+          "subtractions": [],
+          "time_progress": {
+            "method": "closed-no-release-product/v1",
+            "live_job_cap": 0,
+            "closure": "recompute-all-source-successors-no-task-release/v1"
+          }
+        }
+      },
+      "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":0},\"bounds\":[],\"edges\":[],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"TaskSet\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false}]]}],\"scale\":\"1\",\"task_product\":{\"abstraction\":\"bounded-subtraction-diagonal/v1\",\"clock_ceilings\":[],\"diagonal_constraints\":[],\"queue_bounds\":[{\"arrival\":\"periodic\",\"interarrival\":{\"denominator\":\"1\",\"numerator\":\"2\"},\"max_jitter\":{\"denominator\":\"1\",\"numerator\":\"0\"},\"max_jobs\":1,\"relative_deadline\":{\"denominator\":\"1\",\"numerator\":\"2\"},\"task\":\"A\",\"taskset\":\"S\",\"work_lower\":{\"denominator\":\"1\",\"numerator\":\"1\"},\"work_upper\":{\"denominator\":\"1\",\"numerator\":\"2\"}}],\"subtractions\":[],\"time_progress\":{\"closure\":\"recompute-all-source-successors-no-task-release/v1\",\"live_job_cap\":0,\"method\":\"closed-no-release-product/v1\"}}}",
+      "byte_length": 1012
     }
   ],
   "malformed_vectors": [
@@ -1015,6 +1100,20 @@
           "denominator": "1"
         }
       }
+    },
+    {
+      "id": "ZC-27",
+      "description": "The no-release closure marker requires a zero live-job cap.",
+      "base": "ZC-26",
+      "pointer": "/task_product/time_progress/live_job_cap",
+      "value": 1
+    },
+    {
+      "id": "ZC-29",
+      "description": "A no-release closure still carries at least one checked task demand row.",
+      "base": "ZC-26",
+      "pointer": "/task_product/queue_bounds",
+      "value": []
     }
   ],
   "task_reader_vectors": [
@@ -1038,6 +1137,32 @@
       "base": "ZC-23",
       "pointer": "/edges/0/transition/slot",
       "value": 1,
+      "expected": {
+        "code": "certificate-rejected",
+        "rule": "successor-missing",
+        "at": {
+          "node": 0
+        }
+      }
+    },
+    {
+      "id": "ZC-28",
+      "description": "A no-release closure bound to TC-372 CtlFp is refused because its checked source release binding is reachable, and no corresponding task-product successor is certified.",
+      "checked_task_model": "TC-372/CtlFp",
+      "base": "ZC-26",
+      "pointer": "/edges",
+      "value": [
+        {
+          "node": 0,
+          "transition": {
+            "type": "transition",
+            "operation": "Task::release",
+            "receiver": null,
+            "arguments": []
+          },
+          "target": 0
+        }
+      ],
       "expected": {
         "code": "certificate-rejected",
         "rule": "successor-missing",

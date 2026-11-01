@@ -23,7 +23,7 @@ Accept valid zone certificates and reject or refuse invalid ones, recomputing ev
 
 ## Test Procedure
 
-Run each vector through the real local Rust boundary of the frontend or provider named by the requirement, and compare the complete typed result (value, cause and payload) with the expected result. Mutations start from ZC-01's certificate. ZC-10 to ZC-13 and ZC-19 to ZC-25 check the certificate's wire and canonical bytes (FR-418 "Canonical bytes") against the `ZoneCertificate` definition of the FR-331 schema and the vectors in `proposals/backend-provider-v1/zone-certificate-vectors.json`; they run in `tests/zone_certificate_wire.rs`. ZC-19 supplies the two-state finite periodic task cycle, ZC-23 supplies completed-job renaming while another task job stays live, and ZC-24..25 supply schema-valid task-reader refusals. Tag those tests `#[trace("TC-371", "FR-418-AC-n")]`.
+Run each vector through the real local Rust boundary of the frontend or provider named by the requirement, and compare the complete typed result (value, cause and payload) with the expected result. Mutations start from ZC-01's certificate. ZC-10 to ZC-13, ZC-19, ZC-23 and ZC-26 check the certificate's wire and canonical bytes (FR-418 "Canonical bytes") against the `ZoneCertificate` definition of the FR-331 schema and the vectors in `proposals/backend-provider-v1/zone-certificate-vectors.json`; they run in `tests/zone_certificate_wire.rs`. ZC-19 supplies the two-state finite periodic task cycle, ZC-23 supplies completed-job renaming while another task job stays live, and ZC-24..25 and ZC-28 supply schema-valid task-reader refusals. ZC-27 and ZC-29 are malformed no-release wire cases. Tag those tests `#[trace("TC-371", "FR-418-AC-n")]`.
 
 ## Models
 
@@ -60,6 +60,10 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-23 | Task A completes while task B remains live, then A activates again using rank 0/slot 0 | The finite task certificate preserves B's identity and order across A's completion and reuse. Exact replay emits A's first occurrence and next occurrence with the appropriate slot generations while B remains unchanged |
 | ZC-24 | ZC-23 with the activation template's `job_rank` set beyond the recomputed live-job range | `certificate-rejected`, `successor-missing` at node 1 |
 | ZC-25 | ZC-23 with the completion template's `slot` changed to a slot not bound to its live job | `certificate-rejected`, `successor-missing` at node 0 |
+| ZC-26 | A closed source product with no reachable checked task release and interval demand | Valid `ZoneCertificate`; the reader proves the no-release closure and does not use either demand endpoint |
+| ZC-27 | ZC-26 with `live_job_cap` changed to 1 | Not a `ZoneCertificate` |
+| ZC-28 | ZC-26 bound to `TC-372/CtlFp`, whose checked source release is reachable | Schema-valid; `certificate-rejected`, `successor-missing` at node 0 |
+| ZC-29 | ZC-26 with `queue_bounds` empty | Not a `ZoneCertificate` |
 
 ## Expected Results
 

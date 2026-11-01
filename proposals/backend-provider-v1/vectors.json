@@ -12978,6 +12978,17 @@
       ]
     },
     {
+      "name": "task-counterexample-task-transition-missing-delay",
+      "base": "task-queue-growth-overload",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/counterexamples/0/counterexample/prefix/0/delay"
+        }
+      ]
+    },
+    {
       "name": "task-search-work-limit-unresolved-frontier",
       "base": "task-transition-optional-priority-edf-work-limit",
       "owner": "FR-331",
@@ -13026,6 +13037,20 @@
         {
           "op": "remove",
           "path": "/results/0/task_search"
+        }
+      ]
+    },
+    {
+      "name": "task-search-unresolved-open-requires-dynamic-dimension",
+      "base": "task-search-unresolved-dynamics",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/task_search/frontier/0/open",
+          "value": [
+            "successors"
+          ]
         }
       ]
     }

@@ -598,7 +598,9 @@ result's `limit-reached{limit, value, setting}` cause when present. A task searc
 stopped before a configured limit because the next behavior has unresolved
 continuous dynamics carries no `limit`; its result cause is
 `bounded-search-incomplete{reason: "unresolved-dynamics"}`. Its frontier names
-each exact unresolved node with reason `unresolved-choice`. The task-search checker
+each exact unresolved node with reason `unresolved-choice`; each such row's
+`open` set contains at least one of `demand`, `budget-change` or `queue`, and
+may also name `successors` or `delay`. The task-search checker
 re-admits the package and product, replays every listed edge, verifies initial
 node reachability, the zones and the recorded open frontier, and verifies that
 the named effective limit stopped expansion at the recorded first
@@ -788,7 +790,7 @@ probabilistic engine's is `exact_prob`.
   assignments `{type: "assignments", values}`, one FR-181 typed value per
   parameter node; an FR-364 `TemporalCounterexample`, whose timed steps carry
   `delay` and which carries `final_delay` for kind `time-lock` (FR-417) and
-  `refinement_failure` for a refinement item (FR-379: the seven model kinds, and on a protocol abstract subject also `RefusalNotPermitted{position, label}` and `TerminalSuccessMismatch{position, direction}`, with `label` an `ObservationLabel`; none of these is a step verdict); an FR-413
+  `refinement_failure` for a refinement item (FR-379: the seven model kinds, and on a protocol abstract subject also `RefusalNotPermitted{position, label}` and `TerminalSuccessMismatch{position, direction}`, with `label` an `ObservationLabel`; none of these is a step verdict); a task-automaton deadline-miss witness is this same model-arm `TemporalCounterexample`: its `prefix` and time-divergent `loop` use source `TransitionIdentity` steps and/or typed `TaskTransitionIdentity` steps, with each task step's exact delay, and FR-364 replays the concrete miss and checked continuation before the result can be `refuted`; an FR-413
   `ProbabilisticCounterexample`; an FR-393 `GraphEvidence`; an FR-400
   `HyperCounterexample`; or, on an `operation-contract` item, a
   `contract-counterexample` ([FR-485](../../functional/ir-proof/FR-485-check-operation-contract-items.md)
