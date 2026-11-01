@@ -118,7 +118,7 @@
       "schema": "valid",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
-      "locus": "/temporal_bindings/1/declaration"
+      "locus": "/temporal_bindings/1"
     },
     {
       "id": "TCB-12-clock-name-mismatch",
