@@ -56,7 +56,7 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 | `initials` | Nonempty. The position in `nodes` of the initial node of each initial state of the subject, in the subject's initial-state order (FR-361): the node that covers that state's initial symbolic state. A form with one initial state lists one position. QSL FR-244 reads its single `initial` as `initials[0]`; the wire carries no `initial` member. |
 | `admitted` | The ADR-026 TD-6 witness: a start node (in a refinement form, any positioned `initials[i]`, so a time-locked first initial state does not decide it) and a path of certificate edges to a quiescent node or to a node of a component with a cycle of positive total delay (QSL FR-244 `admitted`). |
 | `refinement` | Present only for the safety half of a timed refinement (QSL FR-430): the refinement part below. |
-| `task_product` | Present only for a fixed-work task-automaton proof: the `bounded-subtraction-diagonal/v1` abstraction name, finite per-task queue bounds, each auxiliary clock ceiling `M_x`, all diagonal constraints and each typed subtraction transition and constant. |
+| `task_product` | Present only for a fixed-work task-automaton proof: the `bounded-subtraction-diagonal/v1` abstraction name, each task's enforced arrival kind, minimum interarrival, nominal relative deadline and maximum jitter with its derived finite slot bound, each auxiliary clock ceiling `M_x`, all diagonal constraints and each typed subtraction transition and constant. |
 
 QSL FR-244 names `identity`, `bounds` and a node's `automaton` as `obligation`,
 `lu_bounds` and `automaton_state`; the wire spellings here are the ones the
@@ -66,9 +66,15 @@ on exactly that node.
 
 For a task-automaton certificate, each node's `state` is the complete
 source-plus-scheduler product key. Its DBM uses the canonical clock order:
-source clock places, then each task slot's service clock and deadline clock.
-The checker recompiles the task product and requires `task_product` to match
-its task-slot bounds, ceilings, diagonal constraints and subtraction table.
+source clock places, task arrival clocks, pending-release jitter clocks, then
+each task slot's service and nominal-deadline clocks. The checker recompiles
+the task product and requires `task_product` to match its task-slot bounds,
+task-set arrival fields, ceilings, diagonal constraints and subtraction table.
+Each task's slot bound is `ceil(D_i/T_i)+1` from the compiled enforced nominal
+activation spacing; maximum jitter does not extend the deadline window
+because deadlines start at nominal activation. The checker refuses a bound
+not derived from that task's resolved periodic/sporadic arrival, `T_i`, `D_i`
+and `J_i`.
 It checks each ceiling and exact scaled constant, and proves that every
 reachable subtraction of `c` from `x` is guarded by `c <= x <= M_x`, yields a
 non-negative value, and uses the named clock and transition. The task product
@@ -84,9 +90,11 @@ For a fixed-work task proof, the finite scheduler control, FR-419's finite job
 slots, finite clock ceilings and finite refined-region partition make the
 product graph finite. A task-product certificate covers its entire reachable
 graph. A bounded search frontier is not a `ZoneCertificate` and cannot prove
-absence of deadline misses. A reachable deadline-miss or overflow node is
-permitted only when it is `locked` and has no reachable time-divergent target;
-if it has one, the checker rejects the certificate as `bad-state`. This keeps
+absence of deadline misses. A finite-slot overflow is not a product state or
+certificate node; it stops certification and routes to replayable incomplete
+search evidence. A reachable deadline-miss node is permitted only when it is
+`locked` and has no reachable time-divergent target; if it has one, the checker
+rejects the certificate as `bad-state`. This keeps
 time-locking paths outside FR-416's timed-claim behavior set while FR-417
 continues to report time-locks separately.
 
@@ -220,7 +228,7 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence`, `refinement` or `task_product` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
 | FR-418-AC-9 | `identity` is the structural obligation identity, and in a refinement form the part's `refinement_node` is a `node_id` and `concrete_package` and `abstract_package` are package identities; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
 | FR-418-AC-10 | Every certificate lists `initials` (nonempty), and a refinement-form certificate lists, in its part, `positions` (nonempty) and `taken`, so a refinement part with empty `positions` is not a `ZoneCertificate`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initials` or `admitted`, or with an `initial` member, is not a `ZoneCertificate`; nor is a refinement part whose node-id member is named `refinement` or `node` rather than `refinement_node`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
-| FR-418-AC-11 | A fixed-work task-product certificate carries the exact queue bounds, `M_x` ceiling for every auxiliary clock, diagonal constraints and subtraction constants; the checker rejects a missing or altered bound, subtraction outside `c <= x <= M_x`, a negative subtraction result, a successor covered only by aLU but not the refined-region relation, or a bad node with a time-divergent target. | Test (TC-371) |
+| FR-418-AC-11 | A fixed-work task-product certificate carries each task's periodic/sporadic arrival, `T`, nominal `D`, `J`, derived `ceil(D/T)+1` slot bound, `M_x` ceiling for every auxiliary clock, diagonal constraints and subtraction constants; the checker rejects a missing or altered timing premise/bound, subtraction outside `c <= x <= M_x`, a negative subtraction result, a successor covered only by aLU but not the refined-region relation, or a deadline-miss node with a time-divergent target. Queue-cap overflow is never a certificate node. | Test (TC-371, TC-372) |
 
 ## Dependencies
 

@@ -152,10 +152,47 @@ prefix. A job keeps this identity, its task priority, release time and absolute
 deadline until completion or removal by an explicitly specified task-set
 policy. A scheduler slot is storage for that job, not its identity; moving a
 job in the queue or reusing a slot after completion does not rename a live job.
-Release, dispatch, preemption, resumption, task completion, budget change,
-deadline miss and queue overflow are derived transitions, each carrying the
-source/task provenance and job identity that enables it. They are steps of the
-derived subject and do not claim to be source-model operations.
+Each source declaration `release S.τ on M::o;` resolves `S` and `τ` to exactly
+one task-set declaration in `S`; a missing or ambiguous task binding is an
+invalid task automaton. The source operation is that task's **activation**.
+All release declarations bound to one task share one activation clock and one
+occurrence counter, so adding another source operation cannot bypass the
+task's arrival rule. The first activation establishes the task's phase. A
+`periodic T` task may activate again only exactly `T` after its previous
+activation; a `sporadic T` task may activate again only after at least `T`.
+For a periodic task, the product's arrival-clock invariant `x <= T` prevents
+time from passing the next required activation; if no bound source operation
+can activate it at `x = T`, that path is time-locked and FR-417 reports it.
+For a sporadic task, the guard `x >= T` prevents early activation. Both rules
+apply to every activation, including zero-time source-operation cycles.
+
+An activation is the job's nominal arrival. Its exact release jitter `j` is
+chosen once from `[0,J]`, where absent `jitter` means `J=0`; the instance
+becomes ready exactly `j` time units after activation. The deadline clock
+starts at nominal activation and its absolute deadline is activation time plus
+`D`, matching FR-419's closed-form response bound `R + J`. Jitter delays
+availability to the scheduler; it does not shift the deadline. The pending
+instance retains its source activation identity and selected jitter, and it
+cannot be released twice. This construction is part of the derived subject
+and is replayed with its exact delay. Under a schedulable path, a task's live
+instances are bounded by the number of nominal activations in the `D` window:
+at most `ceil(D/T)+1` for both periodic and sporadic tasks. This bound follows
+from the enforced minimum nominal activation spacing `T`; the product does
+not rely on WCET as a minimum service amount to bound the queue. It applies to
+all live jobs on a no-miss path, including pending jittered releases, because
+the absolute deadline remains measured from nominal activation.
+If the selected jitter places actual release after the nominal absolute
+deadline, the pending job misses at that deadline with its full positive
+remaining demand; it receives no service before actual release.
+If no finite bound is established for an admitted release mapping,
+the analysis stops with replayable bounded-search evidence rather than
+truncating or refusing the source behavior.
+
+Release, dispatch, preemption, resumption, task completion, budget change and
+deadline miss are derived transitions, each carrying the source/task
+provenance and job identity that enables it. Exceeding a finite analysis slot
+cap is a search/frontier signal, not a task transition or a counterexample
+step. These derived transitions do not claim to be source-model operations.
 
 The product has one processor. At a delay of `d`, the running job receives
 exactly `d` service and every waiting or preempted job receives zero service;
@@ -167,13 +204,23 @@ transition explicitly carries a positive delay. A source completion-feedback
 transition is synchronized with the corresponding derived completion step and
 retains both transition identities in replay evidence.
 
-For the fixed-work class, every task type has one positive exact computation
-time (`B = W` in the task-automata notation). The lowering allocates at most
-`ceil(D_i / W_i)` slots for type `i`, in addition to the scheduler's finite
-control. More than that many simultaneously live instances is an overflow
-edge: under the fixed-work assumptions it witnesses a non-schedulable queue,
-but it refutes the timed claim only when the resulting product state has a
-time-divergent continuation. The fixed-work product is decided by the
+The exact fixed-work class applies when the admitted source/product semantics
+constrains each job's actual demand to one positive exact value `W_i` (the
+singleton case `B_i = W_i` in the task-automata notation). The analyzer derives
+this from the resolved source transition and task-set bindings; a WCET `C_i`
+alone does not imply an exact demand or a singleton. Queue capacity comes
+from the task-set activation bound above, not from WCET. An existing sound
+reduction may also select an exact finite procedure when its proven policy and
+feedback premises cover the admitted model. Otherwise, the analyzer uses
+bounded exploration. The exact fixed-work lowering allocates at most
+`ceil(D_i / T_i)+1` slots for type `i`, in addition to the scheduler's finite
+control. More than that many simultaneously live
+instances raises an internal queue-cap frontier. This signal is not itself a
+miss or a refutation: the analyzer must derive a concrete job-specific
+deadline-miss state from the legal task trace, replay that trace, and check its
+time-divergent continuation before returning `refuted`. If it cannot derive
+and replay that deadline miss, it returns `incomplete`, never a queue-overflow
+counterexample. The fixed-work product is decided by the
 bounded-subtraction construction: each task instance has unit-rate service and
 deadline clocks; diagonal clock constraints compare service/deadline values;
 completion subtracts the completed job's fixed work from suspended-job service
@@ -182,12 +229,31 @@ leaves `x - c >= 0`; FR-415 fixes and validates every clock ceiling `M_x`.
 These clocks never have a rate other than one. The resulting finite refined
 region graph is the exact decision procedure for this class.
 
-When per-job execution demand is an interval, the lowering retains the exact
-demand selected for each released job and its completion-feedback effects.
-When an HI task's remaining demand changes at a mode transition, the product
-retains the old and new budget, the exact delta, and the affected live job
-identities; the job's absolute deadline and priority are unchanged. These
-cases use sound bounded exploration with the exact rational demands and deltas
+For a task automaton using a task-set member's WCET `C`, each released `LO` job
+selects one exact rational total demand `d` in `[0, C]`; each `HI` job selects
+one exact rational total demand `d` in `[0, C(HI)]`. The choice is made once
+at nominal activation, is retained across pending jitter, preemption and replay,
+and is never resampled. A zero-demand job completes at activation without
+processor service and cannot be a deadline miss.
+For a `HI` job while the source subject is in `LO` mode, `C(LO)` is its maximum
+service allowance; it does not change the job's selected `d`. A `LO` to `HI`
+mode change is enabled only by an admitted source transition whose post-state
+enters `HI` mode. The task product synchronizes with that transition and then
+emits one derived `budget-change` for each active `HI` job, carrying the exact
+allowance increase `budget_delta = C(HI) - C(LO)`. It preserves `d`, remaining
+actual work, accumulated service, job identity, priority and absolute deadline.
+Reaching service `C(LO)` alone never changes the source mode. If `d` equals
+the service at that threshold, the job completes and has no budget-change
+step. If `d` exceeds the threshold and no `LO` to `HI` source transition is
+enabled, the job receives no service beyond `C(LO)` and remains live; the
+product continues all other enabled source and scheduler behavior. A later
+deadline miss refutes only with the replay evidence below.
+
+An HI task released after the source enters `HI` mode selects from
+`[0, C(HI)]` and has no budget-change step. Completion occurs only after the
+selected demand `d` units of scheduled service; a budget increase never adds
+work or resets service. Variable-demand and mode-change products use sound
+bounded exploration with the exact rational demands and allowance deltas
 selected on each explored path. A finite negative search can settle `proved`
 only when its certificate checks an exact abstraction covering every admitted
 demand, mode change and scheduler successor; sampled or endpoint-only paths
@@ -195,10 +261,10 @@ never establish absence. Otherwise an exhausted configured search bound
 settles `incomplete`, `limit-reached`, with the replayable FR-331 task-search
 frontier. A live-job or state cap used only to bound exploration is not a
 task-queue overflow in the modeled system and cannot refute schedulability.
-A concrete miss is a refutation only
-after FR-364 replays each exact rational demand, delay, derived scheduler step,
-mode change and missed-deadline state, and FR-418 or fresh exploration verifies
-a time-divergent continuation from that state. The fixed-work finite-region
+A concrete miss is a refutation only after FR-364 replays each exact rational
+demand, delay, derived scheduler step, source mode transition, allowance update
+and missed-deadline state, and FR-418 or fresh exploration verifies a
+time-divergent continuation from that state. The fixed-work finite-region
 decision procedure is not claimed for interval demand with completion
 feedback and preemption; it is undecidable in general (Fersman et al.,
 Theorem 5). A budget change has the same rule: unless an exact finite
@@ -213,9 +279,10 @@ time-divergent scope is witnessed.
 The paper's fixed-work proof assumes that the underlying timed automaton has
 no time-stops. This product does not inherit that assumption: FR-416 limits the
 claim to time-divergent behaviours, FR-417 reports time-locks, and every
-deadline or overflow counterexample must include a separately checked
-time-divergent continuation. An overflow without such a continuation is not a
-refutation.
+deadline-miss counterexample must include a separately checked time-divergent
+continuation. A finite-slot cap is only an internal search signal; it is never
+the counterexample endpoint. A time-lock-only path or slot-cap signal without
+a replayed deadline miss and checked continuation is not a refutation.
 
 ## Acceptance Criteria
 
@@ -233,8 +300,9 @@ refutation.
 | FR-419-AC-10 | Each of these parses and refuses at check time with `invalid_timed_model`/`invalid-task-set`, never `invalid_syntax`: `taskset Empty { }` (naming `Empty`); a task with `jitter -1 ms`; a task with `blocking -1 ms`; a `lo` task with `wcet_hi 2 ms`; a task with `blocking 1 ms` under `edf`; a task with `jitter 1 ms` under `edf`; a task with `deadline 5 ms` and `periodic 4 ms` under `amc` (each naming the task). A task set with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms`, under `edf`, reports `t1`'s and `t2`'s task-set defects in that order, then the claim's two `edf` defects in the same order. | Test (TC-372) |
 | FR-419-AC-11 | A task released at `t=0` with fixed work 2 and deadline 3 runs for 1, is preempted by a higher-priority job released at `t=1` with work 1 until `t=2`, then resumes and completes at `t=3`; changing its deadline to `5/2` yields a replayable miss only when the product's absolute deadline expires. | Test (TC-372) |
 | FR-419-AC-12 | For interval execution with feedback and preemption, an exact rational job-demand choice and product trace that reaches a deadline miss replays and refutes only if a time-divergent continuation is checked; a search stopped before complete proof or replay settles `incomplete`, `limit-reached` with the effective bound. | Test (TC-372, TC-371) |
-| FR-419-AC-13 | At an HI mode change, every affected live job retains its original identity, priority and absolute deadline; replayed demand delta equals the recorded exact update, and assigning the continuation a fresh relative deadline or another job's slot generation is rejected. | Test (TC-372) |
-| FR-419-AC-14 | A deadline-miss or queue-overflow state with no time-divergent continuation does not refute the timed claim and is reported through FR-417 time-lock handling; the same bad state with a checked divergent continuation may refute. | Test (TC-372, TC-371) |
+| FR-419-AC-13 | At an enabled source `LO` to `HI` transition, each affected live HI job retains its selected demand, identity, priority and absolute deadline; its allowance increases by exactly `C(HI)-C(LO)`, without changing remaining actual work. Reaching the LO threshold alone does not change mode; an incomplete job with no enabled source mode transition remains at its LO allowance, and a job whose demand equals the threshold completes without a budget-change step. | Test (TC-372) |
+| FR-419-AC-14 | Queue-cap overflow is an internal frontier signal and never a task-transition identity or counterexample endpoint. It may lead to `refuted` only after the producer derives and FR-364 replays a concrete job-specific deadline miss and checks a positive-delay, repeatable divergent continuation; overflow, a time-lock-only path, or a miss without that continuation does not refute. | Test (TC-372, TC-371) |
+| FR-419-AC-15 | Every task-automaton source release operation resolves to exactly one task-set task; repeated operations cannot bypass shared per-task activation timing. Periodic activations occur exactly every `T`, sporadic activations no sooner than `T`; selected `j∈[0,J]` delays scheduler readiness while the deadline remains nominal activation plus `D`. The model's source guard/invariant can make a required periodic activation impossible, yielding FR-417 time-lock rather than a fabricated activation. Ambiguous/missing binding, an early sporadic event and an out-of-range jitter are rejected; the nonzero-jitter boundary replays consistently with response `R+J`. | Test (TC-372) |
 
 ## Dependencies
 

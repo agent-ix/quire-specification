@@ -79,8 +79,9 @@ model subject is a **timed subject**. A second `time` member refuses with
 
 The task-automaton product of FR-419 may add **auxiliary clocks** that do not
 come from a checked-package `clock_place`. Each auxiliary clock is identified
-by the task-set declaration, task declaration, stable job identity and clock
-role (`service` or `deadline`). Its value is held in the product valuation and
+by the task-set declaration, task declaration and role: one shared `arrival`
+phase clock per task; per-job `pending-jitter`, `service` and `deadline`
+clocks keyed by stable job identity. Its value is held in the product valuation and
 is absent from source-model data, source operation frames and user-authored
 clock-place bindings. A product state has finitely many such clocks because
 FR-419 assigns every live job a bounded slot; the product identity includes
@@ -500,7 +501,7 @@ its value and the request setting that raises it.
 | FR-415-AC-23 | Two clock places of one model that no source region tells apart are listed in the order of their paths (field names and slot collections with bounds), never by a hash, so two compilations of one model list its places identically (`AO-08`, `AO-09`); an element place in a clause (`self.ts[i].x`, `self.m[k].x`) is the template place with its owner term and slot terms, and a slot term of another type than the selector's domain refuses `ill_typed`/`type-mismatch` (`CL-10`). | Test (TC-367; CK-35, CK-36; AO-08..AO-10, CL-10) |
 | FR-415-AC-24 | A clock guard `forall(e in p: B)` carries the typed slot parameter `e` in that guard part's `binders`, and reduces to the conjunction of `B` over the live places selected by `p`; `exists(e in p: B)` carries the same binder form and reduces to the disjunction over those places. A time invariant `forall(e in p: B)` carries `e` in the invariant's `binders` and bounds each live place only while live. Empty collections make `forall` true and `exists` false. A binder not corresponding in order to the place constraint's slot terms refuses `invalid_package`/`timed-node-reference` at the binder reference. | Test (TC-367; CK-37; CL-57..CL-60) |
 | FR-415-AC-25 | The checked-package producer refuses `unsupported_construct`/`expression-form`, naming the construct, a guard `self.x >= 1 ms or self.versionNumber > 0` (a disjunct with no clock constraint), the whole-collection write `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` and `self.ts = filter(e in self.ts: e.n > 1)`, the drop `self.v = absent`, the ordered element write `self.ts[i] = Timer { x: 0 ms, n: 1 }` (`CW-06`), and the selection reset `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`; it builds the guard whose every disjunct reads a clock, the constant write `self.v = 0 ms` and a reset whose condition reads only the presence of the binder's place. A presence requirement has no clause node. The cases are `GJ-01`..`GJ-03`, `CW-01`..`CW-06`, `SD-01` and `SD-02` of `timed-clause-node-vectors.json` (FR-322-AC-267). | Test (TC-367; CK-38) |
-| FR-415-AC-26 | A task product with a released job allocates distinct service and deadline auxiliary clocks, both advancing at rate one through every delay; its bounded subtraction `x := x - c` is admitted only under `c <= x <= M_x`, leaves a non-negative value, and is checked against the exact compiled ceiling and diagonal constraints; a rate-zero clock, missing ceiling, negative result or out-of-ceiling subtraction is rejected. | Test (TC-372, TC-371) |
+| FR-415-AC-26 | A task product allocates one shared unit-rate activation-phase clock per task and distinct unit-rate pending-jitter, service and absolute-deadline clocks per job; every clock has a checked `M_x`, and every bounded subtraction `x := x - c` is admitted only under `c <= x <= M_x`, leaves a non-negative value and agrees with the product's diagonal constraints. A rate-zero clock, missing/altered ceiling, negative result or out-of-ceiling subtraction is rejected. | Test (TC-372, TC-371) |
 
 ## Dependencies
 

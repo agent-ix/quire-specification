@@ -5604,7 +5604,7 @@
                   "node": 0,
                   "transition": {
                     "type": "task-transition",
-                    "action": "release",
+                    "action": "activate",
                     "taskset": "Task",
                     "task": "A",
                     "job": 0,
@@ -5624,6 +5624,10 @@
                     },
                     "demand": {
                       "numerator": "1",
+                      "denominator": "1"
+                    },
+                    "jitter": {
+                      "numerator": "0",
                       "denominator": "1"
                     },
                     "deadline": {

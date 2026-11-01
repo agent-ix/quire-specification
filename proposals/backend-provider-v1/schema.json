@@ -148,10 +148,10 @@
     "TaskTransitionIdentity": {
       "description": "FR-181/FR-419: exact identity and provenance of a derived scheduler step. Immutable job fields repeat on every step for that job.",
       "type": "object",
-      "required": ["type", "action", "taskset", "task", "job", "slot", "generation", "release", "source_transition", "demand", "deadline", "priority"],
+      "required": ["type", "action", "taskset", "task", "job", "slot", "generation", "release", "source_transition", "demand", "jitter", "deadline", "priority"],
       "properties": {
         "type": {"const": "task-transition"},
-        "action": {"enum": ["release", "dispatch", "preempt", "resume", "complete", "budget-change", "deadline-miss", "queue-overflow"]},
+        "action": {"enum": ["activate", "release", "dispatch", "preempt", "resume", "complete", "budget-change", "deadline-miss"]},
         "taskset": {"$ref": "#/$defs/Nonempty"},
         "task": {"$ref": "#/$defs/Nonempty"},
         "job": {"description": "FR-419: zero-based occurrence among releases of this task by the same source transition in the replayed prefix.", "$ref": "#/$defs/Count"},
@@ -160,12 +160,13 @@
         "release": {"$ref": "#/$defs/SourceTransitionIdentity"},
         "source_transition": {"description": "The source operation whose release or completion feedback enables this scheduler step; null for an autonomous scheduler action.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/SourceTransitionIdentity"}]},
         "demand": {"description": "FR-419: exact rational total work selected for this job, in the task set's time unit.", "$ref": "#/$defs/Rational"},
+        "jitter": {"description": "FR-419: exact release delay selected once from [0,J]; the absolute deadline remains relative to nominal activation.", "$ref": "#/$defs/Rational"},
         "deadline": {"description": "FR-419: the job's absolute deadline from its source release, in the task set's time unit.", "$ref": "#/$defs/Rational"},
         "priority": {"$ref": "#/$defs/Count"},
-        "demand_delta": {"description": "FR-419: exact non-negative additional work applied to this live job by a mode change; present only on budget-change.", "$ref": "#/$defs/Rational"}
+        "budget_delta": {"description": "FR-419: exact non-negative increase in this live HI job's service allowance applied by a source LO-to-HI transition; it changes no actual demand or remaining work and is present only on budget-change.", "$ref": "#/$defs/Rational"}
       },
       "allOf": [
-        {"if": {"properties": {"action": {"const": "budget-change"}}, "required": ["action"]}, "then": {"required": ["demand_delta"]}, "else": {"not": {"required": ["demand_delta"]}}}
+        {"if": {"properties": {"action": {"const": "budget-change"}}, "required": ["action"]}, "then": {"required": ["budget_delta"]}, "else": {"not": {"required": ["budget_delta"]}}}
       ],
       "additionalProperties": false
     },
@@ -1204,7 +1205,7 @@
       "required": ["abstraction", "queue_bounds", "clock_ceilings", "diagonal_constraints", "subtractions"],
       "properties": {
         "abstraction": {"const": "bounded-subtraction-diagonal/v1"},
-        "queue_bounds": {"type": "array", "items": {"type": "object", "required": ["taskset", "task", "max_jobs"], "properties": {"taskset": {"$ref": "#/$defs/Nonempty"}, "task": {"$ref": "#/$defs/Nonempty"}, "max_jobs": {"$ref": "#/$defs/PositiveCount"}}, "additionalProperties": false}},
+        "queue_bounds": {"type": "array", "items": {"type": "object", "required": ["taskset", "task", "arrival", "interarrival", "relative_deadline", "max_jitter", "max_jobs"], "properties": {"taskset": {"$ref": "#/$defs/Nonempty"}, "task": {"$ref": "#/$defs/Nonempty"}, "arrival": {"enum": ["periodic", "sporadic"]}, "interarrival": {"$ref": "#/$defs/Rational"}, "relative_deadline": {"$ref": "#/$defs/Rational"}, "max_jitter": {"$ref": "#/$defs/Rational"}, "max_jobs": {"$ref": "#/$defs/PositiveCount"}}, "additionalProperties": false}},
         "clock_ceilings": {"type": "array", "items": {"type": "object", "required": ["clock", "maximum"], "properties": {"clock": {"$ref": "#/$defs/Nonempty"}, "maximum": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}},
         "diagonal_constraints": {"type": "array", "items": {"type": "object", "required": ["left", "operator", "right", "constant"], "properties": {"left": {"$ref": "#/$defs/Nonempty"}, "operator": {"enum": ["<", "<=", ">", ">="]}, "right": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "#/$defs/IntegerString"}}, "additionalProperties": false}},
         "subtractions": {"type": "array", "items": {"type": "object", "required": ["transition", "clock", "constant"], "properties": {"transition": {"$ref": "#/$defs/TaskTransitionIdentity"}, "clock": {"$ref": "#/$defs/Nonempty"}, "constant": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "additionalProperties": false}}

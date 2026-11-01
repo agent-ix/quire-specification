@@ -471,6 +471,7 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
 #[trace("TC-431", "FR-331-AC-39")]
 #[trace("TC-431", "FR-331-AC-40")]
 #[trace("TC-431", "FR-331-AC-41")]
+#[trace("TC-431", "FR-331-AC-51")]
 #[test]
 fn tc_431_positive_vectors_are_admitted_with_owned_members() {
     let validator = validator();
@@ -553,6 +554,7 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-41")]
 #[trace("TC-431", "FR-193-AC-19")]
 #[trace("TC-431", "FR-193-AC-20")]
+#[trace("TC-431", "FR-331-AC-51")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();
@@ -1620,7 +1622,7 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
     // The names are exactly the property names, at any depth, of the two certificates and
     // the certificate-owned definitions they reference (FR-331 "Certificate member").
     let walked = certificate_member_names();
-    assert_eq!(walked.len(), 50);
+    assert_eq!(walked.len(), 51);
     let enumerated: std::collections::BTreeSet<String> = parsed(SCHEMA)["$defs"]["CertificateRejected"]["oneOf"]
         .as_array().expect("causes").iter()
         .filter_map(|cause| cause["properties"]["at"]["properties"]["member"]["enum"].as_array())
