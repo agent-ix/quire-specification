@@ -67,7 +67,7 @@ Encode as V2 packages:
 
 11. A `quire.op.temporal.clause` body whose argument 1 is removed, one whose argument 1 is replaced by a `null` literal, and one whose argument 1 is replaced by the clause's clock text literal.
 12. `temporal-fairness-target-vectors.json`: each positive fairness member and each closed-shape mutation.
-13. The vector file's schema-valid reader cases for absent, foreign and wrong-kind parallel identities, an absent branch label, and same-package targets owned by a different protocol clause: root, attempt, parallel branch and compensation template.
+13. The vector file's schema-valid reader cases for absent, foreign and wrong-kind parallel identities, an absent branch label, wrong-kind protocol-root, attempt and compensation targets, and same-package targets owned by a different protocol clause: root, attempt, parallel branch and compensation template.
 
 ## Expected Results
 
@@ -127,4 +127,4 @@ Encode as V2 packages:
     and the union and union-value references are admitted (FR-370-AC-12).
 11. All three fail the schema (FR-370-AC-13).
 12. Every positive member satisfies the `OperationMember` schema, including each protocol target and the preserved hybrid-transition target; all missing/unknown discriminants, missing or extra identity fields and invalid structural node ids fail the schema (FR-322-AC-293, FR-370-AC-14).
-13. Each reader case's target identity and target context are admitted by the schema. Expected refusals point exactly to `/target/node`, `/target/parallel` or `/target/branch` as applicable; same-package nodes in another protocol clause are refused for root, attempt, parallel and compensation targets (FR-370-AC-15).
+13. Each reader case's target identity and target context are admitted by the schema. Expected refusals point exactly to `/target/node`, `/target/parallel` or `/target/branch` as applicable; wrong-kind root, attempt, parallel and compensation targets and same-package nodes in another protocol clause are refused with the FR-370-AC-15 code and cause.

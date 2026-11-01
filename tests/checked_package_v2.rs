@@ -8817,8 +8817,8 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
     let reader_cases = vectors["reader_cases"].as_array().unwrap();
     assert_eq!(
         reader_cases.len(),
-        8,
-        "all target ownership defects are covered"
+        11,
+        "all target resolution defects are covered"
     );
     for row in reader_cases {
         let id = row["id"].as_str().unwrap();
@@ -8831,6 +8831,13 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
                 "invalid_model_binding",
                 "malformed-declaration",
                 "/target/parallel",
+            ),
+            "FT-21-wrong-kind-root"
+            | "FT-22-wrong-kind-attempt"
+            | "FT-23-wrong-kind-compensation" => (
+                "invalid_model_binding",
+                "malformed-declaration",
+                "/target/node",
             ),
             "FT-16-absent-branch-label" => {
                 ("missing_declaration", "missing-name", "/target/branch")
@@ -8876,6 +8883,17 @@ fn tc_233_typed_temporal_fairness_target_vectors_match_the_closed_member_schema(
                         .contains(&target["branch"]),
                     "{id} branch label is absent"
                 );
+            }
+            "FT-21-wrong-kind-root" => {
+                let node = matching.expect("the root target identity exists");
+                assert_eq!(node["node_tag"], "protocol", "{id}");
+                assert_eq!(node["semantic_form"], "control", "{id}");
+            }
+            "FT-22-wrong-kind-attempt" | "FT-23-wrong-kind-compensation" => {
+                let node = matching.expect("the target identity exists");
+                assert_eq!(node["node_tag"], "protocol", "{id}");
+                assert_eq!(node["semantic_form"], "control", "{id}");
+                assert_eq!(node["operator"], "sequence", "{id}");
             }
             "FT-17-other-clause-root" => {
                 let other = &context["other_protocols"][0]["protocol"];
