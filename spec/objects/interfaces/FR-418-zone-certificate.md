@@ -20,6 +20,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-419
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # FR-418: Zone certificate and its checker
@@ -52,7 +54,7 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 
 | Member | Content |
 | --- | --- |
-| `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` (FR-479) binding the proof to the exact subject and claim. |
+| `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` (FR-479) binding the proof to the exact subject and claim. For a task-automaton proof, this binding selects the checked schedulability claim and therefore its policy; policy is not supplied as an independent certificate or `task_product` value. |
 | `scale` | The common denominator the constants were scaled by. |
 | `bounds` | The per-clock lower and upper bounds `L` and `U`, per discrete state, used by the simulation test. |
 | `nodes` | A finite list of nodes `(s, q, Z)`: discrete state key, claim-automaton state, canonical DBM. |
@@ -67,6 +69,18 @@ QSL FR-244 names `identity`, `bounds` and a node's `automaton` as `obligation`,
 FR-331 schema carries and QSL FR-245 writes in its loci. A node is marked
 `locked` (QSL FR-244 "Locked nodes") by a `locked` member present, as `true`,
 on exactly that node.
+
+For a task-automaton certificate, the reader resolves `identity` to the exact
+checked task claim and derives fixed-priority or EDF policy from that claim.
+It independently recompiles the task product and recomputes every release,
+ready queue order, dispatch, preemption, service and completion successor
+under that policy before it accepts coverage or derives positive-delay SCCs.
+The certificate cannot select or override policy through node state, an edge,
+or `task_product`; no duplicate unauthenticated policy value is required in
+the task-product carrier. For EDF, absolute deadline controls order and ties
+use the FR-419 canonical-task-name/source-activation/occurrence rule; source
+declaration order and declared priority do not affect ties. A checked declared
+priority is retained as job provenance but ignored for EDF order.
 
 For a task-automaton certificate, each node's `state` is the complete
 source-plus-scheduler product key. Its DBM uses the canonical clock order:
@@ -239,6 +253,7 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-9 | `identity` is the structural obligation identity, and in a refinement form the part's `refinement_node` is a `node_id` and `concrete_package` and `abstract_package` are package identities; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
 | FR-418-AC-10 | Every certificate lists `initials` (nonempty), and a refinement-form certificate lists, in its part, `positions` (nonempty) and `taken`, so a refinement part with empty `positions` is not a `ZoneCertificate`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initials` or `admitted`, or with an `initial` member, is not a `ZoneCertificate`; nor is a refinement part whose node-id member is named `refinement` or `node` rather than `refinement_node`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
 | FR-418-AC-11 | The `TaskProductCertificate` schema admits `abstraction: bounded-subtraction-diagonal/v1`, the structured `time_progress` object with method `closed-finite-product/v1`, a positive `live_job_cap` and closure label `recompute-all-reachable-successors/v1`, plus the queue-bound, clock-ceiling, diagonal-constraint and subtraction arrays; it refuses an unknown method, zero cap or a producer-asserted closure label. This criterion covers wire shape only; the reader's exhaustive finite-product closure and SCC checks are normative in the behavior above. | Test |
+| FR-418-AC-12 | For a task-automaton certificate, the reader derives the scheduler policy from the checked claim named by `identity`, recomputes every policy successor and refuses an edge inconsistent with that policy; `task_product` carries no policy override. An EDF certificate with absent task priorities is admitted with no synthesized priorities, and a forged priority or ready order is refused. | Test (TC-371, TC-372) |
 
 ## Dependencies
 

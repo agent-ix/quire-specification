@@ -602,7 +602,14 @@ reachable node. The checker verifies that frontier and edge inventories are
 complete for every expansion below the bound; rejects a missing or extra edge,
 a reachable unexpanded node that was below the bound, an inconsistent stop
 reason, changed effective limits or accounting values, and any task/job
-identity, demand, deadline, priority or slot-generation mismatch. The limit's
+identity, demand, deadline, declared-priority or slot-generation mismatch. A
+task-transition identity carries `priority` exactly when its checked task
+declaration has one; the reader refuses an omitted declared value or an extra
+value for a task without one. The reader derives scheduling policy from the
+bound checked claim and recomputes successor order under that policy: EDF uses
+absolute deadline and the FR-419 canonical-task-name/source-activation/occurrence
+tie rule, independent of source declaration order and declared priority; fixed
+priority uses the checked declared value. The limit's
 `value` equals the exact count at which expansion stopped and `setting` names
 the effective configured setting (including the provider default when the
 request omitted it). This record audits why the run is incomplete. It is

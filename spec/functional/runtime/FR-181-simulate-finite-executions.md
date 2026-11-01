@@ -29,6 +29,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-420
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
   - target: ix://agent-ix/quire-specification/FR-383
     type: references
 ---
@@ -327,7 +329,7 @@ bound").
 A task-derived timed subject additionally carries the task scheduler's finite
 control state: the current mode, policy queue order, each live job's task
 declaration, nominal activation identity and occurrence, selected jitter,
-slot generation, priority, absolute deadline and execution-demand phase, and
+slot generation, optional declared priority, absolute deadline and execution-demand phase, and
 whether it is pending jitter, ready, running, preempted or complete. It also
 carries each task's activation-clock phase and the source operation's unique
 task binding. This state is part of the canonical discrete state key.
@@ -340,7 +342,17 @@ or an explicit policy removal; a later job receives a new generation.
 Each derived task step has a typed identity distinct from a source operation
 identity. It names the action, task-set and task declarations, job occurrence,
 slot and generation, immutable activation transition, exact selected demand
-and jitter, priority, and original absolute deadline. An activation names the
+and jitter, and original absolute deadline. It carries `priority` exactly
+when the bound task declares one; otherwise the member is omitted. A supplied
+priority is never inferred from scheduler order or replaced with a default.
+For fixed-priority scheduling, the selected job is the ready job with the
+smallest declared numeric priority (equal priorities are rejected at claim
+admission). For EDF, declared priority does not affect dispatch: the ready job
+with the earliest absolute deadline is selected, ties broken by ascending
+canonical task name in Unicode scalar value order (FR-482), then the canonical
+source activation transition identity and its zero-based occurrence. Source
+declaration order and fixed priority do not affect EDF ties. These tie fields
+identify jobs without synthesizing a task priority. An activation names the
 source transition that created it; the later actual release names that same
 activation. A scheduler step names the derived transition
 that enabled it, and a source completion-feedback step names both the source
