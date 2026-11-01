@@ -26,6 +26,8 @@ const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
 const POSITIVE_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json");
+const DEPENDENCY_ORDER_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/dependency-order-vectors.json");
 const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-tick-timed-model-nodes.json");
 const TIMED_SLOT_SELECTOR_VECTORS: &str =
@@ -17805,6 +17807,58 @@ fn tc_233_every_vector_patch_keeps_dependencies_equal_to_its_body_references() {
     }
     assert!(patched > 0, "the vectors hold patches");
     assert!(failures.is_empty(), "{failures:#?}");
+}
+
+/// FR-322-AC-10 and AC-96: the malformed twin reverses node 34's two
+/// dependencies. After resolving index segments to structural ids, that list
+/// is descending and the refusal belongs to the node's dependencies member.
+#[trace("TC-233", "FR-322-AC-10", "FR-322-AC-96")]
+#[test]
+fn tc_233_descending_structural_dependencies_refuse_at_the_dependency_list() {
+    let vectors = parsed_fixture(DEPENDENCY_ORDER_VECTORS);
+    assert_eq!(
+        vectors["fixture"],
+        "fixtures/positive-timed-model-nodes.json"
+    );
+    let base = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
+    let structural_base = structural_package(&base);
+    for case in vectors["cases"].as_array().expect("dependency order cases") {
+        let id = case["id"].as_str().expect("case id");
+        let position = usize::try_from(case["node"].as_u64().expect("node index"))
+            .expect("node index fits usize");
+        let mut malformed = base.clone();
+        for patch in case["patch"].as_array().expect("case patch") {
+            apply_json_patch(&mut malformed, patch);
+        }
+        let malformed = structural_package(&malformed);
+        let dependencies = malformed["semantic_graph"]["nodes"][position]["dependencies"]
+            .as_array()
+            .expect("malformed dependencies");
+        assert!(
+            dependencies
+                .windows(2)
+                .any(|pair| node_id_order(&pair[0], &pair[1]).is_gt()),
+            "{id}: the mutation is descending by structural NodeId"
+        );
+        assert_eq!(case["expected_code"], "invalid_semantic_graph", "{id}");
+        assert!(case["expected_cause"].is_null(), "{id}: no cause");
+        assert_eq!(
+            case["locus"],
+            format!("/semantic_graph/nodes/{position}/dependencies"),
+            "{id}"
+        );
+        let defects = dependency_defects(
+            id,
+            &structural_base,
+            &malformed,
+        );
+        assert!(
+            defects.iter().any(|defect| defect.contains(&format!(
+                "node {position}: dependencies are not unique and node-id ascending"
+            ))),
+            "{id}: {defects:#?}"
+        );
+    }
 }
 
 const NODE_ORDINAL_VECTORS: &str =
