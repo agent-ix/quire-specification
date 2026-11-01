@@ -17724,7 +17724,7 @@ fn tc_233_node_id_ordinal_vectors_run_from_the_published_file() {
                         "{id}"
                     );
                 }
-                other => panic!("{id}: unknown expectation {other}"),
+            other => panic!("{id}: unknown expectation {other}"),
             }
         }
     }
@@ -18110,7 +18110,7 @@ fn tc_233_structural_identity_vectors_compare_componentwise() {
 const DIMENSION_EQUIVALENCE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dimension-equivalence-vectors.json");
 
-/// FR-322-AC-268 (TC-280 `MU-25`..`MU-28`): shape and consistency check of the
+/// FR-322-AC-268 (TC-280 `MU-25`..`MU-30`): shape and consistency check of the
 /// published cross-package equivalence vectors. QSpec holds no reader for
 /// equivalence graphs: the reader that decides admission and each
 /// `invalid_semantic_graph` refusal is quire-contract-ir's (FR-063-AC-3,
@@ -18130,6 +18130,7 @@ fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
         let node = vectors["nodes"].get(key).unwrap_or_else(|| panic!("node {key} resolves"));
         json!({"package": node["package"], "path": node["path"], "ordinal": node["ordinal"]})
     };
+    let operand_schema = schema_for_def(&root, "DimensionOperand");
     for (key, entry) in vectors["nodes"].as_object().unwrap() {
         let Some(terms) = entry.get("terms") else { continue };
         let body = json!({
@@ -18145,15 +18146,22 @@ fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
     let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
     assert_eq!(
         ids,
-        ["XP-01", "XP-02", "XP-03", "XP-04", "XP-05", "XP-06", "XP-07", "XP-08", "XP-09", "XP-10"]
+        [
+            "XP-01", "XP-02", "XP-03", "XP-04", "XP-05", "XP-06", "XP-07", "XP-08", "XP-09",
+            "XP-10", "XP-11", "XP-12", "XP-13", "XP-14", "XP-15"
+        ]
     );
     for case in cases {
         let id = case["id"].as_str().unwrap();
         let equivalences = case["equivalences"].as_array().unwrap();
         for entry in equivalences {
+            // Each pair entry is the exact wire operand (FR-322-AC-299).
+            for operand in entry["pair"].as_array().unwrap() {
+                assert!(operand_schema.is_valid(operand), "{id}: the operand meets DimensionOperand");
+            }
             let body = json!({
                 "term": "dimension_equivalence",
-                "dimension_node_ids": [node(entry["pair"][0].as_str().unwrap()), node(entry["pair"][1].as_str().unwrap())],
+                "dimension_node_ids": entry["pair"],
                 "root_scale": entry["root_scale"]
             });
             assert!(equivalence_schema.is_valid(&body), "{id}: the body meets the closed schema");
@@ -18163,6 +18171,29 @@ fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
             "invalid_semantic_graph" => {
                 let at = case["at"].as_u64().unwrap_or_else(|| panic!("{id}: a refusal names its node"));
                 assert!((at as usize) < equivalences.len(), "{id}: the locus indexes an equivalence");
+            }
+            "missing_declaration" => {
+                let at = case["at"].as_u64().unwrap_or_else(|| panic!("{id}: a refusal names its node"));
+                assert!((at as usize) < equivalences.len(), "{id}: the locus indexes an equivalence");
+                let operand = case["operand"].as_u64().unwrap() as usize;
+                assert!(operand < 2, "{id}: the operand position is 0 or 1");
+                let member = case["member"].as_str().unwrap();
+                let cause = case["cause"].as_str().unwrap();
+                assert!(
+                    matches!((cause, member), ("missing-selection", "package") | ("missing-name", "node")),
+                    "{id}: the cause pairs with its member"
+                );
+                let selections: Vec<&str> = case
+                    .get("dependency_selections")
+                    .map(|list| list.as_array().unwrap().iter().map(|p| p.as_str().unwrap()).collect())
+                    .unwrap_or_else(|| vec!["acme/clock", "acme/flow", "acme/rpc"]);
+                let named = &equivalences[at as usize]["pair"][operand];
+                let package = named["package"].as_str().unwrap();
+                if cause == "missing-selection" {
+                    assert!(!selections.contains(&package), "{id}: the named package is not a direct selection");
+                } else {
+                    assert!(selections.contains(&package), "{id}: the named package is selected");
+                }
             }
             other => panic!("{id}: unknown expectation {other}"),
         }

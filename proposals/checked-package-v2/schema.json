@@ -12564,6 +12564,32 @@
       },
       "additionalProperties": false
     },
+    "DimensionOperand": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NodeRef"
+        },
+        {
+          "$ref": "#/$defs/PackageNodeRef"
+        }
+      ]
+    },
+    "PackageNodeRef": {
+      "type": "object",
+      "required": [
+        "package",
+        "node"
+      ],
+      "properties": {
+        "package": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "node": {
+          "$ref": "#/$defs/DeclaredNodeId"
+        }
+      },
+      "additionalProperties": false
+    },
     "DimensionEquivalenceBody": {
       "type": "object",
       "required": [
@@ -12580,7 +12606,7 @@
           "minItems": 2,
           "maxItems": 2,
           "items": {
-            "$ref": "#/$defs/NodeRef"
+            "$ref": "#/$defs/DimensionOperand"
           }
         },
         "root_scale": {

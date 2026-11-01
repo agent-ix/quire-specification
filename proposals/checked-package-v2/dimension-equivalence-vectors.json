@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-322-AC-268 (TC-280 MU-25..MU-28): dimension equivalence over dimension nodes of three packages (the derived dimensions of XP-08..XP-10 name `terms` entries by node key, each a closed DimensionBody term). The reader that decides these outcomes is quire-contract-ir's (FR-063-AC-3, FR-063-AC-4); these vectors are authoritative for it and QSpec's test checks only their shape. Each node is a structural id {package,path,ordinal}; `form` is the node's scalar_type form (every node is a dimension except `rpc_s`, the unit XP-05 names). `pair` names two entries of `nodes`; root_scale is the exact positive rational for which one canonical root of the first equals root_scale canonical roots of the second. `at` is the index in `equivalences` of the refused node (the later in node-id order). The equivalence node's own id is assigned: path [scalar_type, dimension_equivalence, first id, second id] in package `example`, ordinal from the entry (default 0).",
+  "note": "FR-322-AC-268 (TC-280 MU-25..MU-28): dimension equivalence over dimension nodes of three packages (the derived dimensions of XP-08..XP-10 name `terms` entries by node key, each a closed DimensionBody term). The reader that decides these outcomes is quire-contract-ir's (FR-063-AC-3, FR-063-AC-4); these vectors are authoritative for it and QSpec's test checks only their shape. Each node is a structural id {package,path,ordinal}; `form` is the node's scalar_type form (every node is a dimension except `rpc_s`, the unit XP-05 names). `pair` names two entries of `nodes`; root_scale is the exact positive rational for which one canonical root of the first equals root_scale canonical roots of the second. `at` is the index in `equivalences` of the refused node (the later in node-id order). The equivalence node's own id is assigned: path [scalar_type, dimension_equivalence, first id, second id] in package `example`, ordinal from the entry (default 0). Each `pair` entry is the exact wire operand of `dimension_node_ids` (FR-322-AC-299): a package operand `{package, node}` for a foreign dimension, or a plain node id for a local operand. The importing package is `example`; a case's `dependency_selections` (default `acme/clock`, `acme/flow`, `acme/rpc`) are its direct selections and `closure_only` names packages reachable only through a selection. A refusal other than `invalid_semantic_graph` names its `code`, `cause`, the equivalence index `at`, the operand position `operand` and, for the selection and name codes, the `member` (`package` or `node`) the refusal points at: `/semantic_graph/nodes/{at node}/body/dimension_node_ids/{operand}/{member}`. `form` `absent` marks a node the case names but its package does not declare (XP-12, XP-13).",
   "nodes": {
     "clock_time": {
       "package": "acme/clock",
@@ -95,6 +95,22 @@
           "exponent": "-2"
         }
       ]
+    },
+    "ghost_time": {
+      "package": "acme/ghost",
+      "path": [
+        "Time"
+      ],
+      "ordinal": 0,
+      "form": "absent"
+    },
+    "rpc_missing": {
+      "package": "acme/rpc",
+      "path": [
+        "Missing"
+      ],
+      "ordinal": 0,
+      "form": "absent"
     }
   },
   "cases": [
@@ -104,8 +120,26 @@
       "equivalences": [
         {
           "pair": [
-            "clock_time",
-            "flow_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -114,8 +148,26 @@
         },
         {
           "pair": [
-            "clock_time",
-            "rpc_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -124,8 +176,26 @@
         },
         {
           "pair": [
-            "flow_time",
-            "rpc_time"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -141,8 +211,26 @@
       "equivalences": [
         {
           "pair": [
-            "flow_time",
-            "clock_time"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1000",
@@ -159,8 +247,26 @@
       "equivalences": [
         {
           "pair": [
-            "flow_time",
-            "flow_time"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -177,8 +283,26 @@
       "equivalences": [
         {
           "pair": [
-            "clock_time",
-            "flow_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -187,8 +311,26 @@
         },
         {
           "pair": [
-            "clock_time",
-            "flow_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -206,8 +348,26 @@
       "equivalences": [
         {
           "pair": [
-            "clock_time",
-            "rpc_s"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "s"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -224,8 +384,26 @@
       "equivalences": [
         {
           "pair": [
-            "clock_time",
-            "flow_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -234,8 +412,26 @@
         },
         {
           "pair": [
-            "clock_time",
-            "rpc_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -244,8 +440,26 @@
         },
         {
           "pair": [
-            "flow_time",
-            "rpc_time"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "2",
@@ -262,8 +476,26 @@
       "equivalences": [
         {
           "pair": [
-            "clock_time",
-            "flow_time"
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "2",
@@ -280,8 +512,26 @@
       "equivalences": [
         {
           "pair": [
-            "flow_accel",
-            "rpc_speed"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Acceleration"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Speed"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -298,8 +548,26 @@
       "equivalences": [
         {
           "pair": [
-            "flow_time",
-            "rpc_time"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -308,8 +576,26 @@
         },
         {
           "pair": [
-            "flow_speed",
-            "rpc_speed"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Speed"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Speed"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "5",
@@ -326,8 +612,26 @@
       "equivalences": [
         {
           "pair": [
-            "flow_time",
-            "rpc_time"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -336,8 +640,26 @@
         },
         {
           "pair": [
-            "flow_speed",
-            "rpc_speed"
+            {
+              "package": "acme/flow",
+              "node": {
+                "package": "acme/flow",
+                "path": [
+                  "Speed"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Speed"
+                ],
+                "ordinal": 0
+              }
+            }
           ],
           "root_scale": {
             "numerator": "1",
@@ -346,6 +668,204 @@
         }
       ],
       "expected": "admitted"
+    },
+    {
+      "id": "XP-11",
+      "note": "acme/rpc is in the derived closure through acme/flow but is not a direct selection",
+      "dependency_selections": [
+        "acme/clock",
+        "acme/flow"
+      ],
+      "closure_only": [
+        "acme/rpc"
+      ],
+      "equivalences": [
+        {
+          "pair": [
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        }
+      ],
+      "expected": "missing_declaration",
+      "cause": "missing-selection",
+      "at": 0,
+      "operand": 1,
+      "member": "package"
+    },
+    {
+      "id": "XP-12",
+      "note": "acme/ghost is in no selection and no closure",
+      "equivalences": [
+        {
+          "pair": [
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/ghost",
+              "node": {
+                "package": "acme/ghost",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        }
+      ],
+      "expected": "missing_declaration",
+      "cause": "missing-selection",
+      "at": 0,
+      "operand": 1,
+      "member": "package"
+    },
+    {
+      "id": "XP-13",
+      "note": "acme/rpc is selected but names no node Missing",
+      "equivalences": [
+        {
+          "pair": [
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/rpc",
+              "node": {
+                "package": "acme/rpc",
+                "path": [
+                  "Missing"
+                ],
+                "ordinal": 0
+              }
+            }
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        }
+      ],
+      "expected": "missing_declaration",
+      "cause": "missing-name",
+      "at": 0,
+      "operand": 1,
+      "member": "node"
+    },
+    {
+      "id": "XP-14",
+      "note": "self-minted: a foreign dimension written as a plain node id of the importing graph",
+      "equivalences": [
+        {
+          "pair": [
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "acme/flow",
+              "path": [
+                "Time"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0,
+      "operand": 1
+    },
+    {
+      "id": "XP-15",
+      "note": "the importing package named as a package operand; a package is not its own dependency",
+      "equivalences": [
+        {
+          "pair": [
+            {
+              "package": "acme/clock",
+              "node": {
+                "package": "acme/clock",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            },
+            {
+              "package": "example",
+              "node": {
+                "package": "example",
+                "path": [
+                  "Time"
+                ],
+                "ordinal": 0
+              }
+            }
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        }
+      ],
+      "expected": "missing_declaration",
+      "cause": "missing-selection",
+      "at": 0,
+      "operand": 1,
+      "member": "package"
     }
-  ]
+  ],
+  "importing_package": "example"
 }
