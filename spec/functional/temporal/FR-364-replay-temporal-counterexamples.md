@@ -133,8 +133,8 @@ position and nominal activation/deadline offsets using two-index affine forms
 index `i` are independent natural numbers. Prefix templates use `i=0`, each
 repeated-block copy uses its zero-based copy index, and suffix templates use
 `i=k+b`. It also records selected fixed
-work, remaining work, jitter, optional declared priority, current service allowance and
-scheduler status. The script names every release,
+work, remaining work, jitter, optional declared priority, current service
+allowance and scheduler status. The script names every release,
 dispatch, preemption, resumption, service amount, completion, budget change
 and source feedback transition in the cycle; it states the exact symbolic
 policy order among all ready template jobs and identifies the concrete missed
@@ -210,16 +210,20 @@ refused as a counterexample step. Each task identity carries the task-set/task
 declarations, job sequence, slot and generation, the nominal source activation,
 the job's exact selected rational demand and jitter and absolute deadline,
 plus `priority` exactly when its checked task declaration has one; absent
-priority is omitted, never synthesized. A supplied priority must equal the
-checked task declaration, and a missing or extra priority is a replay refusal.
-Replay derives the scheduling policy from the bound checked claim. Under
-fixed priority it recomputes ready order by ascending numeric priority. Under
-EDF it recomputes ready order by absolute deadline, with ties by ascending
-canonical task name in Unicode scalar value order (FR-482), then canonical
-source activation transition identity and zero-based occurrence. Source
-declaration order and any declared task priority do not affect EDF ties.
-Declared priority is provenance only and is ignored for EDF ordering. The triggering source or scheduler
-transition is also checked. A
+priority is omitted, never synthesized. This same presence/value rule applies
+to each `QueueGrowthJob` template and `QueueGrowthTransition` in a
+`queue_growth` witness: all carry the checked value if declared and omit it
+otherwise. A supplied priority must equal the checked task declaration, and a
+missing or extra priority is a replay refusal for either carrier. Replay
+derives the scheduling policy from the bound checked claim. Under fixed
+priority it recomputes ready order by ascending numeric priority. Under EDF it
+recomputes ready order, including every symbolic `ready_order`, by absolute
+deadline, with ties by ascending canonical task name in Unicode scalar value
+order (FR-482), then canonical source activation transition identity and
+zero-based occurrence. Source declaration order and any declared task
+priority do not affect EDF ties. Declared priority is provenance only and is
+ignored for EDF ordering. The triggering source or scheduler transition is
+also checked. A
 `budget-change` identity also carries the exact non-negative `budget_delta`;
 it does not alter `demand`.
 All steps for one live job repeat equal immutable identity fields; replay
@@ -378,7 +382,7 @@ counterexamples an engine returned.
 | FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step position the provision does not hold refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-295) |
 | FR-364-AC-10 | The wire schema admits an observed-arm formula counterexample (null `initial_state` and `over_binding`, two `document` steps) and an observed-arm undefined-evaluation envelope whose `where` carries `position`, `document` and `locus`; it refuses an observed-arm counterexample that names an initial state, carries an `over_binding`, carries a model-arm step in its `prefix` or in its `loop`, has `kind` `deadlock`, has `kind` `time-lock` with its `final_delay`, or has an envelope whose `where` carries `state_key` or `state_keys`; and it refuses a model-arm counterexample that has a null `initial_state`, carries a `document` step in its `prefix` or in its `loop`, or has an envelope whose `where` carries `document`. | Test (TC-431) |
 | FR-364-AC-14 | The backend-provider schema admits the typed RT-25 `queue_growth` wire vector and refuses omission of `iteration_shift`, zero `elapsed`, and a simultaneous nonempty `loop`; the vector test recomputes the two-unit cycle delay, work balance, positive backlog increment, and verifies `after(k)=before(k+1)` by affine queue-word expansion for the authored index range. These are wire/vector checks only; the task replay and queue-growth behavior above remain normative and require behavioral verification in the downstream QSL implementation. | Test |
-| FR-364-AC-15 | Task-transition replay admits omitted priority exactly when the bound task declaration has no priority, admits a supplied value only when it equals the declaration, and refuses a missing or forged value otherwise; replay recomputes EDF order from checked absolute deadlines and the deterministic canonical-task-name/source-transition/occurrence tie rule, with source declaration order and declared fixed priority ignored for EDF ties, and recomputes fixed-priority order from the checked declared values. | Test (TC-372) |
+| FR-364-AC-15 | The optional `priority` member on every task-transition identity, `QueueGrowthJob` and `QueueGrowthTransition` is a faithful projection of the checked task declaration: it is absent for a task with no declared priority and equals the declared value otherwise. Replay refuses a missing, extra or forged value for every carrier. Replay recomputes fixed-priority order from checked declared values and EDF order from checked deadlines, then canonical task name, activation transition identity and occurrence; source declaration order and declared priority do not affect EDF ties, including symbolic queue-growth `ready_order`. | Test (TC-372 RT-31, RT-32) |
 
 ## Dependencies
 
