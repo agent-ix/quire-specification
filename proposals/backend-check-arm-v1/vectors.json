@@ -890,9 +890,9 @@
     {
       "id": "VV-08",
       "tc": "TC-973",
-      "name": "operand of a range narrowing is checked against the target range",
+      "name": "operation undefined at a candidate the checker cannot exclude is refuted: 10 mod a over Int[0, 9]",
       "acs": [
-        "FR-484-AC-6"
+        "FR-484-AC-4"
       ],
       "registry": [
         {
@@ -916,7 +916,7 @@
       "item": {
         "kind": "value-validity",
         "form": "scalar-operation",
-        "claim": "vv.mul",
+        "claim": "vv.mod",
         "occurrence": {
           "role": "expression",
           "ordinal": 0
@@ -946,23 +946,18 @@
           }
         ],
         "body": [
-          "narrow",
-          0,
-          5,
+          "@",
+          "o",
           [
-            "@",
-            "o",
-            [
-              "*",
-              "a",
-              1
-            ]
+            "mod",
+            10,
+            "a"
           ]
         ],
         "occurrence": "o"
       },
       "candidate": {
-        "a": 7
+        "a": 0
       },
       "outcome": {
         "contract_version": "quire.backend-provider/v1",
@@ -985,14 +980,14 @@
               "type": "undefined-evaluation",
               "where": {
                 "locus": {
-                  "node": "$node:vv.mul",
+                  "node": "$node:vv.mod",
                   "occurrence": {
                     "role": "expression",
                     "ordinal": 0
                   }
                 }
               },
-              "cause": "integer-outside-range"
+              "cause": "division-by-zero"
             }
           }
         ],
@@ -1007,7 +1002,7 @@
                   "parameter": "$node:vv.a",
                   "value": {
                     "type": "integer",
-                    "value": "7"
+                    "value": "0"
                   }
                 }
               ]
@@ -7141,6 +7136,111 @@
               "value": 50,
               "setting": "value_check.max_cases"
             }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-18",
+      "tc": "TC-973",
+      "name": "operand of a range narrowing is checked against the target range: a * 1 narrowed to Int[0, 5] over Int[0, 3]",
+      "acs": [
+        "FR-484-AC-6"
+      ],
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "scalar-operation",
+        "claim": "vv.mul",
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "supported",
+        "result": "proved"
+      },
+      "method": "enumeration",
+      "model": {
+        "variables": [
+          {
+            "name": "a",
+            "node": "vv.a",
+            "lo": 0,
+            "hi": 3
+          }
+        ],
+        "body": [
+          "narrow",
+          0,
+          5,
+          [
+            "@",
+            "o",
+            [
+              "*",
+              "a",
+              1
+            ]
+          ]
+        ],
+        "occurrence": "o"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "proved",
+            "basis": {
+              "type": "exhaustive"
+            },
+            "certification": "uncertified"
           }
         ],
         "counterexamples": [],
