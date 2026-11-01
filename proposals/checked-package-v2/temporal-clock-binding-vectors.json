@@ -1,0 +1,110 @@
+{
+  "note": "STD-621. These are full checked-package cases derived from the positive temporal-clause fixture. Each positive retains one temporal/temporal_clause NodeRef, updates that clause's selected profile and the lock selection together, and adds one producer-owned temporal_bindings row. The profile is vector metadata, not a wire member; the row carries only its structural declaration key, exact clock name and closed typed clock configuration. The QSpec test validates the complete packages against schema.json. Reader checks for declaration membership and the profile/configuration join are separately recorded for the typed IR reader.",
+  "fixture": "fixtures/positive-timed-clause-nodes.json",
+  "positive": [
+    {
+      "id": "TCB-01-event-position",
+      "profile": "quire.temporal.event-position.false-extension/v1",
+      "clock_name": "model-steps",
+      "clock": {
+        "kind": "event_position",
+        "sequence_authority": "order-events"
+      }
+    },
+    {
+      "id": "TCB-02-fixed-sample",
+      "profile": "quire.temporal.fixed-sample.false-extension/v1",
+      "clock_name": "model-steps",
+      "clock": {
+        "kind": "fixed_sample",
+        "epoch": {
+          "kind": "integer",
+          "decimal": "0"
+        },
+        "period": {
+          "kind": "rational",
+          "numerator": "1",
+          "denominator": "10"
+        },
+        "unit": "milliseconds"
+      }
+    },
+    {
+      "id": "TCB-03-timestamped-event",
+      "profile": "quire.temporal.timestamped-event.finite-window/v1",
+      "clock_name": "model-steps",
+      "clock": {
+        "kind": "timestamped_event",
+        "timestamp_unit": "RFC3339"
+      }
+    }
+  ],
+  "schema_refusals": [
+    {
+      "id": "TCB-04-unknown-kind",
+      "mutation": "unknown-kind",
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/temporal_bindings/0/clock/kind"
+    },
+    {
+      "id": "TCB-05-missing-parameter",
+      "mutation": "missing-sequence-authority",
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/temporal_bindings/0/clock"
+    },
+    {
+      "id": "TCB-06-wrong-parameter-type",
+      "mutation": "wrong-sequence-authority-type",
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/temporal_bindings/0/clock/sequence_authority"
+    }
+  ],
+  "semantic_refusals": [
+    {
+      "id": "TCB-07-missing-required-row",
+      "mutation": "remove-row",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/8/body",
+      "precedence": "after-aggregate-order-before-per-node-joins"
+    },
+    {
+      "id": "TCB-08-absent-declaration",
+      "mutation": "absent-declaration",
+      "declaration": {
+        "package": "example",
+        "path": [
+          "temporal",
+          "temporal_clause",
+          "absent-declaration"
+        ],
+        "ordinal": 0
+      },
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/temporal_bindings/0/declaration"
+    },
+    {
+      "id": "TCB-09-wrong-kind-declaration",
+      "mutation": "wrong-kind-declaration",
+      "node_index": 9,
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/temporal_bindings/0/declaration"
+    },
+    {
+      "id": "TCB-10-duplicate-row",
+      "mutation": "duplicate-row",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/temporal_bindings/1"
+    }
+  ]
+}

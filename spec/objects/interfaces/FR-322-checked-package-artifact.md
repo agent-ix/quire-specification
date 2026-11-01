@@ -2969,6 +2969,80 @@ canonical decimal string, at every magnitude. A *counter*, meaning an
 (QSL ADR-013 O-09). A `node_id.ordinal` is always a JSON number and has the one
 bound 2^53-1 ("Structural node identity").
 
+### Temporal clock bindings
+
+`temporal_bindings` carries the typed clock selection for each temporal
+declaration whose selected profile requires a clock configuration. It is a
+top-level checked-package member, not a semantic-graph node. When no
+`temporal`/`temporal_clause` node selects one of the clock-configured profiles,
+the member is absent; when present, it is a non-empty array. Absence never
+supplies a default clock or configuration for a temporal declaration that
+requires one.
+
+Each row is exactly:
+
+```json
+{
+  "declaration": {"package": "<package>", "path": ["<segment>"], "ordinal": 0},
+  "clock": {"kind": "event_position", "sequence_authority": "<name>"},
+  "clock_name": "<name>"
+}
+```
+
+`declaration` is a structural `NodeRef` equal to the `node_id` of exactly one
+`temporal`/`temporal_clause` declaration node (FR-370), whose occurrence has
+role `claim`. It is not the referenced `temporal`/`formula` expression node,
+the model root, or a `timed_model` node: those identities do not identify the
+temporal declaration's selected clock. The row is read by that exact node id;
+a reader never selects it by array position, clock name, formula contents, or
+path-name inference. Rows are in ascending structural `NodeRef` order and each
+declaration occurs at most once.
+
+`clock_name` is the exact non-empty text value of the clause body's `clock`
+argument (the second argument of `quire.op.temporal.clause`, FR-370). A reader
+uses this typed member directly; it never parses a legacy `clock:` prefix or
+derives the name from the profile identity.
+
+`clock` is exactly one closed alternative, with no omitted or extra members:
+
+| `kind` | Remaining members | Selected `temporal_profile` definition |
+| --- | --- | --- |
+| `event_position` | `sequence_authority`: non-empty name | `quire.temporal.event-position.false-extension/v1` |
+| `fixed_sample` | `epoch` and `period`: exact typed numbers; `period` is positive; `unit`: non-empty name | `quire.temporal.fixed-sample.false-extension/v1` |
+| `timestamped_event` | `timestamp_unit`: non-empty name | `quire.temporal.timestamped-event.finite-window/v1` |
+
+`epoch` and `period` use the closed tagged exact-number form `{kind:
+"integer", decimal}` or `{kind: "rational", numerator, denominator}`;
+integer components use canonical decimal strings and rational denominators are
+positive. The rational components are in lowest terms. `period` is a strictly
+positive exact number. The authority and unit values are non-empty strings
+compared byte-for-byte; no trimming, normalization or alias resolution occurs.
+
+The profile is not repeated in a row. The reader resolves `declaration`, reads
+the clause's `temporal_profile` law, and requires that law to equal the matching
+`lock.profile_selections` entry. The selected definition determines exactly the
+`clock.kind` above. A row for an absent or wrong-kind declaration, a duplicate
+row, a missing row for a clock-configured temporal declaration, a mismatching
+clock name, or a kind inconsistent with its selected profile is refused; no
+clock, parameter or profile is substituted. The reader exposes the admitted
+row by reference as typed clock configuration data, without reparsing the
+wire or rechecking the profile selection during later reads. After aggregate
+order validation and before per-node joins, the reader requires exactly one row
+for every clock-configured temporal declaration. A missing row refuses at the
+first such declaration's own `/semantic_graph/nodes/{N}/body`, where `N` is its
+graph index. A row with an absent or wrong-kind declaration refuses at that
+row's `/temporal_bindings/{i}/declaration`; a repeated declaration refuses at
+the second row `/temporal_bindings/{i}`.
+
+`temporal-clock-binding-vectors.json` publishes one full checked-package
+positive for each configuration kind and the schema-invalid unknown-kind,
+missing-member and wrong-type cases. Its schema-valid semantic refusals cover a
+missing required row, absent and wrong-kind declaration references, and a
+duplicate row; the missing-row locus and its order relative to aggregate and
+per-node checks are explicit. The selected profile, configuration kind, and
+clause clock name agree in every positive. The vector file is the
+machine-readable form consumed by the QSpec qualification test.
+
 ### Timed-model nodes
 
 CheckedPackage V2 carries admitted timed models in `semantic_graph.nodes`.
@@ -3621,6 +3695,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-291 | Each protocol location row joins to one local expression/application node and one of its exact source occurrences; two terms sharing that application and occurrence have distinct `term_ordinal` values and preserve their different semantic locations. Each captured application/occurrence group has consecutive ordinals starting at zero. PL-01-root's lone ordinal-zero row admits; PL-R2's lone ordinal-one row witnesses the missing ordinal-zero mapping and refuses `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations`. A foreign or absent node, non-application, missing occurrence, duplicate per-term key, duplicate term ordinal or malformed origin refuses at the first mismatching row; no location is inferred from a source region, display name or selected dependency. | Test |
 | FR-322-AC-292 | `checked-term-data-vectors.json` publishes positive top-level text, enum, declared-quantity, compound-quantity and plan equality records, plus two equalities beneath one `and` parent, an equality beneath `or`, aggregate-member and binding-value forms. The parent forms reference each child equality application by its exact `NodeRef`; each equality record names that child node and has an empty `term_path`. The four TC-1070 Fixture E expressions at rows 8, 12, 15 and 17 remain four separate equality rows. Positive metadata demonstrates these parent-to-child references without adding a wire member. The vectors also include two protocol terms at one application occurrence and ordered and empty dispatch candidate sets whose selected operations use the typed declaring-node/name witness and whose selection keys use the structural FR-150 `EffectiveId`. Schema-invalid cases include a checked-package `NodeRef` used as an effective identity, an invented operation-path `NodeRef` (`DT-S5`), missing identity members, a missing equality `term_path`, an unrecognized path selector kind and extra identity fields. Schema-valid reader mutations cover wrong operator/operand/type/occurrence, a non-empty equality path ending at a reference to a distinct non-equality application, foreign application and effective identity, mismatched effective identity, a non-member selected operation (`DT-R6`), duplicate equality application/occurrence key, protocol key and dispatch key, duplicate selection key, missing protocol-term mapping and absent precondition join. Reader-level mutations have the expected refusal code, cause and exact JSON pointer. Read work charges every sidecar row and each nested unit, enum and candidate entry before inspection. The vectors contain 17 sidecar rows, 3 unit facts, 2 enum facts and 2 dispatch candidates, with zero equality `term_path` segments, for an exact 24-unit boundary; admission succeeds at 24 units. A 23-unit limit refuses `resource_exhausted` at `/checked_term_data/dispatch_tables/0/candidates/1`, the final charged candidate, with no partial data view. | Test (TC-233) |
 | FR-322-AC-293 | A `fairness` member carries a closed `target` union: model operation (`declaration` node id and `name`), protocol root, attempt node or compensation template (each an exact structural `node` id), parallel branch (`parallel` node id and `branch` label), or hybrid transition (`declaration` node id and `name`). `temporal-fairness-target-vectors.json` publishes one positive member per variant and malformed members with a missing/unknown discriminant, missing required identity, extra identity field and invalid node ordinal; each positive satisfies the V2 `OperationMember` schema and every malformed member fails it. Eleven schema-valid reader cases distinguish absent, foreign-package and wrong-kind parallel ids, a missing branch label, wrong-kind protocol-root, attempt and compensation targets, and root, attempt, parallel and compensation targets owned by another protocol clause in the same package; each records the required refusal code, cause and exact target or label JSON pointer from FR-370-AC-15. | Test (TC-303) |
+| FR-322-AC-294 | Each clock-configured `temporal`/`temporal_clause` has exactly one `temporal_bindings` row keyed by its structural clause `NodeRef`; each row has the exact non-empty clause clock name and one closed `ClockConfiguration` whose kind and parameter set match the clause's selected `temporal_profile` law. The clause identity distinguishes declarations even when their model, profile and clock names agree. The three matching profile/configuration pairs (event-position, fixed-sample and timestamped-event) are complete checked-package positives; an unknown kind, a missing parameter or wrong-typed parameter is `malformed_wire`. A schema-valid row whose declaration `NodeRef` is absent or is not a temporal clause refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/declaration`; a duplicate row refuses with that code/cause at its second row. A missing row for a clock-configured clause refuses with that code/cause at the first such clause's `/semantic_graph/nodes/{N}/body`, where `N` is its graph index. This exact-one check follows aggregate order validation and precedes per-node joins. No profile identity is repeated in the row: the reader joins the clause law to `lock.profile_selections`. When no clock-configured temporal clause exists, `temporal_bindings` is absent; its absence never defaults a required clock configuration. | Test (TC-134; TC-233) |
 
 ## Dependencies
 
