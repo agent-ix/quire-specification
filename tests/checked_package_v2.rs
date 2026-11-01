@@ -18928,8 +18928,9 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
 }
 
 /// FR-322-AC-288 to AC-292 (TC-233): the shared producer-data carrier keeps
-/// equality, protocol-location and dispatch facts keyed by exact application
-/// occurrence; malformed closed shapes are rejected by the authored schema.
+/// equality facts keyed by root application, occurrence and term path,
+/// protocol locations by their per-term ordinal, and dispatch facts by exact
+/// application occurrence; malformed closed shapes fail the authored schema.
 #[trace(
     "TC-233",
     "FR-322-AC-288",
@@ -18966,6 +18967,35 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             "{id} is a valid equality decision"
         );
     }
+    let equality_rows = vectors["positive"]["equality_decisions"]
+        .as_array()
+        .unwrap();
+    let nested_and = equality_rows
+        .iter()
+        .find(|row| row["id"] == "EQ-06-nested-and")
+        .expect("nested equality under and");
+    assert_eq!(nested_and["application"]["path"][2], "and-equality-root");
+    assert_eq!(nested_and["term_path"], json!([1]));
+    let nested_and_first = equality_rows
+        .iter()
+        .find(|row| row["id"] == "EQ-08-nested-and-first")
+        .expect("first nested equality under and");
+    assert_eq!(nested_and_first["application"], nested_and["application"]);
+    assert_eq!(nested_and_first["occurrence"], nested_and["occurrence"]);
+    assert_eq!(nested_and_first["term_path"], json!([0]));
+    assert_ne!(nested_and_first["term_path"], nested_and["term_path"]);
+    let and_paths: Vec<Value> = equality_rows
+        .iter()
+        .filter(|row| row["application"] == nested_and["application"])
+        .map(|row| row["term_path"].clone())
+        .collect();
+    assert_eq!(and_paths, [json!([0]), json!([1])]);
+    let nested_or = equality_rows
+        .iter()
+        .find(|row| row["id"] == "EQ-07-nested-or")
+        .expect("nested equality under or");
+    assert_eq!(nested_or["application"]["path"][2], "or-equality-root");
+    assert_eq!(nested_or["term_path"], json!([0]));
     for row in vectors["positive"]["protocol_locations"]
         .as_array()
         .unwrap()
@@ -19072,7 +19102,10 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             .iter()
             .any(|row| row["units"][0]["form"]["kind"] == "compound")
     );
-    let enum_member = &vectors["positive"]["equality_decisions"][1]["enum_members"][0];
+    let enum_member = &equality_rows
+        .iter()
+        .find(|row| row["id"] == "EQ-02-enum")
+        .expect("enum equality vector")["enum_members"][0];
     assert!(is_node_id(&enum_member["member"]));
     assert!(enum_member["ordered"].is_boolean());
 
@@ -19135,6 +19168,22 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 assert!(rows.iter().all(|row| equality.is_valid(row)));
                 assert_eq!(rows[0]["application"], rows[1]["application"]);
                 assert_eq!(rows[0]["occurrence"], rows[1]["occurrence"]);
+            }
+            "EQ-R6-path-to-non-equality" => {
+                assert!(
+                    equality.is_valid(value),
+                    "the path row is structurally valid"
+                );
+                assert_eq!(value["operator"], "equal");
+                assert_eq!(value["term_path"], json!([0]));
+            }
+            "EQ-R7-duplicate-path" => {
+                let rows = value.as_array().unwrap();
+                assert_eq!(rows.len(), 2);
+                assert!(rows.iter().all(|row| equality.is_valid(row)));
+                assert_eq!(rows[0]["application"], rows[1]["application"]);
+                assert_eq!(rows[0]["occurrence"], rows[1]["occurrence"]);
+                assert_eq!(rows[0]["term_path"], rows[1]["term_path"]);
             }
             "PL-R1-duplicate-term" => {
                 assert_eq!(value.as_array().unwrap().len(), 2);
@@ -19240,10 +19289,19 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .iter()
         .map(|row| row["candidates"].as_array().unwrap().len())
         .sum();
-    assert_eq!(row_count + unit_count + enum_count + candidate_count, 17);
-    assert_eq!(work["exact_limit"], 17);
+    let term_path_segments: usize = vectors["positive"]["equality_decisions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| row["term_path"].as_array().unwrap().len())
+        .sum();
+    assert_eq!(
+        row_count + unit_count + enum_count + candidate_count + term_path_segments,
+        23
+    );
+    assert_eq!(work["exact_limit"], 23);
     assert_eq!(work["exact_result"], "admitted");
-    assert_eq!(work["one_less_limit"], 16);
+    assert_eq!(work["one_less_limit"], 22);
     assert!(
         work["one_less_result"]
             .as_str()

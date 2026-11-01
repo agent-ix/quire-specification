@@ -12249,6 +12249,7 @@
       "required": [
         "application",
         "occurrence",
+        "term_path",
         "operator",
         "left",
         "right",
@@ -12262,6 +12263,12 @@
         },
         "occurrence": {
           "$ref": "#/$defs/Occurrence"
+        },
+        "term_path": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyOrdinal"
+          }
         },
         "operator": {
           "enum": [
