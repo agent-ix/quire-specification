@@ -19473,6 +19473,13 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             case["id"]
         );
         assert_eq!(case["expected_code"], "malformed_wire");
+        if case["id"] == "PL-S1-unknown-origin" {
+            assert_eq!(case["value"]["location"]["origin"]["kind"], "source_region");
+            assert_eq!(
+                case["locus"],
+                "/checked_term_data/protocol_locations/0/location/origin/kind"
+            );
+        }
         assert!(
             case["locus"]
                 .as_str()
@@ -19574,10 +19581,16 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 child.as_object_mut().unwrap().remove("id");
                 let mut root = shared_terms[0].clone();
                 root.as_object_mut().unwrap().remove("id");
-                assert_eq!(rows[0], child, "the retained child witnesses its missing predecessor");
+                assert_eq!(
+                    rows[0], child,
+                    "the retained child witnesses its missing predecessor"
+                );
                 assert_eq!(shared_terms[0]["term_ordinal"], 0);
                 assert_eq!(rows[0]["term_ordinal"], 1);
-                assert_ne!(rows[0], root, "positive root and missing-term witness must differ");
+                assert_ne!(
+                    rows[0], root,
+                    "positive root and missing-term witness must differ"
+                );
             }
             "DT-R1-duplicate-selection-key" => {
                 assert!(
