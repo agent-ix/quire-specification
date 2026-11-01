@@ -12756,6 +12756,34 @@ fn published_positive_packages() -> Vec<(String, Value)> {
         .collect()
 }
 
+/// FR-322-AC-96: every node in every published positive fixture lists its
+/// dependencies in unique ascending structural NodeId order. Index segments
+/// must be resolved before comparison; graph indices are not part of a key.
+#[trace("TC-233", "FR-322-AC-96")]
+#[test]
+fn every_positive_fixture_lists_dependencies_in_structural_node_id_order() {
+    let mut failures = Vec::new();
+    for (name, package) in published_positive_packages() {
+        let structural = structural_package(&package);
+        let nodes = structural["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("positive fixture semantic graph has nodes");
+        for (position, node) in nodes.iter().enumerate() {
+            let dependencies = node["dependencies"]
+                .as_array()
+                .expect("positive fixture node dependencies are an array");
+            if dependencies.windows(2).any(|pair| {
+                node_id_order(&pair[0], &pair[1]) != std::cmp::Ordering::Less
+            }) {
+                failures.push(format!(
+                    "{name} node {position}: dependencies are not unique and structurally node-id ascending"
+                ));
+            }
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
+}
+
 const TEMPORAL_PROFILE_CLOCK_KINDS: [(&str, &str); 3] = [
     (
         "quire.temporal.event-position.false-extension/v1",
