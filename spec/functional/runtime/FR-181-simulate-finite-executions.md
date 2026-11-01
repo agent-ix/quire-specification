@@ -3,6 +3,8 @@ id: FR-181
 title: "Simulate finite composed executions reproducibly"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
   - target: ix://agent-ix/quire-specification/AD-008
     type: references
   - target: ix://agent-ix/quire-specification/US-011
@@ -442,8 +444,8 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-28 | A timed state is terminal exactly when no discrete step is enabled at it or after any admissible delay, a delay of 0 included. | Test (TC-370) |
 | FR-181-AC-29 | A bounded-delay terminal state is a time-lock reported by the time-lock-freedom item and not by the deadlock-freedom item. | Test (TC-370) |
 | FR-181-AC-30 | A state whose canonical state key is longer than `max_state_key_bytes` stops expansion of that state and settles the exploration `incomplete` with cause `state-key-limit-exceeded`, naming the limit and its value; a state whose key is exactly `max_state_key_bytes` long is expanded; no truncated or hashed key appears in a trace or frontier. | Test (TC-210) |
-| FR-181-AC-31 | In a task product, a job with fixed work 2 scheduled from 0 to 1, preempted from 1 to 2 by a one-unit job, and resumed from 2 to 3 has service 2 at completion although all auxiliary clocks advance by 3; its deadline clock remains at its nominal activation plus `D`, and every source-plus-scheduler post-state key includes queue order, job identity, selected jitter and slot generation. | Test (TC-372) |
-| FR-181-AC-32 | Two activations with the same source transition identity get distinct job occurrences and obey the task's periodic `T` or sporadic minimum `T`; selected jitter delays readiness but not the absolute deadline. Preemption/resumption preserve identity and deadline, a completed slot may be reused only with an incremented generation, and a replayed deadline-miss lasso whose region fails to close is not a time-divergent continuation. | Test (TC-372) |
+| FR-181-AC-31 | In a task product, a job with fixed work 2 scheduled from 0 to 1, preempted from 1 to 2 by a one-unit job, and resumed from 2 to 3 has service 2 at completion although all auxiliary clocks advance by 3; its deadline clock remains at its nominal activation plus `D`, and every source-plus-scheduler post-state key includes queue order, job identity, selected jitter and slot generation. | Test |
+| FR-181-AC-32 | Two activations with the same source transition identity get distinct job occurrences and obey the task's periodic `T` or sporadic minimum `T`; selected jitter delays readiness but not the absolute deadline. Preemption/resumption preserve identity and deadline, a completed slot may be reused only with an incremented generation, and a replayed deadline-miss lasso whose region fails to close is not a time-divergent continuation. | Test |
 
 ## Dependencies
 

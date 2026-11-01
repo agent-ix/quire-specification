@@ -4,6 +4,10 @@ title: "Backend provider request and result envelope"
 type: FR
 object: value_object
 relationships:
+  - target: ix://agent-ix/quire-specification/TC-431
+    type: verifies
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
   - target: ix://agent-ix/quire-specification/interface_013
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-195
@@ -871,7 +875,7 @@ computed.
 | FR-331-AC-48 | The request identity includes the request's `memory` selections: two requests that differ only in one `memory` entry's model have different request identities, as FR-434-AC-1 requires of obligation identities. | Test (TC-431) |
 | FR-331-AC-49 | Withdrawn: the `stale-dependency` cause is removed; replay recompiles the supplied inputs and compares nothing against a supplied package. | Withdrawn |
 | FR-331-AC-50 | A domain rooted at a field, an operation parameter or an operation result of a selected domain package is a `node` key under the model declaration node of the member's declaring type, with path `[0, f, ...]`, `[1, o, p, ...]` or `[2, o, ...]` as "Model member domain keys" defines; over the published `acme/orders` document, `Order.total` is `[0, 17]`, `Order.scaled`'s parameter `n` is `[1, 1, 0]`, its result is `[2, 1]`, `Order.size`'s result is `[2, 2]` and `Sub.size`'s result is `[2, 1]` under `Sub`'s node, and no two roots of the document share a key. | Analysis |
-| FR-331-AC-51 | An incomplete task-automaton result stopped by a search limit carries a `task_search` record that independently replays the exact explored product prefix, all successor edges below the effective bound, and the first stopped frontier against the admitted task identity and effective limits; missing/extra edges, an unexplored node below the limit, a changed bound/count/setting, task/job identity, exact demand, activation jitter or source-mode transition is rejected; an overflow signal cannot be encoded as a task-transition edge. Replaying this record explains only why the result is `incomplete`, never that the unsearched product has no miss; it cannot accompany `proved`. | Test (TC-431, TC-372) |
+| FR-331-AC-51 | An incomplete task-automaton result stopped by a search limit carries a `task_search` record that independently replays the exact explored product prefix, all successor edges below the effective bound, and the first stopped frontier against the admitted task identity and effective limits; missing/extra edges, an unexplored node below the limit, a changed bound/count/setting, task/job identity, BCET, exact demand, activation jitter or source-mode transition is rejected; an overflow signal cannot be encoded as a task-transition edge. Replaying this record explains only why the result is `incomplete`, never that the unsearched product has no miss; it cannot accompany `proved`. | Test |
 
 ## Dependencies
 

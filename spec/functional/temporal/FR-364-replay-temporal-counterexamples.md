@@ -3,6 +3,10 @@ id: FR-364
 title: "Carry and replay a temporal counterexample"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/TC-371
+    type: verifies
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
   - target: ix://agent-ix/quire-specification/US-011
     type: implements
   - target: ix://agent-ix/quire-specification/FR-161
@@ -117,8 +121,8 @@ represented prefix and loop are carried by their task-transition identities
 and are checked as exact rationals. The source activation is checked against
 the bound task's periodic or sporadic inter-arrival rule; the actual release
 is exactly the selected jitter after nominal activation, and the absolute
-deadline remains nominal activation plus `D`. Each `LO` job's selected `d` is in `[0,C]`; each `HI` job's selected
-`d` is in `[0,C(HI)]`. A `HI` job has LO-mode allowance `C(LO)` until an
+deadline remains nominal activation plus `D`. Each `LO` job's selected `d` is in `[BCET,C]`; each `HI` job's selected
+`d` is in `[BCET,C(HI)]`. A `HI` job has LO-mode allowance `C(LO)` until an
 admitted source transition enters HI mode. Reaching service `C(LO)` alone
 does not change mode. A completed job at the threshold has no update; an
 incomplete job with no enabled LO-to-HI source transition remains at that
@@ -264,8 +268,8 @@ counterexamples an engine returned.
 | FR-364-AC-8 | A counterexample of an undefined evaluation is a finite prefix with an empty `loop`, a `kind` that is the envelope `{"type": "undefined-evaluation", "where", "cause"}` and `trace_position` at its last position; its replay re-evaluates the claim, guard, `terminal when` predicate or state constraint the locus names at the reported state and reproduces the undefined value with the locus and reason the envelope carries, read from the counterexample alone, settling `reproduced-with-evaluated-witness` and the item `refuted` with cause `undefined-evaluation`; a `trace_position` at which the expression is defined settles `inconclusive`, cause `replay-parity`. | Test (TC-305) |
 | FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step position the provision does not hold refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-295) |
 | FR-364-AC-10 | The wire schema admits an observed-arm formula counterexample (null `initial_state` and `over_binding`, two `document` steps) and an observed-arm undefined-evaluation envelope whose `where` carries `position`, `document` and `locus`; it refuses an observed-arm counterexample that names an initial state, carries an `over_binding`, carries a model-arm step in its `prefix` or in its `loop`, has `kind` `deadlock`, has `kind` `time-lock` with its `final_delay`, or has an envelope whose `where` carries `state_key` or `state_keys`; and it refuses a model-arm counterexample that has a null `initial_state`, carries a `document` step in its `prefix` or in its `loop`, or has an envelope whose `where` carries `document`. | Test (TC-431) |
-| FR-364-AC-11 | A task-derived counterexample replays the exact release occurrence, selected demand within its WCET interval, absolute deadline, priority, slot generation, scheduler actions, delays, clock subtractions, source feedback and any source-authorized budget allowance delta; changing any identity field, a subtraction result or a budget delta refuses `invalid_runtime_input`/`invalid-value`, and a miss without a verified time-divergent continuation settles no `refuted`. | Test (TC-372, TC-371) |
-| FR-364-AC-12 | A task-miss lasso has a prefix ending only at a concrete job-specific deadline-miss state with positive remaining demand, followed by a positive-delay loop whose final product state has the same source/scheduler control and refined region as its entry, modulo permitted completed-slot alpha-renaming; queue-cap overflow is rejected as a counterexample endpoint and may refute only after a concrete miss is derived and replayed. Replay rejects a zero-delay loop, a different region, an altered demand/budget delta, a changed deadline/priority, or a job identity merge. A time-lock-only prefix has no such loop and does not refute the task claim. | Test (TC-372, TC-371) |
+| FR-364-AC-11 | A task-derived counterexample replays the exact release occurrence, selected demand within its `[BCET, WCET]` interval, absolute deadline, priority, slot generation, scheduler actions, delays, clock subtractions, source feedback and any source-authorized budget allowance delta; changing any identity field, a subtraction result or a budget delta refuses `invalid_runtime_input`/`invalid-value`, and a miss without a verified time-divergent continuation settles no `refuted`. | Test |
+| FR-364-AC-12 | A task-miss lasso has a prefix ending only at a concrete job-specific deadline-miss state with positive remaining demand, followed by a positive-delay loop whose final product state has the same source/scheduler control and refined region as its entry, modulo permitted completed-slot alpha-renaming; queue-cap overflow is rejected as a counterexample endpoint and may refute only after a concrete miss is derived and replayed. Replay rejects a zero-delay loop, a different region, an altered demand/budget delta, a changed deadline/priority, or a job identity merge. A time-lock-only prefix has no such loop and does not refute the task claim. | Test |
 
 ## Dependencies
 

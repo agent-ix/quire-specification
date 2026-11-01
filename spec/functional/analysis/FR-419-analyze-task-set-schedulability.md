@@ -15,6 +15,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-416
     type: references
+  - target: ix://agent-ix/quire-specification/TC-372
+    type: verifies
 ---
 
 # FR-419: Analyze task-set schedulability
@@ -28,8 +30,9 @@ premises, and SHALL settle it only after its evidence is recomputed.
 
 ## Inputs
 
-A `taskset` declaration of the shared grammar's timed forms; a `schedulable`
-or `response` claim; the FR-290 kind `schedulability`.
+A `taskset` declaration of the shared grammar's timed forms (including the
+optional `bcet <time>` task member); a `schedulable` or `response` claim; the
+FR-290 kind `schedulability`.
 
 ## Outputs
 
@@ -42,14 +45,20 @@ its evidence; or an inconclusive or unsupported result with its typed cause.
 
 A task set is for one preemptive uniprocessor. Each task declares its
 arrival (periodic with period `T`, or sporadic with minimum inter-arrival time
-`T`), its relative deadline `D`, its worst-case execution time `C`, its
-optional `priority` (a natural number; a smaller value is a higher priority),
+`T`), its relative deadline `D`, its best-case execution time `BCET` and
+worst-case execution time `C`, its optional `priority` (a natural number; a smaller value is a higher priority),
 and its criticality `LO` or `HI`
-with budgets `C(LO) <= C(HI)` for a `HI` task. Release jitter `J` and a
-blocking term `B` are optional members; a task that declares neither has
-`J = 0` and `B = 0`. Every value is an exact rational time
+with budgets `C(LO) <= C(HI)` for a `HI` task. `BCET` is an optional
+non-negative lower bound on actual job demand, written as `bcet <time>` after
+`deadline` and before `wcet`; when omitted it is zero. A
+`LO` task selects one actual demand `d` in `[BCET,C]`; a `HI` task selects
+one actual demand `d` in `[BCET,C(HI)]` at activation, independent of mode.
+For a `HI` job, `C(LO)` is only the service allowance before a source-authorized
+mode change; it does not change selected demand. Release jitter `J` and blocking term `B` are optional members; a
+task that declares neither has `J = 0` and `B = 0`. Every value is an exact rational time
 quantity (FR-142). A `LO` task declares one budget `C`. A task set with a
-non-positive `T`, `D` or `C`, a negative `J` or `B`, a `HI` task with
+non-positive `T`, `D` or `C`, a negative `BCET`, `J` or `B`, `BCET > C` for a
+`LO` task or `BCET > C(HI)` for a `HI` task, a `HI` task with
 `C(LO) > C(HI)`, or a `LO` task with dual budgets refuses with
 `invalid_timed_model`/`invalid-task-set`, naming the task, and a task set
 that declares no task refuses the same way, naming the task set. The shared
@@ -206,9 +215,13 @@ retains both transition identities in replay evidence.
 
 The exact fixed-work class applies when the admitted source/product semantics
 constrains each job's actual demand to one positive exact value `W_i` (the
-singleton case `B_i = W_i` in the task-automata notation). The analyzer derives
-this from the resolved source transition and task-set bindings; a WCET `C_i`
-alone does not imply an exact demand or a singleton. Queue capacity comes
+singleton case `BCET_i = WCET_i` in the task-automata notation). The task-set
+`BCET` supplies a lower bound and `C` (or `C(HI)`) supplies the upper bound;
+`BCET = C` for a `LO` task selects its positive singleton directly. The
+exact fixed-work route admits a `HI` task only when `BCET = C(LO) = C(HI)`;
+mode-change products with unequal budgets remain on bounded exploration. Other existing source/product
+constraints may also establish a singleton if the reader proves them for every
+job. A WCET `C_i` alone never implies an exact demand. Queue capacity comes
 from the task-set activation bound above, not from WCET. An existing sound
 reduction may also select an exact finite procedure when its proven policy and
 feedback premises cover the admitted model. Otherwise, the analyzer uses
@@ -229,14 +242,16 @@ leaves `x - c >= 0`; FR-415 fixes and validates every clock ceiling `M_x`.
 These clocks never have a rate other than one. The resulting finite refined
 region graph is the exact decision procedure for this class.
 
-For a task automaton using a task-set member's WCET `C`, each released `LO` job
-selects one exact rational total demand `d` in `[0, C]`; each `HI` job selects
-one exact rational total demand `d` in `[0, C(HI)]`. The choice is made once
+For a task automaton using a task-set member's execution bounds, each activated
+`LO` job selects one exact rational total demand `d` in `[BCET, C]`; each
+`HI` job selects one exact rational total demand `d` in `[BCET, C(HI)]`. The choice is made once
 at nominal activation, is retained across pending jitter, preemption and replay,
 and is never resampled. A zero-demand job completes at activation without
 processor service and cannot be a deadline miss.
 For a `HI` job while the source subject is in `LO` mode, `C(LO)` is its maximum
-service allowance; it does not change the job's selected `d`. A `LO` to `HI`
+service allowance; it does not change the job's selected `d`. A `HI` job with
+`d > C(LO)` needs the source-authorized mode change before receiving service
+beyond that allowance. A `LO` to `HI`
 mode change is enabled only by an admitted source transition whose post-state
 enters `HI` mode. The task product synchronizes with that transition and then
 emits one derived `budget-change` for each active `HI` job, carrying the exact
@@ -250,7 +265,7 @@ product continues all other enabled source and scheduler behavior. A later
 deadline miss refutes only with the replay evidence below.
 
 An HI task released after the source enters `HI` mode selects from
-`[0, C(HI)]` and has no budget-change step. Completion occurs only after the
+`[BCET, C(HI)]` and has no budget-change step. Completion occurs only after the
 selected demand `d` units of scheduled service; a budget increase never adds
 work or resets service. Variable-demand and mode-change products use sound
 bounded exploration with the exact rational demands and allowance deltas
@@ -288,21 +303,21 @@ a replayed deadline miss and checked continuation is not a refutation.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-419-AC-1 | Task set `Ctl` with `(C, T = D)` of `(1, 4)`, `(2, 6)`, `(5, 12)` ms under fixed priority settles `proved` with response times `1`, `3`, `12` and the third task's fixpoint sequence `5, 9, 12, 12`; under EDF it settles `proved` at utilization exactly 1. | Test (TC-372) |
-| FR-419-AC-2 | With `C = 6` for the third task, fixed priority settles `refuted` with the third task, job 0 and iterates 6, 10, 13 (response time 13 above 12); EDF settles `refuted` with utilization `13/12`. | Test (TC-372) |
-| FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test (TC-372) |
-| FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test (TC-372) |
-| FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority`, `amc` or `response` claim over a task with no `priority`, and a `fixed_priority`, `amc` or `response` claim over two tasks of equal priority, refuse `invalid_timed_model`/`invalid-task-set` naming that task (both tasks for the clash), and an `edf` claim over the same sets is admitted; a non-positive `D` and a `LO` task with dual budgets refuse the same way. | Test (TC-372) |
-| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim; interval demand with completion feedback and preemption is searched soundly, and a negative bounded search settles `incomplete`, `limit-reached`, never `proved` or `unsupported`. | Test (TC-372) |
-| FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test (TC-372) |
-| FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test (TC-372) |
-| FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test (TC-372) |
-| FR-419-AC-10 | Each of these parses and refuses at check time with `invalid_timed_model`/`invalid-task-set`, never `invalid_syntax`: `taskset Empty { }` (naming `Empty`); a task with `jitter -1 ms`; a task with `blocking -1 ms`; a `lo` task with `wcet_hi 2 ms`; a task with `blocking 1 ms` under `edf`; a task with `jitter 1 ms` under `edf`; a task with `deadline 5 ms` and `periodic 4 ms` under `amc` (each naming the task). A task set with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms`, under `edf`, reports `t1`'s and `t2`'s task-set defects in that order, then the claim's two `edf` defects in the same order. | Test (TC-372) |
-| FR-419-AC-11 | A task released at `t=0` with fixed work 2 and deadline 3 runs for 1, is preempted by a higher-priority job released at `t=1` with work 1 until `t=2`, then resumes and completes at `t=3`; changing its deadline to `5/2` yields a replayable miss only when the product's absolute deadline expires. | Test (TC-372) |
-| FR-419-AC-12 | For interval execution with feedback and preemption, an exact rational job-demand choice and product trace that reaches a deadline miss replays and refutes only if a time-divergent continuation is checked; a search stopped before complete proof or replay settles `incomplete`, `limit-reached` with the effective bound. | Test (TC-372, TC-371) |
-| FR-419-AC-13 | At an enabled source `LO` to `HI` transition, each affected live HI job retains its selected demand, identity, priority and absolute deadline; its allowance increases by exactly `C(HI)-C(LO)`, without changing remaining actual work. Reaching the LO threshold alone does not change mode; an incomplete job with no enabled source mode transition remains at its LO allowance, and a job whose demand equals the threshold completes without a budget-change step. | Test (TC-372) |
-| FR-419-AC-14 | Queue-cap overflow is an internal frontier signal and never a task-transition identity or counterexample endpoint. It may lead to `refuted` only after the producer derives and FR-364 replays a concrete job-specific deadline miss and checks a positive-delay, repeatable divergent continuation; overflow, a time-lock-only path, or a miss without that continuation does not refute. | Test (TC-372, TC-371) |
-| FR-419-AC-15 | Every task-automaton source release operation resolves to exactly one task-set task; repeated operations cannot bypass shared per-task activation timing. Periodic activations occur exactly every `T`, sporadic activations no sooner than `T`; selected `j∈[0,J]` delays scheduler readiness while the deadline remains nominal activation plus `D`. The model's source guard/invariant can make a required periodic activation impossible, yielding FR-417 time-lock rather than a fabricated activation. Ambiguous/missing binding, an early sporadic event and an out-of-range jitter are rejected; the nonzero-jitter boundary replays consistently with response `R+J`. | Test (TC-372) |
+| FR-419-AC-1 | Task set `Ctl` with `(C, T = D)` of `(1, 4)`, `(2, 6)`, `(5, 12)` ms under fixed priority settles `proved` with response times `1`, `3`, `12` and the third task's fixpoint sequence `5, 9, 12, 12`; under EDF it settles `proved` at utilization exactly 1. | Test |
+| FR-419-AC-2 | With `C = 6` for the third task, fixed priority settles `refuted` with the third task, job 0 and iterates 6, 10, 13 (response time 13 above 12); EDF settles `refuted` with utilization `13/12`. | Test |
+| FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test |
+| FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test |
+| FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority`, `amc` or `response` claim over a task with no `priority`, and a `fixed_priority`, `amc` or `response` claim over two tasks of equal priority, refuse `invalid_timed_model`/`invalid-task-set` naming that task (both tasks for the clash), and an `edf` claim over the same sets is admitted; a non-positive `D` and a `LO` task with dual budgets refuse the same way. | Test |
+| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim; interval demand with completion feedback and preemption is searched soundly, and a negative bounded search settles `incomplete`, `limit-reached`, never `proved` or `unsupported`. | Test |
+| FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test |
+| FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test |
+| FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test |
+| FR-419-AC-10 | Each of these parses and refuses at check time with `invalid_timed_model`/`invalid-task-set`, never `invalid_syntax`: `taskset Empty { }` (naming `Empty`); a task with `bcet -1 ms`; a task with `bcet 2 ms` and `wcet 1 ms`; a `hi` task with `bcet 4 ms`, `wcet 2 ms`, `wcet_hi 3 ms`; a task with `jitter -1 ms`; a task with `blocking -1 ms`; a `lo` task with `wcet_hi 2 ms`; a task with `blocking 1 ms` under `edf`; a task with `jitter 1 ms` under `edf`; a task with `deadline 5 ms` and `periodic 4 ms` under `amc` (each naming the task). A task set with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms`, under `edf`, reports `t1`'s and `t2`'s task-set defects in that order, then the claim's two `edf` defects in the same order. | Test |
+| FR-419-AC-11 | A task with `BCET = C = 2` and deadline 3 runs for 1, is preempted by a higher-priority task with `BCET = C = 1` released at `t=1` until `t=2`, then resumes and completes at `t=3`; changing its deadline to `5/2` yields a replayable miss only when the product's absolute deadline expires. | Test |
+| FR-419-AC-12 | For interval execution with feedback and preemption, an exact rational job-demand choice within `[BCET,C]` for a LO task or `[BCET,C(HI)]` for a HI task and product trace that reaches a deadline miss replays and refutes only if a time-divergent continuation is checked; a search stopped before complete proof or replay settles `incomplete`, `limit-reached` with the effective bound. | Test |
+| FR-419-AC-13 | At an enabled source `LO` to `HI` transition, each affected live HI job retains its selected demand, identity, priority and absolute deadline; its allowance increases by exactly `C(HI)-C(LO)`, without changing remaining actual work. Reaching the LO threshold alone does not change mode; an incomplete job with no enabled source mode transition remains at its LO allowance, and a job whose demand equals the threshold completes without a budget-change step. | Test |
+| FR-419-AC-14 | Queue-cap overflow is an internal frontier signal and never a task-transition identity or counterexample endpoint. It may lead to `refuted` only after the producer derives and FR-364 replays a concrete job-specific deadline miss and checks a positive-delay, repeatable divergent continuation; overflow, a time-lock-only path, or a miss without that continuation does not refute. | Test |
+| FR-419-AC-15 | Every task-automaton source release operation resolves to exactly one task-set task; repeated operations cannot bypass shared per-task activation timing. Periodic activations occur exactly every `T`, sporadic activations no sooner than `T`; selected `j∈[0,J]` delays scheduler readiness while the deadline remains nominal activation plus `D`. The model's source guard/invariant can make a required periodic activation impossible, yielding FR-417 time-lock rather than a fabricated activation. Ambiguous/missing binding, an early sporadic event and an out-of-range jitter are rejected; the nonzero-jitter boundary replays consistently with response `R+J`. | Test |
 
 ## Dependencies
 
