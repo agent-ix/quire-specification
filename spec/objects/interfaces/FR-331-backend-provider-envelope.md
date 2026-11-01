@@ -583,24 +583,31 @@ names, FR-462), `kind` and `result`, and:
   on an incomplete task-automaton result only).
 
 `task_search` is `{type: "task-search-frontier", identity, nodes, edges,
-frontier, limit}`. It binds to the item's FR-201 certificate identity. Each
+frontier, limit?}`. It binds to the item's FR-201 certificate identity. Each
 node carries the complete product state key, its search depth, a canonical
 DBM zone and whether it was expanded; each edge names the source node,
-transition identity and target node. Node keys are unique; the initial node is
-the sole depth-zero node; every other node is reachable from it by listed
-edges; every listed edge is a legal exact product successor and every
-successful successor below the stopping bound is listed exactly once (after
-canonical state merging). Each frontier row names an unexpanded
-reachable node, its stop reason (`state-limit`, `transition-limit`,
-`clock-limit` or `depth-limit`) and the open successor dimensions (`successors`,
-`delay`, `demand`, `budget-change` or `queue`). `limit` equals the result's
-`limit-reached{limit, value, setting}` cause. The task-search checker re-admits
-the package and product, replays every listed edge, verifies node reachability,
-the zones and the recorded open frontier, and verifies that the named effective
-limit stopped expansion at the recorded first over-limit transition or
-reachable node. The checker verifies that frontier and edge inventories are
-complete for every expansion below the bound; rejects a missing or extra edge,
-a reachable unexpanded node that was below the bound, an inconsistent stop
+transition identity and target node. Node keys are unique; every depth-zero
+node is an initial node; every other node is reachable from at least one
+initial node by listed edges; every listed edge is a legal exact product
+successor and every successful successor below the stopping bound is listed
+exactly once (after canonical state merging). Each frontier row names an
+unexpanded reachable node, its stop reason (`state-limit`, `transition-limit`,
+`clock-limit`, `depth-limit`, `work-limit` or `unresolved-choice`) and the open successor dimensions
+(`successors`, `delay`, `demand`, `budget-change` or `queue`). `limit` equals the
+result's `limit-reached{limit, value, setting}` cause when present. A task search
+stopped before a configured limit because the next behavior has unresolved
+continuous dynamics carries no `limit`; its result cause is
+`bounded-search-incomplete{reason: "unresolved-dynamics"}`. Its frontier names
+each exact unresolved node with reason `unresolved-choice`. The task-search checker
+re-admits the package and product, replays every listed edge, verifies initial
+node reachability, the zones and the recorded open frontier, and verifies that
+the named effective limit stopped expansion at the recorded first
+over-limit transition or reachable node. For a `work-limit`, the producer
+charges one unit immediately before each task-product node expansion,
+including enumeration of its source and task successors, and stops before
+expanding a node beyond the configured budget. The checker verifies that frontier and edge inventories are complete
+for every expansion below the bound; rejects a missing or extra edge, a
+reachable unexpanded node that was below the bound, an inconsistent stop
 reason, changed effective limits or accounting values, and any task/job
 identity, demand, deadline, declared-priority or slot-generation mismatch. A
 task-transition identity carries `priority` exactly when its checked task
@@ -609,13 +616,13 @@ value for a task without one. The reader derives scheduling policy from the
 bound checked claim and recomputes successor order under that policy: EDF uses
 absolute deadline and the FR-419 canonical-task-name/source-activation/occurrence
 tie rule, independent of source declaration order and declared priority; fixed
-priority uses the checked declared value. The limit's
-`value` equals the exact count at which expansion stopped and `setting` names
-the effective configured setting (including the provider default when the
-request omitted it). This record audits why the run is incomplete. It is
-not a closure certificate and never proves that the unsearched product has no
-deadline miss. It is present on every incomplete task-automaton search stopped
-by a search limit; other incomplete results carry no `task_search`.
+priority uses the checked declared value. The limit's `value` equals the exact
+count at which expansion stopped and `setting` names the effective configured
+setting (including the provider default when the request omitted it). This
+record audits why the run is incomplete. It is not a closure certificate and
+never proves that the unsearched product has no deadline miss. It is present on
+every incomplete task-automaton search stopped by a search limit or unresolved
+continuous dynamics; other incomplete results carry no `task_search`.
 
 | Result | Carries |
 | --- | --- |
@@ -626,7 +633,7 @@ by a search limit; other incomplete results carry no `task_search`.
 | `inconclusive` | `cause` |
 | `unsupported` | exactly one of `cause` and `diagnostic` |
 | `declined` | `cause` (`refused`, `invalid-input` or `incomplete-input`) and `diagnostic` |
-| `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled{source}` or `timed-out`); a bounded task-automaton search additionally carries `task_search` |
+| `incomplete` | `cause` (`limit-reached`, `bounded-search-incomplete{reason: unresolved-dynamics}`, `precision-budget`, `cancelled{source}` or `timed-out`); a bounded task-automaton search additionally carries `task_search` |
 | `failed` | exactly one of `cause` (`tool-failure{defect}`, with `limit` and `value` for `frame-length` and `total-bytes`, FR-462) and `diagnostic` |
 
 The closed proof bases are those of FR-363 (`exhaustive`,

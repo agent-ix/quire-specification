@@ -393,7 +393,7 @@
       "additionalProperties": false
     },
     "TemporalLimits": {
-      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-415 max_clocks, FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances, FR-368 SMT solver budgets max_solver_steps and max_solver_time (whole seconds, outside request identity); each absent member takes the routed provider's published default.",
+      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-415 max_clocks and max_task_product_work, FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances, FR-368 SMT solver budgets max_solver_steps and max_solver_time (whole seconds, outside request identity); each absent member takes the routed provider's published default.",
       "type": "object",
       "minProperties": 1,
       "properties": {
@@ -401,6 +401,7 @@
         "max_transitions": {"$ref": "#/$defs/PositiveCount"},
         "max_automaton_states": {"$ref": "#/$defs/PositiveCount"},
         "max_clocks": {"description": "FR-415: the most live clocks a state of the explored graph may hold (setting model_check.max_clocks, default 1024).", "$ref": "#/$defs/PositiveCount"},
+        "max_task_product_work": {"description": "FR-415: the maximum task-product nodes expanded (setting zone_check.max_task_product_work, default 1048576).", "$ref": "#/$defs/PositiveCount"},
         "max_walk_steps": {"$ref": "#/$defs/PositiveCount"},
         "max_witness_set": {"$ref": "#/$defs/PositiveCount"},
         "max_relation_tuples": {"$ref": "#/$defs/PositiveCount"},
@@ -1102,6 +1103,7 @@
       "required": ["type"],
       "oneOf": [
         {"$ref": "#/$defs/LimitReached"},
+        {"properties": {"type": {"const": "bounded-search-incomplete"}, "reason": {"const": "unresolved-dynamics"}}, "required": ["type", "reason"], "additionalProperties": false},
         {"properties": {"type": {"const": "precision-budget"}, "lower": {"$ref": "#/$defs/Rational"}, "upper": {"$ref": "#/$defs/Rational"}}, "required": ["type", "lower", "upper"], "additionalProperties": false},
         {"properties": {"type": {"const": "cancelled"}, "source": {"enum": ["requested", "deadline"]}}, "required": ["type", "source"], "additionalProperties": false},
         {"properties": {"type": {"const": "timed-out"}}, "required": ["type"], "additionalProperties": false}
@@ -1355,13 +1357,13 @@
     "TaskSearchEvidence": {
       "description": "FR-331/FR-419: replayable finite frontier for an incomplete bounded task-automaton search. It audits the stopped search and never proves absence of a deadline miss.",
       "type": "object",
-      "required": ["type", "identity", "nodes", "edges", "frontier", "limit"],
+      "required": ["type", "identity", "nodes", "edges", "frontier"],
       "properties": {
         "type": {"const": "task-search-frontier"},
         "identity": {"$ref": "#/$defs/CertificateIdentity"},
         "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "depth", "zone", "expanded"], "properties": {"state": {"$ref": "#/$defs/State"}, "depth": {"$ref": "#/$defs/Count"}, "zone": {"type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}, "expanded": {"type": "boolean"}}, "additionalProperties": false}},
         "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
-        "frontier": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["node", "reason", "open"], "properties": {"node": {"$ref": "#/$defs/Count"}, "reason": {"enum": ["state-limit", "transition-limit", "clock-limit", "depth-limit"]}, "open": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["successors", "delay", "demand", "budget-change", "queue"]}}}, "additionalProperties": false}},
+        "frontier": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["node", "reason", "open"], "properties": {"node": {"$ref": "#/$defs/Count"}, "reason": {"enum": ["state-limit", "transition-limit", "clock-limit", "depth-limit", "work-limit", "unresolved-choice"]}, "open": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["successors", "delay", "demand", "budget-change", "queue"]}}}, "additionalProperties": false}},
         "limit": {"$ref": "#/$defs/LimitReached"}
       },
       "additionalProperties": false
@@ -1432,7 +1434,11 @@
         {"if": {"properties": {"result": {"const": "declined"}}}, "then": {"required": ["cause", "diagnostic"], "properties": {"cause": {"$ref": "#/$defs/DeclinedCause"}, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "failed"}}}, "then": {"oneOf": [{"required": ["cause"], "properties": {"diagnostic": false}}, {"required": ["diagnostic"], "properties": {"cause": false}}], "properties": {"cause": {"$ref": "#/$defs/FailedCause"}, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "incomplete"}}}, "then": {}, "else": {"properties": {"task_search": false}}},
-        {"description": "FR-331: task-search-frontier is only the replayable evidence for an incomplete result stopped by an exploration limit.", "if": {"required": ["task_search"]}, "then": {"required": ["cause", "result"], "properties": {"result": {"const": "incomplete"}, "cause": {"properties": {"type": {"const": "limit-reached"}}, "required": ["type"]}}}}
+        {"description": "FR-331: task-search-frontier accompanies only an incomplete result stopped by a real limit or unresolved dynamics.", "if": {"required": ["task_search"]}, "then": {"required": ["cause", "result"], "properties": {"result": {"const": "incomplete"}, "cause": {"oneOf": [{"properties": {"type": {"const": "limit-reached"}}, "required": ["type"]}, {"properties": {"type": {"const": "bounded-search-incomplete"}, "reason": {"const": "unresolved-dynamics"}}, "required": ["type", "reason"]}]}}}},
+        {"description": "FR-331: a real task-search limit stop carries its limit in the evidence.", "if": {"required": ["task_search", "cause"], "properties": {"cause": {"properties": {"type": {"const": "limit-reached"}}, "required": ["type"]}}}, "then": {"properties": {"task_search": {"required": ["limit"]}}}},
+        {"description": "FR-331: unresolved task-search dynamics carries no claimed limit and has an unresolved-choice frontier.", "if": {"required": ["task_search", "cause"], "properties": {"cause": {"properties": {"type": {"const": "bounded-search-incomplete"}}, "required": ["type"]}}}, "then": {"properties": {"task_search": {"properties": {"limit": false, "frontier": {"contains": {"properties": {"reason": {"const": "unresolved-choice"}}, "required": ["reason"]}}}}}}},
+        {"description": "FR-331: bounded-search-incomplete requires task-search evidence.", "if": {"required": ["cause"], "properties": {"cause": {"properties": {"type": {"const": "bounded-search-incomplete"}}, "required": ["type"]}}}, "then": {"required": ["task_search"]}},
+        {"description": "FR-331/FR-415: the max_task_product_work cause uses a work-limit frontier.", "if": {"required": ["task_search", "cause"], "properties": {"cause": {"properties": {"type": {"const": "limit-reached"}, "limit": {"const": "max_task_product_work"}}, "required": ["type", "limit"]}}}, "then": {"properties": {"task_search": {"properties": {"frontier": {"contains": {"properties": {"reason": {"const": "work-limit"}}, "required": ["reason"]}}}}}}}
       ],
       "additionalProperties": false
     },

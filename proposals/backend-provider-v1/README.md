@@ -25,7 +25,7 @@ consumer holds a copy of this schema.
   and canonical assignments), `tested`, `inconclusive`
   (`kani_vacuous_proof`, `replay-parity`), `unsupported`
   (`unsupported_projection`/`tool-unavailable`), `declined` (each refusal
-  category), `incomplete` (`limit-reached`, `timed-out`, `cancelled`) and
+  category), `incomplete` (`limit-reached`, `bounded-search-incomplete`, `timed-out`, `cancelled`) and
   `failed` (`tool-failure`, `tool-unavailable` after a passing probe, and
   `runtime_invariant` for an IR mapping invariant break).
   Temporal, state-graph, hyperproperty and probabilistic vectors follow.

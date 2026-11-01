@@ -296,12 +296,20 @@ An HI task released after the source enters `HI` mode selects from
 selected demand `d` units of scheduled service; a budget increase never adds
 work or resets service. Variable-demand and mode-change products use sound
 bounded exploration with the exact rational demands and allowance deltas
-selected on each explored path. A finite negative search can settle `proved`
+selected on each explored path. An exact demand selected from a declared
+interval is an admitted behavior and may support a refutation only when its
+timed witness replays; exploring selected representatives never proves that
+omitted demands are safe. A finite negative search can settle `proved`
 only when its certificate checks an exact abstraction covering every admitted
 demand, mode change and scheduler successor; sampled or endpoint-only paths
-never establish absence. Otherwise an exhausted configured search bound
-settles `incomplete`, `limit-reached`, with the replayable FR-331 task-search
-frontier. A live-job or state cap used only to bound exploration is not a
+never establish absence. When an unresolved continuous successor prevents
+expansion before a configured bound is reached, the analysis settles
+`incomplete` with cause
+`bounded-search-incomplete{reason: unresolved-dynamics}` and the replayable
+FR-331 task-search frontier naming the exact prefix and open dimensions. When
+the configured task-product work bound or another actual search limit stops
+expansion, the analysis settles `incomplete`, `limit-reached`, with that
+reached limit and the replayable frontier. A live-job or state cap used only to bound exploration is not a
 task-queue overflow in the modeled system and cannot refute schedulability.
 A concrete miss is a refutation only after FR-364 replays each exact rational
 demand, delay, derived scheduler step, source mode transition, allowance update
@@ -311,9 +319,10 @@ decision procedure is not claimed for interval demand with completion
 feedback and preemption; it is undecidable in general (Fersman et al.,
 Theorem 5). A budget change has the same rule: unless an exact finite
 abstraction covers its demand updates, bounded exploration may refute by an
-exact miss witness but cannot prove by a finite negative prefix. The result
-names the actual stopped limit and value and carries the replayable frontier.
-It never turns a bounded negative search into `proved`
+exact miss witness but cannot prove by a finite negative prefix. A
+limit-stopped result names the actual stopped limit and value; an unresolved
+continuous choice names `bounded-search-incomplete` and no limit. Both carry
+the replayable frontier. It never turns a bounded negative search into `proved`
 or an undecidable class into a permanent refusal. A time-locking product state
 is reported separately by FR-417 and is not a deadline miss unless the claim's
 time-divergent scope is witnessed.
@@ -350,7 +359,7 @@ establish completeness for the fixed-work class.
 | FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test |
 | FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test |
 | FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority`, `amc` or `response` claim over a task with no `priority`, and a `fixed_priority`, `amc` or `response` claim over two tasks of equal priority, refuse `invalid_timed_model`/`invalid-task-set` naming that task (both tasks for the clash), and an `edf` claim over the same sets is admitted; a non-positive `D` and a `LO` task with dual budgets refuse the same way. | Test |
-| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim only when FR-418 verifies a closed finite product; interval demand with completion feedback and preemption is searched soundly, and a negative bounded search settles `incomplete`, `limit-reached`, never `proved` or `unsupported`. | Test |
+| FR-419-AC-6 | A fixed-work task automaton lowers to the exact finite bounded-subtraction product and a TT-1 claim only when FR-418 verifies a closed finite product; interval demand with completion feedback and preemption is searched soundly, and an unresolved continuous successor or an exhausted task-product work bound settles `incomplete` with replayable FR-331 task-search evidence and respectively `bounded-search-incomplete{reason: unresolved-dynamics}` or `limit-reached`, never `proved` or `unsupported`. A negative deadline-miss result still requires an exact replayed witness. | Test (TC-372) |
 | FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test |
 | FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test |
 | FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test |
