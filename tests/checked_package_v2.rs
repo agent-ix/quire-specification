@@ -14753,7 +14753,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
     defects
 }
 
-#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-294", "FR-342-AC-10", "FR-342-AC-11", "FR-415-AC-24")]
+#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-295", "FR-342-AC-10", "FR-342-AC-11", "FR-415-AC-24")]
 #[test]
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
@@ -14765,7 +14765,7 @@ fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
 
 /// Each rule of the clause oracle is pinned by a published vector: switching
 /// the rule off makes the replay disagree with exactly that vector.
-#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-294")]
+#[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-295")]
 #[test]
 fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
     let pinned = [
