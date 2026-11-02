@@ -26,7 +26,7 @@ relationships:
 When a checked package carries a closed tick-monitor program (QSL FR-251) for a
 `temporal`/`temporal_clause` declaration, the producer SHALL emit it as
 `quire.checked-semantic-graph/v2` nodes over the existing expression contract:
-three ordinary `function` nodes (`init`, `on_event`, `on_watermark`) that pass
+four ordinary `function` nodes (`init`, `on_event`, `on_watermark`, `on_gap`) that pass
 the monitor state in and out, and one *plan-root* node, `node_tag: "temporal"`,
 `semantic_form: "monitor_plan"`, that names them with the state and result types
 and the plan's capacities and counter premises. No statement, loop or assignment
@@ -47,7 +47,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
   text of the two integer premises and the canonical text of `max_event_rate`,
   then for each `buffers` entry the index segment of its subformula and the
   decimal text of its capacity, then the `counter` text, the index segment of
-  the `tick_unit` node and the canonical text of `uncertainty` (FR-322 `path`).
+  the `tick_unit` node, the canonical text of `uncertainty` and the index segment of the `on_gap` node (FR-322 `path`).
   Every premise of the plan, and so the subject, clock binding, uncertainty,
   gap, rate and capacities of QSL FR-251, is part of the key: changing one
   yields a different root key and so a different plan. Changing an entry body changes that entry's own derived `node_id`
@@ -59,7 +59,8 @@ whose rules below do not hold, with the first refusal in the reader order below.
   binding("on_watermark", …), binding("counter_width_bits", …),
   binding("max_reading_gap", …), binding("max_event_rate", …),
   binding("buffers", …), binding("counter", …), binding("tick_unit", …),
-  binding("uncertainty", …)]}`, in this order:
+  binding("uncertainty", …),
+  binding("on_gap", …)]}`, in this order:
   - `clause` — a `reference` to the `temporal`/`temporal_clause` node (FR-370)
     the program monitors. Its `temporal_bindings` row (FR-322 "Temporal clock
     bindings") is the plan's clock binding: the plan repeats no clock name,
@@ -74,7 +75,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
     scope and interval, FR-094);
   - `results` — a `reference` to a `composite_type`/`sequence` node whose
     element is the result record below;
-  - `init`, `on_event`, `on_watermark` — each a `reference` to a
+  - `init`, `on_event`, `on_watermark`, `on_gap` — each a `reference` to a
     `function`/`pure_function` node with no `declaration`;
   - `counter_width_bits` — an `integer` literal, 1 to 64;
   - `max_reading_gap` — an `integer` literal, 0 to `2^counter_width_bits - 1`;
@@ -123,7 +124,12 @@ whose rules below do not hold, with the first refusal in the reader order below.
   - `on_watermark` — three parameters, in order: the state; the unwrapped
     history-boundary tick of the admitted progress assertion, an `integer`
     that covers every tick up to and including the boundary (FR-094); and the
-    scope identities (`scope` node).
+    scope identities (`scope` node);
+  - `on_gap` — two parameters, in order: the state, and the checked gap, an
+    `integer` (the modular difference in ticks of the two counter readings,
+    greater than `max_reading_gap`: the `gap` of `ReadingGapExceeded` below).
+    It is called by the runtime when the reading-gap fault occurs and in place
+    of `on_event` for that reading; its result is the `(State, Results)` tuple.
 - **state** — the `state` record has a field `now`, an `integer`, the unwrapped
   tick of the latest admitted reading, and for each `buffers` entry a field
   named `buffer_<n>` (`<n>` the entry's position in `buffers`, from 0) typed by
@@ -139,9 +145,10 @@ whose rules below do not hold, with the first refusal in the reader order below.
   `Pending` and `Indeterminate` nullary (FR-160); `Incomplete` carrying the
   record `LimitReached{limit, value, setting}` (`limit` `event_buffer`,
   `value` the capacity, `setting` `monitor.max_event_rate`); `Failed` carrying
-  the record `ReadingGapExceeded{gap, max_reading_gap}`. A body returns the
-  first four and `Incomplete`; the executor alone constructs `Failed`, since it
-  owns the modular delta.
+  the record `ReadingGapExceeded{gap, max_reading_gap}`. `gap` and `max_reading_gap` are `integer`s. `on_event` and `on_watermark`
+  return the first four and `Incomplete`; only `on_gap` returns `Failed`, from
+  the checked gap it is given and the plan's `max_reading_gap` premise. The
+  executor owns the modular delta, detects the fault and calls `on_gap`.
 - **append** — the sequence extension `append(s, x)` is not a new operation:
   it is `quire.op.collection.flatten` of `quire.op.collection.sequence(s,
   quire.op.collection.sequence(x))`, over ordinary sequence types. The closed
@@ -158,20 +165,40 @@ the history boundary. The entries are validated against that meaning by the
 reference evaluator and the differential of QSL FR-251-AC-7; the wire fixes no
 separate algorithm.
 
+### Counter-gap path
+
+The first reading is the baseline: its delta is 0 and it is not gap-checked.
+For each later reading the runtime computes the delta modulo
+`2^counter_width_bits`. A delta not above `max_reading_gap` is passed to
+`on_event`. A greater delta is a reading-gap fault: the runtime calls `on_gap`
+with the checked gap instead of `on_event`, the faulting reading becomes the
+new baseline, and the monitor continues. `on_gap` yields for every live
+obligation instance whose verdict is still open (its window or deadline spans
+the gap) a result whose `outcome` is
+`Failed(ReadingGapExceeded{gap, max_reading_gap})`, and drops that instance
+from the returned state; an instance already decided, and one not yet started,
+is unaffected, and a result already emitted is not changed. The returned
+state has `now` advanced by `gap` (the faulting reading is the new baseline,
+so the unwrapped time stays consistent). These rules are QSL:plan's counter-gap
+ruling (QSL-1463) over FR-251 "Counter faults" and RT FR-276, which state only
+the modular difference, the `Failed` payload and the absence of a verdict. No temporal verdict
+is emitted for a failed instance. The state carries no typed projection of its
+live instances beyond what the body keeps in its own fields.
+
 ## Reader order
 
 The plan step visits every `temporal`/`monitor_plan` node in ascending node-id
 order, after the temporal step of FR-322 "Body steps". For one node the checks
 run in this order and the first failing check is its defect:
 
-1. **Shape.** The body is an aggregate of exactly the fifteen bindings in order,
+1. **Shape.** The body is an aggregate of exactly the sixteen bindings in order,
    `buffers` is an aggregate of aggregates of exactly `subformula` then
    `capacity`, `counter_width_bits` and `max_reading_gap` are `integer`
    literals, `max_event_rate` and `uncertainty` are `rational` literals and
    `counter` is a `text` literal, else
    `invalid_semantic_graph` at the first binding, in body order, that breaks
    the rule; for an absent binding the locus is the index it would occupy
-   and for an extra binding the index after the fifteenth.
+   and for an extra binding the index after the sixteenth.
 2. **References.** Each reference resolves to a node of the form stated above
    (`tick_unit`: a `scalar_type`/`unit` node whose dimension is the base `Time`
    dimension) and each entry is a `function`/`pure_function` node with no
@@ -203,26 +230,28 @@ serialization and no plan identity beyond the node keys. An IR reader SHALL
 validate the checks above and expose the admitted plan, its entries and its
 premises by reference as typed data. The runtime executes the entries: it
 supplies the gap-checked delta and the unwrapped boundary tick, enforces the
-capacity premises and constructs the `Failed` outcome. The reader does not run
+capacity premises, detects the reading-gap fault and calls `on_gap`, which
+returns the `Failed` outcome. The reader does not run
 a body.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-487-AC-1 | A plan root over a clause, a `State` record (`now`, `buffer_0`, `buffer_1`), the three entries with the signatures above, the six-case `Outcome` union and the premises `counter_width_bits` 32, `max_reading_gap` 1000, `max_event_rate` 10 and two buffers of capacity 4 and 7 is admitted; a capacity edit is still admitted (`MP-01`, `MP-02`). | Test (TC-978) |
-| FR-487-AC-2 | A root with a binding missing (including `uncertainty`, `MP-39`), reordered or extra, or with `counter_width_bits` or `max_reading_gap` that is not an `integer` literal, `max_event_rate` or `uncertainty` that is not a `rational` literal (`MP-35`, `MP-37`) or a `counter` that is not a `text` literal (`MP-42`), refuses `invalid_semantic_graph` at the first breaking binding; a `clause` that is not a `temporal_clause`, a `state` that is not a record and an entry that is not a `pure_function` refuse the same at the binding (`MP-03` to `MP-09` and `MP-28`, `MP-40` and `MP-41`). | Test (TC-978) |
-| FR-487-AC-3 | `init` with a parameter, `on_event` with two parameters or with the delta before the state, `on_watermark` whose boundary is not an `integer`, and an entry whose result is not the `(State, Results)` tuple refuse `ill_typed`/`type-mismatch` at the entry's binding; an `Outcome` union missing `Pending`, with an extra case or with a `Failed` payload that is not `ReadingGapExceeded` refuses the same at `results` (`MP-10` to `MP-17` and `MP-29`). | Test (TC-978) |
+| FR-487-AC-1 | A plan root over a clause, a `State` record (`now`, `buffer_0`, `buffer_1`), the four entries with the signatures above, the six-case `Outcome` union and the premises `counter_width_bits` 32, `max_reading_gap` 1000, `max_event_rate` 10 and two buffers of capacity 4 and 7 is admitted; a capacity edit is still admitted (`MP-01`, `MP-02`). | Test (TC-978) |
+| FR-487-AC-2 | A root with a binding missing (including `uncertainty`, `MP-39`), reordered or extra, or with `counter_width_bits` or `max_reading_gap` that is not an `integer` literal, `max_event_rate` or `uncertainty` that is not a `rational` literal (`MP-35`, `MP-37`) or a `counter` that is not a `text` literal (`MP-42`), refuses `invalid_semantic_graph` at the first breaking binding; a `clause` that is not a `temporal_clause`, a `state` that is not a record and an entry that is not a `pure_function` refuse the same at the binding (`MP-03` to `MP-09`, `MP-28`, `MP-40`, `MP-41`, `MP-48` and `MP-49`). | Test (TC-978) |
+| FR-487-AC-3 | `init` with a parameter, `on_event` with two parameters or with the delta before the state, `on_watermark` whose boundary is not an `integer`, `on_gap` with the gap before the state or a non-`integer` gap (`MP-50`, `MP-51`), and an entry whose result is not the `(State, Results)` tuple refuse `ill_typed`/`type-mismatch` at the entry's binding; an `Outcome` union missing `Pending`, with an extra case or with a `Failed` payload that is not `ReadingGapExceeded` refuses the same at `results` (`MP-10` to `MP-17`, `MP-29` and `MP-52`). | Test (TC-978) |
 | FR-487-AC-4 | `counter_width_bits` 0 and 65, `max_reading_gap` `2^width`, `max_event_rate` 0 or negative, a negative `uncertainty`, an empty `counter` and a `capacity` 0 refuse `invalid_package`/`invalid-value` at the literal; `buffers` out of ascending order, with a repeated subformula or naming an unreached subformula, and a `state` lacking `buffer_1` or holding a non-sequence `buffer_1`, refuse `invalid_semantic_graph` at `buffers` or `state` (`MP-18` to `MP-27`, `MP-30`, `MP-31`, `MP-34`, `MP-36`, `MP-38`, `MP-46` and `MP-47`). | Test (TC-978) |
 | FR-487-AC-5 | Buffer extension is `flatten(sequence(s, sequence(x)))` over the existing operations `quire.op.collection.flatten` and `quire.op.collection.sequence`: both are in the closed operation catalog, the extension of a `Sequence<T>` by a `T` is a `Sequence<T>`, and the catalog and both V2 schemas are unchanged (`MP-32`). | Test (TC-978) |
-| FR-487-AC-6 | The identity-bearing premises are bindings of the root and part of its key: the `counter` name, the `tick_unit` node, `counter_width_bits`, `max_reading_gap`, `max_event_rate`, `uncertainty` and the buffer capacities. A different `uncertainty` (`0`), `counter`, `max_event_rate` (`1/10`, a rational), `tick_unit` node or capacity yields a different root key (`MP-02`, `MP-33`, `MP-43` to `MP-45`); a `tick_unit` that is not a `scalar_type`/`unit` node, or is a unit of the `Length` dimension, refuses `invalid_semantic_graph` at the `tick_unit` binding (`MP-40`, `MP-41`). The tick intervals are derived from the clause and the unit scales and are not bound. | Test (TC-978) |
+| FR-487-AC-6 | The identity-bearing premises are bindings of the root and part of its key: the `counter` name, the `tick_unit` node, `counter_width_bits`, `max_reading_gap`, `max_event_rate`, `uncertainty`, the `on_gap` entry and the buffer capacities. A different `uncertainty` (`0`), `counter`, `max_event_rate` (`1/10`, a rational), `tick_unit` node or capacity yields a different root key (`MP-02`, `MP-33`, `MP-43` to `MP-45`, and the `on_gap` node, `MP-53`); a `tick_unit` that is not a `scalar_type`/`unit` node, or is a unit of the `Length` dimension, refuses `invalid_semantic_graph` at the `tick_unit` binding (`MP-40`, `MP-41`). The tick intervals are derived from the clause and the unit scales and are not bound. | Test (TC-978) |
+| FR-487-AC-7 | On a reading-gap fault the runtime calls `on_gap(State, gap)` with the checked gap (an `integer` count of ticks above `max_reading_gap`) in place of `on_event`: every open instance yields `Failed(ReadingGapExceeded{gap, max_reading_gap})` and leaves the state, a decided instance and the results already emitted are unaffected, and with no open instance the results are empty and the state is unchanged (`MP-54` to `MP-56`). The first reading is the baseline with no gap check, and the faulting reading becomes the new baseline: readings 65530, 4, 65500, 65510 under width 16 and `max_reading_gap` 100 call baseline, `on_event(10)`, `on_gap(65496)`, `on_event(10)` (`MP-57`). | Test (TC-978) |
 
 ## Published artifacts
 
 `proposals/checked-package-v2/schema.json` admits `monitor_plan` among the
 `temporal` node's `semantic_form` values.
 `proposals/checked-package-v2/monitor-plan-vectors.json` publishes the cases
-`MP-01` to `MP-47`.
+`MP-01` to `MP-57`.
 
 ## Dependencies
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its three state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the premises (integers, rationals, the counter name), the tick unit and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-32 (append) is not an edit: it names the existing operations that extend a sequence. The identity-bearing premises are the counter name, the tick unit, the width, the gap, the rate, the uncertainty and the buffers: each admitted case other than MP-01 changes one and must yield a different root key. The tick intervals are not bound; they follow from the clause's interval bounds, the clause's clock-unit scale and the tick unit's scale.",
+  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its four state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the premises (integers, rationals, the counter name), the tick unit and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-32 (append) is not an edit: it names the existing operations that extend a sequence. The identity-bearing premises are the counter name, the tick unit, the width, the gap, the rate, the uncertainty, the on_gap node and the buffers: each admitted case other than MP-01 changes one and must yield a different root key. The tick intervals are not bound; they follow from the clause's interval bounds, the clause's clock-unit scale and the tick unit's scale.",
   "base": {
     "bindings": [
       "clause",
@@ -17,7 +17,8 @@
       "buffers",
       "counter",
       "tick_unit",
-      "uncertainty"
+      "uncertainty",
+      "on_gap"
     ],
     "clause_form": "temporal_clause",
     "state": {
@@ -95,6 +96,16 @@
           "Scope"
         ],
         "result": "Step"
+      },
+      "on_gap": {
+        "form": "pure_function",
+        "declared": false,
+        "params": [
+          "State",
+          "integer"
+        ],
+        "result": "Step",
+        "index": 9
       }
     },
     "premises": {
@@ -171,7 +182,8 @@
             "max_event_rate",
             "counter",
             "tick_unit",
-            "uncertainty"
+            "uncertainty",
+            "on_gap"
           ]
         ]
       ],
@@ -201,7 +213,8 @@
             "buffers",
             "counter",
             "tick_unit",
-            "uncertainty"
+            "uncertainty",
+            "on_gap"
           ]
         ]
       ],
@@ -232,6 +245,7 @@
             "counter",
             "tick_unit",
             "uncertainty",
+            "on_gap",
             "extra"
           ]
         ]
@@ -239,7 +253,7 @@
       "expected": "refused",
       "code": "invalid_semantic_graph",
       "cause": null,
-      "locus": "/semantic_graph/nodes/{n}/body/members/15"
+      "locus": "/semantic_graph/nodes/{n}/body/members/16"
     },
     {
       "id": "MP-06",
@@ -871,7 +885,8 @@
             "max_event_rate",
             "buffers",
             "counter",
-            "tick_unit"
+            "tick_unit",
+            "on_gap"
           ]
         ]
       ],
@@ -982,6 +997,109 @@
       "code": "invalid_package",
       "cause": "invalid-value",
       "locus": "/semantic_graph/nodes/{n}/body/members/14/value"
+    },
+    {
+      "id": "MP-48",
+      "note": "the on_gap binding is missing",
+      "set": [
+        [
+          "bindings",
+          [
+            "clause",
+            "state",
+            "inputs",
+            "scope",
+            "results",
+            "init",
+            "on_event",
+            "on_watermark",
+            "counter_width_bits",
+            "max_reading_gap",
+            "max_event_rate",
+            "buffers",
+            "counter",
+            "tick_unit",
+            "uncertainty"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/15"
+    },
+    {
+      "id": "MP-49",
+      "note": "on_gap is a predicate, not a pure_function",
+      "set": [
+        [
+          "entries.on_gap.form",
+          "predicate"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/15"
+    },
+    {
+      "id": "MP-50",
+      "note": "on_gap takes the gap before the state",
+      "set": [
+        [
+          "entries.on_gap.params",
+          [
+            "integer",
+            "State"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/15"
+    },
+    {
+      "id": "MP-51",
+      "note": "on_gap gap parameter is text, not an integer",
+      "set": [
+        [
+          "entries.on_gap.params",
+          [
+            "State",
+            "text"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/15"
+    },
+    {
+      "id": "MP-52",
+      "note": "on_gap returns the state alone, not the (State, Results) tuple",
+      "set": [
+        [
+          "entries.on_gap.result",
+          "State"
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/15"
+    },
+    {
+      "id": "MP-53",
+      "note": "another on_gap node: a different plan identity",
+      "set": [
+        [
+          "entries.on_gap.index",
+          10
+        ]
+      ],
+      "expected": "admitted"
     }
   ],
   "append": {
@@ -992,5 +1110,130 @@
       "quire.op.collection.sequence"
     ],
     "expected": "admitted"
+  },
+  "gap_cases": {
+    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances.",
+    "calls": [
+      {
+        "id": "MP-54",
+        "note": "a gap with one open and one decided instance",
+        "width_bits": 16,
+        "max_reading_gap": 100,
+        "gap": 65506,
+        "live": [
+          {
+            "id": 1,
+            "status": "open"
+          },
+          {
+            "id": 2,
+            "status": "decided"
+          }
+        ],
+        "results": [
+          {
+            "instance": 1,
+            "outcome": "Failed",
+            "payload": {
+              "gap": 65506,
+              "max_reading_gap": 100
+            }
+          }
+        ],
+        "live_after": [
+          {
+            "id": 2,
+            "status": "decided"
+          }
+        ]
+      },
+      {
+        "id": "MP-55",
+        "note": "a gap with no open instance returns no results and leaves the state",
+        "width_bits": 16,
+        "max_reading_gap": 100,
+        "gap": 65506,
+        "live": [
+          {
+            "id": 2,
+            "status": "decided"
+          }
+        ],
+        "results": [],
+        "live_after": [
+          {
+            "id": 2,
+            "status": "decided"
+          }
+        ]
+      },
+      {
+        "id": "MP-56",
+        "note": "two open instances both fail and are dropped, in instance order",
+        "width_bits": 16,
+        "max_reading_gap": 100,
+        "gap": 300,
+        "live": [
+          {
+            "id": 1,
+            "status": "open"
+          },
+          {
+            "id": 3,
+            "status": "open"
+          }
+        ],
+        "results": [
+          {
+            "instance": 1,
+            "outcome": "Failed",
+            "payload": {
+              "gap": 300,
+              "max_reading_gap": 100
+            }
+          },
+          {
+            "instance": 3,
+            "outcome": "Failed",
+            "payload": {
+              "gap": 300,
+              "max_reading_gap": 100
+            }
+          }
+        ],
+        "live_after": []
+      }
+    ],
+    "sequences": [
+      {
+        "id": "MP-57",
+        "note": "baseline, advance by 10, gap fault 65496, the faulting reading is the new baseline, advance by 10",
+        "width_bits": 16,
+        "max_reading_gap": 100,
+        "readings": [
+          65530,
+          4,
+          65500,
+          65510
+        ],
+        "calls": [
+          [
+            "baseline"
+          ],
+          [
+            "on_event",
+            10
+          ],
+          [
+            "on_gap",
+            65496
+          ],
+          [
+            "on_event",
+            10
+          ]
+        ]
+      }
+    ]
   }
 }
