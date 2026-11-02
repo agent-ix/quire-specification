@@ -95,6 +95,30 @@
       },
       "additionalProperties": false
     },
+    "SourceRef": {
+      "type": "object",
+      "required": [
+        "authority",
+        "identity",
+        "source_integrity"
+      ],
+      "properties": {
+        "authority": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "identity": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "source_integrity": {
+          "$ref": "#/$defs/SourceIntegrity"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SourceIntegrity": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "Selection": {
       "type": "object",
       "required": [
@@ -428,7 +452,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/DefinitionRef"
+            "$ref": "#/$defs/SourceRef"
           }
         },
         "edition": {
@@ -5770,7 +5794,7 @@
       ],
       "properties": {
         "source": {
-          "$ref": "#/$defs/DefinitionRef"
+          "$ref": "#/$defs/SourceRef"
         },
         "start": {
           "type": "integer",
@@ -5939,7 +5963,8 @@
             "duplicate-clock-place",
             "malformed-clock-place",
             "invalid-time-quantity",
-            "clock-without-dense-time"
+            "clock-without-dense-time",
+            "source-integrity"
           ]
         },
         "details": {
@@ -6031,7 +6056,8 @@
                   "operation-mode-mismatch",
                   "operation-member-mismatch",
                   "operation-mode-type-mismatch",
-                  "declaration-nominal-mismatch"
+                  "declaration-nominal-mismatch",
+                  "source-integrity"
                 ]
               }
             },

@@ -125,9 +125,12 @@ boundary.
   digest or version exists for a model, and the host supplies
   the document under the identity at read and replay.
 - `lock` — exact source-document, edition, ordered profile, dependency and
-  required-feature identities. A source-document entry is `{authority, identity}`
-  and carries nothing else: no byte digest of the source exists anywhere in the
-  package. A definition selection is a `DefinitionRef` `{authority, identity}`.
+  required-feature identities. A source-document entry is a `SourceRef`
+  `{authority, identity, source_integrity}` and carries nothing else
+  ("Source-byte integrity"). No digest of a package, definition or model exists
+  anywhere in the package; the one digest it carries is the `source_integrity`
+  of a source reference. A definition selection is a `DefinitionRef`
+  `{authority, identity}`, which carries no integrity member.
 - `dependency_selections` — the libraries the unit imports directly
   ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md)):
   one `DependencySelection` per directly imported library identity, each
@@ -3185,6 +3188,60 @@ canonical decimal string, at every magnitude. A *counter*, meaning an
 (QSL ADR-013 O-09). A `node_id.ordinal` is always a JSON number and has the one
 bound 2^53-1 ("Structural node identity").
 
+### Source-byte integrity
+
+A source reference is a `SourceRef`, the closed three-member object
+`{authority, identity, source_integrity}`, wherever the package names a source
+document: each `lock.sources` entry, the `source` of each region of a
+`source_map` entry, the `source` of the `region` of each `refinement_step_rows`
+row, and the `source` of each region of a `diagnostics.entries` locus. The
+reference is identified by its `authority` and `identity` pair exactly as before;
+`source_integrity` is an additional claim about the bytes of that document and is
+never part of a node's nominal identity. A `DefinitionRef`, a nominal `SourceOwner`
+and every other reference keep their two-member shape, and `source_integrity`
+appears on none of them.
+
+`source_integrity` is exactly 64 lowercase ASCII hexadecimal characters, the
+SHA-256 of the complete raw source byte sequence the reference names. The digest
+is taken over those bytes unchanged: no decoding, newline conversion,
+normalization, canonical JSON encoding, domain prefix or length prefix is
+applied, and an empty byte sequence is a valid source with its own SHA-256. The
+package is never the source of those bytes. The caller supplies them keyed by
+the exact (`authority`, `identity`) pair, and the reader performs no filesystem,
+URI or network lookup and infers none from the package, a domain document or a
+dependency. Two references to one pair are checked against the same supplied
+bytes. Limits on the bytes read and the visits made are the resource limits of
+FR-330 and neither add nor replace a cause here.
+
+After strict JSON, canonical-byte and closed-schema checks, and before the header,
+body, graph, lock and source-map semantic checks, the reader verifies every
+source reference in this order: `lock.sources` in array order, then `source_map`
+entries in array order with each entry's regions in array order, then
+`refinement_step_rows` in array order, then `diagnostics.entries` in array order
+with each entry's `loci` in array order. A reference fails when its
+`source_integrity` is absent, not a string or not 64 lowercase hexadecimal
+characters, when the caller supplied no bytes for its pair, or when the SHA-256 of
+those bytes differs from the claim, and the first failing reference in the order
+above decides. The failure refuses
+`invalid_package`/`source-integrity` at the RFC 6901 pointer of the reference
+(for example `/lock/sources/0` or `/source_map/3/regions/0/source`), never at its
+`source_integrity` member. For this verification a missing, `null`, wrong-kind or
+malformed `source_integrity` is `source-integrity`, not `missing-member` or
+`wrong-value-kind`; any other missing or extra member of the reference keeps its
+ordinary decode refusal. A reference with only `authority` and `identity` is a
+missing `source_integrity`: no two-member reference is admitted. Because the
+verification precedes the owner join and the source-map agreement check
+(FR-322-AC-52), a package that has both a failing claim and a region naming a
+source other than its node's owner refuses `source-integrity`, and a package whose
+claims all hold refuses that region under the existing rule.
+Changing one byte of the supplied source bytes while leaving the package
+bytes unchanged refuses at the pointer of every reference to that pair; the first
+in the order above is reported.
+
+The published vectors are `proposals/checked-package-v2/source-integrity-vectors.json`
+and the source documents `proposals/checked-package-v2/source-documents.json`
+indexes, one file of raw bytes per pair.
+
 ### Temporal clock bindings
 
 `temporal_bindings` carries the typed clock selection for each temporal
@@ -4142,6 +4199,15 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-316 | A `protocol_attempt` origin appears in no positive protocol-location row and in the reader-refusal vectors only in the two rows of PL-R1-duplicate-term. | Test (TC-233) |
 | FR-322-AC-317 | A protocol declaration's own location, PL-03-declaration, carries the `type_declaration` origin named `protocol Handshake`, the checker's declaration-site form. | Test (TC-233) |
 | FR-322-AC-318 | No positive protocol-location row carries a bare declared-type name as its origin: every positive row's origin `name` is a spaced `protocol ...` site name. | Test (TC-233) |
+| FR-322-AC-319 | `lock.sources`, the `source` of every `source_map` region, of every `refinement_step_rows` region and of every `diagnostics.entries` locus are `SourceRef`, the closed object `{authority, identity, source_integrity}`, in `proposals/checked-package-v2/schema.json`, and every published checked-package fixture and vector carries `source_integrity` at each such site. | Test (TC-233) |
+| FR-322-AC-320 | `DefinitionRef` stays the closed two-member `{authority, identity}`: a `DefinitionRef` carrying `source_integrity` fails the schema, and a nominal `SourceOwner` and the owner join still compare the (`authority`, `identity`) pair alone. | Test (TC-233) |
+| FR-322-AC-321 | `source_integrity` is the SHA-256, as 64 lowercase hexadecimal characters, of the raw bytes of the source document with no transformation: for each pair of `source-documents.json` the claim equals the SHA-256 of its file bytes, which hold CRLF and LF line ends that a newline conversion would change, and the schema refuses an uppercase, 63-character, 65-character and non-hexadecimal claim. | Test (TC-233) |
+| FR-322-AC-322 | A source reference whose `source_integrity` is missing, `null`, wrong-kind or malformed refuses `invalid_package`/`source-integrity` at the pointer of that reference and not at its `source_integrity` member, for vectors SI-R1 to SI-R5, where SI-R1 is the legacy two-member reference. | Test (TC-233) |
+| FR-322-AC-323 | Source bytes that differ from those the claim names in one byte, with the package bytes unchanged, refuse `invalid_package`/`source-integrity` at the pointer of the reference naming that pair (vector SI-R6, QSL FR-518 row 28m), while the unmutated bytes admit the same package (vector SI-P1). | Test (TC-233) |
+| FR-322-AC-324 | A reference whose (`authority`, `identity`) pair has no caller-supplied bytes refuses `invalid_package`/`source-integrity` at the pointer of that reference (vector SI-R7); the reader supplies none from the package, a domain document or the filesystem. | Test (TC-233) |
+| FR-322-AC-325 | A source reference is checked at each of its four site kinds, and each refuses at its own pointer: `/lock/sources/{i}` (SI-R8), `/source_map/{i}/regions/{j}/source` (SI-R9), `/refinement_step_rows/{i}/region/source` (SI-R10) and `/diagnostics/entries/{i}/loci/{j}/source` (SI-R11). | Test (TC-233) |
+| FR-322-AC-326 | Of several failing references, the first in the order `lock.sources`, `source_map`, `refinement_step_rows`, `diagnostics.entries`, then array order within each, decides the pointer: a failing `source_map` region and a failing second `lock.sources` entry refuse at `/lock/sources/1` (vector SI-R12), and a mismatching second `lock.sources` entry ahead of a malformed third refuses at `/lock/sources/1` (vector SI-R13). | Test (TC-233) |
+| FR-322-AC-327 | The integrity verification runs before the owner join and source-map agreement check of FR-322-AC-52: vector SI-R14, with a failing `lock.sources` claim and a declaration region moved to another locked source, refuses `invalid_package`/`source-integrity` at `/lock/sources/0`, and vector SI-R15, the same moved region with every claim holding, refuses `invalid_package`/`invalid-value` at `/source_map/3`. | Test (TC-233) |
 
 ## Dependencies
 

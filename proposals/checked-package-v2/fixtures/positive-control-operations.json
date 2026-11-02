@@ -30,7 +30,8 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example"
+        "identity": "example",
+        "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
       }
     ]
   },
@@ -448,7 +449,8 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 0
         }
@@ -473,7 +475,8 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 1
         }
@@ -503,7 +506,8 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 2
         }
@@ -525,7 +529,8 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 7
         }
@@ -551,7 +556,8 @@
           "end": 9,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 8
         }
@@ -584,7 +590,8 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 9
         }

@@ -87,7 +87,8 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example-a"
+        "identity": "example-a",
+        "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
       }
     ]
   },
@@ -530,7 +531,8 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 0
         }
@@ -551,7 +553,8 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 1
         }
@@ -573,7 +576,8 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 2
         }
@@ -599,7 +603,8 @@
           "end": 4,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 3
         }
@@ -625,7 +630,8 @@
           "end": 5,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 4
         }
@@ -646,7 +652,8 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 5
         }
@@ -667,7 +674,8 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-a"
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
           },
           "start": 6
         }

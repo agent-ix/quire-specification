@@ -87,7 +87,8 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example-b"
+        "identity": "example-b",
+        "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
       }
     ]
   },
@@ -411,7 +412,8 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-b"
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
           },
           "start": 0
         }
@@ -432,7 +434,8 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-b"
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
           },
           "start": 1
         }
@@ -454,7 +457,8 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-b"
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
           },
           "start": 2
         }
@@ -475,7 +479,8 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-b"
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
           },
           "start": 5
         }
@@ -496,7 +501,8 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "identity": "example-b"
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
           },
           "start": 6
         }
