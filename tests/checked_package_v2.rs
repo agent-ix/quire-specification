@@ -12579,7 +12579,8 @@ fn text_bounds_body_is_complete(members: &[Value], profiles: &[&str]) -> bool {
     }
     let integer = |member: &Value| -> Option<u64> {
         let text = member["value"].as_str()?;
-        let canonical = text == "0" || (!text.starts_with('0') && !text.is_empty());
+        let canonical = text.bytes().all(|b| b.is_ascii_digit())
+            && (text == "0" || (!text.starts_with('0') && !text.is_empty()));
         (member["value_kind"] == "integer" && canonical).then(|| text.parse().ok()).flatten()
     };
     let (Some(min), Some(max)) = (integer(&members[0]), integer(&members[1])) else {
