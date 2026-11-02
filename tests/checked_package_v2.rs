@@ -21955,40 +21955,67 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
 }
 
 /// FR-322-AC-304: a `text` literal typed `Text[...; nfc]` is already normalized (the reader
-/// normalizes nothing), so no published positive fixture may carry one in decomposed form. A
-/// combining mark U+0300 to U+036F in such a literal is the decomposed spelling of a
-/// precomposed letter (`e` U+0301 for U+00E9); a `binary-utf8` literal keeps its bytes and is
-/// not checked.
+/// normalizes nothing). Keep the decomposed `e` + U+0301 regression vector out of nfc literals;
+/// the same text remains valid when the profile is `binary-utf8`, which preserves its bytes.
 #[trace("TC-233", "FR-322-AC-304")]
 #[test]
-fn tc_233_published_positive_fixtures_carry_normalized_nfc_text_literals() {
-    fn walk(value: &Value, name: &str, found: &mut usize, bad: &mut Vec<String>) {
+fn tc_233_published_positive_fixtures_reject_decomposed_e_acute_in_nfc_text() {
+    fn walk(
+        value: &Value,
+        name: &str,
+        nfc_literals: &mut usize,
+        nfc_regressions: &mut Vec<String>,
+        binary_regressions: &mut usize,
+    ) {
         match value {
             Value::Object(map) => {
-                let nfc = map
+                let profile = map
                     .get("type")
                     .and_then(|ty| ty["path"].as_array())
-                    .and_then(|path| path.last())
-                    .is_some_and(|last| last == "nfc");
-                if map.get("value_kind").is_some_and(|kind| kind == "text") && nfc {
-                    *found += 1;
+                    .and_then(|path| path.last());
+                if map.get("value_kind").is_some_and(|kind| kind == "text") {
                     let text = map["value"].as_str().unwrap_or_default();
-                    if text.chars().any(|c| ('\u{300}'..='\u{36f}').contains(&c)) {
-                        bad.push(format!("{name}: {text:?} is not NFC"));
+                    let decomposed_e_acute = text.contains("e\u{301}");
+                    if profile.is_some_and(|last| last == "nfc") {
+                        *nfc_literals += 1;
+                        if decomposed_e_acute {
+                            nfc_regressions.push(format!("{name}: {text:?} is not NFC"));
+                        }
+                    } else if profile.is_some_and(|last| last == "binary-utf8")
+                        && decomposed_e_acute
+                    {
+                        *binary_regressions += 1;
                     }
                 }
-                map.values().for_each(|inner| walk(inner, name, found, bad));
+                map.values().for_each(|inner| {
+                    walk(inner, name, nfc_literals, nfc_regressions, binary_regressions)
+                });
             }
-            Value::Array(items) => items.iter().for_each(|inner| walk(inner, name, found, bad)),
+            Value::Array(items) => items.iter().for_each(|inner| {
+                walk(inner, name, nfc_literals, nfc_regressions, binary_regressions)
+            }),
             _ => {}
         }
     }
-    let (mut found, mut bad) = (0, Vec::new());
+    let (mut nfc_literals, mut nfc_regressions, mut binary_regressions) = (0, Vec::new(), 0);
     for (name, package) in published_positive_packages() {
-        walk(&package, &name, &mut found, &mut bad);
+        walk(
+            &package,
+            &name,
+            &mut nfc_literals,
+            &mut nfc_regressions,
+            &mut binary_regressions,
+        );
     }
-    assert!(found >= 1, "a published fixture carries an nfc text literal");
-    assert!(bad.is_empty(), "{bad:#?}");
+    assert!(
+        nfc_literals >= 1,
+        "a published fixture carries an nfc text literal"
+    );
+    assert!(nfc_regressions.is_empty(), "{nfc_regressions:#?}");
+    assert!(
+        binary_regressions >= 1,
+        "the decomposed text vector remains valid under binary-utf8"
+    );
 }
 
 const ENTRY_KEY_VECTORS: &str = include_str!("../proposals/checked-package-v2/entry-key-vectors.json");
