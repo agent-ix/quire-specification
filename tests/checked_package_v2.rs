@@ -46,6 +46,10 @@ const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const TEMPORAL_CLOCK_BINDING_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/temporal-clock-binding-vectors.json");
+const SCHEDULABILITY_CLAIM_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/schedulability-claim-vectors.json");
+const ZONE_CERTIFICATE_VECTORS: &str =
+    include_str!("../proposals/backend-provider-v1/zone-certificate-vectors.json");
 const OPTION_VALUE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/option-value-vectors.json");
 const SELECTED_TIMED_SLOT_DOCUMENT: &str =
@@ -20476,4 +20480,171 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             .unwrap()
             .contains("no partial data view")
     );
+}
+
+#[trace("TC-976", "FR-322-AC-300", "FR-482-AC-4", "FR-418-AC-12")]
+#[test]
+fn schedulability_claim_carrier_vectors_match_the_closed_member_schema() {
+    let vectors: Value = serde_json::from_str(SCHEDULABILITY_CLAIM_VECTORS)
+        .expect("schedulability claim carrier vectors JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let certificate_vectors = parsed_fixture(ZONE_CERTIFICATE_VECTORS);
+    let row_validator = schema_for_def(&schema, "SchedulabilityClaimRef");
+    assert_eq!(
+        schema["properties"]["schedulability_claims"]["items"]["$ref"],
+        "#/$defs/SchedulabilityClaimRef"
+    );
+    assert!(
+        !schema["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("schedulability_claims")),
+        "the carrier is absent when a package has no schedulability claim"
+    );
+    assert!(schema["$defs"]["TaskTransitionTemplate"].is_null());
+
+    let positive = vectors["positive"].as_array().expect("positive cases");
+    assert_eq!(positive.len(), 2);
+    let task_claim = certificate_vectors["vectors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["id"] == "ZC-30")
+        .expect("TC-372 task claim certificate vector")["document"]["identity"]["node_id"]
+        .clone();
+    for case in positive {
+        assert_eq!(case["semantic_form"], "schedulability");
+        let rows = case["rows"].as_array().expect("claim rows");
+        assert!(!rows.is_empty());
+        for row in rows {
+            assert!(
+                row_validator.is_valid(row),
+                "{} row is closed: {:?}",
+                case["id"],
+                row_validator
+                    .iter_errors(row)
+                    .map(|error| error.to_string())
+                    .collect::<Vec<_>>()
+            );
+            assert_eq!(
+                row["declaration"], task_claim,
+                "{} exact identity",
+                case["id"]
+            );
+        }
+        if case["id"] == "SCC-02-shared-node-two-claim-occurrences" {
+            assert_eq!(rows.len(), 2);
+            assert_eq!(rows[0]["declaration"], rows[1]["declaration"]);
+            assert_eq!(rows[0]["occurrence"], 0);
+            assert_eq!(rows[1]["occurrence"], 1);
+        }
+    }
+
+    let expected_schema_refusals = BTreeMap::from([
+        (
+            "SCC-03-missing-occurrence",
+            ("malformed_wire", "/schedulability_claims/0"),
+        ),
+        (
+            "SCC-04-negative-occurrence",
+            ("malformed_wire", "/schedulability_claims/0/occurrence"),
+        ),
+        (
+            "SCC-05-extra-identity-member",
+            ("malformed_wire", "/schedulability_claims/0"),
+        ),
+        (
+            "SCC-12-non-integer-occurrence",
+            ("malformed_wire", "/schedulability_claims/0/occurrence"),
+        ),
+    ]);
+    let schema_refusals = vectors["schema_refusals"]
+        .as_array()
+        .expect("schema refusal cases");
+    assert_eq!(schema_refusals.len(), expected_schema_refusals.len());
+    for case in schema_refusals {
+        let id = case["id"].as_str().expect("case id");
+        let (expected_code, expected_locus) = expected_schema_refusals
+            .get(id)
+            .unwrap_or_else(|| panic!("unexpected schema refusal {id}"));
+        assert_eq!(case["expected_code"], *expected_code, "{id}");
+        assert_eq!(case["locus"], *expected_locus, "{id}");
+        let mut error_loci = row_validator
+            .iter_errors(&case["row"])
+            .map(|error| format!("/schedulability_claims/0{}", error.instance_path()))
+            .collect::<Vec<_>>();
+        error_loci.sort();
+        assert_eq!(
+            error_loci,
+            vec![expected_locus.to_string()],
+            "{id} has exactly the published malformed-wire locus"
+        );
+    }
+
+    let expected_reader_refusals = BTreeMap::from([
+        (
+            "SCC-06-foreign-package",
+            (
+                "invalid_package",
+                "invalid-value",
+                "/schedulability_claims/0/declaration",
+            ),
+        ),
+        (
+            "SCC-07-wrong-node-form",
+            (
+                "invalid_package",
+                "invalid-value",
+                "/schedulability_claims/0/declaration",
+            ),
+        ),
+        (
+            "SCC-08-unowned-occurrence",
+            (
+                "invalid_package",
+                "invalid-value",
+                "/schedulability_claims/0/occurrence",
+            ),
+        ),
+        (
+            "SCC-09-duplicate-key",
+            (
+                "invalid_package",
+                "conflicting-definition",
+                "/schedulability_claims/1",
+            ),
+        ),
+        (
+            "SCC-10-missing-claim-coverage",
+            ("invalid_package", "invalid-value", "/schedulability_claims"),
+        ),
+        (
+            "SCC-11-noncanonical-order",
+            (
+                "invalid_package",
+                "invalid-value",
+                "/schedulability_claims/1",
+            ),
+        ),
+    ]);
+    let reader_refusals = vectors["reader_refusals"]
+        .as_array()
+        .expect("reader refusal cases");
+    assert_eq!(reader_refusals.len(), expected_reader_refusals.len());
+    for case in reader_refusals {
+        let id = case["id"].as_str().expect("case id");
+        assert_eq!(case["schema"], "valid", "{id}");
+        let (expected_code, expected_cause, expected_locus) = expected_reader_refusals
+            .get(id)
+            .unwrap_or_else(|| panic!("unexpected reader refusal {id}"));
+        assert_eq!(case["expected_code"], *expected_code, "{id}");
+        assert_eq!(case["expected_cause"], *expected_cause, "{id}");
+        assert_eq!(case["locus"], *expected_locus, "{id}");
+        for row in case["rows"].as_array().expect("reader mutation rows") {
+            assert!(
+                row_validator.is_valid(row),
+                "{id} is a semantic reader mutation, not a wire mutation"
+            );
+        }
+    }
 }

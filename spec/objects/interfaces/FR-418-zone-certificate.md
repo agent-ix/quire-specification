@@ -55,7 +55,7 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 
 | Member | Content |
 | --- | --- |
-| `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` (FR-479) binding the proof to the exact subject and claim. For a task-automaton proof, this binding selects the checked schedulability claim and therefore its policy; policy is not supplied as an independent certificate or `task_product` value. |
+| `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` (FR-479) binding the proof to the exact subject and claim. For a task-automaton proof, this binding selects the checked schedulability claim through FR-322's `schedulability_claims` row and FR-482 body, and therefore its policy; policy is not supplied as an independent certificate or `task_product` value. |
 | `scale` | The common denominator the constants were scaled by. |
 | `bounds` | The per-clock lower and upper bounds `L` and `U`, per discrete state, used by the simulation test. |
 | `nodes` | A finite list of nodes `(s, q, Z)`: discrete state key, claim-automaton state, canonical DBM. For a task-product certificate, `s` is the complete source-plus-scheduler product key modulo the finite live-job renaming below. |
@@ -73,6 +73,12 @@ on exactly that node.
 
 For a task-automaton certificate, the reader resolves `identity` to the exact
 checked task claim and derives fixed-priority or EDF policy from that claim.
+The checked claim is the FR-322 `schedulability_claims` identity row joined to
+the admitted FR-482 body. The IR reader owns that typed carrier read only.
+This FR-418 reader is the QSL checker: it joins the authenticated claim to
+the selected timed model's source release declarations and recomputes the
+source-plus-scheduler successors. It does not ask IR to interpret
+`TaskTransitionTemplate` or run a second scheduler evaluator.
 It independently recompiles the task product and recomputes every release,
 ready queue order, dispatch, preemption, service and completion successor
 under that policy before it accepts coverage or derives positive-delay SCCs.
