@@ -20107,7 +20107,8 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-297",
     "FR-322-AC-310",
     "FR-322-AC-311",
-    "FR-322-AC-312"
+    "FR-322-AC-312",
+    "FR-322-AC-313"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20293,6 +20294,35 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             row["id"]
         );
     }
+    // FR-322-AC-313: a protocol slot expression is located under a type_declaration
+    // origin named by its site, never a protocol_attempt origin.
+    for row in location_rows {
+        let origin = &row["location"]["origin"];
+        assert_eq!(origin["kind"], "type_declaration", "{}", row["id"]);
+        assert!(
+            origin["name"].as_str().unwrap().starts_with("protocol ")
+                || origin["name"] == "Handshake",
+            "{} names a protocol site or a declared type",
+            row["id"]
+        );
+    }
+    let site = |id: &str| {
+        location_rows.iter().find(|row| row["id"] == id).unwrap()["location"].clone()
+    };
+    assert_eq!(
+        site("PL-01-root")["origin"]["name"],
+        "protocol Handshake compensate undo trigger-guard 0"
+    );
+    assert_eq!(site("PL-01-root")["origin"], site("PL-02-child")["origin"]);
+    let attempt_rows: Vec<&str> = vectors["reader_refusals"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .chain(vectors["schema_invalid"].as_array().unwrap())
+        .filter(|v| v.to_string().contains("protocol_attempt"))
+        .map(|v| v["id"].as_str().unwrap())
+        .collect();
+    assert_eq!(attempt_rows, ["PL-R1-duplicate-term"]);
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
         let mut wire = row.clone();
