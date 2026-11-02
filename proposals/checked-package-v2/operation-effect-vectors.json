@@ -1,0 +1,1699 @@
+{
+  "note": "STD-640. The operation_effects rows carry FR-103's OperationMemberRecord.effect (FR-013 frame, lifted per FR-013-AC-13 and FR-340) keyed by selected document, declaring node and original operation name, with provenance. Each case's documents are compact excerpts of the selected FR-154 model documents (operation frames in document form: modifies, modifies_receiver, creates, deletes, deletes_receiver, deletes_parameters); its rows are the expected carrier. schema_refusals and reader_refusals are RFC 6902 patches over the rows of their base positive case, applied to {\"operation_effects\": rows}; loci are absolute JSON pointers into that package member.",
+  "positive": [
+    {
+      "id": "OEC-01-modifies",
+      "description": "modifies only: one every-object field and one receiver-scoped field; creates, deletes and deletes_scoped are carried empty",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total",
+                "status"
+              ],
+              "operations": [
+                {
+                  "name": "touch",
+                  "params": [],
+                  "frame": {
+                    "modifies": [
+                      "ix://acme/orders/Order/total"
+                    ],
+                    "modifies_receiver": [
+                      "ix://acme/orders/Order/status"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch",
+          "effect": {
+            "modifies": [
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "status",
+                "scope": "receiver"
+              },
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "total",
+                "scope": "every-object"
+              }
+            ],
+            "creates": [],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/touch"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OEC-02-creates",
+      "description": "creates only: the created object type is carried and the other three kinds are empty",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "open",
+                  "params": [],
+                  "frame": {
+                    "creates": [
+                      "ix://acme/orders/Invoice"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Invoice",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "open",
+          "effect": {
+            "modifies": [],
+            "creates": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Invoice"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/open"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OEC-03-deletes",
+      "description": "deletes only: a type-wide delete is carried and the other three kinds are empty",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "purge",
+                  "params": [],
+                  "frame": {
+                    "deletes": [
+                      "ix://acme/orders/Invoice"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Invoice",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "purge",
+          "effect": {
+            "modifies": [],
+            "creates": [],
+            "deletes": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Invoice"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/purge"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OEC-04-scoped-deletes",
+      "description": "deletes_scoped only: deletes self and deletes a named reference parameter",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "close",
+                  "params": [
+                    {
+                      "name": "receipt",
+                      "type": "Reference<Receipt>"
+                    }
+                  ],
+                  "frame": {
+                    "deletes_receiver": true,
+                    "deletes_parameters": [
+                      "receipt"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Receipt",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "close",
+          "effect": {
+            "modifies": [],
+            "creates": [],
+            "deletes": [],
+            "deletes_scoped": [
+              {
+                "kind": "receiver"
+              },
+              {
+                "kind": "parameter",
+                "name": "receipt"
+              }
+            ]
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/close"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OEC-05-empty-effect",
+      "description": "an operation with no frame entries has a row whose four members are all empty, distinct from an absent row",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "noop",
+                  "params": [],
+                  "frame": {}
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "noop",
+          "effect": {
+            "modifies": [],
+            "creates": [],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/noop"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OEC-06-multiple-members",
+      "description": "two operations of one object: rows sorted by operation name in UTF-8 bytes",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "touch",
+                  "params": [],
+                  "frame": {
+                    "modifies": [
+                      "ix://acme/orders/Order/total"
+                    ]
+                  }
+                },
+                {
+                  "name": "open",
+                  "params": [],
+                  "frame": {
+                    "creates": [
+                      "ix://acme/orders/Invoice"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Invoice",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "open",
+          "effect": {
+            "modifies": [],
+            "creates": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Invoice"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/open"
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch",
+          "effect": {
+            "modifies": [
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "total",
+                "scope": "every-object"
+              }
+            ],
+            "creates": [],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/touch"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OEC-07-same-member-identity",
+      "description": "one member name, three owners: Order.settle and Invoice.settle in acme/orders and Order.settle in acme/ledger are three distinct rows with three distinct effects; Order.settle carries every kind and both scopes",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [
+            "Placed"
+          ],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total",
+                "status"
+              ],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [
+                    {
+                      "name": "receipt",
+                      "type": "Reference<Receipt>"
+                    }
+                  ],
+                  "frame": {
+                    "modifies": [
+                      "ix://acme/orders/Order/total",
+                      "ix://acme/orders/Placed"
+                    ],
+                    "modifies_receiver": [
+                      "ix://acme/orders/Order/status"
+                    ],
+                    "creates": [
+                      "ix://acme/orders/Invoice"
+                    ],
+                    "deletes": [
+                      "ix://acme/orders/Receipt"
+                    ],
+                    "deletes_receiver": false,
+                    "deletes_parameters": [
+                      "receipt"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Invoice",
+              "form": "object_type",
+              "fields": [
+                "amount"
+              ],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "frame": {
+                    "modifies": [
+                      "ix://acme/orders/Invoice/amount"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Receipt",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        },
+        {
+          "identity": "acme/ledger",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "frame": {
+                    "creates": [
+                      "ix://acme/ledger/Entry"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Entry",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/ledger",
+          "declaring": {
+            "package": "acme/ledger",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/ledger/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "effect": {
+            "modifies": [],
+            "creates": [
+              {
+                "package": "acme/ledger",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/ledger/Entry"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/ledger/Order/settle"
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "effect": {
+            "modifies": [
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Invoice"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "amount",
+                "scope": "every-object"
+              }
+            ],
+            "creates": [],
+            "deletes": [],
+            "deletes_scoped": []
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Invoice/settle"
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "effect": {
+            "modifies": [
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "status",
+                "scope": "receiver"
+              },
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "total",
+                "scope": "every-object"
+              },
+              {
+                "kind": "relationship",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "relation",
+                    "relationship",
+                    "ix://acme/orders/Placed"
+                  ],
+                  "ordinal": 0
+                }
+              }
+            ],
+            "creates": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Invoice"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Receipt"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes_scoped": [
+              {
+                "kind": "parameter",
+                "name": "receipt"
+              }
+            ]
+          },
+          "provenance": {
+            "origin": "model_document_operation_frame",
+            "member": "ix://acme/orders/Order/settle"
+          }
+        }
+      ]
+    }
+  ],
+  "schema_refusals": [
+    {
+      "id": "OES-01-missing-document",
+      "description": "row without its document",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/document"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2"
+    },
+    {
+      "id": "OES-02-missing-operation",
+      "description": "row without its operation",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/operation"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2"
+    },
+    {
+      "id": "OES-03-missing-provenance",
+      "description": "row without its provenance",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/provenance"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2"
+    },
+    {
+      "id": "OES-04-missing-effect",
+      "description": "row without its effect",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2"
+    },
+    {
+      "id": "OES-05-effect-missing-creates",
+      "description": "effect with the creates kind dropped",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect/creates"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect"
+    },
+    {
+      "id": "OES-06-effect-missing-deletes",
+      "description": "effect with the deletes kind dropped",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect/deletes"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect"
+    },
+    {
+      "id": "OES-07-effect-missing-modifies",
+      "description": "effect with the modifies kind dropped",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect/modifies"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect"
+    },
+    {
+      "id": "OES-08-effect-missing-deletes-scoped",
+      "description": "effect with the deletes_scoped kind dropped",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect/deletes_scoped"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect"
+    },
+    {
+      "id": "OES-09-unknown-effect-kind",
+      "description": "effect with a fifth, unknown kind",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_effects/2/effect/renames",
+          "value": []
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect"
+    },
+    {
+      "id": "OES-10-unknown-modifies-entry-kind",
+      "description": "modifies entry whose kind is neither field nor relationship",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/modifies/0",
+          "value": {
+            "kind": "rename",
+            "declaration": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            }
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect/modifies/0"
+    },
+    {
+      "id": "OES-11-unknown-provenance-origin",
+      "description": "provenance origin that is not the model document's operation frame",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/provenance/origin",
+          "value": "guessed_from_name"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/provenance/origin"
+    },
+    {
+      "id": "OES-12-extra-row-member",
+      "description": "row with a member outside the closed shape",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_effects/2/frame_node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2"
+    },
+    {
+      "id": "OES-13-empty-operation",
+      "description": "row whose operation is not an identifier",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/operation",
+          "value": ""
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/operation"
+    },
+    {
+      "id": "OES-14-duplicate-entry",
+      "description": "modifies array repeating an entry",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_effects/2/effect/modifies/-",
+          "value": {
+            "kind": "field",
+            "declaration": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            },
+            "name": "total",
+            "scope": "every-object"
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_effects/2/effect/modifies"
+    }
+  ],
+  "reader_refusals": [
+    {
+      "id": "OER-01-document-not-selected",
+      "description": "row document that is no selection of the lock",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/document",
+          "value": "acme/unselected"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-selection",
+      "locus": "/operation_effects/2/document"
+    },
+    {
+      "id": "OER-02-declaring-absent",
+      "description": "declaring node that names no node of the package",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/declaring",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Ghost"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "locus": "/operation_effects/2/declaring"
+    },
+    {
+      "id": "OER-03-declaring-foreign",
+      "description": "declaring node of a package that is not selected",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/declaring",
+          "value": {
+            "package": "acme/unselected",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/unselected/Order"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/declaring"
+    },
+    {
+      "id": "OER-04-declaring-relationship",
+      "description": "declaring node that is a relationship",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/declaring",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "relation",
+              "relationship",
+              "ix://acme/orders/Placed"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_effects/2/declaring"
+    },
+    {
+      "id": "OER-05-document-owner-mismatch",
+      "description": "row document is a selection but is not the declaring node's owner document",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/document",
+          "value": "acme/ledger"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/document"
+    },
+    {
+      "id": "OER-06-operation-is-a-field",
+      "description": "effect keyed by a field name of the declaring type",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/operation",
+          "value": "total"
+        },
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/provenance/member",
+          "value": "ix://acme/orders/Order/total"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_effects/2/operation"
+    },
+    {
+      "id": "OER-07-operation-undeclared",
+      "description": "effect keyed by a name the declaring type does not declare",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/operation",
+          "value": "ghost"
+        },
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/provenance/member",
+          "value": "ix://acme/orders/Order/ghost"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_effects/2/operation"
+    },
+    {
+      "id": "OER-08-provenance-other-owner",
+      "description": "provenance member names another owner's operation of the same name",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/provenance/member",
+          "value": "ix://acme/orders/Invoice/settle"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/provenance/member"
+    },
+    {
+      "id": "OER-09-provenance-other-document",
+      "description": "provenance member names the same-named member of another document",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/provenance/member",
+          "value": "ix://acme/ledger/Order/settle"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/provenance/member"
+    },
+    {
+      "id": "OER-10-modifies-entry-absent",
+      "description": "modifies entry naming a node that is not in the package",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/modifies/0/declaration",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Ghost"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "locus": "/operation_effects/2/effect/modifies/0/declaration"
+    },
+    {
+      "id": "OER-11-creates-entry-wrong-kind",
+      "description": "creates entry naming a relationship",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/creates/0",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "relation",
+              "relationship",
+              "ix://acme/orders/Placed"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "locus": "/operation_effects/2/effect/creates/0"
+    },
+    {
+      "id": "OER-12-modifies-field-undeclared",
+      "description": "field entry whose name the declaring node does not declare",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/modifies/0/name",
+          "value": "ghost"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "locus": "/operation_effects/2/effect/modifies/0/name"
+    },
+    {
+      "id": "OER-13-modifies-misordered",
+      "description": "modifies entries not in FR-340 canonical order",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_effects/2/effect/modifies/0",
+          "value": {
+            "kind": "relationship",
+            "declaration": {
+              "package": "acme/orders",
+              "path": [
+                "relation",
+                "relationship",
+                "ix://acme/orders/Placed"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect/modifies/3"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "locus": "/operation_effects/2/effect/modifies"
+    },
+    {
+      "id": "OER-14-modifies-dropped",
+      "description": "modifies relationship entry dropped relative to the document frame",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/2/effect/modifies/2"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/effect/modifies"
+    },
+    {
+      "id": "OER-15-creates-dropped",
+      "description": "creates entry dropped relative to the document frame",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/creates",
+          "value": []
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/effect/creates"
+    },
+    {
+      "id": "OER-16-deletes-dropped",
+      "description": "deletes entry dropped relative to the document frame",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/deletes",
+          "value": []
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/effect/deletes"
+    },
+    {
+      "id": "OER-17-deletes-scoped-dropped",
+      "description": "scoped parameter delete dropped relative to the document frame",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/2/effect/deletes_scoped",
+          "value": []
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2/effect/deletes_scoped"
+    },
+    {
+      "id": "OER-18-effect-invented",
+      "description": "effect adds a created type the document frame does not name",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/1/effect/creates",
+          "value": [
+            {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Receipt"
+              ],
+              "ordinal": 0
+            }
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/1/effect/creates"
+    },
+    {
+      "id": "OER-19-effect-swapped-with-other-owner",
+      "description": "Invoice.settle row carrying Order.settle's effect",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/1/effect",
+          "value": {
+            "modifies": [
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "status",
+                "scope": "receiver"
+              },
+              {
+                "kind": "field",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                "name": "total",
+                "scope": "every-object"
+              },
+              {
+                "kind": "relationship",
+                "declaration": {
+                  "package": "acme/orders",
+                  "path": [
+                    "relation",
+                    "relationship",
+                    "ix://acme/orders/Placed"
+                  ],
+                  "ordinal": 0
+                }
+              }
+            ],
+            "creates": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Invoice"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes": [
+              {
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Receipt"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "deletes_scoped": [
+              {
+                "kind": "parameter",
+                "name": "receipt"
+              }
+            ]
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/1/effect/modifies"
+    },
+    {
+      "id": "OER-20-duplicate-key",
+      "description": "a repeated (document, declaring, operation) key",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_effects/3",
+          "value": {
+            "document": "acme/orders",
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle",
+            "effect": {
+              "modifies": [
+                {
+                  "kind": "field",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "model",
+                      "object_type",
+                      "ix://acme/orders/Order"
+                    ],
+                    "ordinal": 0
+                  },
+                  "name": "status",
+                  "scope": "receiver"
+                },
+                {
+                  "kind": "field",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "model",
+                      "object_type",
+                      "ix://acme/orders/Order"
+                    ],
+                    "ordinal": 0
+                  },
+                  "name": "total",
+                  "scope": "every-object"
+                },
+                {
+                  "kind": "relationship",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "relation",
+                      "relationship",
+                      "ix://acme/orders/Placed"
+                    ],
+                    "ordinal": 0
+                  }
+                }
+              ],
+              "creates": [
+                {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Invoice"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "deletes": [
+                {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Receipt"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "deletes_scoped": [
+                {
+                  "kind": "parameter",
+                  "name": "receipt"
+                }
+              ]
+            },
+            "provenance": {
+              "origin": "model_document_operation_frame",
+              "member": "ix://acme/orders/Order/settle"
+            }
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/operation_effects/3"
+    },
+    {
+      "id": "OER-21-noncanonical-order",
+      "description": "rows out of (document, declaring, operation) order",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_effects/1",
+          "value": {
+            "document": "acme/orders",
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle",
+            "effect": {
+              "modifies": [
+                {
+                  "kind": "field",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "model",
+                      "object_type",
+                      "ix://acme/orders/Order"
+                    ],
+                    "ordinal": 0
+                  },
+                  "name": "status",
+                  "scope": "receiver"
+                },
+                {
+                  "kind": "field",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "model",
+                      "object_type",
+                      "ix://acme/orders/Order"
+                    ],
+                    "ordinal": 0
+                  },
+                  "name": "total",
+                  "scope": "every-object"
+                },
+                {
+                  "kind": "relationship",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "relation",
+                      "relationship",
+                      "ix://acme/orders/Placed"
+                    ],
+                    "ordinal": 0
+                  }
+                }
+              ],
+              "creates": [
+                {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Invoice"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "deletes": [
+                {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Receipt"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "deletes_scoped": [
+                {
+                  "kind": "parameter",
+                  "name": "receipt"
+                }
+              ]
+            },
+            "provenance": {
+              "origin": "model_document_operation_frame",
+              "member": "ix://acme/orders/Order/settle"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/operation_effects/2",
+          "value": {
+            "document": "acme/orders",
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Invoice"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle",
+            "effect": {
+              "modifies": [
+                {
+                  "kind": "field",
+                  "declaration": {
+                    "package": "acme/orders",
+                    "path": [
+                      "model",
+                      "object_type",
+                      "ix://acme/orders/Invoice"
+                    ],
+                    "ordinal": 0
+                  },
+                  "name": "amount",
+                  "scope": "every-object"
+                }
+              ],
+              "creates": [],
+              "deletes": [],
+              "deletes_scoped": []
+            },
+            "provenance": {
+              "origin": "model_document_operation_frame",
+              "member": "ix://acme/orders/Invoice/settle"
+            }
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects/2"
+    },
+    {
+      "id": "OER-22-missing-coverage",
+      "description": "an operation of the selected documents with no row",
+      "base": "OEC-07-same-member-identity",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_effects/1"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_effects"
+    }
+  ]
+}

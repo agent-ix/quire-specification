@@ -65,6 +65,14 @@ structures, but any external consumer receives only the contract.
   handle is in checked-package-v2; FR-418 `TaskTransitionTemplate` remains in
   the separate backend-provider-v1 certificate, where QSL owns successor
   recomputation.
+- `operation-effect-vectors.json` publishes the optional `operation_effects`
+  carrier of FR-103's per-operation declared effect (modifies, creates, deletes
+  and scoped deletes), keyed by selected document, declaring node and original
+  operation name with provenance. Positive cases OEC-01 to OEC-07 cover each
+  kind, the empty effect, several members and one member name under different
+  objects and documents; the schema and reader refusals OES-* and OER-* carry
+  exact codes and loci (FR-322-AC-301). QSL emits the carrier and the IR strict
+  reader admits or refuses it.
 - `temporal-fairness-target-vectors.json` publishes complete fairness members
   for operation, protocol-root, attempt-node, parallel-branch,
   compensation-template and hybrid-transition targets, plus closed-shape

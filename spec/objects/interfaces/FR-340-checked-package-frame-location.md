@@ -37,6 +37,12 @@ field by the node id of the declaration that declares it plus the field's
 name; a `creates` or `deletes` entry names an object type or process by its
 node id. This wire encoding is the V2 carrier of that existing model.
 
+A `state`/`frame` node is built only where an operation anchor binds the
+operation. The complete per-operation record of what every model operation may
+modify, create and delete is FR-322's `operation_effects` carrier, whose `effect`
+is this frame body's four members; a frame node and a carrier row for one
+operation agree.
+
 ## Properties
 
 - **semantic_type** (`NodeRef`) — the `model`/`object_type`, `model`/`process`
