@@ -31,3 +31,9 @@ Ticket: IR-1273, QSL-1501. The new section follows FR-322's existing declarative
 ## Verdict
 
 One low, convention-consistent finding; no change required unless the owner wants EARS form for new sections.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | accepted-no-change | Prose form matches FR-322's existing convention; the new FR-323 text uses the file's SHALL/declarative style as its neighbours do. |

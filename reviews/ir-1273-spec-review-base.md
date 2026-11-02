@@ -46,3 +46,23 @@ Ticket: IR-1273, QSL-1501. PR: quire-specification#605, head 5f483b1. Mergeable 
 ## Verdict
 
 Mergeable once FND-001 and FND-002 are resolved (wording and a one-line scope ruling). The digests, pointers, order, schema closure and refusal vectors are correct and fail when mutated. IR #837 must change: add the refinement_step_rows[*].region.source site (between source-map and diagnostics) and align its within-reference order or drop it as unobservable.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Head bfe3d2a: FR-322 now states the verification runs after strict JSON and canonical-byte checks and before every other check, closed-schema included; SI-R16 and FR-322-AC-341 pin it; mutating SI-R16's expected locus turns the vectors test red. |
+| FND-002 | fixed | Head bfe3d2a: conformance-corpus-v1 SourceRef requires source_integrity (DependencyEntry.sources), ObjectEnvironmentRef.identity moved to closed two-member ObjectEnvironmentIdentity (judgement accepted: it names an environment, not a source), FR-336-AC-9/10, FR-323 sources check and AC-29..33, RP vectors. No two-member source reference remains in any fixture. |
+| FND-003 | fixed | Head bfe3d2a: .gitattributes marks proposals/checked-package-v2/source-documents/** -text; digests recomputed and equal. |
+| FND-004 | fixed | Head bfe3d2a: ACs split into single-claim FR-322-AC-319..341; AC-332 and SI-R7 make no-filesystem-lookup failable (file present beside fixtures, bytes unsupplied, still refused). |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | FR-323 replay sources check order is unspecified between entries and between failure kinds; the test decider checks every claim's syntax first, then missing-bytes and mismatch interleaved per entry, and no vector pins it | spec/objects/interfaces/FR-323-native-runtime-envelope.md:39-49 |
+| FND-006 | low | TC-969 (relationships, Scope, trace line) does not list FR-336-AC-9/10 although the new test is tagged to it; FR-323-AC-29..33 are verified by TC-233 not TC-277 (the FR-323 replay TC) | spec/test-cases/TC-969-conformance-corpus-v1-schema-admits-the-fixture-and-refuses-out-of-domain-shapes.md:17,36 |
+
+## Verdict (disposition pass 1)
+
+FND-001..004 fixed. FND-005 and FND-006 are new and open; neither changes any shipped vector, both are spec wording or trace fixes. Mergeable once FND-005 and FND-006 are fixed or the owner defers them. Checks at bfe3d2a: cargo test all 18 targets 283 passed; FR-323 and FR-336 quire validate diagnostics identical to main; digests recomputed equal; no ID collisions with open PRs (AC-319..341, FR-323-AC-29..33, FR-336-AC-9/10); mutations of SI-R16 and RP-R4 expectations turn the tests red.

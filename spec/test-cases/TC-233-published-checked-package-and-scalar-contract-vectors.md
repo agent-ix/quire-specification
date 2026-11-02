@@ -85,16 +85,6 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-272-AC-26
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-29
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-30
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-31
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-32
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-33
-    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
@@ -830,5 +820,4 @@ source-map, refinement-step and diagnostic reference, SI-R12 and SI-R13 fix the
 order, SI-R14 and SI-R15 show that the integrity phase precedes the owner and
 source-map agreement check and SI-R16 that it precedes the closed-schema checks
 (FR-322-AC-333..341). The cause is catalogued and paired in FR-272
-(FR-272-AC-26). The `replay` cases RP-P1..RP-R4 check a replay request's `sources`
-entries against `byte_provision` (FR-323-AC-29..33).
+(FR-272-AC-26).

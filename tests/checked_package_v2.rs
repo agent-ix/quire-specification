@@ -22696,15 +22696,24 @@ fn tc_233_source_integrity_cause_is_catalogued_and_paired_with_invalid_package()
     assert!(row.contains("never the pointer of its `source_integrity` member"));
 }
 
-/// FR-323-AC-29 to AC-33 (TC-233): each replay `sources` entry is checked
+/// FR-323-AC-29 to AC-35 (TC-277): each replay `sources` entry is checked
 /// against the `byte_provision` bytes of its pair before any recompile.
-#[trace("TC-233", "FR-323-AC-29", "FR-323-AC-30", "FR-323-AC-31", "FR-323-AC-32", "FR-323-AC-33")]
+#[trace(
+    "TC-277",
+    "FR-323-AC-29",
+    "FR-323-AC-30",
+    "FR-323-AC-31",
+    "FR-323-AC-32",
+    "FR-323-AC-33",
+    "FR-323-AC-34",
+    "FR-323-AC-35"
+)]
 #[test]
-fn tc_233_replay_sources_are_checked_against_byte_provision() {
+fn tc_277_replay_sources_are_checked_against_byte_provision() {
     let vectors = parsed_fixture(SOURCE_INTEGRITY_VECTORS)["replay"].clone();
     let documents = source_document_index();
     let cases = vectors["cases"].as_array().expect("cases");
-    assert_eq!(cases.len(), 5);
+    assert_eq!(cases.len(), 8);
     for case in cases {
         let id = case["id"].as_str().unwrap();
         let mut evidence = SourceEvidence::new();
