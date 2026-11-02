@@ -9,10 +9,26 @@ review_set: all
 
 ## Summary
 
-Re-reviewed the complete diff against origin/main. The earlier test-reference, dependency-edge, and unresolved-choice dimension findings are resolved. One remaining wire-coverage gap is recorded below.
+The initial pass against `origin/main` found the empty `queue_bounds` schema gap below. In disposition round 2 at `4cfad11c`, the no-release schema condition added `minItems: 1` and malformed vector ZC-29; FND-001 remains fixed at final head `c9e67ada71508a19dce74088048ed130410957fd`, with no base finding open.
 
 ## Findings
 
 | ID | Severity | Summary | Refs | Escape Cause |
 | --- | --- | --- | --- | --- |
 | FND-001 | low | The `closed-no-release-product/v1` schema branch permits an empty `queue_bounds` array, while FR-418-AC-14 requires checked task demand intervals and the normative text requires verifying both endpoints against each checked task declaration. Require at least one row or state and test the reader's exact completeness rule. | FR-418-AC-14; `TaskProductCertificate` allOf in proposals/backend-provider-v1/schema.json; ZC-25 | correct-requirement-no-evidence |
+
+## Dispositions
+
+Round 2, at 4cfad11c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The schema now rejects an empty no-release demand-row list, and ZC-29 tests that rejection. |
+
+```yaml
+dispositions:
+  - fnd: FND-001
+    outcome: fixed
+    after_excerpt: |-
+      "queue_bounds": {"minItems": 1}
+```
