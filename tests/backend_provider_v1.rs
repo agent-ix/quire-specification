@@ -472,6 +472,7 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
 #[trace("TC-431", "FR-331-AC-39")]
 #[trace("TC-431", "FR-331-AC-40")]
 #[trace("TC-431", "FR-331-AC-41")]
+#[trace("TC-431", "FR-415-AC-26")]
 #[test]
 fn tc_431_positive_vectors_are_admitted_with_owned_members() {
     let validator = validator();
@@ -574,12 +575,16 @@ fn tc_431_task_product_finite_gate_schema_is_typed() {
 /// its exact finite wire arithmetic and the affine word recurrence; it does
 /// not stand in for the downstream QSL product/replay implementation.
 #[trace("TC-431", "FR-364-AC-14")]
+#[trace("TC-431", "FR-419-AC-6")]
 #[test]
 fn tc_431_task_queue_growth_vector_has_consistent_affine_cycle() {
     let whole = validator();
     let vector = positive("task-queue-growth-overload");
     let document = composed(&vector);
     assert!(whole.is_valid(&document), "queue-growth positive wire vector");
+    let miss = &document["counterexamples"][0]["counterexample"]["prefix"][0];
+    assert_eq!(miss["transition"]["type"], "task-transition");
+    assert!(miss.get("delay").is_some(), "typed task witness steps carry exact delay");
     let witness = &document["counterexamples"][0]["counterexample"]["queue_growth"];
     let shift = witness["iteration_shift"].as_u64().expect("iteration shift");
     let before = &witness["before"];
@@ -614,6 +619,7 @@ fn tc_431_task_queue_growth_vector_has_consistent_affine_cycle() {
         "task-queue-growth-missing-shift",
         "task-queue-growth-zero-elapsed",
         "task-queue-growth-loop-conflict",
+        "task-counterexample-task-transition-missing-delay",
     ] {
         let adverse = vector_set["adverse"].as_array().unwrap().iter()
             .find(|candidate| candidate["name"] == name).expect("queue-growth adverse vector");
@@ -704,6 +710,7 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-41")]
 #[trace("TC-431", "FR-193-AC-19")]
 #[trace("TC-431", "FR-193-AC-20")]
+#[trace("TC-431", "FR-415-AC-26")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();

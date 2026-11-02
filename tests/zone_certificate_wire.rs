@@ -58,11 +58,12 @@ fn vector(id: &str) -> Value {
 }
 
 #[trace("TC-371", "FR-418-AC-6")]
+#[trace("TC-371", "FR-418-AC-14")]
 #[test]
 fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
     let valid = validator();
     let rows = vectors();
-    assert_eq!(rows.len(), 5);
+    assert_eq!(rows.len(), 7);
     for row in &rows {
         let id = row["id"].as_str().unwrap();
         let document = &row["document"];
@@ -95,6 +96,7 @@ fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
 }
 
 #[trace("TC-371", "FR-418-AC-11", "FR-418-AC-13")]
+#[trace("TC-371", "FR-418-AC-14")]
 #[test]
 fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identities() {
     let valid = validator();
@@ -132,6 +134,24 @@ fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identiti
         );
         assert_eq!(case["expected"]["code"], "certificate-rejected", "{id}");
         assert_eq!(case["expected"]["rule"], "successor-missing", "{id}");
+        assert!(case["expected"]["at"].is_object(), "{id}: reader refusal has a locus");
+        if id == "ZC-28" {
+            assert_eq!(case["checked_task_model"], "TC-372/CtlFp");
+            assert_eq!(case["base"], "ZC-30");
+            assert_eq!(case["expected"]["at"], json!({"node": 0}));
+            assert_eq!(case["value"][0]["transition"]["operation"], "Cell::set");
+            let base = vector("ZC-30")["document"].clone();
+            assert_eq!(base["identity"]["model"], "test/litmus");
+            assert_eq!(base["identity"]["ordinal"], 0);
+            assert_eq!(base["identity"]["node_id"]["package"], "package");
+            let identity_path = base["identity"]["node_id"]["path"].as_array().unwrap();
+            assert_eq!(identity_path.iter().filter(|part| part["node"] == 6).count(), 18);
+            assert_eq!(base["task_product"]["queue_bounds"], json!([
+                {"taskset":"Ctl","task":"t1","arrival":"periodic","interarrival":{"numerator":"4","denominator":"1"},"relative_deadline":{"numerator":"4","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"1","denominator":"1"},"work_upper":{"numerator":"1","denominator":"1"},"max_jobs":2},
+                {"taskset":"Ctl","task":"t2","arrival":"periodic","interarrival":{"numerator":"6","denominator":"1"},"relative_deadline":{"numerator":"6","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"2","denominator":"1"},"work_upper":{"numerator":"2","denominator":"1"},"max_jobs":2},
+                {"taskset":"Ctl","task":"t3","arrival":"periodic","interarrival":{"numerator":"12","denominator":"1"},"relative_deadline":{"numerator":"12","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"5","denominator":"1"},"work_upper":{"numerator":"5","denominator":"1"},"max_jobs":2}
+            ]));
+        }
     }
 
     let task_identity = json!({

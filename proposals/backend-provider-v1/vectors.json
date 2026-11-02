@@ -1041,7 +1041,8 @@
         "/request/items/0/temporal/witness_samples": "FR-392",
         "/request/items/0/temporal/seed": "FR-392",
         "/request/items/0/reductions": "FR-382",
-        "/request/items/0/temporal/subject/proof_bounds/0/kind": "FR-331"
+        "/request/items/0/temporal/subject/proof_bounds/0/kind": "FR-331",
+        "/request/items/0/temporal/limits/max_task_product_work": "FR-415"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1188,7 +1189,8 @@
                   "max_clocks": 1024,
                   "max_walk_steps": 64,
                   "max_solver_steps": 1000,
-                  "max_solver_time": 5
+                  "max_solver_time": 5,
+                  "max_task_product_work": 1048576
                 },
                 "smt_encoding": {
                   "max_constants": 1048576
@@ -8834,7 +8836,7 @@
       }
     },
     {
-      "name": "task-transition-optional-priority-edf",
+      "name": "task-transition-optional-priority-edf-work-limit",
       "stage": "outcome",
       "owners": {
         "/results/0/cause": "FR-415",
@@ -8858,9 +8860,9 @@
             "result": "incomplete",
             "cause": {
               "type": "limit-reached",
-              "limit": "max_clocks",
-              "value": 1024,
-              "setting": "model_check.max_clocks"
+              "limit": "max_task_product_work",
+              "value": 1048576,
+              "setting": "zone_check.max_task_product_work"
             },
             "task_search": {
               "type": "task-search-frontier",
@@ -8950,7 +8952,7 @@
               "frontier": [
                 {
                   "node": 1,
-                  "reason": "clock-limit",
+                  "reason": "work-limit",
                   "open": [
                     "successors"
                   ]
@@ -8958,9 +8960,9 @@
               ],
               "limit": {
                 "type": "limit-reached",
-                "limit": "max_clocks",
-                "value": 1024,
-                "setting": "model_check.max_clocks"
+                "limit": "max_task_product_work",
+                "value": 1048576,
+                "setting": "zone_check.max_task_product_work"
               }
             }
           }
@@ -8972,11 +8974,149 @@
             "settled_by": "result",
             "method": "exploration",
             "limits": {
-              "max_clocks": 1024
+              "max_task_product_work": 1048576
             },
             "reached": [
-              "max_clocks"
+              "max_task_product_work"
             ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "task-search-unresolved-dynamics",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-331",
+        "/results/0/task_search": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "incomplete",
+            "cause": {
+              "type": "bounded-search-incomplete",
+              "reason": "unresolved-dynamics"
+            },
+            "task_search": {
+              "type": "task-search-frontier",
+              "identity": {
+                "node_id": {
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "model_root"
+                  ],
+                  "ordinal": 0
+                },
+                "model": "acme/orders",
+                "ordinal": 0
+              },
+              "nodes": [
+                {
+                  "state": {
+                    "key": "AA"
+                  },
+                  "depth": 0,
+                  "zone": [
+                    [
+                      {
+                        "bound": "0",
+                        "strict": false
+                      }
+                    ]
+                  ],
+                  "expanded": true
+                },
+                {
+                  "state": {
+                    "key": "AQ"
+                  },
+                  "depth": 1,
+                  "zone": [
+                    [
+                      {
+                        "bound": "0",
+                        "strict": false
+                      }
+                    ]
+                  ],
+                  "expanded": false
+                }
+              ],
+              "edges": [
+                {
+                  "node": 0,
+                  "transition": {
+                    "type": "task-transition",
+                    "action": "activate",
+                    "taskset": "Task",
+                    "task": "A",
+                    "job": 0,
+                    "slot": 0,
+                    "generation": 0,
+                    "release": {
+                      "type": "transition",
+                      "operation": "task_release",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "source_transition": {
+                      "type": "transition",
+                      "operation": "task_release",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "demand": {
+                      "numerator": "1",
+                      "denominator": "1"
+                    },
+                    "jitter": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    },
+                    "deadline": {
+                      "numerator": "2",
+                      "denominator": "1"
+                    },
+                    "priority": 1
+                  },
+                  "target": 1
+                }
+              ],
+              "frontier": [
+                {
+                  "node": 1,
+                  "reason": "unresolved-choice",
+                  "open": [
+                    "demand"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result",
+            "method": "exploration",
+            "limits": {
+              "max_clocks": 1024
+            }
           }
         ]
       }
@@ -12834,6 +12974,83 @@
               "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             }
           }
+        }
+      ]
+    },
+    {
+      "name": "task-counterexample-task-transition-missing-delay",
+      "base": "task-queue-growth-overload",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/counterexamples/0/counterexample/prefix/0/delay"
+        }
+      ]
+    },
+    {
+      "name": "task-search-work-limit-unresolved-frontier",
+      "base": "task-transition-optional-priority-edf-work-limit",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/task_search/frontier/0/reason",
+          "value": "unresolved-choice"
+        }
+      ]
+    },
+    {
+      "name": "task-search-unresolved-with-limit",
+      "base": "task-search-unresolved-dynamics",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/task_search/limit",
+          "value": {
+            "type": "limit-reached",
+            "limit": "max_task_product_work",
+            "value": 1048576,
+            "setting": "zone_check.max_task_product_work"
+          }
+        }
+      ]
+    },
+    {
+      "name": "temporal-limits-task-product-work-zero",
+      "base": "temporal-request",
+      "owner": "FR-415",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/limits/max_task_product_work",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "task-search-unresolved-frontier-required",
+      "base": "task-search-unresolved-dynamics",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/task_search"
+        }
+      ]
+    },
+    {
+      "name": "task-search-unresolved-open-requires-dynamic-dimension",
+      "base": "task-search-unresolved-dynamics",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/task_search/frontier/0/open",
+          "value": [
+            "successors"
+          ]
         }
       ]
     }
