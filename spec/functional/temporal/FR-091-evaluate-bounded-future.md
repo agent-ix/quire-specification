@@ -76,10 +76,12 @@ admitted clock distance in `[a,b]`. Existential and universal operators quantify
 only eligible admitted instants; `until` uses the admitted order and requires
 its left operand at every eligible earlier instant from the lower bound to the
 witness. For an activation at admitted tick `t0` of a clause whose nested interval
-operators reach `H` ticks (the greatest sum of upper bounds along a nesting
-path), the activation is *established* exactly when the observation authority
-asserts completeness through `t0 + H` and the progress watermark `W` satisfies
-`W >= t0 + H`. An established activation is evaluated over its eligible admitted
+operators reach `H` ticks into the future (the greatest sum of upper bounds of
+the future interval operators along a nesting path; past operators add nothing,
+since a look-back needs only the retained history of
+[FR-092](FR-092-evaluate-bounded-past.md)), the activation is *established*
+exactly when the observation authority asserts completeness through `t0 + H` and
+the progress watermark `W` satisfies `W >= t0 + H`. An established activation is evaluated over its eligible admitted
 instants only, with no synthetic atom after closure, and its result is definite
 true or false, including the empty existential (false) and empty universal
 (true) window. Before establishment, or when the input is incomplete, the
@@ -90,7 +92,7 @@ early witness or counterexample, or a missing fact outside the decision
 support); otherwise it is `pending` while `W < t0 + H` (declared progress could
 resolve it) and `indeterminate` once `W >= t0 + H` (closed evidence still
 unresolved: a missing or conflicting valuation, a completeness assertion short
-of `t0 + H`, or missing history). `incomplete` is reserved for a missing
+of `t0 + H`, or missing history, which a look-back-only clause reports at once because its `H` is 0). `incomplete` is reserved for a missing
 required current valuation at the anchor and for resource exhaustion. Two
 instants with equal clock distance are ordered only by an admitted order key; the
 eligible set, `until`/`since` and their duals use that order and refuse without
