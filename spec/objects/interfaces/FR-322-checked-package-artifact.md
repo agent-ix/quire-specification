@@ -3099,10 +3099,14 @@ bound 2^53-1 ("Structural node identity").
 ### Temporal clock bindings
 
 `temporal_bindings` carries the typed clock selection for each temporal
-declaration whose selected profile requires a clock configuration. It is a
+declaration whose selected profile requires a clock configuration. A
+*temporal declaration* is a `temporal`/`temporal_clause` node or a
+`protocol`/`compensation` node (operator `compensate`, FR-466), whose
+`within` window is a selected temporal declaration with its own clock name. It is a
 top-level checked-package member, not a semantic-graph node. When no
-`temporal`/`temporal_clause` node selects one of the clock-configured profiles,
-the member is absent; when present, it is a non-empty array. Absence never
+`temporal`/`temporal_clause` node selects one of the clock-configured profiles
+and no `compensation` node exists under a lock whose `temporal_profile` selects
+one, the member is absent; when present, it is a non-empty array. Absence never
 supplies a default clock or configuration for a temporal declaration that
 requires one.
 
@@ -3118,7 +3122,10 @@ Each row is exactly:
 
 `declaration` is a structural `NodeRef` equal to the `node_id` of exactly one
 `temporal`/`temporal_clause` declaration node (FR-370), whose occurrence has
-role `claim`. It is not the referenced `temporal`/`formula` expression node,
+role `claim`, or of exactly one `protocol`/`compensation` node (FR-466), whose
+occurrence has role `declaration`; a compensation window is keyed by the
+compensation node's own `node_id` and by no `await`, `attempt` or other control
+node. It is not the referenced `temporal`/`formula` expression node,
 the model root, or a `timed_model` node: those identities do not identify the
 temporal declaration's selected clock. The row is read by that exact node id;
 a reader never selects it by array position, clock name, formula contents, or
@@ -3126,7 +3133,9 @@ path-name inference. Rows are in ascending structural `NodeRef` order and each
 declaration occurs at most once.
 
 `clock_name` is the exact non-empty text value of the clause body's `clock`
-argument (the second argument of `quire.op.temporal.clause`, FR-370). A reader
+argument (the second argument of `quire.op.temporal.clause`, FR-370), or, for a
+compensation row, of the compensation node's `clock` text argument (the fifth
+argument of `compensate`, FR-466). A reader
 uses this typed member directly; it never parses a legacy `clock:` prefix or
 derives the name from the profile identity.
 
@@ -3147,7 +3156,10 @@ compared byte-for-byte; no trimming, normalization or alias resolution occurs.
 
 The profile is not repeated in a row. The reader resolves `declaration`, reads
 the clause's `temporal_profile` law, and requires that law to equal the matching
-`lock.profile_selections` entry. The selected definition determines exactly the
+`lock.profile_selections` entry. A compensation node has no `temporal_profile`
+law of its own (FR-464 "An `await` or a `compensate` reads a clock role"): its
+profile is the lock's `temporal_profile` selection, and no per-node law is read
+or required. The selected definition determines exactly the
 `clock.kind` above. A row for an absent or wrong-kind declaration, a duplicate
 row, a missing row for a clock-configured temporal declaration, a mismatching
 clock name, or a kind inconsistent with its selected profile is refused; no
@@ -3155,9 +3167,13 @@ clock, parameter or profile is substituted. The reader exposes the admitted
 row by reference as typed clock configuration data, without reparsing the
 wire or rechecking the profile selection during later reads. After aggregate
 order validation and before per-node joins, the reader requires exactly one row
-for every clock-configured temporal declaration. A missing row refuses at the
+for every clock-configured temporal declaration: every clock-configured
+`temporal_clause`, and every `compensation` node when the lock's
+`temporal_profile` selection is one of the three clock-configured profiles (a
+compensation always carries its `within` window, FR-466). A missing row refuses at the
 first such declaration's own `/semantic_graph/nodes/{N}/body`, where `N` is its
-graph index. A row with an absent or wrong-kind declaration refuses at that
+graph index and "first" is the lowest graph index among clauses and
+compensations. A row with an absent or wrong-kind declaration refuses at that
 row's `/temporal_bindings/{i}/declaration`; a repeated declaration refuses at
 the second row `/temporal_bindings/{i}`. Each of these semantic refusals is
 `invalid_package`/`timed-node-reference`. After aggregate order validation and
@@ -3167,6 +3183,10 @@ configuration kind against the selected profile: a name mismatch refuses
 `invalid_package`/`timed-node-reference` at
 `/temporal_bindings/{i}/clock_name`; a profile/configuration kind mismatch
 refuses with the same code and cause at `/temporal_bindings/{i}/clock/kind`.
+Clause and compensation rows share one array in one ascending structural
+`NodeRef` order and these checks apply to a compensation row unchanged: two
+compensations sharing a model, profile and clock name have two rows. The
+`TemporalBinding` schema is unchanged, so every existing payload stays valid.
 
 `temporal-clock-binding-vectors.json` publishes one full checked-package
 positive for each configuration kind and the schema-invalid unknown-kind,
@@ -3176,7 +3196,10 @@ duplicate row. Further semantic refusals cover a clock-name mismatch and a
 profile/configuration kind mismatch, with their exact row loci and check order.
 The multi-clause positive has two distinct declaration `NodeRef`s with the same
 model, selected profile and clock name; their formula references distinguish
-the structural keys, and the rows are in ascending `NodeRef` order. The selected
+the structural keys, and the rows are in ascending `NodeRef` order. Its `compensation_cases` (`CB-01` to `CB-08`,
+FR-322-AC-305) publish a clause beside two compensation windows, compensations
+alone, and the missing-row, duplicate-row, clock-name, clock-kind and wrong-kind-declaration
+refusals of a compensation row. The selected
 profile, configuration kind, and clause clock name agree in every single- and
 multi-clause positive. The vector file is the
 machine-readable form consumed by the QSpec qualification test.
@@ -4002,6 +4025,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-300 | A package with no `claim`/`schedulability` occurrence omits `schedulability_claims`; a package with such occurrences contains exactly one closed `{declaration, occurrence}` row for each, in structural-`NodeRef`, then occurrence order. Each row resolves only to its local `claim`/`schedulability` node and one of that node's `claim` occurrences; it copies no claim body, task value, source release binding, policy or task-transition template. The positive and shared-node/multiple-occurrence vectors are schema-valid. Missing coverage, a foreign, absent or wrong-form node, an unowned occurrence, a repeated key and a non-canonical row order have the exact `invalid_package` refusal and locus in TC-976; missing/extra row members and a non-integer or negative occurrence are `malformed_wire`. The IR typed read exposes the FR-482 body and identity without evaluating model releases or task successors; the QSL FR-418 checker alone recomputes source/scheduler successors. `TaskTransitionTemplate` remains in the backend-provider-v1 certificate and is not a checked-package member. | Test (TC-976) |
 | FR-322-AC-303 | A package carries `operation_effects` or omits it; when omitted the effects are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, effect, provenance}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)`, with all four `effect` members always present. Each of `modifies`, `creates`, `deletes` and `deletes_scoped` is carried exactly as the selected document's operation frame lifts under FR-013-AC-13 and FR-340, so no effect kind is dropped, and an operation with no frame entries has an all-empty row. One member name under another declaring node or document is another row. The positive vectors OEC-01 to OEC-07 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed`, `invalid_model_binding`, `invalid_semantic_graph` and `invalid_package` refusals and loci for missing/extra members, unknown effect or entry kinds, wrong provenance, a field or undeclared operation, a dropped or invented effect, a repeated key, key order and missing coverage are in TC-977. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-977) |
 | FR-322-AC-304 | A `text` literal typed by `Text[min, max; profile]` is admitted exactly when its `value` is already normalized under `profile` (`nfc`, `nfd`, `nfkc`, `nfkd`; the reader normalizes nothing) and its length (scalar count, or UTF-8 byte count under `binary-utf8`) lies in `[min, max]`, both bounds inclusive. A length below `min`, a length above `max` and a `value` not in the profile's normal form each refuse `ill_typed`/`type-mismatch` at `/semantic_graph/nodes/{n}/body/value`; under `binary-utf8` a two-scalar, four-byte `value` against `Text[1, 3; binary-utf8]` refuses while the same `value` against `Text[1, 3; unicode-scalars]` is admitted (`proposals/checked-package-v2/text-literal-vectors.json`, `TX-01` to `TX-14`). | Test (TC-233) |
+| FR-322-AC-305 | A `temporal_bindings` row may be keyed by the `node_id` of a `protocol`/`compensation` node (operator `compensate`) as well as of a `temporal`/`temporal_clause` node; its `clock_name` is the compensation's `clock` text and its configuration kind is the one the lock's `temporal_profile` selection determines (no per-node law). When that selection is clock-configured every compensation node has exactly one row. A compensation with no row refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{N}/body` (`CB-03`); a repeated compensation row at the second row `/temporal_bindings/{i}` (`CB-04`); a compensation row whose `clock_name` differs from the node's `clock` at `/temporal_bindings/{i}/clock_name` (`CB-05`) before a configuration kind inconsistent with the lock's selection at `/temporal_bindings/{i}/clock/kind` (`CB-06`); a row naming a node that is neither a temporal clause nor a compensation, an `await` included, at `/temporal_bindings/{i}/declaration` (`CB-07`). A clause beside two compensations sharing model, profile and clock name (`CB-01`), compensations alone (`CB-02`) and the same rows under a profile with no clock configuration (`CB-08`, no rows, member absent) are admitted. The schema and every existing payload are unchanged (`proposals/checked-package-v2/temporal-clock-binding-vectors.json`). | Test (TC-233) |
 
 ## Dependencies
 

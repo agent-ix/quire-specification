@@ -16205,6 +16205,95 @@ fn temporal_clock_package_with_two_clauses(case: &Value) -> Value {
     package
 }
 
+/// FR-322-AC-305: the `compensation_cases` of the clock-binding vectors, decided
+/// by a small reader over the stated rules: a row names a temporal clause or a
+/// compensation node, every such node has exactly one row when the lock's
+/// `temporal_profile` is clock-configured, and a row is checked for its clock name
+/// before its configuration kind.
+#[trace("TC-233", "FR-322-AC-305")]
+#[test]
+fn tc_233_compensation_rows_follow_the_temporal_binding_rules() {
+    let vectors: Value = serde_json::from_str(TEMPORAL_CLOCK_BINDING_VECTORS)
+        .expect("clock binding vectors JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let binding_validator = schema_for_def(&schema, "TemporalBinding");
+    let declarations = vectors["compensation_declarations"].as_array().unwrap();
+    let find = |key: &str| {
+        declarations
+            .iter()
+            .find(|declaration| declaration["key"] == key)
+            .unwrap_or_else(|| panic!("declaration {key} resolves"))
+    };
+    let order_key = |declaration: &Value| {
+        let id = &declaration["node_id"];
+        let mut key = vec![id["package"].as_str().unwrap().to_owned()];
+        key.extend(id["path"].as_array().unwrap().iter().map(|s| s.as_str().unwrap().to_owned()));
+        key
+    };
+    let mut seen = BTreeSet::new();
+    let (mut admitted, mut refused) = (0, 0);
+    for case in vectors["compensation_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: ids are unique");
+        let profile = case["lock_temporal_profile"].as_str().unwrap();
+        let keys: Vec<&str> = case["declarations"].as_array().unwrap().iter().map(|k| k.as_str().unwrap()).collect();
+        let rows = case["rows"].as_array().unwrap();
+        for row in rows {
+            let mut wire = row.clone();
+            wire["declaration"] = find(row["declaration"].as_str().unwrap())["node_id"].clone();
+            assert!(binding_validator.is_valid(&wire), "{id}: the row meets the closed TemporalBinding schema");
+        }
+        let outcome = (|| -> Option<String> {
+            let mut counted = BTreeSet::new();
+            for (position, row) in rows.iter().enumerate() {
+                let declaration = find(row["declaration"].as_str().unwrap());
+                if !matches!(declaration["form"].as_str().unwrap(), "temporal_clause" | "compensation") {
+                    return Some(format!("/temporal_bindings/{position}/declaration"));
+                }
+                if !counted.insert(row["declaration"].as_str().unwrap()) {
+                    return Some(format!("/temporal_bindings/{position}"));
+                }
+            }
+            if profile != "none" {
+                let mut required: Vec<&Value> = keys
+                    .iter()
+                    .map(|key| find(key))
+                    .filter(|d| matches!(d["form"].as_str().unwrap(), "temporal_clause" | "compensation"))
+                    .collect();
+                required.sort_by_key(|d| d["graph_index"].as_u64().unwrap());
+                if let Some(missing) = required.iter().find(|d| !counted.contains(d["key"].as_str().unwrap())) {
+                    return Some(format!("/semantic_graph/nodes/{}/body", missing["graph_index"]));
+                }
+            }
+            for (position, row) in rows.iter().enumerate() {
+                if row["clock_name"] != find(row["declaration"].as_str().unwrap())["clock"] {
+                    return Some(format!("/temporal_bindings/{position}/clock_name"));
+                }
+                if row["clock"]["kind"] != profile {
+                    return Some(format!("/temporal_bindings/{position}/clock/kind"));
+                }
+            }
+            None
+        })();
+        match case["expected"].as_str().unwrap() {
+            "admitted" => {
+                assert_eq!(outcome, None, "{id}");
+                let keys: Vec<Vec<String>> = rows.iter().map(|r| order_key(find(r["declaration"].as_str().unwrap()))).collect();
+                assert!(keys.windows(2).all(|pair| pair[0] < pair[1]), "{id}: rows in ascending NodeRef order");
+                admitted += 1;
+            }
+            "refused" => {
+                assert_eq!(case["code"], "invalid_package", "{id}");
+                assert_eq!(case["cause"], "timed-node-reference", "{id}");
+                assert_eq!(outcome.as_deref(), case["locus"].as_str(), "{id}: the refusal locus");
+                refused += 1;
+            }
+            other => panic!("{id}: unknown expectation {other}"),
+        }
+    }
+    assert_eq!((admitted, refused), (3, 5));
+}
+
 #[trace("TC-134", "TC-233", "FR-322-AC-294")]
 #[test]
 fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {

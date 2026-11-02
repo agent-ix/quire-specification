@@ -504,3 +504,4 @@ and two nodes declaring one name refuse as `ambiguous-name`
   (no implicit reset on a presence change) for an `Option<Clock>` place
   (TC-367 CK-31).
 - `text-literal-vectors.json` publishes the text-literal membership cases `TX-01` to `TX-14` (and `TX-13s`) over `Text[min, max; profile]` (FR-322-AC-304, TC-233 `DL-07` to `DL-10`): exact bounds, below min, above max, non-normalized retained sequences and the `binary-utf8` byte count. The reader that decides them is quire-contract-ir's (FR-038); QSpec's test checks lengths and the stated rule.
+- `temporal-clock-binding-vectors.json` also publishes `compensation_cases` `CB-01` to `CB-08` (FR-322-AC-305, TC-233 `TB-01` to `TB-03`): a `temporal_bindings` row keyed by a `protocol`/`compensation` node, beside a clause and in refusal. The `TemporalBinding` schema is unchanged. The reader that decides them is quire-contract-ir's.
