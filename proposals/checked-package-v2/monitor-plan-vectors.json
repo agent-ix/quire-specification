@@ -54,7 +54,8 @@
         "subformula",
         "origin",
         "status"
-      ]
+      ],
+      "activation_status": "integer"
     },
     "inputs_form": "record",
     "scope_form": "record",
@@ -1481,6 +1482,28 @@
       "code": "invalid_semantic_graph",
       "cause": null,
       "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-81",
+      "note": "status typed as a record holding an integer position: admitted (the reader does not constrain status)",
+      "set": [
+        [
+          "state.activation_status",
+          "record{position:integer}"
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-82",
+      "note": "status typed as a text scalar: admitted",
+      "set": [
+        [
+          "state.activation_status",
+          "text"
+        ]
+      ],
+      "expected": "admitted"
     }
   ],
   "append": {

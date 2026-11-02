@@ -21753,6 +21753,7 @@ fn monitor_plan_key(plan: &Value) -> Vec<String> {
     key.push(text(&premises["uncertainty"]));
     key.push(text(&plan["entries"]["on_gap"]["index"]));
     key.push(text(&premises["activation_capacity"]));
+    key.push(text(&plan["state"]["activation_status"])); // the state type node is an operand of the root key
     key
 }
 
@@ -21794,7 +21795,7 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 63);
+    assert_eq!(cases.len(), 65);
     let base_key = monitor_plan_key(&vectors["base"]);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
@@ -21822,7 +21823,7 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (8, 55));
+    assert_eq!((admitted, refused), (10, 55));
 
     // The counter-gap path (FR-487-AC-7): on_gap over abstract live instances, and the reading sequence.
     let gaps = &vectors["gap_cases"];
