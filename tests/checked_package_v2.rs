@@ -22470,7 +22470,14 @@ fn walk_source_sites(value: &Value, pointer: &str, visit: &mut dyn FnMut(&str, &
 /// closed three-member `SourceRef` and every published package carries the
 /// integrity member at each; `DefinitionRef` and the nominal source owner keep
 /// the two-member shape.
-#[trace("TC-233", "FR-322-AC-319", "FR-322-AC-320")]
+#[trace(
+    "TC-233",
+    "FR-322-AC-319",
+    "FR-322-AC-320",
+    "FR-322-AC-321",
+    "FR-322-AC-322",
+    "FR-322-AC-323"
+)]
 #[test]
 fn tc_233_source_references_are_closed_three_member_refs_and_definition_refs_stay_two() {
     let schema = parsed_fixture(SCHEMA);
@@ -22533,7 +22540,7 @@ fn tc_233_source_references_are_closed_three_member_refs_and_definition_refs_sta
 
 /// FR-322-AC-321 (TC-233): the claim is the SHA-256 of the raw bytes, lowercase
 /// hexadecimal, with no transformation.
-#[trace("TC-233", "FR-322-AC-321")]
+#[trace("TC-233", "FR-322-AC-324", "FR-322-AC-325")]
 #[test]
 fn tc_233_source_integrity_is_the_sha256_of_the_raw_source_bytes() {
     assert_eq!(sha256_hex(b""), "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
@@ -22571,16 +22578,26 @@ fn tc_233_source_integrity_is_the_sha256_of_the_raw_source_bytes() {
     }
 }
 
-/// FR-322-AC-322 to AC-327 (TC-233): the published vectors replayed through the
+/// FR-322-AC-326 to AC-341 (TC-233): the published vectors replayed through the
 /// test-local source-integrity decider and, when it admits, the full reader.
 #[trace(
     "TC-233",
-    "FR-322-AC-322",
-    "FR-322-AC-323",
-    "FR-322-AC-324",
-    "FR-322-AC-325",
     "FR-322-AC-326",
-    "FR-322-AC-327"
+    "FR-322-AC-327",
+    "FR-322-AC-328",
+    "FR-322-AC-329",
+    "FR-322-AC-330",
+    "FR-322-AC-331",
+    "FR-322-AC-332",
+    "FR-322-AC-333",
+    "FR-322-AC-334",
+    "FR-322-AC-335",
+    "FR-322-AC-336",
+    "FR-322-AC-337",
+    "FR-322-AC-338",
+    "FR-322-AC-339",
+    "FR-322-AC-340",
+    "FR-322-AC-341"
 )]
 #[test]
 fn tc_233_source_integrity_vectors_refuse_at_the_reference_pointer() {
@@ -22629,12 +22646,19 @@ fn tc_233_source_integrity_vectors_refuse_at_the_reference_pointer() {
         assert_eq!(outcome, vector["expected"], "{}", vector["id"]);
     }
     let refusals = vectors["refusals"].as_array().expect("refusals");
-    assert_eq!(refusals.len(), 15);
+    assert_eq!(refusals.len(), 16);
     for vector in refusals {
         let id = vector["id"].as_str().unwrap();
         let (outcome, schema_valid) = decide(vector);
         assert_eq!(outcome, vector["expected"], "{id}");
         assert_eq!(schema_valid, vector["schema"] == "valid", "{id} schema validity");
+        if id == "SI-R7" {
+            // FR-322-AC-332: the file for the pair exists beside the fixtures, yet is not read.
+            assert!(
+                documents.iter().any(|(authority, identity, _, _)| (authority.as_str(), identity.as_str()) == ("agent-ix", "example-a")),
+                "the published file exists for the unsupplied pair"
+            );
+        }
         if vector["expected"]["cause"] == "source-integrity" {
             let locus = vector["expected"]["locus"].as_str().unwrap();
             assert!(!locus.ends_with("source_integrity"), "{id}: the pointer is the reference's");
@@ -22670,4 +22694,58 @@ fn tc_233_source_integrity_cause_is_catalogued_and_paired_with_invalid_package()
         .expect("the FR-272 invalid_package row");
     assert!(row.contains("`source-integrity`"));
     assert!(row.contains("never the pointer of its `source_integrity` member"));
+}
+
+/// FR-323-AC-29 to AC-33 (TC-233): each replay `sources` entry is checked
+/// against the `byte_provision` bytes of its pair before any recompile.
+#[trace("TC-233", "FR-323-AC-29", "FR-323-AC-30", "FR-323-AC-31", "FR-323-AC-32", "FR-323-AC-33")]
+#[test]
+fn tc_233_replay_sources_are_checked_against_byte_provision() {
+    let vectors = parsed_fixture(SOURCE_INTEGRITY_VECTORS)["replay"].clone();
+    let documents = source_document_index();
+    let cases = vectors["cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 5);
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let mut evidence = SourceEvidence::new();
+        for pair in case["supplied"].as_array().unwrap() {
+            let (authority, identity) = (pair["authority"].as_str().unwrap(), pair["identity"].as_str().unwrap());
+            let (_, _, _, bytes) = documents
+                .iter()
+                .find(|(a, i, _, _)| (a.as_str(), i.as_str()) == (authority, identity))
+                .expect("a published source document");
+            evidence.insert((authority.to_owned(), identity.to_owned()), bytes.clone());
+        }
+        // The wire request carries `package.sources` and `package.dependencies[*].sources`.
+        let request = json!({"package": {"sources": case["package_sources"], "dependencies": case["dependencies"]}});
+        let mut sites: Vec<(String, &Value)> = Vec::new();
+        for (i, source) in request["package"]["sources"].as_array().unwrap().iter().enumerate() {
+            sites.push((format!("/package/sources/{i}"), source));
+        }
+        for (d, dependency) in request["package"]["dependencies"].as_array().unwrap().iter().enumerate() {
+            for (i, source) in dependency["sources"].as_array().unwrap().iter().enumerate() {
+                sites.push((format!("/package/dependencies/{d}/sources/{i}"), source));
+            }
+        }
+        let outcome = (|| {
+            for (pointer, source) in &sites {
+                let well_formed = source["source_integrity"].as_str().is_some_and(|claim| {
+                    claim.len() == 64 && claim.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+                });
+                if !well_formed {
+                    return json!({"code": "invalid_package", "cause": "source-integrity", "locus": pointer});
+                }
+            }
+            for (pointer, source) in &sites {
+                let pair = (source["authority"].as_str().unwrap().to_owned(), source["identity"].as_str().unwrap().to_owned());
+                match evidence.get(&pair) {
+                    None => return json!({"code": "missing_import", "cause": "missing-selection", "locus": pointer}),
+                    Some(bytes) if sha256_hex(bytes) == source["source_integrity"].as_str().unwrap() => {}
+                    Some(_) => return json!({"code": "invalid_package", "cause": "source-integrity", "locus": pointer}),
+                }
+            }
+            json!({"admitted": true})
+        })();
+        assert_eq!(outcome, case["expected"], "{id}");
+    }
 }

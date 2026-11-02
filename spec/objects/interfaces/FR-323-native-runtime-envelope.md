@@ -36,6 +36,17 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   domain-package documents are reached through `byte_provision` by the
   identity the recompiled sources name.
   `sources` is the proved package's own FR-322 lock `sources`.
+  Each `sources` entry, of the package and of every `dependencies` entry, is the
+  FR-322 `SourceRef` `{authority, identity, source_integrity}` copied from that
+  lock. Before any recompile the executor checks the claim of each entry against
+  the `byte_provision` bytes keyed by the entry's pair, with the FR-322 "Source-byte
+  integrity" digest: a claim that is missing, wrong-kind or not 64 lowercase
+  hexadecimal characters, or that differs from the SHA-256 of those bytes,
+  refuses `invalid_package`/`source-integrity` at the entry's pointer,
+  `/package/sources/{i}` or `/package/dependencies/{d}/sources/{i}`, the
+  `package` entries in order and then each `dependencies` entry in order. An entry
+  whose bytes the provision does not carry keeps the `missing_import`/`missing-selection`
+  refusal below, which this check does not replace.
   `dependencies` holds one entry per library identity in the proved package's
   derived closure (its direct selections plus the closure of every selected
   dependency), in ascending UTF-8 byte order of `identity`, each
@@ -75,7 +86,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `byte_provision` — present on a replay request only: the bytes of every
   source and definition input the replay recompiles, each keyed by the
   `{authority, identity}` its lock `sources` entry names, and every
-  domain-package document, keyed by the identity its own `package.identity` member declares (QSL ADR-013 QC-1), the entries forming one ordered provision whose position is the request's position (FR-336), with no version, digest or expected value compared. A second document under one key is a duplicate definition and refuses `invalid_package`/`conflicting-definition`. The executor obtains every recompilation input from this
+  domain-package document, keyed by the identity its own `package.identity` member declares (QSL ADR-013 QC-1), the entries forming one ordered provision whose position is the request's position (FR-336), with no version or expected value compared and no digest compared except the `source_integrity` of a `sources` entry (below). A second document under one key is a duplicate definition and refuses `invalid_package`/`conflicting-definition`. The executor obtains every recompilation input from this
   provision and never from a path, environment variable or search location.
   Before any recompile, an input the `package` reference names that the
   provision does not carry refuses `missing_import`/`missing-selection`,
@@ -521,6 +532,11 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read: no refusal. | Test (TC-277) |
 | FR-323-AC-27 | The executor reads no recompilation input by path, environment variable or search location: every source, definition and domain-package input comes from `byte_provision`. | Test (TC-277) |
 | FR-323-AC-28 | Withdrawn: the raw-byte digest and digest-domain refusals are removed with the source byte digests. | Withdrawn |
+| FR-323-AC-29 | A replay request whose `package.sources` entry carries a `source_integrity` that differs from the SHA-256 of the `byte_provision` bytes for its pair refuses `invalid_package`/`source-integrity` at `/package/sources/{i}` before any recompile. | Test (TC-233) |
+| FR-323-AC-30 | A replay request whose `dependencies` entry `sources` entry carries a `source_integrity` that differs from the SHA-256 of the `byte_provision` bytes for its pair refuses `invalid_package`/`source-integrity` at `/package/dependencies/{d}/sources/{i}`. | Test (TC-233) |
+| FR-323-AC-31 | A replay request whose `sources` entry carries no `source_integrity` refuses `invalid_package`/`source-integrity` at that entry's pointer. | Test (TC-233) |
+| FR-323-AC-32 | A replay request whose `sources` entry names a pair that `byte_provision` does not carry keeps refusing `missing_import`/`missing-selection` naming that pair, not `source-integrity`. | Test (TC-233) |
+| FR-323-AC-33 | A replay request whose `sources` entries all carry the SHA-256 of their `byte_provision` bytes passes the integrity check. | Test (TC-233) |
 
 ## Dependencies
 

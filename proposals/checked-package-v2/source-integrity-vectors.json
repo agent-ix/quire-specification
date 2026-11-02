@@ -542,8 +542,183 @@
           "identity": "example-b"
         }
       ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R16",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+            },
+            {
+              "authority": "agent-ix",
+              "extra": 1,
+              "identity": "example-b",
+              "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+            }
+          ]
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        }
+      ]
     }
   ],
+  "replay": {
+    "cases": [
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "admitted": true
+        },
+        "id": "RP-P1",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          },
+          {
+            "authority": "agent-ix",
+            "identity": "example-b"
+          }
+        ]
+      },
+      {
+        "dependencies": [],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R1",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ]
+      },
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/dependencies/0/sources/0"
+        },
+        "id": "RP-R2",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          },
+          {
+            "authority": "agent-ix",
+            "identity": "example-b"
+          }
+        ]
+      },
+      {
+        "dependencies": [],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R3",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ]
+      },
+      {
+        "dependencies": [],
+        "expected": {
+          "cause": "missing-selection",
+          "code": "missing_import",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R4",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": []
+      }
+    ],
+    "note": "FR-323 replay request: each sources entry is checked against the byte_provision bytes of its pair before any recompile (FR-323-AC-29..33). `package_sources` and `dependencies` are the request members; `supplied` names the pairs byte_provision carries."
+  },
   "schema_invalid": [
     {
       "id": "SI-S1",
