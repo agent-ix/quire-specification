@@ -71,7 +71,7 @@ structures, but any external consumer receives only the contract.
   operation name with provenance. Positive cases OEC-01 to OEC-07 cover each
   kind, the empty effect, several members and one member name under different
   objects and documents; the schema and reader refusals OES-* and OER-* carry
-  exact codes and loci (FR-322-AC-301). QSL emits the carrier and the IR strict
+  exact codes and loci (FR-322-AC-303). QSL emits the carrier and the IR strict
   reader admits or refuses it.
 - `temporal-fairness-target-vectors.json` publishes complete fairness members
   for operation, protocol-root, attempt-node, parallel-branch,
