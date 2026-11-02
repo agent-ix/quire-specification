@@ -436,6 +436,10 @@ body changed, canonical order and `dependencies` kept (FR-322-AC-54).
 | DL-04 | values `1.0` and `1.00` typed by one decimal type | Two literals with two node ids | FR-322-AC-113 |
 | DL-05 | `decimal` literal typed by an `integer` or `string` node with value `.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-113 |
 | DL-06 | literals typed by `Decimal[-1000, 1000; 1, 2; nearest-even]` with values `-0.5`, `5` and `100`, then `1001` | The first three admitted (`5` has membership scale 1 and coefficient 50); `1001` is `invalid_package`/`invalid-value` | FR-322-AC-113 |
+| DL-07 | `text` literals typed by `Text[2, 3; nfc]` with values `ab`, `abc` and `\u00e9b` (`TX-01`, `TX-02`, `TX-05`) | Each admitted: exact minimum, exact maximum and a composed value in normal form | FR-322-AC-304 |
+| DL-08 | the same type with values `a`, `abcd` (`TX-03`, `TX-04`) | `ill_typed`/`type-mismatch` at `/semantic_graph/nodes/{n}/body/value`: one below the minimum and one above the maximum | FR-322-AC-304 |
+| DL-09 | `Text[2, 3; nfc]` with `e\u0301b` and `e\u0301`; `Text[1, 2; nfd]` with `\u00e9`, and with `e\u0301` (`TX-06`, `TX-07`, `TX-09`, `TX-08`) | The first three not normalized under their profile: `ill_typed`/`type-mismatch` at the `value` member (the reader normalizes nothing); `e\u0301` under `nfd` admitted | FR-322-AC-304 |
+| DL-10 | `Text[1, 3; unicode-scalars]` with `e\u0301`, `abcd` and `\u00e9\u00e9`; `Text[1, 3; binary-utf8]` with `a\u00e9`, `\u00e9\u00e9` (4 bytes, 2 scalars) and the empty text (`TX-10`, `TX-11`, `TX-13s`, `TX-12`, `TX-13`, `TX-14`) | `e\u0301` and `\u00e9\u00e9` admitted under scalars, `abcd` above the maximum; under `binary-utf8` `a\u00e9` (3 bytes) admitted, `\u00e9\u00e9` above the maximum and the empty text below the minimum, each `ill_typed`/`type-mismatch` at the `value` member | FR-322-AC-304 |
 
 ### One-occurrence collection vectors
 

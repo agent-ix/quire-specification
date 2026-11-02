@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "note": "FR-322-AC-304 (TC-233 DL-07..DL-10): text literals typed by a text_bounds node. `types` name Text[min, max; profile]; `value` is the retained sequence the reader receives and never normalizes; `normalized` records whether it equals its own normalization under the profile; `length` is the scalar count, or the UTF-8 byte count under binary-utf8. The refusal locus is the literal's `value` member, `pointer` with `{n}` the node index for a root literal. QSpec's test recomputes lengths and checks the expectation against the stated rule, taking `normalized` as authored (QSpec holds no normalization tables); the reader that decides these outcomes is quire-contract-ir's (FR-038).",
+  "types": {
+    "nfc23": {
+      "min": 2,
+      "max": 3,
+      "text_profile": "nfc"
+    },
+    "nfd12": {
+      "min": 1,
+      "max": 2,
+      "text_profile": "nfd"
+    },
+    "scalars13": {
+      "min": 1,
+      "max": 3,
+      "text_profile": "unicode-scalars"
+    },
+    "bin13": {
+      "min": 1,
+      "max": 3,
+      "text_profile": "binary-utf8"
+    }
+  },
+  "cases": [
+    {
+      "id": "TX-01",
+      "type": "nfc23",
+      "value": "ab",
+      "normalized": true,
+      "length": 2,
+      "expected": "admitted",
+      "note": "exact minimum"
+    },
+    {
+      "id": "TX-02",
+      "type": "nfc23",
+      "value": "abc",
+      "normalized": true,
+      "length": 3,
+      "expected": "admitted",
+      "note": "exact maximum"
+    },
+    {
+      "id": "TX-03",
+      "type": "nfc23",
+      "value": "a",
+      "normalized": true,
+      "length": 1,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "below-min",
+      "note": "one below the minimum"
+    },
+    {
+      "id": "TX-04",
+      "type": "nfc23",
+      "value": "abcd",
+      "normalized": true,
+      "length": 4,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "above-max",
+      "note": "one above the maximum"
+    },
+    {
+      "id": "TX-05",
+      "type": "nfc23",
+      "value": "\u00e9b",
+      "normalized": true,
+      "length": 2,
+      "expected": "admitted",
+      "note": "composed form, 2 scalars"
+    },
+    {
+      "id": "TX-06",
+      "type": "nfc23",
+      "value": "e\u0301b",
+      "normalized": false,
+      "length": 3,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "not-normalized",
+      "note": "decomposed form is not nfc; the reader does not normalize it to 2 scalars"
+    },
+    {
+      "id": "TX-07",
+      "type": "nfc23",
+      "value": "e\u0301",
+      "normalized": false,
+      "length": 2,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "not-normalized",
+      "note": "raw count 2 would pass; the value is not normalized"
+    },
+    {
+      "id": "TX-08",
+      "type": "nfd12",
+      "value": "e\u0301",
+      "normalized": true,
+      "length": 2,
+      "expected": "admitted",
+      "note": "decomposed form is nfd, 2 scalars"
+    },
+    {
+      "id": "TX-09",
+      "type": "nfd12",
+      "value": "\u00e9",
+      "normalized": false,
+      "length": 1,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "not-normalized",
+      "note": "composed form is not nfd"
+    },
+    {
+      "id": "TX-10",
+      "type": "scalars13",
+      "value": "e\u0301",
+      "normalized": true,
+      "length": 2,
+      "expected": "admitted",
+      "note": "unicode-scalars applies no normalization, 2 scalars"
+    },
+    {
+      "id": "TX-11",
+      "type": "scalars13",
+      "value": "abcd",
+      "normalized": true,
+      "length": 4,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "above-max",
+      "note": ""
+    },
+    {
+      "id": "TX-12",
+      "type": "bin13",
+      "value": "a\u00e9",
+      "normalized": true,
+      "length": 3,
+      "expected": "admitted",
+      "note": "3 bytes, exact maximum, 2 scalars"
+    },
+    {
+      "id": "TX-13",
+      "type": "bin13",
+      "value": "\u00e9\u00e9",
+      "normalized": true,
+      "length": 4,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "above-max",
+      "note": "2 scalars but 4 bytes"
+    },
+    {
+      "id": "TX-13s",
+      "type": "scalars13",
+      "value": "\u00e9\u00e9",
+      "normalized": true,
+      "length": 2,
+      "expected": "admitted",
+      "note": "the value of TX-13 counted in scalars is a member"
+    },
+    {
+      "id": "TX-14",
+      "type": "bin13",
+      "value": "",
+      "normalized": true,
+      "length": 0,
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "pointer": "/semantic_graph/nodes/{n}/body/value",
+      "reason": "below-min",
+      "note": "0 bytes"
+    }
+  ]
+}
