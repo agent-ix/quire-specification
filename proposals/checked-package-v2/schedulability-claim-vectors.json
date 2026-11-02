@@ -481,6 +481,23 @@
       },
       "expected_code": "malformed_wire",
       "locus": "/schedulability_claims/0"
+    },
+    {
+      "id": "SCC-12-non-integer-occurrence",
+      "row": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "schedulability",
+            "CtlFp"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": "0"
+      },
+      "expected_code": "malformed_wire",
+      "locus": "/schedulability_claims/0/occurrence"
     }
   ],
   "reader_refusals": [
@@ -2217,7 +2234,7 @@
           "occurrence": 0
         }
       ],
-      "base_case": "TC-967/SC-01+SC-02 compiled in one package",
+      "base_case": "TC-967/SC-03 (CtlFp and CtlEdf)",
       "declared_claim_occurrences": [
         {
           "declaration": {
