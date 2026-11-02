@@ -77,6 +77,16 @@ structures, but any external consumer receives only the contract.
   for operation, protocol-root, attempt-node, parallel-branch,
   compensation-template and hybrid-transition targets, plus closed-shape
   mutations rejected by the V2 `OperationMember` schema (FR-322-AC-293).
+- `fixtures/protocol-node-base.json` is the checked OrderFlow base package of
+  the protocol node vectors (TC-946, TC-947, TC-948).
+  `fixtures/protocol-node-mutation-manifest.json` is their executable form
+  (STD-609): each row edits the base with RFC 6902 operations and states the
+  first defect in reader order, or a property the base holds; `later` and
+  `pending` account for every other vector. Its shape is
+  `protocol-node-mutation-manifest.schema.json`, and
+  `tests/protocol_node_mutation_manifest.rs` checks the partition, the edits,
+  the loci, the dependency lists and the property assertions. The base and the
+  manifest are edited by patch only; there is no generator.
 - `fixtures/positive-extension-nodes.json` is a V2 package carrying the
   `retention Audit { subject: "audit", days: 30 }` form of a selected
   extension as one `extension`/`extension_form` node, its two clause subnodes

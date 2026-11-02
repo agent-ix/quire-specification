@@ -1,0 +1,718 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Agent-IX
+
+//! STD-609: the executable mutation manifest of the protocol node vectors
+//! (TC-946, TC-947, TC-948). The manifest must follow its schema, name every
+//! vector exactly once as a row, a later row or a pending question, edit a
+//! base that exists and is schema-valid, carry loci that its own edits reach,
+//! keep every edited node's `dependencies` equal to the references of its body
+//! (so a graph-stage refusal never masks the defect a row is about), and state
+//! property assertions that the base itself satisfies.
+
+use ix_trace_rs::trace;
+use serde_json::Value;
+use std::collections::{BTreeMap, BTreeSet};
+
+const MANIFEST: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/protocol-node-mutation-manifest.json");
+const MANIFEST_SCHEMA: &str =
+    include_str!("../proposals/checked-package-v2/protocol-node-mutation-manifest.schema.json");
+const VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/protocol-node-vectors.json");
+const BASE: &str = include_str!("../proposals/checked-package-v2/fixtures/protocol-node-base.json");
+const PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
+fn parse(text: &str) -> Value {
+    serde_json::from_str(text).expect("authored fixture is valid JSON")
+}
+
+fn unescape(segment: &str) -> String {
+    segment.replace("~1", "/").replace("~0", "~")
+}
+
+/// Applies the RFC 6902 `add`, `remove` and `replace` operations a row uses.
+fn apply(base: &Value, edit: &[Value]) -> Value {
+    let mut package = base.clone();
+    for op in edit {
+        let path = op["path"].as_str().expect("path");
+        let (parent, last) = path.rsplit_once('/').expect("absolute pointer");
+        let last = unescape(last);
+        let target = package
+            .pointer_mut(parent)
+            .unwrap_or_else(|| panic!("{path}: parent exists"));
+        match (op["op"].as_str().expect("op"), target) {
+            ("remove", Value::Object(map)) => {
+                map.remove(&last)
+                    .unwrap_or_else(|| panic!("{path}: member exists"));
+            }
+            ("remove", Value::Array(items)) => {
+                items.remove(last.parse::<usize>().expect("index"));
+            }
+            ("replace", Value::Object(map)) => {
+                assert!(map.contains_key(&last), "{path}: replaced member exists");
+                map.insert(last, op["value"].clone());
+            }
+            ("add", Value::Object(map)) => {
+                map.insert(last, op["value"].clone());
+            }
+            ("replace", Value::Array(items)) => {
+                items[last.parse::<usize>().expect("index")] = op["value"].clone();
+            }
+            ("add", Value::Array(items)) => {
+                let at = if last == "-" {
+                    items.len()
+                } else {
+                    last.parse().expect("index")
+                };
+                items.insert(at, op["value"].clone());
+            }
+            (other, _) => panic!("{path}: unsupported {other}"),
+        }
+    }
+    package
+}
+
+fn nodes_of(package: &Value) -> &Vec<Value> {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+}
+
+fn declaration_name(node: &Value) -> String {
+    match node.get("declaration") {
+        Some(declaration) => declaration["qualified_name"]
+            .as_array()
+            .expect("qualified name")
+            .iter()
+            .map(|s| s.as_str().expect("segment"))
+            .collect::<Vec<_>>()
+            .join("::"),
+        None => serde_json::to_string(&node["node_id"]["path"]).expect("path"),
+    }
+}
+
+fn node_named<'a>(package: &'a Value, name: &str) -> &'a Value {
+    nodes_of(package)
+        .iter()
+        .find(|n| declaration_name(n) == name)
+        .unwrap_or_else(|| panic!("no node named {name}"))
+}
+
+fn ids_of(list: &Value) -> Vec<(String, String)> {
+    list.as_array()
+        .expect("array")
+        .iter()
+        .filter(|r| r.get("sub_case_of").is_none())
+        .map(|r| {
+            (
+                r["test_case"].as_str().unwrap().to_owned(),
+                r["id"].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect()
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+enum Segment {
+    Node(u64),
+    Text(String),
+}
+
+/// FR-322 structural order of a node id: package, then path segments, then ordinal.
+fn id_key(id: &Value) -> (String, Vec<Segment>, u64) {
+    let path = id["path"]
+        .as_array()
+        .expect("path")
+        .iter()
+        .map(|s| match s.get("node") {
+            Some(index) => Segment::Node(index.as_u64().expect("index")),
+            None => Segment::Text(s.as_str().expect("segment").to_owned()),
+        })
+        .collect();
+    (
+        id["package"].as_str().expect("package").to_owned(),
+        path,
+        id["ordinal"].as_u64().expect("ordinal"),
+    )
+}
+
+fn collect_targets(value: &Value, out: &mut Vec<Value>) {
+    match value {
+        Value::Object(map) => {
+            if map.get("term").and_then(Value::as_str) == Some("reference") {
+                if let Some(target) = map.get("target") {
+                    out.push(target.clone());
+                }
+            }
+            for (key, child) in map {
+                if key != "target" {
+                    collect_targets(child, out);
+                }
+            }
+        }
+        Value::Array(items) => items.iter().for_each(|item| collect_targets(item, out)),
+        _ => {}
+    }
+}
+
+/// The unique references of a protocol application body and of its `owner_model` edge,
+/// in ascending node-id order: what the node's `dependencies` must list (FR-322-AC-96).
+fn expected_dependencies(node: &Value) -> Vec<Value> {
+    let mut targets = Vec::new();
+    collect_targets(&node["body"], &mut targets);
+    if let Some(owner) = node.get("owner_model") {
+        targets.push(owner.clone());
+    }
+    let unique: BTreeMap<String, Value> = targets.into_iter().map(|t| (t.to_string(), t)).collect();
+    let mut targets: Vec<Value> = unique.into_values().collect();
+    targets.sort_by_key(id_key);
+    targets
+}
+
+fn dependency_defects(package: &Value) -> Vec<String> {
+    nodes_of(package)
+        .iter()
+        .enumerate()
+        .filter(|(_, n)| n["node_tag"] == "protocol" && n["body"]["term"] == "application")
+        .filter(|(_, n)| {
+            expected_dependencies(n) != n["dependencies"].as_array().expect("dependencies").clone()
+        })
+        .map(|(i, n)| format!("node {i} {}", declaration_name(n)))
+        .collect()
+}
+
+/// A graph-stage dependency defect row asserts the mismatch itself; a schema row never reaches the graph.
+fn dependencies_are_the_point(expect: &Value) -> bool {
+    expect["stage"] == "schema"
+        || (expect["stage"] == "graph"
+            && expect["locus"]
+                .as_str()
+                .is_some_and(|l| l.ends_with("/dependencies")))
+}
+
+fn rows(manifest: &Value) -> &Vec<Value> {
+    manifest["rows"].as_array().expect("rows")
+}
+
+fn edit_of(row: &Value) -> Vec<Value> {
+    row.get("edit")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn the_manifest_follows_its_schema() {
+    let schema =
+        jsonschema::validator_for(&parse(MANIFEST_SCHEMA)).expect("manifest schema is valid");
+    let manifest = parse(MANIFEST);
+    let errors: Vec<String> = schema
+        .iter_errors(&manifest)
+        .map(|e| format!("{e} at {}", e.instance_path()))
+        .take(5)
+        .collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    assert!(
+        MANIFEST.ends_with("}\n"),
+        "the manifest ends with a newline"
+    );
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn every_vector_is_a_row_a_later_row_or_a_pending_question_exactly_once() {
+    let manifest = parse(MANIFEST);
+    let vectors = parse(VECTORS);
+    let expected: Vec<(String, String)> = ids_of(&vectors["cases"]);
+    assert_eq!(expected.len(), 406, "the prose corpus is 406 vectors");
+    let mut seen = BTreeSet::new();
+    for list in ["rows", "later", "pending"] {
+        for entry in ids_of(&manifest[list]) {
+            assert!(
+                seen.insert(entry.clone()),
+                "{entry:?} appears in more than one place"
+            );
+        }
+    }
+    let expected: BTreeSet<_> = expected.into_iter().collect();
+    assert_eq!(
+        seen, expected,
+        "manifest partitions the vectors, with the same test case per id"
+    );
+    let known: BTreeSet<&str> = seen.iter().map(|(_, id)| id.as_str()).collect();
+    for entry in manifest["later"].as_array().unwrap() {
+        if let Some(parent) = entry.get("sub_case_of").and_then(Value::as_str) {
+            assert!(
+                known.contains(parent),
+                "{}: sub_case_of {parent} is a vector",
+                entry["id"]
+            );
+            assert!(
+                !known.contains(entry["id"].as_str().unwrap()),
+                "{}: a sub-case is not a vector id",
+                entry["id"]
+            );
+        }
+    }
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn a_later_row_class_matches_what_its_vector_expects() {
+    let manifest = parse(MANIFEST);
+    let vectors = parse(VECTORS);
+    let prose: BTreeMap<String, String> = vectors["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| {
+            (
+                c["id"].as_str().unwrap().to_owned(),
+                c["Expected"].as_str().unwrap().to_lowercase(),
+            )
+        })
+        .collect();
+    let refusal_words = |e: &str| {
+        e.contains("refus")
+            || e.contains("reported")
+            || e.split('`')
+                .skip(1)
+                .step_by(2)
+                .any(|token| token.contains('_') || token.contains('/'))
+    };
+    let mut defects = Vec::new();
+    for entry in manifest["later"].as_array().unwrap() {
+        let Some(expected) = prose.get(entry["id"].as_str().unwrap()) else {
+            continue;
+        };
+        let class = entry["class"].as_str().unwrap();
+        let admitted = expected.starts_with("admit");
+        if class == "refuse" && admitted && entry["reason"] != "multi_outcome_split" {
+            defects.push(format!(
+                "{}: refuse, but the vector is admitted",
+                entry["id"]
+            ));
+        }
+        if class == "refuse" && !admitted && !refusal_words(expected) {
+            defects.push(format!(
+                "{}: refuse, but the vector names no refusal",
+                entry["id"]
+            ));
+        }
+        if class == "admit" && !expected.contains("admit") {
+            defects.push(format!(
+                "{}: admit, but the vector is not admitted",
+                entry["id"]
+            ));
+        }
+    }
+    assert!(defects.is_empty(), "{defects:?}");
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn every_row_edits_a_base_that_exists_and_is_schema_valid() {
+    let manifest = parse(MANIFEST);
+    let base = parse(BASE);
+    assert_eq!(manifest["base"]["fixture"], "protocol-node-base.json");
+    let validator = jsonschema::validator_for(&parse(PACKAGE_SCHEMA)).expect("I04 schema is valid");
+    assert!(
+        validator.is_valid(&base),
+        "the base package is schema-valid"
+    );
+    for row in rows(&manifest) {
+        assert_eq!(
+            row["base"], manifest["base"]["fixture"],
+            "{}: base ref",
+            row["id"]
+        );
+    }
+    assert!(
+        dependency_defects(&base).is_empty(),
+        "the base lists exactly the references of every protocol body"
+    );
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn every_edit_reaches_the_node_it_names_and_its_locus_resolves() {
+    let manifest = parse(MANIFEST);
+    let base = parse(BASE);
+    let shipped = jsonschema::validator_for(&parse(PACKAGE_SCHEMA)).expect("I04 schema is valid");
+    let nodes = nodes_of(&base);
+    let mut defects = Vec::new();
+    for row in rows(&manifest) {
+        let id = row["id"].as_str().unwrap();
+        let edit = edit_of(row);
+        for op in &edit {
+            let path = op["path"].as_str().unwrap();
+            if let Some(rest) = path.strip_prefix("/semantic_graph/nodes/") {
+                let index: usize = rest.split('/').next().unwrap().parse().expect("node index");
+                let named = op["node"].as_str().unwrap_or_default();
+                if named != declaration_name(&nodes[index]) {
+                    defects.push(format!(
+                        "{id}: {path} does not enter the node it names ({named})"
+                    ));
+                }
+            }
+        }
+        let edited = apply(&base, &edit);
+        let expect = &row["expect"];
+        let first_error = shipped
+            .iter_errors(&edited)
+            .next()
+            .map(|e| e.instance_path().to_string());
+        match expect["decision"].as_str().unwrap() {
+            "refuse" if expect["stage"] == "schema" => {
+                if first_error.as_deref() != expect["locus"].as_str() {
+                    defects.push(format!(
+                        "{id}: wire locus {:?} is not the first schema error path {first_error:?}",
+                        expect["locus"]
+                    ));
+                }
+            }
+            _ => {
+                if first_error.is_some() {
+                    defects.push(format!(
+                        "{id}: the edit does not pass the schema ({first_error:?})"
+                    ));
+                }
+                if !dependencies_are_the_point(expect) {
+                    let stale = dependency_defects(&edited);
+                    if !stale.is_empty() {
+                        defects.push(format!(
+                            "{id}: dependencies differ from the body references at {stale:?}"
+                        ));
+                    }
+                }
+            }
+        }
+        if expect["decision"] == "refuse" && expect["stage"] != "schema" {
+            let locus = expect["locus"].as_str().unwrap();
+            if edited.pointer(locus).is_none() {
+                defects.push(format!(
+                    "{id}: locus {locus} does not resolve in the edited package"
+                ));
+            }
+        }
+        if let Some(pointer) = expect.get("document_pointer").and_then(Value::as_str) {
+            let locus = expect["locus"].as_str().unwrap();
+            if !pointer.starts_with(locus) || edited.pointer(pointer).is_none() {
+                defects.push(format!(
+                    "{id}: document_pointer {pointer} is not a field under {locus}"
+                ));
+            }
+        }
+        if let Some(step) = expect.get("step_alone") {
+            let locus = step["locus"].as_str().unwrap();
+            if edited.pointer(locus).is_none() {
+                defects.push(format!("{id}: step_alone locus {locus} does not resolve"));
+            }
+        }
+    }
+    assert!(defects.is_empty(), "{defects:#?}");
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn locus_basis_records_how_each_locus_was_set() {
+    let manifest = parse(MANIFEST);
+    let mut defects = Vec::new();
+    for row in rows(&manifest) {
+        let id = row["id"].as_str().unwrap();
+        let basis = row["locus_basis"].as_str().unwrap();
+        let expect = &row["expect"];
+        if expect["decision"] != "refuse" {
+            if basis != "not_applicable" {
+                defects.push(format!("{id}: {basis} on a row that asserts no refusal"));
+            }
+            continue;
+        }
+        let locus = expect["locus"].as_str().unwrap();
+        let is_node = locus
+            .strip_prefix("/semantic_graph/nodes/")
+            .is_some_and(|rest| rest.parse::<usize>().is_ok());
+        let fits = match basis {
+            "node" => is_node,
+            "dependencies_list" => locus.ends_with("/dependencies"),
+            "target" => locus.ends_with("/target"),
+            "schema_error_path" => expect["stage"] == "schema",
+            "field" => !is_node && !locus.ends_with("/dependencies") && !locus.ends_with("/target"),
+            _ => false,
+        };
+        if !fits || (basis == "schema_error_path") != (expect["stage"] == "schema") {
+            defects.push(format!(
+                "{id}: locus_basis {basis} does not describe locus {locus}"
+            ));
+        }
+    }
+    assert!(defects.is_empty(), "{defects:?}");
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn refusal_rows_carry_a_code_and_admission_rows_nothing_more() {
+    let manifest = parse(MANIFEST);
+    let mut counts = (0, 0, 0);
+    for row in rows(&manifest) {
+        match row["class"].as_str().unwrap() {
+            "refuse" => {
+                assert!(row["expect"]["code"].is_string(), "{}", row["id"]);
+                counts.0 += 1;
+            }
+            "admit" => {
+                assert_eq!(row["expect"], serde_json::json!({"decision": "admit"}));
+                counts.1 += 1;
+            }
+            "property" => counts.2 += 1,
+            other => panic!("{}: class {other} has no rows in PR 1", row["id"]),
+        }
+    }
+    assert!(
+        counts.0 > 0 && counts.1 > 0 && counts.2 > 0,
+        "every outcome is executed"
+    );
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn a_retaining_refusal_retains_what_the_edited_target_is() {
+    let manifest = parse(MANIFEST);
+    let base = parse(BASE);
+    for row in rows(&manifest) {
+        let Some(retains) = row["expect"].get("retains") else {
+            continue;
+        };
+        let edited = apply(&base, &edit_of(row));
+        let target = edited
+            .pointer(row["expect"]["locus"].as_str().unwrap())
+            .expect("locus resolves");
+        let node = nodes_of(&edited)
+            .iter()
+            .find(|n| n["node_id"] == *target)
+            .unwrap_or_else(|| panic!("{}: the target is a node of the package", row["id"]));
+        if let Some(kind) = retains.get("actual_kind").and_then(Value::as_str) {
+            assert_eq!(node["semantic_form"], kind, "{}: actual kind", row["id"]);
+        }
+        if let Some(key) = retains.get("actual_key").and_then(Value::as_str) {
+            assert_eq!(declaration_name(node), key, "{}: actual key", row["id"]);
+        }
+    }
+}
+
+fn parameter_level(package: &Value, binder: &str) -> Option<u64> {
+    nodes_of(package).iter().find_map(|n| {
+        let path = n["node_id"]["path"].as_array()?;
+        let named =
+            path.first()? == "value" && path.get(1)? == "parameter" && path.get(4)? == binder;
+        if named {
+            path.get(7)?.as_str()?.parse().ok()
+        } else {
+            None
+        }
+    })
+}
+
+fn operator_of(node: &Value) -> &str {
+    node["body"]["operation"]["member"]["operator"]
+        .as_str()
+        .unwrap_or_default()
+}
+
+fn argument<'a>(node: &'a Value, name: &str) -> &'a Value {
+    node["body"]["arguments"]
+        .as_array()
+        .and_then(|args| args.iter().find(|a| a["name"] == name))
+        .map(|a| &a["value"])
+        .unwrap_or_else(|| panic!("{}: no argument {name}", declaration_name(node)))
+}
+
+fn has_cycle(edges: &[(String, String)]) -> bool {
+    fn visit(
+        at: &str,
+        edges: &[(String, String)],
+        active: &mut Vec<String>,
+        done: &mut BTreeSet<String>,
+    ) -> bool {
+        if active.iter().any(|a| a == at) {
+            return true;
+        }
+        if !done.insert(at.to_owned()) {
+            return false;
+        }
+        active.push(at.to_owned());
+        let cyclic = edges
+            .iter()
+            .filter(|(from, _)| from == at)
+            .any(|(_, to)| visit(to, edges, active, done));
+        active.pop();
+        cyclic
+    }
+    let mut done = BTreeSet::new();
+    edges
+        .iter()
+        .any(|(from, _)| visit(from, edges, &mut Vec::new(), &mut done))
+}
+
+/// Evaluates one property assertion against the base and the edited package; returns a defect if it fails.
+fn check_assertion(assertion: &Value, base: &Value, edited: &Value) -> Option<String> {
+    let kind = assertion["kind"].as_str().unwrap();
+    let ids = |names: &Value| -> Vec<String> {
+        names
+            .as_array()
+            .map(|a| a.iter().map(|n| n.as_str().unwrap().to_owned()).collect())
+            .unwrap_or_default()
+    };
+    match kind {
+        "admitted" => None,
+        "package_byte_equal" => (serde_json::to_string(base).ok()
+            != serde_json::to_string(edited).ok())
+        .then(|| "the edited package is not byte-equal to the base".to_owned()),
+        "binder_levels" => assertion["levels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find_map(|l| {
+                let binder = l["binder"].as_str().unwrap();
+                (parameter_level(edited, binder) != l["level"].as_u64()).then(|| {
+                    format!(
+                        "binder {binder} level is {:?}",
+                        parameter_level(edited, binder)
+                    )
+                })
+            }),
+        "runtime_subject_kinds" => {
+            assertion["operators"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find_map(|o| {
+                    let operator = o["operator"].as_str().unwrap();
+                    (!nodes_of(edited).iter().any(|n| operator_of(n) == operator))
+                        .then(|| format!("no {operator} node in the package"))
+                })
+        }
+        "causal_edges" => {
+            let mut graph = Vec::new();
+            for edge in assertion["edges"].as_array().unwrap() {
+                let from = node_named(edited, edge["from"]["node"].as_str().unwrap());
+                let to = node_named(edited, edge["to"]["node"].as_str().unwrap());
+                let ok = match edge["relation"].as_str().unwrap() {
+                    "message" => {
+                        operator_of(from) == "send"
+                            && operator_of(to) == "receive"
+                            && argument(from, "channel") == argument(to, "channel")
+                            && argument(to, "of")["target"] == from["node_id"]
+                    }
+                    "effect" => {
+                        operator_of(to) == "effect"
+                            && argument(to, "of")["target"] == from["node_id"]
+                    }
+                    "join" => {
+                        operator_of(to) == "parallel"
+                            && argument(to, "branches")
+                                .to_string()
+                                .contains(&from["node_id"].to_string())
+                    }
+                    _ => true,
+                };
+                if !ok {
+                    return Some(format!(
+                        "{} edge {} to {} is not in the package",
+                        edge["relation"], edge["from"]["node"], edge["to"]["node"]
+                    ));
+                }
+                graph.push((
+                    edge["from"]["node"].as_str().unwrap().to_owned(),
+                    edge["to"]["node"].as_str().unwrap().to_owned(),
+                ));
+            }
+            (assertion["acyclic"] == true && has_cycle(&graph))
+                .then(|| "the causal edges are cyclic".to_owned())
+        }
+        "activation_relation" => assertion["rows"].as_array().unwrap().iter().find_map(|r| {
+            let clause = node_named(edited, r["clause"].as_str().unwrap());
+            let activation = argument(clause, "activation")["members"]
+                .as_array()
+                .unwrap();
+            let named = |n: &str| {
+                activation
+                    .iter()
+                    .find(|m| m["name"] == n)
+                    .map(|m| m["value"].clone())
+            };
+            if named("kind").map(|k| k["value"].clone()) != Some(r["activation"].clone()) {
+                return Some("activation kind differs".to_owned());
+            }
+            let clause_node = node_named(edited, r["temporal_clause"].as_str().unwrap());
+            let required = argument(clause, "requirements")
+                .to_string()
+                .contains(&clause_node["node_id"].to_string());
+            let trigger_ok = match r.get("trigger").and_then(Value::as_str) {
+                Some(t) => named("trigger")
+                    .is_some_and(|v| v["target"] == node_named(edited, t)["node_id"]),
+                None => named("trigger").is_none(),
+            };
+            (!required || !trigger_ok).then(|| "trigger or requirement differs".to_owned())
+        }),
+        "node_ids_unchanged" => {
+            let names: Vec<String> = if assertion["scope"] == "all" {
+                nodes_of(base).iter().map(declaration_name).collect()
+            } else {
+                ids(&assertion["nodes"])
+            };
+            names
+                .iter()
+                .find(|n| node_named(base, n)["node_id"] != node_named(edited, n)["node_id"])
+                .map(|n| format!("{n}: node id changed"))
+        }
+        "node_id_changed" => {
+            let n = assertion["node"].as_str().unwrap();
+            let before = nodes_of(base)
+                .iter()
+                .find(|x| declaration_name(x) == n)
+                .map(|x| &x["node_id"]);
+            let after = nodes_of(edited)
+                .iter()
+                .find(|x| declaration_name(x) == n)
+                .map(|x| &x["node_id"]);
+            (before.is_some() && before == after).then(|| format!("{n}: node id unchanged"))
+        }
+        "body_changed" | "body_unchanged" => {
+            let n = assertion["node"].as_str().unwrap();
+            let same = node_named(base, n)["body"] == node_named(edited, n)["body"];
+            (same != (kind == "body_unchanged")).then(|| format!("{n}: {kind} fails"))
+        }
+        "distinct_node_ids" => {
+            let found: BTreeSet<String> = ids(&assertion["nodes"])
+                .iter()
+                .map(|n| node_named(edited, n)["node_id"].to_string())
+                .collect();
+            (found.len() as u64 != assertion["count"].as_u64().unwrap())
+                .then(|| format!("{} distinct node ids", found.len()))
+        }
+        "member_equals" => {
+            let node = node_named(edited, assertion["node"].as_str().unwrap());
+            (node.pointer(assertion["member"].as_str().unwrap()) != Some(&assertion["value"]))
+                .then(|| "member differs".to_owned())
+        }
+        other => Some(format!("unknown assertion kind {other}")),
+    }
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1")]
+#[test]
+fn property_rows_hold_on_the_base_they_describe() {
+    let manifest = parse(MANIFEST);
+    let base = parse(BASE);
+    let mut defects = Vec::new();
+    for row in rows(&manifest).iter().filter(|r| r["class"] == "property") {
+        let edited = apply(&base, &edit_of(row));
+        for assertion in row["expect"]["assertions"].as_array().unwrap() {
+            if let Some(defect) = check_assertion(assertion, &base, &edited) {
+                defects.push(format!("{}: {defect}", row["id"]));
+            }
+        }
+    }
+    assert!(defects.is_empty(), "{defects:?}");
+}
