@@ -1769,9 +1769,10 @@ constraints ("Reference conformance" below).
    uniqueness of its {`package`, `path`, `ordinal`}, that `dimension_node_ids`
    resolve to two distinct dimension nodes in ascending node-id order, and
    path equality with a `declaration` only where a declaration exists, which it
-   does not here (the published
-   fixture's path `["scalar_type", "dimension_equivalence", <first id>, <second id>]`
-   is an example convention only). It depends on exactly its local operands (a package operand joins through `dependency_selections`, never `dependencies`), and its one occurrence has role
+   does not here (a legal label is any
+   path of string segments, for example `["equivalence-0"]`; a path never holds
+   an operand's node id, and an index segment `{"node": i}` names only a node of
+   the importing graph). It depends on exactly its local operands (a package operand joins through `dependency_selections`, never `dependencies`), and its one occurrence has role
    `anchor` and the ordinal of the declaration among the equivalence
    declarations of its source in source order, with the declaration's region.
    A reader recomputes the equivalence classes from these nodes alone: the
