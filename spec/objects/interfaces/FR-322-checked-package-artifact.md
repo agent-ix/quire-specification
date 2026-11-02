@@ -1233,7 +1233,7 @@ that key: a closed object with exactly these members:
 | Member | Value |
 | --- | --- |
 | `package` | The `name` of the package the node belongs to (for a `model_root` node and for a node a domain package owns, that domain package's identity). |
-| `path` | A non-empty array of segments, each a string or an *index segment* `{"node": i}` ("Operand index segments" below). A declared node's path is its declaration path, the declaring scopes' names outermost first, all strings. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or an operand node, which the path holds as the index segment naming that operand node in `semantic_graph.nodes`. A path never holds a `node_id` object. |
+| `path` | A non-empty array of segments, each a string or an *index segment* `{"node": i}` ("Operand index segments" below). A declared node's path is its declaration path, the declaring scopes' names outermost first, all strings. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]` (a `dimension_equivalence` node excepted: its path is an assigned label, "Dimension equivalence" below); each operand is a string (a literal's text, an operator or member name) or an operand node, which the path holds as the index segment naming that operand node in `semantic_graph.nodes`. A path never holds a `node_id` object. |
 | `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. A recursion-group member's `ordinal` is no exception: it is producer-assigned and unique among nodes sharing its `package` and `path`, and it is not a position in the group (`recursion_group`, below). |
 
 Ordinals compare numerically; `package` and `path` strings compare as UTF-8 bytes. An `ordinal` that is negative, above 9007199254740991, not a JSON integer (a string, a fraction or an exponent form, for example) is a malformed integer and is refused `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal`, `i` the node's graph index; the same bound and the same refusal apply to every `node_id` held in a reference, dependency, `semantic_type` or `source_map` entry, and to the `node` member of every index segment, at that member's pointer.
@@ -1769,9 +1769,10 @@ constraints ("Reference conformance" below).
    uniqueness of its {`package`, `path`, `ordinal`}, that `dimension_node_ids`
    resolve to two distinct dimension nodes in ascending node-id order, and
    path equality with a `declaration` only where a declaration exists, which it
-   does not here (the published
-   fixture's path `["scalar_type", "dimension_equivalence", <first id>, <second id>]`
-   is an example convention only). It depends on exactly its local operands (a package operand joins through `dependency_selections`, never `dependencies`), and its one occurrence has role
+   does not here (a legal label is any
+   path of string segments, for example `["equivalence-0"]`; a path never holds
+   an operand's node id, and an index segment `{"node": i}` names only a node of
+   the importing graph); the fixture `positive-nominal-identities.json` writes it `["scalar_type", "dimension_equivalence", {"node": i}, {"node": j}]`, a legal label of string and index segments. It depends on exactly its local operands (a package operand joins through `dependency_selections`, never `dependencies`), and its one occurrence has role
    `anchor` and the ordinal of the declaration among the equivalence
    declarations of its source in source order, with the declaration's region.
    A reader recomputes the equivalence classes from these nodes alone: the
