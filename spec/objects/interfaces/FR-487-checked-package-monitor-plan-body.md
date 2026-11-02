@@ -161,7 +161,9 @@ whose rules below do not hold, with the first refusal in the reader order below.
   `Pending` and `Indeterminate` nullary (FR-160); `Incomplete` carrying the
   record `LimitReached{limit, value, setting}` (`limit` `event_buffer`, `value`
   the capacity and `setting` `monitor.max_event_rate`; or `limit` `activation`,
-  `value` the `activation_capacity` and `setting` `monitor.max_activations`); `Failed` carrying
+  `value` the `activation_capacity` and `setting` `monitor.max_activations`; or
+  `limit` `atom_projection`, `value` the atom's identity, an `integer` (the
+  `AtomId` of QSL FR-251), and `setting` `monitor.atom_projection`); `Failed` carrying
   the record `ReadingGapExceeded{gap, max_reading_gap}`. `gap` and `max_reading_gap` are `integer`s. `on_event` and `on_watermark`
   return the first four and `Incomplete`; only `on_gap` returns `Failed`, from
   the checked gap it is given and the plan's `max_reading_gap` premise. The
@@ -181,6 +183,22 @@ evidence stays conflicting, and an entry expires when its window end lies before
 the history boundary. The entries are validated against that meaning by the
 reference evaluator and the differential of QSL FR-251-AC-7; the wire fixes no
 separate algorithm.
+
+### Atoms without an admitted projection
+
+An atom reads the scalar or aggregate values its capture bindings name,
+projected from the model value by existing catalog projections. Where an atom
+over a model-typed value has no admitted projection, `on_event` reports, for the
+obligations that depend on that atom, `Incomplete` with
+`LimitReached{limit: atom_projection, value: <the atom's identity>,
+setting: monitor.atom_projection}` and replayable evidence: the reader does not
+refuse the plan (it is a run outcome, not a wire defect), the atom is not
+dropped, and no new `Outcome` case or payload shape exists. The `limit` kind
+names the resource counter in the manner of `event_buffer` and `activation`.
+`monitor.atom_projection` is not a runtime tunable: it names the remedy, the
+plan-declared capture binding of the atom (QSL FR-251) that supplies an admitted
+projection, FR-461's one name for the limit. The closed `limit` kinds of the
+plan root are therefore `event_buffer`, `activation` and `atom_projection`.
 
 ### Counter-gap path
 
@@ -280,13 +298,14 @@ a body.
 | FR-487-AC-9 | After a gap fault `on_gap` returns every `buffer_<n>` empty and sets `history_start` and `now` to the faulting reading's tick, open instances fail and decided ones stay (`MP-54` to `MP-56`); a past-time operator whose window start `now - b` is below `history_start` is indeterminate until `now - b` reaches it (`MP-66` to `MP-68`); a clock poll does not move the baseline: readings 100 (event), 150 (poll), 180 (event) call the baseline `on_event(0)` and `on_event(80)` (`MP-69`). | Test (TC-978) |
 | FR-487-AC-10 | Each interval-operator instance is reported once, on settlement, and each pending instance at every `on_watermark` step and no `on_event` step; an unbounded root `always` or `eventually` reports one folded outcome per activation, `Pending` until resolved (`MP-70` to `MP-72`). | Test (TC-978) |
 | FR-487-AC-11 | The state ends with `event_position`, an `integer` that `init` sets to 0, `on_event` increases by 1 per admitted event (the baseline reading included), and `on_watermark`, `on_gap` and a clock poll leave unchanged (`MP-77`, `MP-57`, `MP-69`); a state lacking `event_position`, with it typed `text` or placed before `activations` refuses `invalid_semantic_graph` at the `state` binding (`MP-74` to `MP-76`). | Test (TC-978) |
+| FR-487-AC-12 | An atom with no admitted projection yields `Incomplete(LimitReached{limit: atom_projection, value: <atom identity>, setting: monitor.atom_projection})` with replayable evidence, not a refusal and not a dropped atom, and an atom with an admitted projection does not; the `limit` kinds of `LimitReached` are exactly `event_buffer`, `activation` and `atom_projection`, each with its own `setting`, and the `Outcome` union and its payload record shapes are unchanged (`MP-78` to `MP-80`). | Test (TC-978) |
 
 ## Published artifacts
 
 `proposals/checked-package-v2/schema.json` admits `monitor_plan` among the
 `temporal` node's `semantic_form` values.
 `proposals/checked-package-v2/monitor-plan-vectors.json` publishes the cases
-`MP-01` to `MP-77`.
+`MP-01` to `MP-80`.
 
 ## Dependencies
 

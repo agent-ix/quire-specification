@@ -21787,6 +21787,7 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
     "FR-487-AC-9",
     "FR-487-AC-10",
     "FR-487-AC-11",
+    "FR-487-AC-12",
     "FR-322-AC-308"
 )]
 #[test]
@@ -21933,6 +21934,29 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
         }
         assert_eq!(Value::from(seen), case["positions"], "{id}");
     }
+
+    let limits = &gaps["limit_cases"];
+    let kinds: Vec<&str> = limits["limit_kinds"].as_object().unwrap().keys().map(String::as_str).collect();
+    assert_eq!(kinds.iter().collect::<BTreeSet<_>>(), ["event_buffer", "activation", "atom_projection"].iter().collect::<BTreeSet<_>>());
+    for case in limits["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        if let Some(projection) = case.get("projection") {
+            let outcome = if projection == true { Value::Null } else { json!({"outcome": "Incomplete"}) };
+            assert_eq!(outcome["outcome"], case["expected"]["outcome"], "{id}");
+            if projection == false {
+                let payload = &case["expected"]["payload"];
+                assert_eq!(payload["limit"], "atom_projection", "{id}");
+                assert_eq!(payload["value"], case["atom"], "{id}");
+                assert_eq!(payload["setting"], limits["limit_kinds"]["atom_projection"], "{id}");
+                assert_eq!(case["reader"], "admitted", "{id}: an unprojectable atom is a run outcome, not a refusal");
+            }
+        } else {
+            assert_eq!(case["outcome_cases"], 6, "{id}");
+            assert_eq!(case["limit_reached_fields"], json!(["limit", "value", "setting"]), "{id}");
+        }
+    }
+    // The union and payload shapes of the base plan are untouched by the new limit kind.
+    assert_eq!(vectors["base"]["outcome"]["cases"].as_array().unwrap().len(), 6);
 
     // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
     let append = &vectors["append"];

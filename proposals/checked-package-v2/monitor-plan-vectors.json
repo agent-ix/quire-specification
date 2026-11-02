@@ -1493,7 +1493,7 @@
     "expected": "admitted"
   },
   "gap_cases": {
-    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline. overflow_cases: an activation arriving while the live count equals activation_capacity. The baseline entry [\"baseline\", 0] is on_event(0) and counts as an event; on_gap, on_watermark and a poll leave event_position unchanged.",
+    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline. overflow_cases: an activation arriving while the live count equals activation_capacity. The baseline entry [\"baseline\", 0] is on_event(0) and counts as an event; on_gap, on_watermark and a poll leave event_position unchanged. limit_cases: the closed limit kinds of LimitReached and the atom-without-projection outcome.",
     "calls": [
       {
         "id": "MP-54",
@@ -1892,6 +1892,47 @@
         ],
         "init": 0
       }
-    ]
+    ],
+    "limit_cases": {
+      "limit_kinds": {
+        "event_buffer": "monitor.max_event_rate",
+        "activation": "monitor.max_activations",
+        "atom_projection": "monitor.atom_projection"
+      },
+      "cases": [
+        {
+          "id": "MP-78",
+          "note": "an atom with an admitted projection: no Incomplete",
+          "atom": 4,
+          "projection": true,
+          "expected": null
+        },
+        {
+          "id": "MP-79",
+          "note": "an atom over a model value with no admitted projection: Incomplete(LimitReached) naming the atom, the plan is still admitted",
+          "atom": 4,
+          "projection": false,
+          "expected": {
+            "outcome": "Incomplete",
+            "payload": {
+              "limit": "atom_projection",
+              "value": 4,
+              "setting": "monitor.atom_projection"
+            }
+          },
+          "reader": "admitted"
+        },
+        {
+          "id": "MP-80",
+          "note": "the Outcome union and payload record shapes are unchanged: still six cases, LimitReached{limit, value, setting}",
+          "outcome_cases": 6,
+          "limit_reached_fields": [
+            "limit",
+            "value",
+            "setting"
+          ]
+        }
+      ]
+    }
   }
 }
