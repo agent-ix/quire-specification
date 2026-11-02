@@ -21810,6 +21810,10 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
 
     // The counter-gap path (FR-487-AC-7): on_gap over abstract live instances, and the reading sequence.
     let gaps = &vectors["gap_cases"];
+    let ids: Vec<&str> = gaps["calls"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["MP-54", "MP-55", "MP-56"]);
+    assert_eq!(gaps["sequences"].as_array().unwrap().len(), 1);
+    assert_eq!(gaps["sequences"][0]["id"], "MP-57");
     for call in gaps["calls"].as_array().unwrap() {
         let id = call["id"].as_str().unwrap();
         let gap = call["gap"].as_u64().unwrap();
