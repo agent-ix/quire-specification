@@ -185,3 +185,31 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
         "ordinal": 0
     })));
 }
+
+/// FR-336-AC-9 and AC-10: a replay dependency's source entries carry the
+/// FR-322 source integrity, while an object environment identity does not.
+#[test]
+#[trace("TC-969", "FR-336-AC-9", "FR-336-AC-10")]
+fn replay_dependency_sources_require_source_integrity_and_object_environments_do_not() {
+    let schema = parsed(SCHEMA);
+    let entry = definition_validator(&schema, "DependencyEntry");
+    let environment = definition_validator(&schema, "ObjectEnvironmentRef");
+    let claim = "0".repeat(64);
+    let source = json!({"authority": "agent-ix", "identity": "lib", "source_integrity": claim});
+    assert!(entry.is_valid(&json!({"identity": "lib", "sources": [source]})));
+    for (label, mutated) in [
+        ("missing", json!({"authority": "agent-ix", "identity": "lib"})),
+        ("uppercase", json!({"authority": "agent-ix", "identity": "lib", "source_integrity": "A".repeat(64)})),
+        ("63 characters", json!({"authority": "agent-ix", "identity": "lib", "source_integrity": "0".repeat(63)})),
+        ("non-string", json!({"authority": "agent-ix", "identity": "lib", "source_integrity": 5})),
+    ] {
+        assert!(
+            !entry.is_valid(&json!({"identity": "lib", "sources": [mutated]})),
+            "AC-9: {label} claim is refused"
+        );
+    }
+    let two_member = json!({"identity": {"authority": "agent-ix", "identity": "env"}});
+    assert!(environment.is_valid(&two_member), "AC-10: the environment identity stays two-member");
+    let with_integrity = json!({"identity": {"authority": "agent-ix", "identity": "env", "source_integrity": claim}});
+    assert!(!environment.is_valid(&with_integrity), "AC-10: no integrity member on an environment");
+}

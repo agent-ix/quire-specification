@@ -1068,7 +1068,7 @@
       ],
       "properties": {
         "identity": {
-          "$ref": "#/$defs/SourceRef"
+          "$ref": "#/$defs/ObjectEnvironmentIdentity"
         }
       },
       "additionalProperties": false
@@ -1731,6 +1731,27 @@
       "$ref": "urn:quire:checked-package:v2#/$defs/NodeId"
     },
     "SourceRef": {
+      "type": "object",
+      "required": [
+        "authority",
+        "identity",
+        "source_integrity"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "source_integrity": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ObjectEnvironmentIdentity": {
       "type": "object",
       "required": [
         "authority",

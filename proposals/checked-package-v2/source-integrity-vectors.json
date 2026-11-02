@@ -1,0 +1,842 @@
+{
+  "base": "fixtures/positive-two-owners-a.json",
+  "note": "Source-byte integrity vectors (FR-322 \"Source-byte integrity\"; FR-322-AC-319..327; FR-272-AC-26). Each case is an RFC 6902 patch on `base`; `supplied` names the pairs of source-documents.json whose file bytes the caller supplies; `flip_byte` XORs one supplied byte with 0x01. `expected` is admitted or the refusal code, cause and RFC 6901 locus.",
+  "positive": [
+    {
+      "expected": {
+        "admitted": true
+      },
+      "id": "SI-P1",
+      "patch": [],
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "admitted": true
+      },
+      "id": "SI-P2",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-empty",
+              "source_integrity": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ],
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-empty"
+        }
+      ]
+    }
+  ],
+  "refusals": [
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R1",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/lock/sources/0/source_integrity"
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R2",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources/0/source_integrity",
+          "value": null
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R3",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources/0/source_integrity",
+          "value": 5
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R4",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources/0/source_integrity",
+          "value": "13986A0BB82F0CE188FD36A7681C21ED719E0E91B7F1F7EEC043F4BEED5C6F2A"
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R5",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources/0/source_integrity",
+          "value": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2"
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "flip_byte": {
+        "authority": "agent-ix",
+        "identity": "example-a",
+        "index": 0
+      },
+      "id": "SI-R6",
+      "patch": [],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R7",
+      "patch": [],
+      "schema": "valid",
+      "supplied": []
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/1"
+      },
+      "id": "SI-R8",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-b",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            }
+          ]
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/source_map/0/regions/0/source"
+      },
+      "id": "SI-R9",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/source_map/0/regions/0/source/source_integrity",
+          "value": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/refinement_step_rows/0/region/source"
+      },
+      "id": "SI-R10",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/refinement_step_rows",
+          "value": [
+            {
+              "node_id": {
+                "ordinal": 0,
+                "package": "example-a",
+                "path": [
+                  "List"
+                ]
+              },
+              "ordinal": 0,
+              "region": {
+                "end": 1,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example-a",
+                  "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+                },
+                "start": 0
+              }
+            }
+          ]
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/diagnostics/entries/0/loci/0/source"
+      },
+      "id": "SI-R11",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/diagnostics/entries",
+          "value": [
+            {
+              "cause_tag": "invalid-value",
+              "code": "invalid_package",
+              "details": [],
+              "loci": [
+                {
+                  "end": 1,
+                  "source": {
+                    "authority": "agent-ix",
+                    "identity": "example-a",
+                    "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+                  },
+                  "start": 0
+                }
+              ],
+              "stage": "package_read"
+            }
+          ]
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/1"
+      },
+      "id": "SI-R12",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-b",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/regions/0/source/source_integrity",
+          "value": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+        },
+        {
+          "op": "add",
+          "path": "/refinement_step_rows",
+          "value": [
+            {
+              "node_id": {
+                "ordinal": 0,
+                "package": "example-a",
+                "path": [
+                  "List"
+                ]
+              },
+              "ordinal": 0,
+              "region": {
+                "end": 1,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example-a",
+                  "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+                },
+                "start": 0
+              }
+            }
+          ]
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/1"
+      },
+      "id": "SI-R13",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-b",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-empty",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2"
+            }
+          ]
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-empty"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R14",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-b",
+              "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/regions/0/source",
+          "value": {
+            "authority": "agent-ix",
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/lock/sources/0/source_integrity",
+          "value": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "invalid-value",
+        "code": "invalid_package",
+        "locus": "/source_map/3"
+      },
+      "id": "SI-R15",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+            },
+            {
+              "authority": "agent-ix",
+              "identity": "example-b",
+              "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/regions/0/source",
+          "value": {
+            "authority": "agent-ix",
+            "identity": "example-b",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+          }
+        }
+      ],
+      "schema": "valid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "cause": "source-integrity",
+        "code": "invalid_package",
+        "locus": "/lock/sources/0"
+      },
+      "id": "SI-R16",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lock/sources",
+          "value": [
+            {
+              "authority": "agent-ix",
+              "identity": "example-a",
+              "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+            },
+            {
+              "authority": "agent-ix",
+              "extra": 1,
+              "identity": "example-b",
+              "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+            }
+          ]
+        }
+      ],
+      "schema": "invalid",
+      "supplied": [
+        {
+          "authority": "agent-ix",
+          "identity": "example-a"
+        },
+        {
+          "authority": "agent-ix",
+          "identity": "example-b"
+        }
+      ]
+    }
+  ],
+  "replay": {
+    "cases": [
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "admitted": true
+        },
+        "id": "RP-P1",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          },
+          {
+            "authority": "agent-ix",
+            "identity": "example-b"
+          }
+        ]
+      },
+      {
+        "dependencies": [],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R1",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ]
+      },
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/dependencies/0/sources/0"
+        },
+        "id": "RP-R2",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          },
+          {
+            "authority": "agent-ix",
+            "identity": "example-b"
+          }
+        ]
+      },
+      {
+        "dependencies": [],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R3",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ]
+      },
+      {
+        "dependencies": [],
+        "expected": {
+          "cause": "missing-selection",
+          "code": "missing_import",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R4",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": []
+      },
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R5",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "b575e97cfbdbd6857813009031a1faddae81e47ef9a372dcf836fbbff1bae3e8"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a"
+          }
+        ]
+      },
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "cause": "missing-selection",
+          "code": "missing_import",
+          "locus": "/package/sources/0"
+        },
+        "id": "RP-R6",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-b"
+          }
+        ]
+      },
+      {
+        "dependencies": [
+          {
+            "identity": "lib",
+            "sources": [
+              {
+                "authority": "agent-ix",
+                "identity": "example-b",
+                "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2"
+              }
+            ]
+          }
+        ],
+        "expected": {
+          "cause": "source-integrity",
+          "code": "invalid_package",
+          "locus": "/package/dependencies/0/sources/0"
+        },
+        "id": "RP-R7",
+        "package_sources": [
+          {
+            "authority": "agent-ix",
+            "identity": "example-a",
+            "source_integrity": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+          }
+        ],
+        "supplied": []
+      }
+    ],
+    "note": "FR-323 replay request: each sources entry is checked against the byte_provision bytes of its pair before any recompile (FR-323-AC-29..33). `package_sources` and `dependencies` are the request members; `supplied` names the pairs byte_provision carries."
+  },
+  "schema_invalid": [
+    {
+      "id": "SI-S1",
+      "note": "a DefinitionRef carries no integrity member",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/lock/definition_selections/0/source_integrity",
+          "value": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+        }
+      ]
+    },
+    {
+      "id": "SI-S2",
+      "note": "a SourceOwner carries no integrity member",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/1/owner/source_integrity",
+          "value": "13986a0bb82f0ce188fd36a7681c21ed719e0e91b7f1f7eec043f4beed5c6f2a"
+        }
+      ]
+    }
+  ],
+  "source_documents": "source-documents.json",
+  "version": 1
+}

@@ -38,7 +38,8 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example"
+        "identity": "example",
+        "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
       }
     ]
   },
@@ -1879,7 +1880,8 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 5
         }
@@ -1901,7 +1903,8 @@
           "end": 4,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 3
         }
@@ -1940,7 +1943,8 @@
           "end": 26,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 25
         }
@@ -1975,7 +1979,8 @@
           "end": 12,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 11
         }
@@ -2014,7 +2019,8 @@
           "end": 28,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 27
         }
@@ -2044,7 +2050,8 @@
           "end": 16,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 15
         }
@@ -2067,7 +2074,8 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 7
         }
@@ -2102,7 +2110,8 @@
           "end": 14,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 13
         }
@@ -2124,7 +2133,8 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 1
         }
@@ -2159,7 +2169,8 @@
           "end": 24,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 23
         }
@@ -2193,7 +2204,8 @@
           "end": 18,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 17
         }
@@ -2242,7 +2254,8 @@
           "end": 30,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 29
         }
@@ -2275,7 +2288,8 @@
           "end": 20,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 19
         }
@@ -2301,7 +2315,8 @@
           "end": 22,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 21
         }
@@ -2326,7 +2341,8 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 9
         }
@@ -2348,7 +2364,8 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "identity": "example"
+            "identity": "example",
+            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
           },
           "start": 5
         }

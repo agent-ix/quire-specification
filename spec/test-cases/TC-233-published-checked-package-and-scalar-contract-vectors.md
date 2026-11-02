@@ -37,6 +37,54 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-318
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-319
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-320
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-321
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-322
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-323
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-324
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-325
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-326
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-327
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-328
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-329
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-330
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-331
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-332
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-333
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-334
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-335
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-336
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-337
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-338
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-339
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-340
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-341
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-26
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
@@ -758,3 +806,18 @@ leaf row copies an enclosing application's location, while a row naming the
 admitted application is not refused by the leaf rule (FR-322-AC-310..312). Each
 protocol slot row carries a `type_declaration` site-name origin, and only
 PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..318).
+
+Source-byte integrity (FR-322 "Source-byte integrity", IR-1273, QSL FR-518 row
+28m): every source reference of every published package is the three-member
+`SourceRef` whose `source_integrity` equals the SHA-256 of the raw bytes in
+`source-documents.json` (FR-322-AC-319..325). `source-integrity-vectors.json` over
+`positive-two-owners-a.json` admits SI-P1 and the empty source SI-P2 and refuses
+SI-R1..SI-R5 (missing, null, wrong-kind, uppercase and short claims), SI-R6 (one
+flipped byte of the supplied source, package bytes unchanged) and SI-R7 (no bytes
+supplied although the file exists) with `invalid_package`/`source-integrity` at the
+reference pointer (FR-322-AC-326..332). SI-R8..SI-R11 place the failure at a lock,
+source-map, refinement-step and diagnostic reference, SI-R12 and SI-R13 fix the
+order, SI-R14 and SI-R15 show that the integrity phase precedes the owner and
+source-map agreement check and SI-R16 that it precedes the closed-schema checks
+(FR-322-AC-333..341). The cause is catalogued and paired in FR-272
+(FR-272-AC-26).

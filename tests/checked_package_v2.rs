@@ -22266,3 +22266,495 @@ fn tc_979_declaration_less_function_keys_follow_content() {
         "the accessor label is published"
     );
 }
+
+// ---------------------------------------------------------------------------
+// Source-byte integrity (FR-322 "Source-byte integrity", IR-1273).
+// ---------------------------------------------------------------------------
+
+const SOURCE_INTEGRITY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/source-integrity-vectors.json");
+const SOURCE_DOCUMENTS: &str =
+    include_str!("../proposals/checked-package-v2/source-documents.json");
+const CHECKED_PACKAGE_V2_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/proposals/checked-package-v2");
+
+/// SHA-256 (FIPS 180-4) of `bytes`, as 64 lowercase hexadecimal characters.
+fn sha256_hex(bytes: &[u8]) -> String {
+    const K: [u32; 64] = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4,
+        0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe,
+        0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f,
+        0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
+        0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
+        0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+        0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116,
+        0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
+        0xc67178f2,
+    ];
+    let mut state: [u32; 8] = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
+        0x5be0cd19,
+    ];
+    let mut message = bytes.to_vec();
+    message.push(0x80);
+    while message.len() % 64 != 56 {
+        message.push(0);
+    }
+    message.extend_from_slice(&((bytes.len() as u64) * 8).to_be_bytes());
+    for block in message.chunks(64) {
+        let mut w = [0u32; 64];
+        for (i, word) in block.chunks(4).enumerate() {
+            w[i] = u32::from_be_bytes([word[0], word[1], word[2], word[3]]);
+        }
+        for i in 16..64 {
+            let s0 = w[i - 15].rotate_right(7) ^ w[i - 15].rotate_right(18) ^ (w[i - 15] >> 3);
+            let s1 = w[i - 2].rotate_right(17) ^ w[i - 2].rotate_right(19) ^ (w[i - 2] >> 10);
+            w[i] = w[i - 16]
+                .wrapping_add(s0)
+                .wrapping_add(w[i - 7])
+                .wrapping_add(s1);
+        }
+        let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = state;
+        for i in 0..64 {
+            let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
+            let choose = (e & f) ^ (!e & g);
+            let t1 = h
+                .wrapping_add(s1)
+                .wrapping_add(choose)
+                .wrapping_add(K[i])
+                .wrapping_add(w[i]);
+            let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
+            let majority = (a & b) ^ (a & c) ^ (b & c);
+            let t2 = s0.wrapping_add(majority);
+            h = g;
+            g = f;
+            f = e;
+            e = d.wrapping_add(t1);
+            d = c;
+            c = b;
+            b = a;
+            a = t1.wrapping_add(t2);
+        }
+        for (slot, value) in state.iter_mut().zip([a, b, c, d, e, f, g, h]) {
+            *slot = slot.wrapping_add(value);
+        }
+    }
+    state.iter().map(|word| format!("{word:08x}")).collect()
+}
+
+type SourceEvidence = BTreeMap<(String, String), Vec<u8>>;
+
+/// Every source reference of a checked package with its RFC 6901 pointer, in
+/// the verification order of FR-322 "Source-byte integrity": `lock.sources`,
+/// `source_map` regions, `refinement_step_rows` regions, diagnostic loci.
+fn source_reference_sites(package: &Value) -> Vec<(String, &Value)> {
+    let mut sites = Vec::new();
+    for (i, source) in package["lock"]["sources"].as_array().into_iter().flatten().enumerate() {
+        sites.push((format!("/lock/sources/{i}"), source));
+    }
+    for (i, entry) in package["source_map"].as_array().into_iter().flatten().enumerate() {
+        for (j, region) in entry["regions"].as_array().into_iter().flatten().enumerate() {
+            sites.push((format!("/source_map/{i}/regions/{j}/source"), &region["source"]));
+        }
+    }
+    for (i, row) in package["refinement_step_rows"].as_array().into_iter().flatten().enumerate() {
+        sites.push((format!("/refinement_step_rows/{i}/region/source"), &row["region"]["source"]));
+    }
+    for (i, entry) in package["diagnostics"]["entries"].as_array().into_iter().flatten().enumerate() {
+        for (j, locus) in entry["loci"].as_array().into_iter().flatten().enumerate() {
+            sites.push((format!("/diagnostics/entries/{i}/loci/{j}/source"), &locus["source"]));
+        }
+    }
+    sites
+}
+
+/// The test-local decider of the source-integrity phase: the first failing
+/// reference refuses `invalid_package`/`source-integrity` at its pointer.
+fn decide_source_integrity(
+    package: &Value,
+    evidence: &SourceEvidence,
+) -> Result<(), (&'static str, &'static str, String)> {
+    for (pointer, reference) in source_reference_sites(package) {
+        let refusal = || ("invalid_package", "source-integrity", pointer.clone());
+        let claim = match reference.get("source_integrity") {
+            Some(Value::String(claim))
+                if claim.len() == 64
+                    && claim.bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte)) =>
+            {
+                claim
+            }
+            _ => return Err(refusal()),
+        };
+        let pair = (
+            reference["authority"].as_str().expect("authority").to_owned(),
+            reference["identity"].as_str().expect("identity").to_owned(),
+        );
+        match evidence.get(&pair) {
+            Some(bytes) if sha256_hex(bytes) == *claim => {}
+            _ => return Err(refusal()),
+        }
+    }
+    Ok(())
+}
+
+fn source_document_index() -> Vec<(String, String, String, Vec<u8>)> {
+    parsed_fixture(SOURCE_DOCUMENTS)["documents"]
+        .as_array()
+        .expect("documents")
+        .iter()
+        .map(|document| {
+            let file = document["file"].as_str().expect("file");
+            let bytes = std::fs::read(format!("{CHECKED_PACKAGE_V2_DIR}/{file}")).expect("source document bytes");
+            (
+                document["authority"].as_str().expect("authority").to_owned(),
+                document["identity"].as_str().expect("identity").to_owned(),
+                document["source_integrity"].as_str().expect("claim").to_owned(),
+                bytes,
+            )
+        })
+        .collect()
+}
+
+/// Every JSON file of the checked-package proposal directory except schemas.
+fn checked_package_json_files() -> Vec<(String, Value)> {
+    fn visit(dir: &std::path::Path, found: &mut Vec<(String, Value)>) {
+        for entry in std::fs::read_dir(dir).expect("directory") {
+            let path = entry.expect("entry").path();
+            if path.is_dir() {
+                visit(&path, found);
+            } else if path.extension().is_some_and(|ext| ext == "json")
+                && !path.to_string_lossy().contains("schema")
+                && !path.to_string_lossy().contains("source-integrity-vectors")
+            {
+                let text = std::fs::read_to_string(&path).expect("json text");
+                found.push((path.display().to_string(), serde_json::from_str(&text).expect("json")));
+            }
+        }
+    }
+    let mut found = Vec::new();
+    visit(std::path::Path::new(CHECKED_PACKAGE_V2_DIR), &mut found);
+    found
+}
+
+/// Walk `value`, calling `visit` with the pointer of every source-reference site
+/// (a `lock.sources` entry or a `source` member holding an authority/identity object).
+fn walk_source_sites(value: &Value, pointer: &str, visit: &mut dyn FnMut(&str, &Value)) {
+    match value {
+        Value::Object(object) => {
+            for (key, child) in object {
+                let child_pointer = format!("{pointer}/{key}");
+                let is_authority_identity = child
+                    .as_object()
+                    .is_some_and(|map| map.contains_key("authority") && map.contains_key("identity"));
+                if key == "source" && is_authority_identity {
+                    visit(&child_pointer, child);
+                }
+                if key == "sources" && pointer == "/lock" {
+                    for (i, source) in child.as_array().expect("lock sources").iter().enumerate() {
+                        visit(&format!("{child_pointer}/{i}"), source);
+                    }
+                }
+                walk_source_sites(child, &child_pointer, visit);
+            }
+        }
+        Value::Array(items) => {
+            for (i, child) in items.iter().enumerate() {
+                walk_source_sites(child, &format!("{pointer}/{i}"), visit);
+            }
+        }
+        _ => {}
+    }
+}
+
+/// FR-322-AC-319 and AC-320 (TC-233): the four source-reference sites are the
+/// closed three-member `SourceRef` and every published package carries the
+/// integrity member at each; `DefinitionRef` and the nominal source owner keep
+/// the two-member shape.
+#[trace(
+    "TC-233",
+    "FR-322-AC-319",
+    "FR-322-AC-320",
+    "FR-322-AC-321",
+    "FR-322-AC-322",
+    "FR-322-AC-323"
+)]
+#[test]
+fn tc_233_source_references_are_closed_three_member_refs_and_definition_refs_stay_two() {
+    let schema = parsed_fixture(SCHEMA);
+    let source_ref = schema_for_def(&schema, "SourceRef");
+    let definition_ref = schema_for_def(&schema, "DefinitionRef");
+    let claim = "0".repeat(64);
+    let reference = |extra: Option<(&str, Value)>| {
+        let mut value = json!({"authority": "agent-ix", "identity": "example"});
+        if let Some((key, member)) = extra {
+            value[key] = member;
+        }
+        value
+    };
+    assert!(source_ref.is_valid(&reference(Some(("source_integrity", json!(claim))))));
+    assert!(!source_ref.is_valid(&reference(None)), "AC-319: integrity is required");
+    assert!(!source_ref.is_valid(&reference(Some(("extra", json!(1))))));
+    assert!(definition_ref.is_valid(&reference(None)));
+    assert!(
+        !definition_ref.is_valid(&reference(Some(("source_integrity", json!(claim))))),
+        "AC-320: a definition reference carries no integrity"
+    );
+    assert_eq!(schema["$defs"]["PackageLock"]["properties"]["sources"]["items"]["$ref"], "#/$defs/SourceRef");
+    assert_eq!(schema["$defs"]["SourceRegion"]["properties"]["source"]["$ref"], "#/$defs/SourceRef");
+    let documents = source_document_index();
+    let mut sites = 0;
+    for (name, document) in checked_package_json_files() {
+        walk_source_sites(&document, "", &mut |pointer, site| {
+            sites += 1;
+            let keys: BTreeSet<&str> = site.as_object().expect("object").keys().map(String::as_str).collect();
+            assert_eq!(
+                keys,
+                BTreeSet::from(["authority", "identity", "source_integrity"]),
+                "{name}{pointer} is a three-member source reference (AC-319)"
+            );
+            let pair = (site["authority"].as_str().unwrap(), site["identity"].as_str().unwrap());
+            let (_, _, expected, _) = documents
+                .iter()
+                .find(|(authority, identity, _, _)| (authority.as_str(), identity.as_str()) == pair)
+                .unwrap_or_else(|| panic!("{name}{pointer} names a published source document"));
+            assert_eq!(site["source_integrity"], json!(expected), "{name}{pointer}");
+        });
+    }
+    assert!(sites > 500, "the published packages carry many source references: {sites}");
+    // AC-320: a definition selection and a source owner stay two-member in a package.
+    let vectors = parsed_fixture(SOURCE_INTEGRITY_VECTORS);
+    let v2 = jsonschema::validator_for(&schema).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_TWO_OWNERS_A);
+    assert!(v2.is_valid(&base));
+    for vector in vectors["schema_invalid"].as_array().expect("schema_invalid") {
+        let mut candidate = base.clone();
+        for patch in vector["patch"].as_array().expect("patch") {
+            apply_authored_patch(&mut candidate, patch);
+        }
+        assert!(!v2.is_valid(&candidate), "{} fails the schema", vector["id"]);
+    }
+    // The owner join compares the pair alone: a source owner has no integrity member.
+    let owner = &base["semantic_graph"]["nodes"][1]["owner"];
+    assert!(owner.get("source_integrity").is_none());
+}
+
+/// FR-322-AC-321 (TC-233): the claim is the SHA-256 of the raw bytes, lowercase
+/// hexadecimal, with no transformation.
+#[trace("TC-233", "FR-322-AC-324", "FR-322-AC-325")]
+#[test]
+fn tc_233_source_integrity_is_the_sha256_of_the_raw_source_bytes() {
+    assert_eq!(sha256_hex(b""), "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    assert_eq!(sha256_hex(b"abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+    let documents = source_document_index();
+    assert!(documents.len() >= 7);
+    let normalize_newlines = |bytes: &[u8]| -> Vec<u8> {
+        String::from_utf8_lossy(bytes).replace("\r\n", "\n").into_bytes()
+    };
+    for (authority, identity, claim, bytes) in &documents {
+        assert_eq!(&sha256_hex(bytes), claim, "{authority}/{identity}");
+        if !bytes.is_empty() {
+            assert!(bytes.windows(2).any(|pair| pair == b"\r\n"), "{identity} holds CRLF");
+            assert!(bytes.ends_with(b"\n") && !bytes.ends_with(b"\r\n"), "{identity} ends with LF");
+            assert_ne!(
+                &sha256_hex(&normalize_newlines(bytes)),
+                claim,
+                "{identity}: a newline conversion changes the digest"
+            );
+        }
+    }
+    assert!(documents.iter().any(|(_, _, _, bytes)| bytes.is_empty()), "an empty source is valid");
+    let schema = parsed_fixture(SCHEMA);
+    let source_ref = schema_for_def(&schema, "SourceRef");
+    let valid = documents[0].2.clone();
+    for (label, claim, accepted) in [
+        ("lowercase 64", valid.clone(), true),
+        ("uppercase", valid.to_uppercase(), false),
+        ("63 characters", valid[..63].to_owned(), false),
+        ("65 characters", format!("{valid}0"), false),
+        ("non-hexadecimal", format!("g{}", &valid[1..]), false),
+    ] {
+        let reference = json!({"authority": "a", "identity": "u", "source_integrity": claim});
+        assert_eq!(source_ref.is_valid(&reference), accepted, "{label}");
+    }
+}
+
+/// FR-322-AC-326 to AC-341 (TC-233): the published vectors replayed through the
+/// test-local source-integrity decider and, when it admits, the full reader.
+#[trace(
+    "TC-233",
+    "FR-322-AC-326",
+    "FR-322-AC-327",
+    "FR-322-AC-328",
+    "FR-322-AC-329",
+    "FR-322-AC-330",
+    "FR-322-AC-331",
+    "FR-322-AC-332",
+    "FR-322-AC-333",
+    "FR-322-AC-334",
+    "FR-322-AC-335",
+    "FR-322-AC-336",
+    "FR-322-AC-337",
+    "FR-322-AC-338",
+    "FR-322-AC-339",
+    "FR-322-AC-340",
+    "FR-322-AC-341"
+)]
+#[test]
+fn tc_233_source_integrity_vectors_refuse_at_the_reference_pointer() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let vectors = parsed_fixture(SOURCE_INTEGRITY_VECTORS);
+    assert_eq!(vectors["base"], "fixtures/positive-two-owners-a.json");
+    let base = parsed_fixture(POSITIVE_TWO_OWNERS_A);
+    let documents = source_document_index();
+    let decide = |vector: &Value| -> (Value, bool) {
+        let mut candidate = base.clone();
+        for patch in vector["patch"].as_array().expect("patch") {
+            apply_authored_patch(&mut candidate, patch);
+        }
+        let mut evidence = SourceEvidence::new();
+        for pair in vector["supplied"].as_array().expect("supplied") {
+            let (authority, identity) = (pair["authority"].as_str().unwrap(), pair["identity"].as_str().unwrap());
+            let (_, _, _, bytes) = documents
+                .iter()
+                .find(|(a, i, _, _)| (a.as_str(), i.as_str()) == (authority, identity))
+                .expect("a published source document");
+            evidence.insert((authority.to_owned(), identity.to_owned()), bytes.clone());
+        }
+        if let Some(flip) = vector.get("flip_byte") {
+            let key = (flip["authority"].as_str().unwrap().to_owned(), flip["identity"].as_str().unwrap().to_owned());
+            evidence.get_mut(&key).expect("supplied bytes to mutate")[flip["index"].as_u64().unwrap() as usize] ^= 1;
+        }
+        let schema_valid = v2.is_valid(&candidate);
+        let outcome = match decide_source_integrity(&candidate, &evidence) {
+            Err((code, cause, locus)) => json!({"code": code, "cause": cause, "locus": locus}),
+            Ok(()) => match read_package_semantics(&candidate, &catalog) {
+                Ok(()) => json!({"admitted": true}),
+                Err(ReadRefusal::InvalidOwnerValue(locus)) => {
+                    json!({"code": "invalid_package", "cause": "invalid-value", "locus": locus})
+                }
+                Err(other) => panic!("{}: unexpected reader refusal {other:?}", vector["id"]),
+            },
+        };
+        (outcome, schema_valid)
+    };
+    let positives = vectors["positive"].as_array().expect("positive");
+    assert_eq!(positives.len(), 2);
+    for vector in positives {
+        let (outcome, schema_valid) = decide(vector);
+        assert!(schema_valid, "{} is a V2 package", vector["id"]);
+        assert_eq!(outcome, vector["expected"], "{}", vector["id"]);
+    }
+    let refusals = vectors["refusals"].as_array().expect("refusals");
+    assert_eq!(refusals.len(), 16);
+    for vector in refusals {
+        let id = vector["id"].as_str().unwrap();
+        let (outcome, schema_valid) = decide(vector);
+        assert_eq!(outcome, vector["expected"], "{id}");
+        assert_eq!(schema_valid, vector["schema"] == "valid", "{id} schema validity");
+        if id == "SI-R7" {
+            // FR-322-AC-332: the file for the pair exists beside the fixtures, yet is not read.
+            assert!(
+                documents.iter().any(|(authority, identity, _, _)| (authority.as_str(), identity.as_str()) == ("agent-ix", "example-a")),
+                "the published file exists for the unsupplied pair"
+            );
+        }
+        if vector["expected"]["cause"] == "source-integrity" {
+            let locus = vector["expected"]["locus"].as_str().unwrap();
+            assert!(!locus.ends_with("source_integrity"), "{id}: the pointer is the reference's");
+        }
+    }
+}
+
+/// FR-272-AC-26 (TC-233): `source-integrity` is catalogued and paired.
+#[trace("TC-233", "FR-272-AC-26")]
+#[test]
+fn tc_233_source_integrity_cause_is_catalogued_and_paired_with_invalid_package() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    let codes = string_list(&schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"], "diagnostic codes");
+    for code in &codes {
+        let entry = json!({"stage": "package_read", "code": code, "cause_tag": "source-integrity", "details": [], "loci": []});
+        assert_eq!(diagnostic.is_valid(&entry), *code == "invalid_package", "source-integrity pairs only with invalid_package, not {code}");
+    }
+    let row = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.starts_with("| `invalid_package` |"))
+        .expect("the invalid_package row");
+    assert!(row.contains("`source-integrity`"));
+    assert!(row.contains("never the pointer of its `source_integrity` member"));
+    let fr272 = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/spec/objects/foundation/FR-272-typed-diagnostic-cause.md"
+    ))
+    .expect("FR-272 text");
+    let row = fr272
+        .lines()
+        .find(|line| line.starts_with("| `invalid_package` |"))
+        .expect("the FR-272 invalid_package row");
+    assert!(row.contains("`source-integrity`"));
+    assert!(row.contains("never the pointer of its `source_integrity` member"));
+}
+
+/// FR-323-AC-29 to AC-35 (TC-277): each replay `sources` entry is checked
+/// against the `byte_provision` bytes of its pair before any recompile.
+#[trace(
+    "TC-277",
+    "FR-323-AC-29",
+    "FR-323-AC-30",
+    "FR-323-AC-31",
+    "FR-323-AC-32",
+    "FR-323-AC-33",
+    "FR-323-AC-34",
+    "FR-323-AC-35"
+)]
+#[test]
+fn tc_277_replay_sources_are_checked_against_byte_provision() {
+    let vectors = parsed_fixture(SOURCE_INTEGRITY_VECTORS)["replay"].clone();
+    let documents = source_document_index();
+    let cases = vectors["cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 8);
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let mut evidence = SourceEvidence::new();
+        for pair in case["supplied"].as_array().unwrap() {
+            let (authority, identity) = (pair["authority"].as_str().unwrap(), pair["identity"].as_str().unwrap());
+            let (_, _, _, bytes) = documents
+                .iter()
+                .find(|(a, i, _, _)| (a.as_str(), i.as_str()) == (authority, identity))
+                .expect("a published source document");
+            evidence.insert((authority.to_owned(), identity.to_owned()), bytes.clone());
+        }
+        // The wire request carries `package.sources` and `package.dependencies[*].sources`.
+        let request = json!({"package": {"sources": case["package_sources"], "dependencies": case["dependencies"]}});
+        let mut sites: Vec<(String, &Value)> = Vec::new();
+        for (i, source) in request["package"]["sources"].as_array().unwrap().iter().enumerate() {
+            sites.push((format!("/package/sources/{i}"), source));
+        }
+        for (d, dependency) in request["package"]["dependencies"].as_array().unwrap().iter().enumerate() {
+            for (i, source) in dependency["sources"].as_array().unwrap().iter().enumerate() {
+                sites.push((format!("/package/dependencies/{d}/sources/{i}"), source));
+            }
+        }
+        let outcome = (|| {
+            for (pointer, source) in &sites {
+                let well_formed = source["source_integrity"].as_str().is_some_and(|claim| {
+                    claim.len() == 64 && claim.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+                });
+                if !well_formed {
+                    return json!({"code": "invalid_package", "cause": "source-integrity", "locus": pointer});
+                }
+            }
+            for (pointer, source) in &sites {
+                let pair = (source["authority"].as_str().unwrap().to_owned(), source["identity"].as_str().unwrap().to_owned());
+                match evidence.get(&pair) {
+                    None => return json!({"code": "missing_import", "cause": "missing-selection", "locus": pointer}),
+                    Some(bytes) if sha256_hex(bytes) == source["source_integrity"].as_str().unwrap() => {}
+                    Some(_) => return json!({"code": "invalid_package", "cause": "source-integrity", "locus": pointer}),
+                }
+            }
+            json!({"admitted": true})
+        })();
+        assert_eq!(outcome, case["expected"], "{id}");
+    }
+}
