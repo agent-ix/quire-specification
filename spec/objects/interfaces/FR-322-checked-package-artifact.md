@@ -2807,6 +2807,27 @@ application has `semantic_type` equal to that `result_type`. A `literal` term's
 `text`, `string`, `uuid`, `timestamp`, `bytes`, `json_object`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`, `reference`→`reference`). Any failure is
 `operator-ineligible`.
 
+**Text literal membership.** A `literal` of `value_kind` `text` whose `type` is a
+`bounded_domain`/`text_bounds` node (`Text[min, max; profile]`) is admitted only
+when its `value` is a member of the type. The `value` is the *retained
+sequence*: the reader applies no normalization and never rewrites it. Under
+`nfc`, `nfd`, `nfkc` and `nfkd` the `value` SHALL already equal its own
+normalization under the named form (FR-141, tables
+`quire.value.text.unicode-17.0.0/v1`); `unicode-scalars` and `binary-utf8` have
+none. Its length is FR-141's: the scalar count of the retained sequence, or its
+UTF-8 payload byte count under `binary-utf8`, and the literal is a member when
+`min <= length <= max`, both bounds inclusive. A `value` that is not in the
+profile's normal form, a length below `min` and a length above `max` each refuse
+`ill_typed`/`type-mismatch` at the literal's `value` member, that is
+`/semantic_graph/nodes/{n}/body/value` for a root literal and the same member of
+the literal's pointer in its node's `body` otherwise (the QSL
+`TextLiteralOutsideBounds` check, FR-056). The family check precedes it: a `text`
+literal whose `type` has no `text` family still refuses `ill_typed`/`operator-ineligible`
+as above, and a `text` literal typed by a plain `scalar_type`/`text` node has no
+bound. The refusal is `ill_typed`/`type-mismatch`, not FR-141's
+`text_length_out_of_domain`, which is a runtime value refusal and not a package
+refusal (`proposals/checked-package-v2/text-literal-vectors.json`, FR-322-AC-304).
+
 The Option literals `none` and `absent` (FR-143 "The `absent` Option literal") lower
 to one `literal` term with `value_kind` `none` whose `type` is a node of family
 `option`, the `composite_type`/`option` node of the `Option<T>` the position
@@ -3980,6 +4001,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-302 | A `quire.op.quantity.convert` application whose operand 0 is typed by the unit node of `in` and whose `result_type` is a carried quantity node over `m` with a `Decimal[-100, 100; 2, 2; exact]` carrier is admitted with `mode` `{kind: rounding, value: exact}`, and one with the carrier's mode `nearest-even` with that mode; a `mode` differing from the result node's `rounding`, `null` included, refuses `invalid_package`/`operation-mode-type-mismatch`; a result over a unit of another dimension refuses `ill_typed`/`operator-ineligible`; a carried quantity as an operand of `quire.op.quantity.add` refuses `ill_typed`/`operator-ineligible` (`CQ-W09` to `CQ-W15`; `CQ-W15` converts a carried quantity into another). | Test (TC-280) |
 | FR-322-AC-300 | A package with no `claim`/`schedulability` occurrence omits `schedulability_claims`; a package with such occurrences contains exactly one closed `{declaration, occurrence}` row for each, in structural-`NodeRef`, then occurrence order. Each row resolves only to its local `claim`/`schedulability` node and one of that node's `claim` occurrences; it copies no claim body, task value, source release binding, policy or task-transition template. The positive and shared-node/multiple-occurrence vectors are schema-valid. Missing coverage, a foreign, absent or wrong-form node, an unowned occurrence, a repeated key and a non-canonical row order have the exact `invalid_package` refusal and locus in TC-976; missing/extra row members and a non-integer or negative occurrence are `malformed_wire`. The IR typed read exposes the FR-482 body and identity without evaluating model releases or task successors; the QSL FR-418 checker alone recomputes source/scheduler successors. `TaskTransitionTemplate` remains in the backend-provider-v1 certificate and is not a checked-package member. | Test (TC-976) |
 | FR-322-AC-303 | A package carries `operation_effects` or omits it; when omitted the effects are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, effect, provenance}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)`, with all four `effect` members always present. Each of `modifies`, `creates`, `deletes` and `deletes_scoped` is carried exactly as the selected document's operation frame lifts under FR-013-AC-13 and FR-340, so no effect kind is dropped, and an operation with no frame entries has an all-empty row. One member name under another declaring node or document is another row. The positive vectors OEC-01 to OEC-07 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed`, `invalid_model_binding`, `invalid_semantic_graph` and `invalid_package` refusals and loci for missing/extra members, unknown effect or entry kinds, wrong provenance, a field or undeclared operation, a dropped or invented effect, a repeated key, key order and missing coverage are in TC-977. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-977) |
+| FR-322-AC-304 | A `text` literal typed by `Text[min, max; profile]` is admitted exactly when its `value` is already normalized under `profile` (`nfc`, `nfd`, `nfkc`, `nfkd`; the reader normalizes nothing) and its length (scalar count, or UTF-8 byte count under `binary-utf8`) lies in `[min, max]`, both bounds inclusive. A length below `min`, a length above `max` and a `value` not in the profile's normal form each refuse `ill_typed`/`type-mismatch` at `/semantic_graph/nodes/{n}/body/value`; under `binary-utf8` a two-scalar, four-byte `value` against `Text[1, 3; binary-utf8]` refuses while the same `value` against `Text[1, 3; unicode-scalars]` is admitted (`proposals/checked-package-v2/text-literal-vectors.json`, `TX-01` to `TX-14`). | Test (TC-233) |
 
 ## Dependencies
 

@@ -12506,6 +12506,66 @@ fn decimal_literal_membership_is_decided_by_value() {
     assert!(!decimal_literal_is_member("1001", -1000, 1000, 1, 2));
 }
 
+const TEXT_LITERAL_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/text-literal-vectors.json");
+
+/// FR-322-AC-304: a `text` literal over `Text[min, max; profile]` is a member
+/// when its retained sequence is normalized under the profile (taken as authored:
+/// QSpec holds no normalization tables) and its length, in scalars or UTF-8 bytes
+/// under `binary-utf8`, lies in `[min, max]`. The test recomputes each length and
+/// each expectation from that rule.
+#[trace("TC-233", "FR-322-AC-304")]
+#[test]
+fn tc_233_text_literal_vectors_follow_the_membership_rule() {
+    let vectors = parsed_fixture(TEXT_LITERAL_VECTORS);
+    let cases = vectors["cases"].as_array().unwrap();
+    let mut seen = BTreeSet::new();
+    let (mut admitted, mut below, mut above, mut unnormalized) = (0, 0, 0, 0);
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: ids are unique");
+        let bounds = &vectors["types"][case["type"].as_str().unwrap()];
+        let profile = bounds["text_profile"].as_str().unwrap();
+        let (min, max) = (bounds["min"].as_u64().unwrap(), bounds["max"].as_u64().unwrap());
+        let value = case["value"].as_str().unwrap();
+        let length = if profile == "binary-utf8" { value.len() } else { value.chars().count() } as u64;
+        assert_eq!(case["length"].as_u64().unwrap(), length, "{id}: the recorded length");
+        let normalized = case["normalized"].as_bool().unwrap();
+        if matches!(profile, "unicode-scalars" | "binary-utf8") {
+            assert!(normalized, "{id}: a profile with no normalization has a normal value");
+        }
+        let expected = if !normalized {
+            unnormalized += 1;
+            "not-normalized"
+        } else if length < min {
+            below += 1;
+            "below-min"
+        } else if length > max {
+            above += 1;
+            "above-max"
+        } else {
+            admitted += 1;
+            "admitted"
+        };
+        match case["expected"].as_str().unwrap() {
+            "admitted" => assert_eq!(expected, "admitted", "{id}"),
+            "refused" => {
+                assert_eq!(case["reason"], expected, "{id}: the refusal reason");
+                assert_eq!(case["code"], "ill_typed", "{id}");
+                assert_eq!(case["cause"], "type-mismatch", "{id}");
+                assert_eq!(case["pointer"], "/semantic_graph/nodes/{n}/body/value", "{id}");
+            }
+            other => panic!("{id}: unknown expectation {other}"),
+        }
+    }
+    assert!(admitted >= 6 && below >= 2 && above >= 3 && unnormalized >= 3, "every class is exercised");
+    // The byte count and the scalar count differ for the same value.
+    let by_id = |id: &str| cases.iter().find(|case| case["id"] == id).unwrap();
+    assert_eq!(by_id("TX-13")["value"], by_id("TX-13s")["value"]);
+    assert_eq!(by_id("TX-13")["length"], 4);
+    assert_eq!(by_id("TX-13s")["length"], 2);
+}
+
 #[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
 #[test]
 fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {
