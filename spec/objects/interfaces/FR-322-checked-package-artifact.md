@@ -58,6 +58,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-093
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-103
+    type: references
   - target: ix://agent-ix/quire-spec-language/FR-092
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-094
@@ -1173,6 +1175,21 @@ A frame body refusal, meaning-join or canonical-order
   policy, source binding or transition; the body remains the sole source of
   authenticated task-set data under FR-482. This member is the checked-package
   carrier IR admits and exposes as a typed claim read.
+- `operation_effects` — an optional, closed carrier of the declared effect of
+  every model operation member, which has no semantic graph node of its own.
+  When absent the operation effects are unavailable, not empty, and a reader
+  asked for one refuses it typed; no other member of the package changes. When
+  present it is a non-empty array with exactly one row for each operation
+  member declared by an admitted `model` node of form `object_type`, `process`
+  or `state_machine` in a selected document. A row is
+  `{document, declaring, operation, effect, provenance}`: `document` is the
+  selected document identity, `declaring` the local `NodeRef` of the declaring
+  node, `operation` the original member name declared by that node itself, and
+  `effect` the four-member `{modifies, creates, deletes, deletes_scoped}` lift
+  of the operation's document frame (FR-013-AC-13, FR-340), all four members
+  always present and each possibly empty. Rows are keyed by
+  `(document, declaring, operation)` and sorted by that key. See "Operation-effect
+  carrier" below.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -3202,6 +3219,97 @@ out-of-order rows. The positive handles name the FR-482/TC-967 claim form; the
 vector file is the machine-readable contract consumed by the QSpec
 qualification test.
 
+### Operation-effect carrier
+
+`operation_effects` carries
+[QSL FR-103](https://github.com/agent-ix/quire-spec-language)'s
+`OperationMemberRecord.effect`: what each model operation may modify, create and
+delete. A model operation member has no graph node and a `state`/`frame` node
+(FR-340) exists only where a clause, protocol attempt, transition or refinement
+step binds that operation through a `state`/`operation_anchor` (FR-342), so
+neither is a complete per-operation record. The carrier is therefore a
+separate member and the frame nodes are unchanged. Each row is exactly:
+
+```json
+{
+  "document": "acme/orders",
+  "declaring": {"package": "acme/orders", "path": ["model", "object_type", "ix://acme/orders/Order"], "ordinal": 0},
+  "operation": "settle",
+  "effect": {"modifies": [], "creates": [], "deletes": [], "deletes_scoped": []},
+  "provenance": {"origin": "model_document_operation_frame", "member": "ix://acme/orders/Order/settle"}
+}
+```
+
+`effect` has FR-340's frame-body members with the same entry shapes, scopes,
+canonical order and entry checks (`FrameModifiesEntry`, `NodeRef`,
+`FrameDeletesScopedEntry`), minus `term`, and with the row's `effect` as the
+locus root; a process or state-machine row refuses the receiver forms as
+FR-340 does. All four members are required and any may be the empty array: an
+operation with no frame entries has a row of four empty arrays, which is not an
+absent row. A `persistence_interface` declares operations but has no FR-013
+frame (FR-340 admits only an object type, process or state machine as a frame
+context), so it has no row, and as a declaring node of a row it refuses
+`ill_typed`/`operator-ineligible` at `declaring`. No effect kind is dropped, collapsed or inferred: `modifies`
+(field entries with their `receiver` or `every-object` scope, and relationship
+entries), `creates`, type-wide `deletes` and the `deletes_scoped` receiver and
+parameter entries are each carried as the selected document's frame states
+them. `provenance.origin` is exactly `model_document_operation_frame`, and
+`provenance.member` is the IR node identity of the operation member in
+`document`, `<declaring owner node>/<operation>`. Identity is the key and the
+provenance only: a reader never infers either from a path, a display name or
+the position of a frame node, and the same `operation` name under another
+declaring node or another document is another row.
+
+The reader checks rows in array order after aggregate-order validation. For
+each row it checks, in order: `document` is a lock selection
+(`missing_declaration`/`missing-selection` at `document`); `declaring` names a
+node of a selected package (`invalid_package`/`invalid-value` at `declaring`
+when its package is not selected), names a node of the package
+(`missing_declaration`/`missing-name`) and is an eligible `model` node
+(`ill_typed`/`operator-ineligible`, so a relationship or `systems_interface`
+node refuses) at `declaring`; the declaring node's owner document equals
+`document` (`invalid_package`/`invalid-value` at `document`); `operation`
+exactly names an operation the declaring node itself declares, so a field, an
+undeclared name and an operation only inherited refuse `ill_typed`/
+`operator-ineligible` at `operation` (FR-322-AC-30); `provenance.member` equals
+the member identity above (`invalid_package`/`invalid-value` at
+`provenance/member`); each `effect` entry joins as FR-340 states
+(`missing_declaration`/`missing-name`, `invalid_model_binding`/
+`malformed-declaration`, at the entry's FR-340 locus under `effect`); the
+`deletes_scoped` parameter entry names a parameter the operation declares
+(`missing_declaration`/`missing-name` at the entry's `name`); the four `effect`
+arrays are in FR-340's canonical order (`invalid_semantic_graph` at the member
+array, no cause, as FR-340; `deletes_scoped` is the receiver entry, then
+parameter entries by name in UTF-8 bytes); and finally `effect` equals the lift of the
+selected document's operation frame member by member, in the order `modifies`,
+`creates`, `deletes`, `deletes_scoped`, the first differing member refusing
+`invalid_package`/`invalid-value` at `effect/{member}`. A dropped, added,
+altered or wrong-owner entry is that difference; a frame node of FR-340 for the
+same operation, when present, is the same lift and so agrees. After the row
+joins it visits each later row in array order and checks its key against every
+earlier key (`invalid_package`/`conflicting-definition` at that row) before
+against its predecessor's (`invalid_package`/`invalid-value` at that row). Key
+order compares `document` as UTF-8 bytes, then `declaring` by structural
+`NodeRef` order, then `operation` as UTF-8 bytes. Coverage is checked last: an operation with no row refuses `invalid_package`/
+`invalid-value` at `/operation_effects`. The closed schema refuses a missing or
+extra row member, a missing `effect` member (so no kind is silently omitted),
+an unknown effect member or entry kind, a duplicate entry, an unknown
+`provenance.origin` and a non-identifier `operation` as `malformed_wire` at the
+object or member that breaks the schema. Each visited row and each effect entry
+consumes one validation visit from the caller's finite reader budget before
+inspection; exhaustion returns `incomplete` at the first uncharged row with no
+partial effect view.
+
+The split is: QSL emits the carrier from its admitted model documents (the
+emission ticket follows this specification), and the IR strict reader admits or
+refuses it as above and exposes the admitted effect by `(document, declaring,
+operation)`. The IR neither mirrors the effect in a type of its own nor reads it
+from a frame node, a name or a path.
+`operation-effect-vectors.json` publishes the positive cases (each effect kind
+alone, empty effect, several members of one object, one member name under
+different documents and objects), the schema refusals and the schema-valid
+reader refusals with exact codes, causes and loci; TC-977 consumes it.
+
 ### Timed-model nodes
 
 CheckedPackage V2 carries admitted timed models in `semantic_graph.nodes`.
@@ -3871,6 +3979,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-301 | A `scalar_type`/`carried_quantity` node over the unit node of `m` and a `decimal_range` carrier `Decimal[-100, 100; 2, 2; exact]`, one over an `integer_range` carrier `Int[-2, 2]` with `rounding` `exact`, and one over `Int[-2, 2]` with `rounding` `nearest-even` are admitted, self-typed, of family `quantity`, with the path of "Derived type forms and forwarding", and the three are three nodes; the V2 schema enumerates `carried_quantity` among the `scalar_type` forms. Their refusals are `RM-CQ-UNIT`, `RM-CQ-CARRIER` and `RM-CQ-MODE`, each `invalid_package`/`invalid-derived-shape` at the node (`CQ-W01` to `CQ-W08`). | Test (TC-280) |
 | FR-322-AC-302 | A `quire.op.quantity.convert` application whose operand 0 is typed by the unit node of `in` and whose `result_type` is a carried quantity node over `m` with a `Decimal[-100, 100; 2, 2; exact]` carrier is admitted with `mode` `{kind: rounding, value: exact}`, and one with the carrier's mode `nearest-even` with that mode; a `mode` differing from the result node's `rounding`, `null` included, refuses `invalid_package`/`operation-mode-type-mismatch`; a result over a unit of another dimension refuses `ill_typed`/`operator-ineligible`; a carried quantity as an operand of `quire.op.quantity.add` refuses `ill_typed`/`operator-ineligible` (`CQ-W09` to `CQ-W15`; `CQ-W15` converts a carried quantity into another). | Test (TC-280) |
 | FR-322-AC-300 | A package with no `claim`/`schedulability` occurrence omits `schedulability_claims`; a package with such occurrences contains exactly one closed `{declaration, occurrence}` row for each, in structural-`NodeRef`, then occurrence order. Each row resolves only to its local `claim`/`schedulability` node and one of that node's `claim` occurrences; it copies no claim body, task value, source release binding, policy or task-transition template. The positive and shared-node/multiple-occurrence vectors are schema-valid. Missing coverage, a foreign, absent or wrong-form node, an unowned occurrence, a repeated key and a non-canonical row order have the exact `invalid_package` refusal and locus in TC-976; missing/extra row members and a non-integer or negative occurrence are `malformed_wire`. The IR typed read exposes the FR-482 body and identity without evaluating model releases or task successors; the QSL FR-418 checker alone recomputes source/scheduler successors. `TaskTransitionTemplate` remains in the backend-provider-v1 certificate and is not a checked-package member. | Test (TC-976) |
+| FR-322-AC-301 | A package carries `operation_effects` or omits it; when omitted the effects are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, effect, provenance}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)`, with all four `effect` members always present. Each of `modifies`, `creates`, `deletes` and `deletes_scoped` is carried exactly as the selected document's operation frame lifts under FR-013-AC-13 and FR-340, so no effect kind is dropped, and an operation with no frame entries has an all-empty row. One member name under another declaring node or document is another row. The positive vectors OEC-01 to OEC-07 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed`, `invalid_model_binding`, `invalid_semantic_graph` and `invalid_package` refusals and loci for missing/extra members, unknown effect or entry kinds, wrong provenance, a field or undeclared operation, a dropped or invented effect, a repeated key, key order and missing coverage are in TC-977. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-977) |
 
 ## Dependencies
 

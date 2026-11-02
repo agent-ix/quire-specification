@@ -56,6 +56,13 @@
         "$ref": "#/$defs/SchedulabilityClaimRef"
       }
     },
+    "operation_effects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/OperationEffectRow"
+      }
+    },
     "capability_report": {
       "type": "array",
       "items": {
@@ -204,6 +211,90 @@
         "occurrence": {
           "type": "integer",
           "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "OperationEffect": {
+      "type": "object",
+      "required": [
+        "modifies",
+        "creates",
+        "deletes",
+        "deletes_scoped"
+      ],
+      "properties": {
+        "modifies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FrameModifiesEntry"
+          },
+          "uniqueItems": true
+        },
+        "creates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NodeRef"
+          },
+          "uniqueItems": true
+        },
+        "deletes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NodeRef"
+          },
+          "uniqueItems": true
+        },
+        "deletes_scoped": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FrameDeletesScopedEntry"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "OperationEffectProvenance": {
+      "type": "object",
+      "required": [
+        "origin",
+        "member"
+      ],
+      "properties": {
+        "origin": {
+          "const": "model_document_operation_frame"
+        },
+        "member": {
+          "$ref": "#/$defs/Nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OperationEffectRow": {
+      "type": "object",
+      "required": [
+        "document",
+        "declaring",
+        "operation",
+        "effect",
+        "provenance"
+      ],
+      "properties": {
+        "document": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "declaring": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "operation": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "effect": {
+          "$ref": "#/$defs/OperationEffect"
+        },
+        "provenance": {
+          "$ref": "#/$defs/OperationEffectProvenance"
         }
       },
       "additionalProperties": false

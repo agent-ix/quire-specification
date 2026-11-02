@@ -50,6 +50,8 @@ const SCHEDULABILITY_CLAIM_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/schedulability-claim-vectors.json");
 const ZONE_CERTIFICATE_VECTORS: &str =
     include_str!("../proposals/backend-provider-v1/zone-certificate-vectors.json");
+const OPERATION_EFFECT_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/operation-effect-vectors.json");
 const OPTION_VALUE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/option-value-vectors.json");
 const SELECTED_TIMED_SLOT_DOCUMENT: &str =
@@ -20834,5 +20836,426 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
             }
             other => panic!("{id}: unknown disposition {other}"),
         }
+    }
+}
+
+type OperationEffectRefusal = (String, Option<String>, String);
+
+fn effect_node_order(node: &Value) -> (String, Vec<String>, u64) {
+    (
+        node["package"].as_str().unwrap().to_owned(),
+        node["path"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|segment| segment.as_str().unwrap().to_owned())
+            .collect(),
+        node["ordinal"].as_u64().unwrap(),
+    )
+}
+
+fn effect_node(identity: &str, form: &str, name: &str) -> Value {
+    let tag = if form == "relationship" {
+        "relation"
+    } else {
+        "model"
+    };
+    json!({
+        "package": identity,
+        "path": [tag, form, format!("ix://{identity}/{name}")],
+        "ordinal": 0
+    })
+}
+
+/// The FR-013-AC-13 lift of one document operation frame, in FR-340's
+/// canonical order.
+fn lift_operation_frame(document: &Value, frame: &Value) -> Value {
+    let identity = document["identity"].as_str().unwrap();
+    let names = |member: &str| -> Vec<String> {
+        frame[member]
+            .as_array()
+            .map(|items| {
+                items
+                    .iter()
+                    .map(|item| item.as_str().unwrap().to_owned())
+                    .collect()
+            })
+            .unwrap_or_default()
+    };
+    let relationships: Vec<String> = document["relationships"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|name| format!("ix://{identity}/{}", name.as_str().unwrap()))
+        .collect();
+    let form_of = |type_name: &str| -> String {
+        document["types"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|candidate| candidate["name"] == type_name)
+            .unwrap_or_else(|| panic!("{type_name} is declared"))["form"]
+            .as_str()
+            .unwrap()
+            .to_owned()
+    };
+    let type_node = |id: &str| {
+        let name = id.rsplit('/').next().unwrap();
+        effect_node(identity, &form_of(name), name)
+    };
+    let mut modifies = Vec::new();
+    for (member, scope) in [("modifies", "every-object"), ("modifies_receiver", "receiver")] {
+        for id in names(member) {
+            if relationships.contains(&id) {
+                modifies.push(json!({
+                    "kind": "relationship",
+                    "declaration": effect_node(identity, "relationship", id.rsplit('/').next().unwrap())
+                }));
+            } else {
+                let (owner, field) = id.rsplit_once('/').unwrap();
+                modifies.push(json!({
+                    "kind": "field",
+                    "declaration": type_node(owner),
+                    "name": field,
+                    "scope": scope
+                }));
+            }
+        }
+    }
+    modifies.sort_by_key(|entry| {
+        (
+            effect_node_order(&entry["declaration"]),
+            entry["name"].as_str().unwrap_or("").to_owned(),
+            u8::from(entry["scope"] == "receiver"),
+        )
+    });
+    let mut creates: Vec<Value> = names("creates").iter().map(|id| type_node(id)).collect();
+    creates.sort_by_key(effect_node_order);
+    let mut deletes: Vec<Value> = names("deletes").iter().map(|id| type_node(id)).collect();
+    deletes.sort_by_key(effect_node_order);
+    let mut scoped = Vec::new();
+    if frame["deletes_receiver"] == true {
+        scoped.push(json!({"kind": "receiver"}));
+    }
+    let mut parameters = names("deletes_parameters");
+    parameters.sort();
+    scoped.extend(
+        parameters
+            .into_iter()
+            .map(|name| json!({"kind": "parameter", "name": name})),
+    );
+    json!({
+        "modifies": modifies,
+        "creates": creates,
+        "deletes": deletes,
+        "deletes_scoped": scoped
+    })
+}
+
+fn refuse(code: &str, cause: Option<&str>, locus: String) -> OperationEffectRefusal {
+    (code.to_owned(), cause.map(str::to_owned), locus)
+}
+
+/// Reference reader for the FR-322 `operation_effects` carrier join: per-row
+/// joins in array order, then key checks, then coverage.
+fn read_operation_effects(
+    documents: &[Value],
+    rows: &[Value],
+) -> Result<(), OperationEffectRefusal> {
+    let selections: Vec<&str> = documents
+        .iter()
+        .map(|document| document["identity"].as_str().unwrap())
+        .collect();
+    // node key -> (document, form, type name, document type)
+    let mut declared: BTreeMap<(String, Vec<String>, u64), (&Value, String, String, Option<&Value>)> =
+        BTreeMap::new();
+    for document in documents {
+        let identity = document["identity"].as_str().unwrap();
+        for ty in document["types"].as_array().unwrap() {
+            let form = ty["form"].as_str().unwrap();
+            let name = ty["name"].as_str().unwrap();
+            declared.insert(
+                effect_node_order(&effect_node(identity, form, name)),
+                (document, form.to_owned(), name.to_owned(), Some(ty)),
+            );
+        }
+        for name in document["relationships"].as_array().unwrap() {
+            let name = name.as_str().unwrap();
+            declared.insert(
+                effect_node_order(&effect_node(identity, "relationship", name)),
+                (document, "relationship".to_owned(), name.to_owned(), None),
+            );
+        }
+    }
+    let mut keys: Vec<(Vec<u8>, (String, Vec<String>, u64), Vec<u8>)> = Vec::new();
+    for (index, row) in rows.iter().enumerate() {
+        let at = |suffix: &str| format!("/operation_effects/{index}{suffix}");
+        let document_id = row["document"].as_str().unwrap();
+        if !selections.contains(&document_id) {
+            return Err(refuse("missing_declaration", Some("missing-selection"), at("/document")));
+        }
+        let declaring = effect_node_order(&row["declaring"]);
+        if !selections.contains(&declaring.0.as_str()) {
+            return Err(refuse("invalid_package", Some("invalid-value"), at("/declaring")));
+        }
+        let Some((document, form, type_name, ty)) = declared.get(&declaring) else {
+            return Err(refuse("missing_declaration", Some("missing-name"), at("/declaring")));
+        };
+        let eligible = matches!(form.as_str(), "object_type" | "process" | "state_machine");
+        if !eligible {
+            return Err(refuse("ill_typed", Some("operator-ineligible"), at("/declaring")));
+        }
+        if document["identity"] != row["document"] {
+            return Err(refuse("invalid_package", Some("invalid-value"), at("/document")));
+        }
+        let operation = row["operation"].as_str().unwrap();
+        let declared_operation = ty
+            .unwrap()["operations"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|candidate| candidate["name"] == operation);
+        let Some(declared_operation) = declared_operation else {
+            return Err(refuse("ill_typed", Some("operator-ineligible"), at("/operation")));
+        };
+        let member = format!("ix://{document_id}/{type_name}/{operation}");
+        if row["provenance"]["member"] != member {
+            return Err(refuse("invalid_package", Some("invalid-value"), at("/provenance/member")));
+        }
+        let effect = &row["effect"];
+        for (position, entry) in effect["modifies"].as_array().unwrap().iter().enumerate() {
+            let entry_at = |suffix: &str| at(&format!("/effect/modifies/{position}{suffix}"));
+            let Some((entry_document, entry_form, _, entry_type)) =
+                declared.get(&effect_node_order(&entry["declaration"]))
+            else {
+                return Err(refuse("missing_declaration", Some("missing-name"), entry_at("/declaration")));
+            };
+            let _ = entry_document;
+            if entry["kind"] == "relationship" {
+                if entry_form != "relationship" {
+                    return Err(refuse("invalid_model_binding", Some("malformed-declaration"), entry_at("/declaration")));
+                }
+            } else {
+                if !matches!(entry_form.as_str(), "object_type" | "process" | "state_machine") {
+                    return Err(refuse("invalid_model_binding", Some("malformed-declaration"), entry_at("/declaration")));
+                }
+                let has_field = entry_type.unwrap()["fields"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|field| *field == entry["name"]);
+                if !has_field {
+                    return Err(refuse("missing_declaration", Some("missing-name"), entry_at("/name")));
+                }
+            }
+        }
+        for kind in ["creates", "deletes"] {
+            for (position, entry) in effect[kind].as_array().unwrap().iter().enumerate() {
+                let entry_at = at(&format!("/effect/{kind}/{position}"));
+                match declared.get(&effect_node_order(entry)) {
+                    None => return Err(refuse("missing_declaration", Some("missing-name"), entry_at)),
+                    Some((_, entry_form, _, _)) if !matches!(entry_form.as_str(), "object_type" | "process") => {
+                        return Err(refuse("invalid_model_binding", Some("malformed-declaration"), entry_at));
+                    }
+                    Some(_) => {}
+                }
+            }
+        }
+        for (position, entry) in effect["deletes_scoped"].as_array().unwrap().iter().enumerate() {
+            if entry["kind"] == "parameter" {
+                let declared_parameter = declared_operation["params"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|parameter| parameter["name"] == entry["name"]);
+                if !declared_parameter {
+                    return Err(refuse(
+                        "missing_declaration",
+                        Some("missing-name"),
+                        at(&format!("/effect/deletes_scoped/{position}/name")),
+                    ));
+                }
+            }
+        }
+        let scoped_order: Vec<(u8, String)> = effect["deletes_scoped"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|entry| {
+                (
+                    u8::from(entry["kind"] == "parameter"),
+                    entry["name"].as_str().unwrap_or("").to_owned(),
+                )
+            })
+            .collect();
+        if scoped_order.windows(2).any(|pair| pair[0] >= pair[1]) {
+            return Err(refuse("invalid_semantic_graph", None, at("/effect/deletes_scoped")));
+        }
+        for kind in ["modifies", "creates", "deletes"] {
+            let order: Vec<_> = effect[kind]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| {
+                    (
+                        effect_node_order(if kind == "modifies" { &entry["declaration"] } else { entry }),
+                        entry["name"].as_str().unwrap_or("").to_owned(),
+                        u8::from(entry["scope"] == "receiver"),
+                    )
+                })
+                .collect();
+            if order.windows(2).any(|pair| pair[0] >= pair[1]) {
+                return Err(refuse("invalid_semantic_graph", None, at(&format!("/effect/{kind}"))));
+            }
+        }
+        let expected = lift_operation_frame(document, &declared_operation["frame"]);
+        for kind in ["modifies", "creates", "deletes", "deletes_scoped"] {
+            if effect[kind] != expected[kind] {
+                return Err(refuse("invalid_package", Some("invalid-value"), at(&format!("/effect/{kind}"))));
+            }
+        }
+        keys.push((document_id.as_bytes().to_vec(), declaring, operation.as_bytes().to_vec()));
+    }
+    for index in 1..keys.len() {
+        let at = format!("/operation_effects/{index}");
+        if keys[..index].contains(&keys[index]) {
+            return Err(refuse("invalid_package", Some("conflicting-definition"), at));
+        }
+        if keys[index] < keys[index - 1] {
+            return Err(refuse("invalid_package", Some("invalid-value"), at));
+        }
+    }
+    let mut required = 0;
+    for document in documents {
+        for ty in document["types"].as_array().unwrap() {
+            if matches!(ty["form"].as_str().unwrap(), "object_type" | "process" | "state_machine") {
+                required += ty["operations"].as_array().unwrap().len();
+            }
+        }
+    }
+    if keys.len() != required {
+        return Err(refuse("invalid_package", Some("invalid-value"), "/operation_effects".to_owned()));
+    }
+    Ok(())
+}
+
+#[trace("TC-977", "FR-322-AC-301")]
+#[test]
+fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() {
+    let vectors: Value =
+        serde_json::from_str(OPERATION_EFFECT_VECTORS).expect("operation effect vectors JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let row_validator = schema_for_def(&schema, "OperationEffectRow");
+    let member = &schema["properties"]["operation_effects"];
+    assert_eq!(member["items"]["$ref"], "#/$defs/OperationEffectRow");
+    assert_eq!(member["minItems"], 1);
+    assert!(
+        !schema["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("operation_effects")),
+        "the carrier is absent (effects unavailable) in a package that does not carry it"
+    );
+
+    let positive = vectors["positive"].as_array().expect("positive cases");
+    let ids: Vec<&str> = positive.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    assert_eq!(
+        ids,
+        [
+            "OEC-01-modifies",
+            "OEC-02-creates",
+            "OEC-03-deletes",
+            "OEC-04-scoped-deletes",
+            "OEC-05-empty-effect",
+            "OEC-06-multiple-members",
+            "OEC-07-same-member-identity",
+        ]
+    );
+    let carried = |case: &Value| -> Vec<&'static str> {
+        ["modifies", "creates", "deletes", "deletes_scoped"]
+            .into_iter()
+            .filter(|kind| {
+                case["rows"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|row| !row["effect"][kind].as_array().unwrap().is_empty())
+            })
+            .collect()
+    };
+    for case in positive {
+        let rows = case["rows"].as_array().unwrap();
+        for row in rows {
+            assert!(row_validator.is_valid(row), "{} row is closed", case["id"]);
+        }
+        let documents = case["documents"].as_array().unwrap();
+        assert_eq!(read_operation_effects(documents, rows), Ok(()), "{}", case["id"]);
+    }
+    assert_eq!(carried(&positive[0]), ["modifies"]);
+    assert_eq!(carried(&positive[1]), ["creates"]);
+    assert_eq!(carried(&positive[2]), ["deletes"]);
+    assert_eq!(carried(&positive[3]), ["deletes_scoped"]);
+    assert!(carried(&positive[4]).is_empty());
+    assert_eq!(positive[5]["rows"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        carried(&positive[6]),
+        ["modifies", "creates", "deletes", "deletes_scoped"]
+    );
+    let shared = positive[6]["rows"].as_array().unwrap();
+    assert_eq!(shared.len(), 3);
+    assert!(shared.iter().all(|row| row["operation"] == "settle"));
+    assert_ne!(shared[0]["effect"], shared[1]["effect"]);
+    assert_ne!(shared[1]["effect"], shared[2]["effect"]);
+
+    let base_for = |id: &str| -> &Value {
+        positive
+            .iter()
+            .find(|case| case["id"] == id)
+            .unwrap_or_else(|| panic!("base case {id}"))
+    };
+    let patched_rows = |case: &Value| -> Vec<Value> {
+        let base = base_for(case["base"].as_str().unwrap());
+        let mut package = json!({"operation_effects": base["rows"].clone()});
+        for patch in case["patch"].as_array().unwrap() {
+            apply_json_patch(&mut package, patch);
+        }
+        package["operation_effects"].as_array().unwrap().clone()
+    };
+
+    let schema_refusals = vectors["schema_refusals"].as_array().expect("schema refusals");
+    assert_eq!(schema_refusals.len(), 14);
+    for case in schema_refusals {
+        let id = case["id"].as_str().unwrap();
+        assert_eq!(case["schema"], "invalid", "{id}");
+        assert_eq!(case["expected_code"], "malformed_wire", "{id}");
+        let mut loci = Vec::new();
+        for (index, row) in patched_rows(case).iter().enumerate() {
+            for error in row_validator.iter_errors(row) {
+                loci.push(format!("/operation_effects/{index}{}", error.instance_path()));
+            }
+        }
+        loci.sort();
+        loci.dedup();
+        assert_eq!(loci, vec![case["locus"].as_str().unwrap().to_owned()], "{id}");
+    }
+
+    let reader_refusals = vectors["reader_refusals"].as_array().expect("reader refusals");
+    assert_eq!(reader_refusals.len(), 26);
+    for case in reader_refusals {
+        let id = case["id"].as_str().unwrap();
+        assert_eq!(case["schema"], "valid", "{id}");
+        let rows = patched_rows(case);
+        for row in &rows {
+            assert!(row_validator.is_valid(row), "{id} is a reader mutation");
+        }
+        let documents = base_for(case["base"].as_str().unwrap())["documents"]
+            .as_array()
+            .unwrap();
+        let expected = (
+            case["expected_code"].as_str().unwrap().to_owned(),
+            case["expected_cause"].as_str().map(str::to_owned),
+            case["locus"].as_str().unwrap().to_owned(),
+        );
+        assert_eq!(read_operation_effects(documents, &rows), Err(expected), "{id}");
     }
 }
