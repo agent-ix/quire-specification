@@ -80,8 +80,12 @@ operators reach `H` ticks into the future (the greatest sum of upper bounds of
 the future interval operators along a nesting path; past operators add nothing,
 since a look-back needs only the retained history of
 [FR-092](FR-092-evaluate-bounded-past.md)), the activation is *established*
-exactly when the observation authority asserts completeness through `t0 + H` and
-the progress watermark `W` satisfies `W >= t0 + H`. An established activation is evaluated over its eligible admitted
+exactly when the observation authority asserts completeness through `t0 + H + m`
+and the progress watermark `W` satisfies `W >= t0 + H + m`, where the margin `m`
+is 0 for an exact clock and `2u` for a counter cover of uncertainty `u` ticks (it
+keeps every unseen reading above `W` outside the window; FR-160). The
+completeness assertion may run ahead of `W`; establishment needs both
+conditions. An established activation is evaluated over its eligible admitted
 instants only, with no synthetic atom after closure, and its result is definite
 true or false, including the empty existential (false) and empty universal
 (true) window. Before establishment, or when the input is incomplete, the
@@ -89,14 +93,16 @@ evaluator applies the possibility rules of
 [FR-160](FR-160-evaluate-uncertain-revisioned-time.md) over every admissible
 continuation: the result is definite when every possibility agrees (a valid
 early witness or counterexample, or a missing fact outside the decision
-support); otherwise it is `pending` while `W < t0 + H` (declared progress could
-resolve it) and `indeterminate` once `W >= t0 + H` (closed evidence still
+support); otherwise it is `pending` while `W < t0 + H + m` (declared progress could
+resolve it, its deadline being `t0 + H + m`) and `indeterminate` once `W >= t0 + H + m` (closed evidence still
 unresolved: a missing or conflicting valuation, a completeness assertion short
-of `t0 + H`, or missing history, which a look-back-only clause reports at once because its `H` is 0). `incomplete` is reserved for a missing
+of `t0 + H + m`, or missing history, which a look-back-only clause reports at once because its `H` is 0). `incomplete` is reserved for a missing
 required current valuation at the anchor and for resource exhaustion. Two
 instants with equal clock distance are ordered only by an admitted order key; the
 eligible set, `until`/`since` and their duals use that order and refuse without
-it. `release` remains the Boolean dual.
+it, when the order-sensitive operator is evaluated. A trace with no instants, or
+whose stamps decrease along the admitted order, is refused on admission before
+any instant is visited. `release` remains the Boolean dual.
 
 The evaluator shall return `satisfied` or `violated` for an open decision scope only when the
 selected profile proves that every admitted continuation preserves it. Such a
@@ -105,7 +111,16 @@ result shall identify `decisive-witness` for `satisfied` or
 capture, clock, progress and profile facts that form its decision-support set.
 Closure of that decision scope authorizes `closed-scope`; it does not imply
 closure of the surrounding execution. An undecided open scope shall remain
-pending with settlement basis `unsettled`.
+pending with settlement basis `unsettled`. For the timestamped finite-window
+profile the settlement basis is `closed-scope` when the activation is established
+and the decision scope is closed, `decisive-witness` or `decisive-counterexample`
+for any other definite verdict, `unsettled` for `pending` and `unavailable` for
+`indeterminate`, which carries no truth fact. The decision-support set holds the
+`(position, atom)` pairs whose single valuation, flipped, or whose instant other
+than the anchor, removed, would change the verdict; for `pending` and
+`indeterminate` the pairs whose valuation would decide it. Decision-scope
+closure, surrounding-execution closure, assessment execution and input
+completeness stay independent fields ([FR-094](FR-094-interpret-progress-history-and-closure.md)).
 
 For the false-extension profiles, the evaluator shall represent missing required
 current valuations or an incomplete closed input as incomplete rather than
@@ -142,6 +157,9 @@ Where a bounded temporal profile is selected, the evaluator shall refuse an unbo
 | FR-091-AC-17 | Stamps 3 and 4, `once[0,4] holds(p)` at the second position with `p` false at both: a history-cutoff lower boundary gives `indeterminate` (missing history) and an authoritative origin gives false; `p` true at stamp 3 gives true for both (`FWV-25` to `FWV-28`). | Test (TC-980) |
 | FR-091-AC-18 | With counter cover and uncertainty 0, a request at tick 0 and `holds(req) implies eventually[0,3000] holds(ack)`, an acknowledgement at tick 2998 is true, at 3000 `indeterminate` (the cover straddles the bound) and at 3001 false; under exact cover the three are true, true and false. The neighbouring ticks and the same-tick pair are `TCV-01` to `TCV-15` of FR-160 (`FWV-39` to `FWV-44`). | Test (TC-980) |
 | FR-091-AC-19 | `eventually[0,2] holds(p)` activated at each position, over stamps 0 and 10 with `p` false at both, `W` 10 and completeness through 10: the activation at 0 is definitely false and the one at 10 is `pending`, so the outcome is false at position 0; with `p` true at stamp 0 the outcome is `pending` at position 1 with deadline 12, not true (`FWV-29`, `FWV-30`). | Test (TC-980) |
+| FR-091-AC-20 | With counter cover of uncertainty 1, a request at tick 0 and `eventually[0,3000] holds(ack)` with no acknowledgement and completeness through 3002: `W` 3001 is `pending` with deadline 3002 (margin `2u`), and `W` 3002 is false. Under exact cover `W` 3000 with completeness through 3000 is already false (`FWV-52` to `FWV-54`). | Test (TC-980) |
+| FR-091-AC-21 | Over stamps 0, 2, 5 with `p` true, false, true and `W` 5 with completeness through 5, `always[0,5] holds(p)` is false with basis `closed-scope` for a closed scope and `decisive-counterexample` for an open scope, with decision support exactly {(position 1, `p`)}; `eventually[0,5] holds(p)` with `p` false, false, true is true with basis `closed-scope` and support {(position 2, `p`)}. A definite verdict on an unestablished activation reports `decisive-witness` whatever the scope, `pending` reports `unsettled` and `indeterminate` reports `unavailable` with no truth (`FWV-09`, `FWV-13`, `FWV-48` to `FWV-51`). | Test (TC-980) |
+| FR-091-AC-22 | Completeness through 9 with `W` 5 for `eventually[0,5] holds(p)` over stamps 0, 2, 5 with `p` false is false (established at 5), and with `W` 3 it is `pending` with deadline 5. A trace with no instants and a trace with stamps 0, 5, 2 are each refused on admission before any instant is visited (`FWV-55` to `FWV-58`). | Test (TC-980) |
 
 ## Dependencies
 

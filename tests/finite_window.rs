@@ -49,6 +49,9 @@ struct Window {
     complete: Option<i64>,
     anchors: Vec<usize>,
     history_cutoff: bool,
+    /// Counter-cover uncertainty `u`; the establishment margin is `2u`.
+    uncertainty: i64,
+    scope_closed: bool,
 }
 
 fn window(case: &Value) -> Window {
@@ -81,7 +84,22 @@ fn window(case: &Value) -> Window {
         complete: case["complete"].as_i64(),
         anchors,
         history_cutoff: case.get("lower").is_some_and(|l| l == "HistoryCutoff"),
+        uncertainty: case.get("uncertainty").and_then(Value::as_i64).unwrap_or(0),
+        scope_closed: case.get("scope").is_none_or(|s| s == "closed"),
     }
+}
+
+/// The reach of an activation: past operators add nothing, future ones their
+/// upper bound, and a counter cover adds the margin `2u`.
+fn reach(win: &Window, anchor: usize) -> i64 {
+    let future = if win.op == "once" { 0 } else { win.b };
+    win.stamps[anchor] + future + 2 * win.uncertainty
+}
+
+/// Completeness and the watermark both cover the reach.
+fn established(win: &Window, anchor: usize) -> bool {
+    let reach = reach(win, anchor);
+    win.complete.is_some_and(|through| through >= reach) && win.w >= reach
 }
 
 /// The result of one activation: `None` is a definite true.
@@ -97,17 +115,16 @@ fn activation(win: &Window, anchor: usize) -> Option<Outcome> {
             }
         })
         .collect();
-    let reach = t0 + win.b;
+    let reach = reach(win, anchor);
     let complete = win.complete.is_some_and(|through| through >= reach);
     let history_gap = past && win.history_cutoff && t0 - win.b < win.stamps[0];
-    let established = if past {
-        complete && win.w >= t0
-    } else {
-        complete && win.w >= reach
-    };
     // An unestablished activation (or one with missing history) admits a
     // continuation that adds a further eligible instant of either value.
-    let extra = if past { history_gap } else { !established };
+    let extra = if past {
+        history_gap
+    } else {
+        !established(win, anchor)
+    };
     let may_true = |v: Valuation| v != Valuation::F;
     let may_false = |v: Valuation| v != Valuation::T;
     let values: Vec<Valuation> = eligible.iter().map(|&j| win.values[j]).collect();
@@ -126,7 +143,7 @@ fn activation(win: &Window, anchor: usize) -> Option<Outcome> {
         (true, false) => None,
         (false, true) => Some(Outcome::False { at: anchor }),
         (false, false) => panic!("empty possibility set"),
-        (true, true) if !past && win.w < reach => Some(Outcome::Pending {
+        (true, true) if win.w < reach => Some(Outcome::Pending {
             at: anchor,
             deadline: reach,
         }),
@@ -176,6 +193,64 @@ fn evaluate(win: &Window) -> Outcome {
         .unwrap_or(Outcome::True)
 }
 
+fn basis(win: &Window, outcome: &Outcome) -> &'static str {
+    match outcome {
+        Outcome::Pending { .. } => "unsettled",
+        Outcome::Indeterminate { .. } => "unavailable",
+        Outcome::True | Outcome::False { .. } => {
+            let at = if let Outcome::False { at } = outcome {
+                *at
+            } else {
+                win.anchors[0]
+            };
+            if established(win, at) && win.scope_closed {
+                "closed-scope"
+            } else if matches!(outcome, Outcome::True) {
+                "decisive-witness"
+            } else {
+                "decisive-counterexample"
+            }
+        }
+    }
+}
+
+/// The instants whose single valuation, flipped, or which, removed and other
+/// than the anchor, change the result (activation at the origin).
+fn support(win: &Window, base: &Outcome) -> Vec<usize> {
+    let rebuild = |values: Vec<Valuation>, stamps: Vec<i64>| Window {
+        op: win.op.clone(),
+        a: win.a,
+        b: win.b,
+        stamps,
+        values,
+        w: win.w,
+        complete: win.complete,
+        anchors: vec![0],
+        history_cutoff: win.history_cutoff,
+        uncertainty: win.uncertainty,
+        scope_closed: win.scope_closed,
+    };
+    (0..win.stamps.len())
+        .filter(|&j| {
+            let mut flipped = win.values.clone();
+            flipped[j] = match flipped[j] {
+                Valuation::T => Valuation::F,
+                Valuation::F => Valuation::T,
+                other => other,
+            };
+            let flip_changes = evaluate(&rebuild(flipped, win.stamps.clone())) != *base;
+            let remove_changes = j != 0 && {
+                let mut values = win.values.clone();
+                let mut stamps = win.stamps.clone();
+                values.remove(j);
+                stamps.remove(j);
+                evaluate(&rebuild(values, stamps)) != *base
+            };
+            flip_changes || remove_changes
+        })
+        .collect()
+}
+
 fn expected(case: &Value) -> Outcome {
     let e = &case["expected"];
     let at = || e["where"].as_u64().unwrap() as usize;
@@ -214,13 +289,30 @@ fn vectors() -> Value {
     "FR-091-AC-14",
     "FR-091-AC-15",
     "FR-091-AC-17",
-    "FR-091-AC-19"
+    "FR-091-AC-19",
+    "FR-091-AC-20",
+    "FR-091-AC-21",
+    "FR-091-AC-22"
 )]
 #[test]
 fn tc_980_window_vectors_follow_the_established_window_rule() {
     for case in vectors()["window"].as_array().unwrap() {
         let id = case["id"].as_str().unwrap();
-        assert_eq!(evaluate(&window(case)), expected(case), "{id}");
+        let win = window(case);
+        let outcome = evaluate(&win);
+        assert_eq!(outcome, expected(case), "{id}");
+        if let Some(want) = case["expected"].get("basis") {
+            assert_eq!(basis(&win, &outcome), want.as_str().unwrap(), "{id} basis");
+        }
+        if let Some(want) = case["expected"].get("support") {
+            let want: Vec<usize> = want
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|p| p[0].as_u64().unwrap() as usize)
+                .collect();
+            assert_eq!(support(&win, &outcome), want, "{id} support");
+        }
     }
 }
 
@@ -357,13 +449,29 @@ fn tc_980_a_watermark_covers_its_own_tick_and_not_the_next() {
     }
 }
 
+/// A trace with no instants, or with decreasing stamps, is refused on admission.
+#[trace("TC-980", "FR-091-AC-22")]
+#[test]
+fn tc_980_an_empty_or_decreasing_trace_is_refused_on_admission() {
+    for case in vectors()["admit"].as_array().unwrap() {
+        let stamps: Vec<i64> = case["stamps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_i64().unwrap())
+            .collect();
+        let refused = stamps.is_empty() || stamps.windows(2).any(|pair| pair[1] < pair[0]);
+        assert_eq!(refused, case["expected"] == "refuse", "{}", case["id"]);
+    }
+}
+
 #[trace("TC-980", "FR-091-AC-10", "FR-091-AC-18")]
 #[test]
 fn tc_980_vector_ids_are_unique_and_every_origin_row_is_present() {
     let doc = vectors();
     let mut ids = BTreeSet::new();
     let mut rows = BTreeSet::new();
-    for group in ["window", "order", "counter", "covered"] {
+    for group in ["window", "order", "counter", "covered", "admit"] {
         for case in doc[group].as_array().unwrap() {
             assert!(
                 ids.insert(case["id"].as_str().unwrap().to_owned()),
@@ -376,5 +484,6 @@ fn tc_980_vector_ids_are_unique_and_every_origin_row_is_present() {
         }
     }
     rows.insert(doc["tick_cover_vectors"]["row"].as_i64().unwrap());
-    assert_eq!(rows, (1..=22).collect::<BTreeSet<i64>>());
+    let want: BTreeSet<i64> = (1..=22).chain([27, 28, 31]).collect();
+    assert_eq!(rows, want);
 }

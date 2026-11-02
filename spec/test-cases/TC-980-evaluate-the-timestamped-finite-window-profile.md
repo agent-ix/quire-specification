@@ -27,7 +27,7 @@ and a result that depends on ingestion order.
 
 Apply the established-window rule of FR-091 and the possibility sets of FR-160 to
 each vector of `proposals/finite-window/finite-window-vectors.json` (`FWV-01` to
-`FWV-47`; QSL TC-1295 rows 1 to 22) and compare the outcome class, deciding
+`FWV-58`; QSL TC-1295 rows 1 to 22, 27, 28 and 31) and compare the outcome class, deciding
 position, deadline and reason with the stated expectation. The tick-cover vectors
 `TCV-01` to `TCV-15` are consumed from `tick-cover-vectors.json`.
 
