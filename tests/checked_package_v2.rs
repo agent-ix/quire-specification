@@ -21590,8 +21590,9 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         "counter",
         "tick_unit",
         "uncertainty",
+        "on_gap",
     ];
-    // 1. shape: the fifteen bindings, in order.
+    // 1. shape: the sixteen bindings, in order.
     let bindings: Vec<&str> = plan["bindings"].as_array().unwrap().iter().map(|b| b.as_str().unwrap()).collect();
     for (index, name) in expected.iter().enumerate() {
         if bindings.get(index) != Some(name) {
@@ -21620,12 +21621,13 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     // 2. reference kinds (and no declaration on an entry), in binding order.
     let form_is = |value: &Value, form: &str| value.as_str() == Some(form);
     let undeclared = |name: &str| plan["entries"][name]["declared"] == false;
-    let checks: [(usize, bool); 9] = [
+    let checks: [(usize, bool); 10] = [
         (0, form_is(&plan["clause_form"], "temporal_clause")),
         (1, form_is(&plan["state"]["form"], "record")),
         (2, form_is(&plan["inputs_form"], "record")),
         (3, form_is(&plan["scope_form"], "record")),
         (4, form_is(&plan["results_form"], "sequence")),
+        (15, form_is(&plan["entries"]["on_gap"]["form"], "pure_function") && undeclared("on_gap")),
         (13, form_is(&plan["tick_unit"]["form"], "unit") && form_is(&plan["tick_unit"]["dimension"], "Time")),
         (5, form_is(&plan["entries"]["init"]["form"], "pure_function") && undeclared("init")),
         (6, form_is(&plan["entries"]["on_event"]["form"], "pure_function") && undeclared("on_event")),
@@ -21639,6 +21641,7 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         (5, "init", json!([]), "State"),
         (6, "on_event", json!(["State", "integer", "Inputs"]), "Step"),
         (7, "on_watermark", json!(["State", "integer", "Scope"]), "Step"),
+        (15, "on_gap", json!(["State", "integer"]), "Step"),
     ];
     for (index, name, params, result) in signatures {
         let entry = &plan["entries"][name];
@@ -21738,6 +21741,7 @@ fn monitor_plan_key(plan: &Value) -> Vec<String> {
     key.push(text(&premises["counter"]));
     key.push(text(&plan["tick_unit"]["index"]));
     key.push(text(&premises["uncertainty"]));
+    key.push(text(&plan["entries"]["on_gap"]["index"]));
     key
 }
 
@@ -21767,13 +21771,14 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
     "FR-487-AC-4",
     "FR-487-AC-5",
     "FR-487-AC-6",
+    "FR-487-AC-7",
     "FR-322-AC-308"
 )]
 #[test]
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 46);
+    assert_eq!(cases.len(), 52);
     let base_key = monitor_plan_key(&vectors["base"]);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
@@ -21801,7 +21806,43 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (6, 40));
+    assert_eq!((admitted, refused), (7, 45));
+
+    // The counter-gap path (FR-487-AC-7): on_gap over abstract live instances, and the reading sequence.
+    let gaps = &vectors["gap_cases"];
+    for call in gaps["calls"].as_array().unwrap() {
+        let id = call["id"].as_str().unwrap();
+        let gap = call["gap"].as_u64().unwrap();
+        let max = call["max_reading_gap"].as_u64().unwrap();
+        assert!(gap > max, "{id}: a gap fault exceeds the maximum");
+        let (mut results, mut live_after) = (Vec::new(), Vec::new());
+        for instance in call["live"].as_array().unwrap() {
+            if instance["status"] == "open" {
+                results.push(json!({
+                    "instance": instance["id"],
+                    "outcome": "Failed",
+                    "payload": {"gap": gap, "max_reading_gap": max}
+                }));
+            } else {
+                live_after.push(instance.clone());
+            }
+        }
+        assert_eq!(Value::Array(results), call["results"], "{id}");
+        assert_eq!(Value::Array(live_after), call["live_after"], "{id}");
+    }
+    for sequence in gaps["sequences"].as_array().unwrap() {
+        let id = sequence["id"].as_str().unwrap();
+        let modulus = 1u64 << sequence["width_bits"].as_u64().unwrap();
+        let max = sequence["max_reading_gap"].as_u64().unwrap();
+        let readings: Vec<u64> =
+            sequence["readings"].as_array().unwrap().iter().map(|r| r.as_u64().unwrap()).collect();
+        let mut calls = vec![json!(["baseline"])];
+        for pair in readings.windows(2) {
+            let delta = (pair[1] + modulus - pair[0]) % modulus;
+            calls.push(if delta > max { json!(["on_gap", delta]) } else { json!(["on_event", delta]) });
+        }
+        assert_eq!(Value::Array(calls), sequence["calls"], "{id}");
+    }
 
     // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
     let append = &vectors["append"];
