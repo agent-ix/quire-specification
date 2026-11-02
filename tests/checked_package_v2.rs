@@ -20104,7 +20104,8 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-291",
     "FR-322-AC-292",
     "FR-322-AC-296",
-    "FR-322-AC-297"
+    "FR-322-AC-297",
+    "FR-322-AC-310"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20580,6 +20581,30 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 assert_ne!(
                     rows[0], root,
                     "positive root and missing-term witness must differ"
+                );
+            }
+            "PL-R3-leaf-row" => {
+                let rows = value.as_array().unwrap();
+                assert_eq!(rows.len(), 1);
+                assert!(
+                    location.is_valid(&rows[0]),
+                    "a leaf row remains structurally valid"
+                );
+                // Protocol locations are application-only: the row names a literal leaf.
+                assert_eq!(rows[0]["application"]["path"][0], "expression");
+                assert_eq!(rows[0]["application"]["path"][1], "literal");
+                for positive in vectors["positive"]["protocol_locations"].as_array().unwrap() {
+                    assert_eq!(
+                        positive["application"]["path"][1], "application",
+                        "{} names an application, never a leaf",
+                        positive["id"]
+                    );
+                }
+                assert_eq!(case["expected_code"], "invalid_package");
+                assert_eq!(case["expected_cause"], "invalid-value");
+                assert_eq!(
+                    case["locus"],
+                    "/checked_term_data/protocol_locations/0/application"
                 );
             }
             "DT-R1-duplicate-selection-key" => {

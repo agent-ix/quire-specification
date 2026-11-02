@@ -2518,6 +2518,43 @@
       ]
     },
     {
+      "id": "PL-R3-leaf-row",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "row names a literal leaf node, not an application; a leaf takes its location from its own node",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/0/application",
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "literal",
+              "protocol-leaf"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "DT-R4-foreign-effective-selection-key",
       "target": "DispatchCandidateTable",
       "mutation": "selection_key.original.package is outside the admitted effective view",

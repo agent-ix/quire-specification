@@ -1121,6 +1121,14 @@ A frame body refusal, meaning-join or canonical-order
   the reader SHALL refuse `malformed_wire` at that `kind` member, not at the
   containing origin object.
 
+  `protocol_locations` is application-only. A non-application leaf node
+  (a `literal`, `Local` or `reference` expression node) SHALL take its
+  semantic location from its own admitted node, never from a
+  `protocol_locations` row, and a leaf's location SHALL NOT be inferred from
+  the row of an enclosing or neighbouring application. A row whose
+  `application` names a leaf node refuses `invalid_package`/`invalid-value`
+  at that row's `application` member (FR-322-AC-310).
+
   `dispatch_tables` retains the producer's admitted candidate table for a
   selected model-operation dispatch. A table names the exact application and
   occurrence, selected operation witness `{declaring, operation}`, and receiver
@@ -4097,6 +4105,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-307 | `quire.op.ieee.float64.fma` over three `float64` operands typed `Float64[nearest-even]`, and `quire.op.ieee.float32.fma` over three `float32` operands typed `Float32[toward-zero]`, are admitted as applications of operator `call` with three `reference` arguments a, b, c, `result_type` of the operands' width, the law `ieee_profile` and a `rounding` mode, no member and no leaves (the catalog entry of QVC `checked-operation-catalog-v1.json`). Two arguments, four arguments, a `float32` operand of the `float64` identity (mixed width included), an `integer` operand and a `float32` `result_type` of the `float64` identity refuse `ill_typed`/`operator-ineligible`; a node with mode `null` refuses `invalid_package`/`operation-mode-mismatch` and one with no `ieee_profile` law `invalid_package`/`operation-law-missing` (`proposals/checked-package-v2/fma-application-vectors.json`, `FM-01` to `FM-12`). | Test (TC-233) |
 | FR-322-AC-308 | A `temporal`/`monitor_plan` root is admitted by the reader only with the seventeen ordered bindings, the entry signatures, the `Outcome` union and the premises of FR-487, and refuses with the codes and loci of FR-487 otherwise; buffer extension adds no operation identity to the closed catalog or to either V2 schema (`proposals/checked-package-v2/monitor-plan-vectors.json`, `MP-01` to `MP-82`). | Test (TC-978) |
 | FR-322-AC-309 | A declaration-less `function` node has the derived path `["function", <semantic_form>, <decimal parameter count>, <parameter index segments in order>, <body root index segment>, <measure index segment if any>]`: equal parameters, body root and measure give an equal path, and a changed body root, a changed or reordered parameter or an added measure gives a different one; two nodes with equal `package`, `path` and `ordinal` are refused as a duplicate `node_id`, and a model-owned accessor with an owner-chosen label is admitted unchanged (`proposals/checked-package-v2/entry-key-vectors.json`, `EK-01` to `EK-08`). | Test (TC-979) |
+| FR-322-AC-310 | A non-application leaf node (`literal`, `Local` or `reference`) takes its semantic location from its own admitted node and never from a `protocol_locations` row: `protocol_locations` is application-only. Vector PL-R3-leaf-row, a structurally valid row whose `application` names the leaf node `["expression", "literal", "protocol-leaf"]`, refuses `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations/0/application`; the positive rows PL-01-root, PL-02-child and PL-03-declaration each name a node whose path is `["expression", "application", ...]`, and none names a leaf. | Test (TC-233) |
 
 ## Dependencies
 
