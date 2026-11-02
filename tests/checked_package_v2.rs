@@ -22758,3 +22758,266 @@ fn tc_277_replay_sources_are_checked_against_byte_provision() {
         assert_eq!(outcome, case["expected"], "{id}");
     }
 }
+
+// ---------------------------------------------------------------------------
+// IR-1278: temporal clause names (FR-322 "Temporal clause names", FR-370).
+// ---------------------------------------------------------------------------
+
+const TEMPORAL_CLAUSE_NAME_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-clause-name-vectors.json");
+
+type ClauseNameRefusal = (&'static str, &'static str, String);
+
+/// Resolve the vector placeholders `<clause>`, `<node 9>` and `<binding row 0>`.
+fn resolve_clause_name_placeholders(value: &Value, base: &Value) -> Value {
+    match value {
+        Value::String(text) => {
+            let nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+            match text.as_str() {
+                "<clause>" => nodes[8]["node_id"].clone(),
+                "<node 9>" => nodes[9]["node_id"].clone(),
+                "<binding row 0>" => base["temporal_bindings"][0].clone(),
+                _ => value.clone(),
+            }
+        }
+        Value::Object(map) => Value::Object(
+            map.iter()
+                .map(|(key, item)| (key.clone(), resolve_clause_name_placeholders(item, base)))
+                .collect(),
+        ),
+        Value::Array(items) => Value::Array(
+            items.iter().map(|item| resolve_clause_name_placeholders(item, base)).collect(),
+        ),
+        other => other.clone(),
+    }
+}
+
+/// RFC 6902 patch, adding array insertion to the shared object-member applier.
+fn apply_clause_name_patch(candidate: &mut Value, patch: &Value) {
+    if patch["op"] == "add" {
+        let path = patch["path"].as_str().expect("add path");
+        let (parent, member) = path.rsplit_once('/').expect("add path has a parent");
+        if let Some(array) = candidate.pointer_mut(parent).and_then(Value::as_array_mut) {
+            array.insert(member.parse().expect("array index"), patch["value"].clone());
+            return;
+        }
+    }
+    apply_authored_patch(candidate, patch);
+}
+
+/// Test-local decider for the temporal clause name carrier and the duplicate
+/// declaration rule of `temporal_bindings` rows, over a schema-valid package.
+/// Order: binding rows, then name-row joins, repeated keys, canonical order, coverage.
+fn decide_temporal_clause_names(package: &Value) -> Result<(), ClauseNameRefusal> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let find = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id);
+    let is_clause =
+        |node: &Value| node["node_tag"] == "temporal" && node["semantic_form"] == "temporal_clause";
+    let mut bound = Vec::new();
+    for (i, row) in package["temporal_bindings"].as_array().into_iter().flatten().enumerate() {
+        let declaration = find(&row["declaration"]);
+        if !declaration.is_some_and(|node| {
+            is_clause(node) || (node["node_tag"] == "protocol" && node["semantic_form"] == "compensation")
+        }) {
+            return Err(("invalid_package", "timed-node-reference", format!("/temporal_bindings/{i}/declaration")));
+        }
+        if bound.contains(&&row["declaration"]) {
+            return Err(("invalid_package", "timed-node-reference", format!("/temporal_bindings/{i}")));
+        }
+        bound.push(&row["declaration"]);
+    }
+    let rows = package["temporal_clause_names"].as_array().cloned().unwrap_or_default();
+    for (i, row) in rows.iter().enumerate() {
+        let Some(node) = find(&row["declaration"]).filter(|node| is_clause(node)) else {
+            return Err(("invalid_package", "invalid-value", format!("/temporal_clause_names/{i}/declaration")));
+        };
+        let owned = node["occurrences"].as_array().unwrap().iter().any(|occurrence| {
+            occurrence["role"] == "claim" && occurrence["ordinal"] == row["occurrence"]
+        });
+        if !owned {
+            return Err(("invalid_package", "invalid-value", format!("/temporal_clause_names/{i}/occurrence")));
+        }
+    }
+    let key = |row: &Value| (row["declaration"].clone(), row["occurrence"].as_u64().unwrap());
+    for (i, row) in rows.iter().enumerate() {
+        if rows[..i].iter().any(|earlier| key(earlier) == key(row)) {
+            return Err(("invalid_package", "conflicting-definition", format!("/temporal_clause_names/{i}")));
+        }
+    }
+    for i in 1..rows.len() {
+        let order = node_id_order(&rows[i - 1]["declaration"], &rows[i]["declaration"])
+            .then(key(&rows[i - 1]).1.cmp(&key(&rows[i]).1));
+        if order.is_gt() {
+            return Err(("invalid_package", "invalid-value", format!("/temporal_clause_names/{i}")));
+        }
+    }
+    for node in nodes.iter().filter(|node| is_clause(node)) {
+        for occurrence in node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim") {
+            if !rows.iter().any(|row| {
+                row["declaration"] == node["node_id"] && row["occurrence"] == occurrence["ordinal"]
+            }) {
+                return Err(("invalid_package", "invalid-value", "/temporal_clause_names".to_owned()));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn clause_name_case_package(base: &Value, case: &Value) -> Value {
+    let mut package = base.clone();
+    for patch in case["patch"].as_array().expect("patch") {
+        apply_clause_name_patch(&mut package, &resolve_clause_name_placeholders(patch, base));
+    }
+    package
+}
+
+/// FR-322-AC-342..AC-354 (TC-233): the clause-name carrier is closed, carries one name per
+/// claim occurrence, leaves the node and its identity name-free, and the vectors decide.
+#[trace(
+    "TC-233", "TC-303", "FR-322-AC-342", "FR-322-AC-343", "FR-322-AC-344", "FR-322-AC-345",
+    "FR-322-AC-346", "FR-322-AC-347", "FR-322-AC-348", "FR-322-AC-349", "FR-322-AC-350",
+    "FR-322-AC-351", "FR-322-AC-352", "FR-322-AC-353", "FR-322-AC-354", "FR-370-AC-16"
+)]
+#[test]
+fn temporal_clause_name_carrier_is_closed_per_occurrence_and_identity_free() {
+    let vectors = parsed_fixture(TEMPORAL_CLAUSE_NAME_VECTORS);
+    let schema = parsed_fixture(SCHEMA);
+    let package_validator = jsonschema::validator_for(&schema).expect("checked package schema");
+    let row_validator = schema_for_def(&schema, "TemporalClauseNameRow");
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-timed-clause-nodes.json"
+    ));
+    assert_eq!(vectors["base"], "fixtures/positive-timed-clause-nodes.json");
+    assert_eq!(schema["properties"]["temporal_clause_names"]["items"]["$ref"], "#/$defs/TemporalClauseNameRow");
+    assert!(
+        !schema["required"].as_array().unwrap().contains(&json!("temporal_clause_names")),
+        "a package with no temporal clause omits the member"
+    );
+    let row_schema = &schema["$defs"]["TemporalClauseNameRow"];
+    assert_eq!(row_schema["additionalProperties"], json!(false), "the row is closed");
+    assert_eq!(row_schema["properties"]["name"]["$ref"], "#/$defs/Identifier");
+    assert_eq!(
+        row_schema["properties"].as_object().unwrap().keys().cloned().collect::<BTreeSet<_>>(),
+        ["declaration", "name", "occurrence"].iter().map(|s| s.to_string()).collect()
+    );
+
+    // The clause node is the one the vectors name, carries one claim occurrence, no
+    // `declaration`, and its structural path holds no clause name (identity is name-free).
+    let nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+    let clause = &nodes[vectors["clause_graph_index"].as_u64().unwrap() as usize];
+    assert_eq!((clause["node_tag"].as_str(), clause["semantic_form"].as_str()), (Some("temporal"), Some("temporal_clause")));
+    assert!(clause.get("declaration").is_none(), "AC-342: no declaration member on the node");
+    assert!(!clause["node_id"].to_string().contains("Clause0"), "AC-343: the name is outside the node id");
+    assert_eq!(decide_temporal_clause_names(&base), Ok(()));
+
+    let mut seen = BTreeSet::new();
+    let (mut admitted, mut schema_refused, mut refused) = (0, 0, 0);
+    for case in vectors["positive"].as_array().expect("positive") {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(
+            package_validator.is_valid(&package),
+            "{id}: {:?}",
+            package_validator.iter_errors(&package).map(|e| e.to_string()).collect::<Vec<_>>()
+        );
+        assert_eq!(decide_temporal_clause_names(&package), Ok(()), "{id}");
+        let names: Vec<&str> = package["temporal_clause_names"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| row["name"].as_str().unwrap())
+            .collect();
+        assert_eq!(names, string_list(&case["names"], "names"), "{id}");
+        assert_eq!(
+            package["temporal_bindings"].as_array().unwrap().len() as u64,
+            case["bindings"].as_u64().unwrap(),
+            "{id}: one binding row per clause node, whatever its occurrence count"
+        );
+        // One row per claim occurrence of the node; the node itself holds no name.
+        let occurrences = package["semantic_graph"]["nodes"][8]["occurrences"].as_array().unwrap().len();
+        assert_eq!(names.len(), occurrences, "{id}: one name per claim occurrence");
+        if case["identity_unchanged"] == true {
+            for patch in case["patch"].as_array().unwrap() {
+                assert!(
+                    patch["path"].as_str().unwrap().starts_with("/temporal_clause_names"),
+                    "{id}: a rename touches only the name row"
+                );
+            }
+            assert_eq!(package["semantic_graph"], base["semantic_graph"], "{id}: AC-343");
+        } else if names.len() == 2 {
+            // Two occurrences of one structurally shared node: one node id, distinct names.
+            let rows = package["temporal_clause_names"].as_array().unwrap();
+            assert_eq!(rows[0]["declaration"], rows[1]["declaration"], "{id}: AC-344 one shared node");
+            assert_ne!(rows[0]["name"], rows[1]["name"], "{id}: AC-344 a name per occurrence");
+            assert_ne!(rows[0]["occurrence"], rows[1]["occurrence"], "{id}");
+        }
+        admitted += 1;
+    }
+    for case in vectors["schema_refusals"].as_array().expect("schema refusals") {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(!package_validator.is_valid(&package), "{id}: the closed schema refuses the package");
+        if case["expected"]["code"] == "malformed_wire" {
+            // A missing or extra member is refused at the row; a mistyped member at that member.
+            let row = &package["temporal_clause_names"][0];
+            let error = row_validator
+                .iter_errors(row)
+                .next()
+                .unwrap_or_else(|| panic!("{id}: the row definition refuses the row"));
+            let at = error.instance_path().to_string();
+            assert_eq!(
+                format!("/temporal_clause_names/0{at}"),
+                case["expected"]["locus"].as_str().unwrap(),
+                "{id}"
+            );
+        } else {
+            assert_eq!(case["expected"]["code"], "invalid_semantic_graph", "{id}");
+        }
+        schema_refused += 1;
+    }
+    for case in vectors["semantic_refusals"].as_array().expect("semantic refusals") {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(package_validator.is_valid(&package), "{id}: schema-valid reader case");
+        let expected = &case["expected"];
+        assert_eq!(
+            decide_temporal_clause_names(&package),
+            Err((
+                expected["code"].as_str().unwrap(),
+                expected["cause"].as_str().unwrap(),
+                expected["locus"].as_str().unwrap().to_owned()
+            )),
+            "{id}"
+        );
+        refused += 1;
+    }
+    assert_eq!((admitted, schema_refused, refused), (3, 9, 9));
+}
+
+/// Every published positive package that has a temporal
+/// clause carries one name row per claim occurrence of each clause.
+#[trace("TC-233", "FR-322-AC-342", "FR-322-AC-345")]
+#[test]
+fn every_positive_fixture_names_each_claim_occurrence_of_each_temporal_clause() {
+    let mut with_clauses = 0;
+    for (name, package) in published_positive_packages() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+        let expected: usize = nodes
+            .iter()
+            .filter(|n| n["node_tag"] == "temporal" && n["semantic_form"] == "temporal_clause")
+            .map(|n| n["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim").count())
+            .sum();
+        match package["temporal_clause_names"].as_array() {
+            None => assert_eq!(expected, 0, "{name}: a clause needs its name rows"),
+            Some(rows) => {
+                assert_eq!(rows.len(), expected, "{name}");
+                with_clauses += 1;
+            }
+        }
+        assert_eq!(decide_temporal_clause_names(&package), Ok(()), "{name}");
+    }
+    assert!(with_clauses >= 6, "the published clause fixtures all carry names: {with_clauses}");
+}

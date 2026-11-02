@@ -821,3 +821,15 @@ order, SI-R14 and SI-R15 show that the integrity phase precedes the owner and
 source-map agreement check and SI-R16 that it precedes the closed-schema checks
 (FR-322-AC-333..341). The cause is catalogued and paired in FR-272
 (FR-272-AC-26).
+
+Temporal clause names (FR-322 "Temporal clause names", IR-1278, QSL FR-515 `name()`,
+FR-518 row 8): `temporal-clause-name-vectors.json` over
+`positive-timed-clause-nodes.json` admits CN-P1 (one named clause), CN-P2 (a shared
+node, two occurrences, two names, one binding row) and CN-P3 (rename, identity
+unchanged); refuses CN-S1..CN-S9 in the closed schema (`malformed_wire`; CN-S9 is
+the unchanged `invalid_semantic_graph` of a node `declaration`); and refuses
+CN-R1..CN-R9 with `invalid_package` and the exact cause and locus: coverage,
+absent and wrong-kind declaration, unowned occurrence, repeated key, order, the
+check order, and the second `temporal_bindings` row of a shared node
+(FR-322-AC-342..354, FR-370-AC-16). Every published positive package with a
+temporal clause carries its name rows.

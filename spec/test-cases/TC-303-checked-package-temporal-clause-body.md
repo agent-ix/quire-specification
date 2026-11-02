@@ -69,6 +69,8 @@ Encode as V2 packages:
 12. `temporal-fairness-target-vectors.json`: each positive fairness member and each closed-shape mutation.
 13. The vector file's schema-valid reader cases for absent, foreign and wrong-kind parallel identities, an absent branch label, wrong-kind protocol-root, attempt and compensation targets, and same-package targets owned by a different protocol clause: root, attempt, parallel branch and compensation template.
 
+14. `temporal-clause-name-vectors.json`: a clause renamed with the graph unchanged, and two structurally equal clauses declared under two names.
+
 ## Expected Results
 
 1. Both are admitted: each body is a `quire.op.temporal.clause` application
@@ -128,3 +130,4 @@ Encode as V2 packages:
 11. All three fail the schema (FR-370-AC-13).
 12. Every positive member satisfies the `OperationMember` schema, including each protocol target and the preserved hybrid-transition target; all missing/unknown discriminants, missing or extra identity fields and invalid structural node ids fail the schema (FR-322-AC-293, FR-370-AC-14).
 13. Each reader case's target identity and target context are admitted by the schema. Expected refusals point exactly to `/target/node`, `/target/parallel` or `/target/branch` as applicable; wrong-kind root, attempt, parallel and compensation targets and same-package nodes in another protocol clause are refused with the FR-370-AC-15 code and cause.
+14. The rename changes no node and no `node_id`; the two clauses are one node with two `claim` occurrences and two `temporal_clause_names` rows, one name each (FR-370-AC-16, FR-322-AC-343, FR-322-AC-344).
