@@ -20108,7 +20108,11 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-310",
     "FR-322-AC-311",
     "FR-322-AC-312",
-    "FR-322-AC-313"
+    "FR-322-AC-313",
+    "FR-322-AC-314",
+    "FR-322-AC-315",
+    "FR-322-AC-316",
+    "FR-322-AC-317"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20294,35 +20298,46 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             row["id"]
         );
     }
-    // FR-322-AC-313: a protocol slot expression is located under a type_declaration
-    // origin named by its site, never a protocol_attempt origin.
+    // FR-322-AC-313..317: protocol locations carry checker site-name origins.
+    const SLOT_SITE: &str = "protocol Handshake compensate undo trigger-guard 0";
     for row in location_rows {
         let origin = &row["location"]["origin"];
         assert_eq!(origin["kind"], "type_declaration", "{}", row["id"]);
-        assert!(
-            origin["name"].as_str().unwrap().starts_with("protocol ")
-                || origin["name"] == "Handshake",
-            "{} names a protocol site or a declared type",
-            row["id"]
-        );
+        let expected = if row["id"] == "PL-03-declaration" {
+            "protocol Handshake"
+        } else {
+            SLOT_SITE
+        };
+        assert_eq!(origin["name"], expected, "{} (AC-313, AC-317)", row["id"]);
     }
     let site = |id: &str| {
         location_rows.iter().find(|row| row["id"] == id).unwrap()["location"].clone()
     };
-    assert_eq!(
-        site("PL-01-root")["origin"]["name"],
-        "protocol Handshake compensate undo trigger-guard 0"
-    );
     assert_eq!(site("PL-01-root")["origin"], site("PL-02-child")["origin"]);
-    let attempt_rows: Vec<&str> = vectors["reader_refusals"]
-        .as_array()
-        .unwrap()
+    assert_eq!(site("PL-01-root")["path"], json!([]));
+    assert_eq!(site("PL-02-child")["path"], json!([2, 0]));
+    let refusals = vectors["reader_refusals"].as_array().unwrap();
+    for vector in refusals {
+        let id = vector["id"].as_str().unwrap();
+        if id.starts_with("PL-R2") || id.starts_with("PL-R3") {
+            let rows = vector["value"].as_array().unwrap();
+            assert!(!rows.is_empty(), "{id}");
+            for row in rows {
+                assert_eq!(
+                    row["location"]["origin"],
+                    site("PL-02-child")["origin"],
+                    "{id} (AC-315)"
+                );
+            }
+        }
+    }
+    let attempt_rows: Vec<&str> = refusals
         .iter()
         .chain(vectors["schema_invalid"].as_array().unwrap())
         .filter(|v| v.to_string().contains("protocol_attempt"))
         .map(|v| v["id"].as_str().unwrap())
         .collect();
-    assert_eq!(attempt_rows, ["PL-R1-duplicate-term"]);
+    assert_eq!(attempt_rows, ["PL-R1-duplicate-term"], "AC-316");
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
         let mut wire = row.clone();

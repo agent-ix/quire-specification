@@ -1118,7 +1118,7 @@ A frame body refusal, meaning-join or canonical-order
   of the nodes anchored to that attempt and is not the origin of a protocol slot
   expression. Every protocol slot expression, and every other site of a protocol
   declaration, is located at the root of a `type_declaration` origin whose
-  `name` is that site's own spaced name (FR-322-AC-313), so that no two sites of
+  `name` is that site's own spaced name (FR-322-AC-313..317), so that no two sites of
   a protocol share an origin and no site name equals a declared type name.
   The site-name forms are the registry below, where `P` is the protocol name:
   `protocol P`; `protocol P finish F`; `protocol P finish F body`;
@@ -4136,7 +4136,11 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-310 | `protocol_locations` is application-only: every `value` node form of the schema's `ValueNode` and `expression`/`reference` is a leaf that takes its semantic location from its own admitted node, never from a row, and does not inherit an enclosing application's row location. A row naming a leaf is refused `invalid_package`/`invalid-value` at that row's `application` member; no other node kind receives a code from this rule (they stay under FR-322-AC-291). | Test (TC-233) |
 | FR-322-AC-311 | A row naming an admitted leaf node refuses `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations/{i}/application`, `i` the row index, for each of PL-R3-leaf-literal, PL-R3-leaf-local and PL-R3-leaf-reference (each graph holds two schema-valid `SemanticNode`s, the admitted leaf and an admitted `expression`/`call` application, and the row is otherwise valid); every `ValueNode` form and `expression`/`reference` refuses the same way, and no other form is asserted. The same refusal holds for PL-R3-leaf-copies-enclosing-location, whose valid application row at index 0 does not admit the following leaf row at index 1 that copies its location. These isolate the leaf rule: the node exists and is local, unlike the absent or foreign node of FR-322-AC-291. | Test (TC-233) |
 | FR-322-AC-312 | A row naming the admitted `expression`/`call` application node of those graphs is not refused by the leaf rule, and every positive row PL-01-root, PL-02-child and PL-03-declaration names an `["expression", "call", ...]` node, the same form the PL-R3 graphs use, none a leaf. | Test (TC-233) |
-| FR-322-AC-313 | A protocol slot expression's `protocol_locations` row carries a `type_declaration` origin whose `name` is the slot's site name from the site-name registry in the `protocol_locations` clause, at the origin's root (`path` empty for the slot's root term), never a `protocol_attempt` origin: PL-01-root and PL-02-child name `protocol Handshake compensate undo trigger-guard 0`, the root and the child at path `[2, 0]`, and each PL-R2 and PL-R3 row names the same site. A `protocol_attempt` origin is carried only by the PL-R1-duplicate-term rows. | Test (TC-233) |
+| FR-322-AC-313 | A protocol slot expression's `protocol_locations` row carries a `type_declaration` origin whose `name` is the slot's site name from the site-name registry in the `protocol_locations` clause, never a `protocol_attempt` origin: PL-01-root and PL-02-child both name `protocol Handshake compensate undo trigger-guard 0`. | Test (TC-233) |
+| FR-322-AC-314 | A protocol location's `path` is empty exactly when it locates the slot's root term and is the child-index path of the term otherwise: PL-01-root carries `[]` and PL-02-child, the same slot's child term, carries `[2, 0]`, so the two rows share one origin and differ in location. | Test (TC-233) |
+| FR-322-AC-315 | Each protocol-location row of the PL-R2 and PL-R3 reader-refusal vectors carries the same `type_declaration` site-name origin as PL-02-child, so each refuses for the defect it isolates and not for its origin. | Test (TC-233) |
+| FR-322-AC-316 | A `protocol_attempt` origin appears in no positive protocol-location row and in the reader-refusal vectors only in the two rows of PL-R1-duplicate-term. | Test (TC-233) |
+| FR-322-AC-317 | A protocol declaration's own location, PL-03-declaration, carries the `type_declaration` origin named `protocol Handshake`, the checker's declaration-site form, and no protocol-location row names a bare declared-type name as an origin. | Test (TC-233) |
 
 ## Dependencies
 

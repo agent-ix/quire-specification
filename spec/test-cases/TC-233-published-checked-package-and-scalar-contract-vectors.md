@@ -27,6 +27,14 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-313
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-314
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-315
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-316
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-317
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
@@ -747,4 +755,4 @@ reference; the PL-R3 vectors carry the graph) refuses
 leaf row copies an enclosing application's location, while a row naming the
 admitted application is not refused by the leaf rule (FR-322-AC-310..312). Each
 protocol slot row carries a `type_declaration` site-name origin, and only
-PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313).
+PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..317).
