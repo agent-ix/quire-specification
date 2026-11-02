@@ -856,7 +856,7 @@
         "location": {
           "origin": {
             "kind": "type_declaration",
-            "name": "Handshake"
+            "name": "protocol Handshake"
           },
           "path": [
             1
@@ -881,9 +881,8 @@
         "term_ordinal": 0,
         "location": {
           "origin": {
-            "kind": "protocol_attempt",
-            "protocol": 0,
-            "attempt": 0
+            "kind": "type_declaration",
+            "name": "protocol Handshake compensate undo trigger-guard 0"
           },
           "path": []
         }
@@ -906,9 +905,8 @@
         "term_ordinal": 1,
         "location": {
           "origin": {
-            "kind": "protocol_attempt",
-            "protocol": 0,
-            "attempt": 0
+            "kind": "type_declaration",
+            "name": "protocol Handshake compensate undo trigger-guard 0"
           },
           "path": [
             2,
@@ -2505,9 +2503,8 @@
           "term_ordinal": 1,
           "location": {
             "origin": {
-              "kind": "protocol_attempt",
-              "protocol": 0,
-              "attempt": 0
+              "kind": "type_declaration",
+              "name": "protocol Handshake compensate undo trigger-guard 0"
             },
             "path": [
               2,
@@ -2689,9 +2686,8 @@
           "term_ordinal": 0,
           "location": {
             "origin": {
-              "kind": "protocol_attempt",
-              "protocol": 0,
-              "attempt": 0
+              "kind": "type_declaration",
+              "name": "protocol Handshake compensate undo trigger-guard 0"
             },
             "path": [
               2,
@@ -2902,9 +2898,8 @@
           "term_ordinal": 0,
           "location": {
             "origin": {
-              "kind": "protocol_attempt",
-              "protocol": 0,
-              "attempt": 0
+              "kind": "type_declaration",
+              "name": "protocol Handshake compensate undo trigger-guard 0"
             },
             "path": [
               2,
@@ -3093,9 +3088,8 @@
           "term_ordinal": 0,
           "location": {
             "origin": {
-              "kind": "protocol_attempt",
-              "protocol": 0,
-              "attempt": 0
+              "kind": "type_declaration",
+              "name": "protocol Handshake compensate undo trigger-guard 0"
             },
             "path": [
               2,
@@ -3277,9 +3271,8 @@
           "term_ordinal": 0,
           "location": {
             "origin": {
-              "kind": "protocol_attempt",
-              "protocol": 0,
-              "attempt": 0
+              "kind": "type_declaration",
+              "name": "protocol Handshake compensate undo trigger-guard 0"
             },
             "path": [
               2,
@@ -3304,9 +3297,8 @@
           "term_ordinal": 0,
           "location": {
             "origin": {
-              "kind": "protocol_attempt",
-              "protocol": 0,
-              "attempt": 0
+              "kind": "type_declaration",
+              "name": "protocol Handshake compensate undo trigger-guard 0"
             },
             "path": [
               2,
