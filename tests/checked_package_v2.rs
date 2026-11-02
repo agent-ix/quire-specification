@@ -21932,3 +21932,40 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
     // The plan root is a form of the existing temporal node, not a new node tag.
     assert_eq!(SCHEMA.matches("\"monitor_plan\"").count(), 1);
 }
+
+/// FR-322-AC-304: a `text` literal typed `Text[...; nfc]` is already normalized (the reader
+/// normalizes nothing), so no published positive fixture may carry one in decomposed form. A
+/// combining mark U+0300 to U+036F in such a literal is the decomposed spelling of a
+/// precomposed letter (`e` U+0301 for U+00E9); a `binary-utf8` literal keeps its bytes and is
+/// not checked.
+#[trace("TC-233", "FR-322-AC-304")]
+#[test]
+fn tc_233_published_positive_fixtures_carry_normalized_nfc_text_literals() {
+    fn walk(value: &Value, name: &str, found: &mut usize, bad: &mut Vec<String>) {
+        match value {
+            Value::Object(map) => {
+                let nfc = map
+                    .get("type")
+                    .and_then(|ty| ty["path"].as_array())
+                    .and_then(|path| path.last())
+                    .is_some_and(|last| last == "nfc");
+                if map.get("value_kind").is_some_and(|kind| kind == "text") && nfc {
+                    *found += 1;
+                    let text = map["value"].as_str().unwrap_or_default();
+                    if text.chars().any(|c| ('\u{300}'..='\u{36f}').contains(&c)) {
+                        bad.push(format!("{name}: {text:?} is not NFC"));
+                    }
+                }
+                map.values().for_each(|inner| walk(inner, name, found, bad));
+            }
+            Value::Array(items) => items.iter().for_each(|inner| walk(inner, name, found, bad)),
+            _ => {}
+        }
+    }
+    let (mut found, mut bad) = (0, Vec::new());
+    for (name, package) in published_positive_packages() {
+        walk(&package, &name, &mut found, &mut bad);
+    }
+    assert!(found >= 1, "a published fixture carries an nfc text literal");
+    assert!(bad.is_empty(), "{bad:#?}");
+}
