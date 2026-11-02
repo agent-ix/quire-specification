@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-142-AC-27 to FR-142-AC-30, FR-322-AC-301 and FR-322-AC-302 (TC-187 U41 to U44, TC-280 MU-31 to MU-34): the carried quantity type `Quantity<u, C>` (`scalar_type`/`carried_quantity`) and its conversion. `nodes` lists the nodes of one importing package `example` by key; a path segment `{\"node\": key}` is the structural id of the node `key` (the path of FR-322 \"Derived type forms and forwarding\"). `wire` holds CQ-W01 to CQ-W14: the shape and conversion-application cases, each `admitted`, `distinct` (two nodes with different paths) or a refusal with `code`, `cause` and the node `at`. `evaluation` holds CQ-E01 to CQ-E16, the exact halves of TC-187 U07, U08, U16, U17, U18 and U29 and the precedence case U43: each names the `source` value, its `unit`, the `target` carrier node, the mode (always `exact`: the nearest-even halves of U07, U16 and U29 are unchanged and not restated), the optional `limits` tuple `L(i,d,e,o,w,r)` of TC-187 as a list `[integer_bits, decimal_digits, unit_edges, value_occurrences, work_units, result_units]`, and the `expected` disposition. The reader and evaluator that decide these outcomes are quire-contract-ir's and quire-verification's; the vectors are authoritative for them and QSpec's test checks only their shape and that each `completed` or `refused` outcome follows from the exact value and the carrier.",
+  "note": "FR-142-AC-27 to FR-142-AC-30, FR-322-AC-301 and FR-322-AC-302 (TC-187 U41 to U44, TC-280 MU-31 to MU-34): the carried quantity type `Quantity<u, C>` (`scalar_type`/`carried_quantity`) and its conversion. `nodes` lists the nodes of one importing package `example` by key; a path segment `{\"node\": key}` is the structural id of the node `key` (the path of FR-322 \"Derived type forms and forwarding\"). `wire` holds CQ-W01 to CQ-W14: the shape and conversion-application cases, each `admitted`, `distinct` (two nodes with different paths) or a refusal with `code`, `cause` and the node `at`. `evaluation` holds CQ-E01 to CQ-E20, the exact halves of TC-187 U07, U08, U16, U17, U18 and U29 and the precedence case U43: each names the `source` value, its `unit`, the `target` carrier node, the mode (`exact` except CQ-E17 to CQ-E19, the carried forms of the unchanged nearest-even halves of U07 and U29 and rounding before bounds), the optional `limits` tuple `L(i,d,e,o,w,r)` of TC-187 as a list `[integer_bits, decimal_digits, unit_edges, value_occurrences, work_units, result_units]`, and the `expected` disposition. The reader and evaluator that decide these outcomes are quire-contract-ir's and quire-verification's; the vectors are authoritative for them and QSpec's test checks only their shape and that each `completed` or `refused` outcome follows from the exact value and the carrier.",
   "units": {
     "m": "1",
     "cm": "1/100",
@@ -929,6 +929,163 @@
       "carrier": "dec_wide",
       "rounding": "exact"
     },
+    "dec_wide_s": {
+      "tag": "bounded_domain",
+      "form": "decimal_range",
+      "path": [
+        "bounded_domain",
+        "decimal_range",
+        "coefficient_min",
+        {
+          "node": "integer"
+        },
+        "-100",
+        "coefficient_max",
+        "100",
+        "scale_min",
+        "0",
+        "scale_max",
+        "2",
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact",
+        {
+          "node": "decimal"
+        }
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "coefficient_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "coefficient_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "0",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "base": "decimal",
+      "coefficient_min": -100,
+      "coefficient_max": 100,
+      "scale_min": 0,
+      "scale_max": 2,
+      "rounding": "exact"
+    },
+    "q_dec_range": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_wide_s"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_wide_s"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_wide_s",
+      "rounding": "exact"
+    },
     "q_dec_s": {
       "tag": "scalar_type",
       "form": "carried_quantity",
@@ -1386,6 +1543,22 @@
       },
       "code": "ill_typed",
       "cause": "operator-ineligible"
+    },
+    {
+      "id": "CQ-W15",
+      "description": "convert a q_pm2 operand (carried, unit m) into q_dec, mode exact",
+      "expected": "admitted",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "q_pm2"
+        ],
+        "result_type": "q_dec",
+        "mode": {
+          "kind": "rounding",
+          "value": "exact"
+        }
+      }
     }
   ],
   "evaluation": [
@@ -1473,7 +1646,8 @@
         "code": "decimal_out_of_domain",
         "cause": "outside-domain",
         "after": "unit.target-domain",
-        "before": "unit.result-retain"
+        "before": "unit.result-retain",
+        "expected": "Decimal[-2, 2; 0, 0]"
       }
     },
     {
@@ -1491,7 +1665,8 @@
         "code": "decimal_out_of_domain",
         "cause": "outside-domain",
         "after": "unit.target-domain",
-        "before": "unit.result-retain"
+        "before": "unit.result-retain",
+        "expected": "Decimal[-2, 2; 0, 0]"
       }
     },
     {
@@ -1521,7 +1696,9 @@
           "unit.rational-arithmetic": 2,
           "work_units": 4
         },
-        "before": "unit.target-domain"
+        "before": "unit.target-domain",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 2, 2]"
       }
     },
     {
@@ -1551,7 +1728,9 @@
           "unit.rational-arithmetic": 2,
           "work_units": 4
         },
-        "before": "unit.target-domain"
+        "before": "unit.target-domain",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 2, 2]"
       }
     },
     {
@@ -1576,7 +1755,8 @@
         "code": "decimal_out_of_domain",
         "cause": "outside-domain",
         "after": "unit.target-domain",
-        "before": "unit.result-retain"
+        "before": "unit.result-retain",
+        "expected": "Decimal[-2, 2; 0, 0]"
       }
     },
     {
@@ -1659,6 +1839,7 @@
           "work_units": 4
         },
         "before": "unit.target-domain",
+        "at": "convert",
         "expected": "Int[-2, 2]"
       }
     },
@@ -1707,7 +1888,8 @@
         "code": "integer_out_of_domain",
         "cause": "outside-domain",
         "after": "unit.target-domain",
-        "before": "unit.result-retain"
+        "before": "unit.result-retain",
+        "expected": "Int[-2, 2]"
       }
     },
     {
@@ -1752,6 +1934,88 @@
         "cause": "inexact-conversion",
         "at": "convert",
         "expected": "Decimal[-2, 2; 0, 0]"
+      }
+    },
+    {
+      "id": "CQ-E17",
+      "row": "U44 carried form of U07 nearest-even: 1 in into Decimal[-100, 100; 2, 2; nearest-even]",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec_ne",
+      "mode": "nearest-even",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "coefficient": 3,
+        "scale": 2,
+        "loss": {
+          "exact_numerator": 127,
+          "exact_denominator": 5000,
+          "rounded_coefficient": 3,
+          "rounded_scale": 2,
+          "mode": "nearest-even"
+        }
+      }
+    },
+    {
+      "id": "CQ-E18",
+      "row": "U44 25 cm into Int[-2, 2; nearest-even]",
+      "source": {
+        "magnitude": "25",
+        "unit": "cm"
+      },
+      "target": "q_int_ne",
+      "mode": "nearest-even",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "integer": 0,
+        "loss": {
+          "exact_numerator": 1,
+          "exact_denominator": 4,
+          "rounded_coefficient": 0,
+          "rounded_scale": 0,
+          "mode": "nearest-even"
+        }
+      }
+    },
+    {
+      "id": "CQ-E19",
+      "row": "U44 rounding precedes bounds: 13/5 m into Int[-2, 2; nearest-even]",
+      "source": {
+        "magnitude": "13/5",
+        "unit": "m"
+      },
+      "target": "q_int_ne",
+      "mode": "nearest-even",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "integer_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Int[-2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E20",
+      "row": "scale grid is 10^-smax: 1 in into Decimal[-100, 100; 0, 2; exact] (smin < smax) refuses",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec_range",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 0, 2]"
       }
     }
   ]

@@ -20648,3 +20648,191 @@ fn schedulability_claim_carrier_vectors_match_the_closed_member_schema() {
         }
     }
 }
+
+fn carried_rounding_is_exact(node: &Value) -> bool {
+    node["rounding"] == "exact"
+}
+
+const QUANTITY_CARRIER_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/quantity-carrier-vectors.json");
+
+/// FR-322-AC-301, FR-322-AC-302, FR-142-AC-28..FR-142-AC-30 (TC-280 `MU-31`..
+/// `MU-34`, TC-187 `U41`..`U44`): shape and consistency check of the published
+/// carried-quantity vectors. QSpec holds no reader or evaluator for them (the
+/// readers are quire-contract-ir's and quire-verification's), so this test
+/// recomputes only what follows from exact arithmetic: that each carried node's
+/// path and body agree, that each carried node meets the closed
+/// `ScalarTypeNode` schema, that the schema enumerates the form, and that every
+/// `completed` or `refused` evaluation outcome is what the exact converted
+/// value and the carrier decide.
+#[trace("TC-280", "FR-322-AC-301", "FR-322-AC-302")]
+#[trace("TC-187", "FR-142-AC-28", "FR-142-AC-29", "FR-142-AC-30")]
+#[test]
+fn tc_280_quantity_carrier_vectors_are_consistent() {
+    let root = parsed_fixture(SCHEMA);
+    let vectors = parsed_fixture(QUANTITY_CARRIER_VECTORS);
+    let nodes = vectors["nodes"].as_object().unwrap();
+    let keys: Vec<&String> = nodes.keys().collect();
+    let index = |key: &str| keys.iter().position(|k| k.as_str() == key).unwrap_or_else(|| panic!("node {key} resolves"));
+    let resolve_path = |path: &Value| -> Value {
+        Value::Array(
+            path.as_array()
+                .unwrap()
+                .iter()
+                .map(|seg| match seg.get("node") {
+                    Some(key) => json!({"node": index(key.as_str().unwrap())}),
+                    None => seg.clone(),
+                })
+                .collect(),
+        )
+    };
+    let id_of = |key: &str| {
+        json!({"package": "example", "path": resolve_path(&nodes[key]["path"]), "ordinal": 0})
+    };
+    let scalar = schema_for_def(&root, "ScalarTypeNode");
+    let enumerated = root["$defs"]["ScalarTypeNode"].to_string();
+    assert!(enumerated.contains("\"carried_quantity\""), "the schema enumerates the form");
+    for (key, node) in nodes {
+        if node["form"] != "carried_quantity" {
+            continue;
+        }
+        let (unit, carrier, rounding) =
+            (node["unit"].as_str().unwrap(), node["carrier"].as_str().unwrap(), node["rounding"].as_str().unwrap());
+        let path = node["path"].as_array().unwrap();
+        assert_eq!(path[..2], [json!("scalar_type"), json!("carried_quantity")], "{key}");
+        assert_eq!(path[2], json!({"node": unit}), "{key}: the unit is the third segment");
+        assert_eq!(path[3], json!({"node": carrier}), "{key}: the carrier is the fourth segment");
+        assert_eq!(path[4], json!("rounding"), "{key}");
+        assert_eq!(path[6], json!(rounding), "{key}: the path ends in the mode");
+        let members = node["body"]["members"].as_array().unwrap();
+        let names: Vec<&str> = members.iter().map(|m| m["name"].as_str().unwrap()).collect();
+        assert_eq!(names, ["unit", "carrier", "rounding"], "{key}: the body members in order");
+        assert_eq!(members[2]["value"]["value"], json!(rounding), "{key}: the literal is the mode");
+        let resolve_ref = |value: &Value| match value.get("target") {
+            Some(target) => json!({"term": "reference", "target": id_of(target["node"].as_str().unwrap())}),
+            None => json!({
+                "term": "literal",
+                "type": id_of(value["type"]["node"].as_str().unwrap()),
+                "value": value["value"],
+                "value_kind": value["value_kind"]
+            }),
+        };
+        let mut dependencies = vec![id_of(unit), id_of(carrier)];
+        dependencies.sort_by_key(|id| id["path"].to_string());
+        let wire = json!({
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "node_id": id_of(key),
+            "node_tag": "scalar_type",
+            "semantic_form": "carried_quantity",
+            "semantic_type": id_of(key),
+            "dependencies": dependencies,
+            "occurrences": [{"ordinal": 0, "role": "type"}],
+            "body": {
+                "term": "aggregate",
+                "members": members.iter().map(|m| json!({
+                    "term": "binding", "name": m["name"], "value": resolve_ref(&m["value"])
+                })).collect::<Vec<_>>()
+            }
+        });
+        assert!(scalar.is_valid(&wire), "{key}: the node meets the closed ScalarTypeNode schema");
+    }
+    // Wire cases: ids, referenced nodes and mode pairs.
+    let wire_ids: Vec<&str> = vectors["wire"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    let expected_wire: Vec<String> = (1..=15).map(|n| format!("CQ-W{n:02}")).collect();
+    assert_eq!(wire_ids, expected_wire.iter().map(String::as_str).collect::<Vec<_>>());
+    for case in vectors["wire"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        if let Some(node) = case.get("node") {
+            assert!(nodes.contains_key(node.as_str().unwrap()), "{id}");
+            let carried = &nodes[node.as_str().unwrap()];
+            let carrier = &nodes[carried["carrier"].as_str().unwrap()];
+            let well_formed = carried["form"] == "carried_quantity"
+                && nodes[carried["unit"].as_str().unwrap()]["form"] == "unit"
+                && matches!(carrier["form"].as_str().unwrap(), "integer_range" | "decimal_range")
+                && (carrier["form"] != "decimal_range" || carrier["rounding"] == carried["rounding"]);
+            assert_eq!(well_formed, case["expected"] == "admitted", "{id}: the shape decides admission");
+        }
+        if let Some(app) = case.get("application") {
+            let result = &nodes[app["result_type"].as_str().unwrap()];
+            if app["operation"] == "quire.op.quantity.convert" {
+                let dimension = |unit: &str| match nodes[unit].get("unit") {
+                    Some(inner) => nodes[inner.as_str().unwrap()]["dimension"].clone(),
+                    None => nodes[unit]["dimension"].clone(),
+                };
+                let same = dimension(app["operand_types"][0].as_str().unwrap()) == dimension(app["result_type"].as_str().unwrap());
+                let mode = app["mode"].get("value").cloned().unwrap_or(Value::Null);
+                let agrees = mode == result["rounding"];
+                let outcome = match (same, agrees) {
+                    (false, _) => "ill_typed/operator-ineligible",
+                    (true, false) => "invalid_package/operation-mode-type-mismatch",
+                    (true, true) => "admitted",
+                };
+                assert_eq!(outcome, case["expected"], "{id}");
+            } else {
+                assert_eq!(case["expected"], "ill_typed/operator-ineligible", "{id}");
+            }
+        }
+    }
+    // Evaluation cases: exact arithmetic decides completed and refused outcomes.
+    let eval_ids: Vec<&str> = vectors["evaluation"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    let expected_eval: Vec<String> = (1..=20).map(|n| format!("CQ-E{n:02}")).collect();
+    assert_eq!(eval_ids, expected_eval.iter().map(String::as_str).collect::<Vec<_>>());
+    let fraction = |text: &str| -> (BigInt, BigInt) {
+        let (n, d) = text.split_once('/').unwrap_or((text, "1"));
+        (n.parse().unwrap(), d.parse().unwrap())
+    };
+    for case in vectors["evaluation"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let mode = case["mode"].as_str().unwrap();
+        assert_eq!(mode == "exact", carried_rounding_is_exact(&nodes[case["target"].as_str().unwrap()]), "{id}: the mode is the target's");
+        let expected = &case["expected"];
+        let carried = &nodes[case["target"].as_str().unwrap()];
+        let carrier = &nodes[carried["carrier"].as_str().unwrap()];
+        let (mn, md) = fraction(case["source"]["magnitude"].as_str().unwrap());
+        let (un, ud) = fraction(vectors["units"][case["source"]["unit"].as_str().unwrap()].as_str().unwrap());
+        // value = mag * unit_scale as num/den; scale 10^t for a decimal carrier.
+        let (num, den) = (mn * un, md * ud);
+        let (t, lo, hi): (u32, BigInt, BigInt) = if carrier["form"] == "decimal_range" {
+            if carrier["scale_max"].as_u64().unwrap() > 1000 {
+                assert_eq!(expected["disposition"], "incomplete", "{id}: the wide carrier is never materialized");
+                continue;
+            }
+            (
+                carrier["scale_max"].as_u64().unwrap() as u32,
+                carrier["coefficient_min"].as_i64().unwrap().into(),
+                carrier["coefficient_max"].as_i64().unwrap().into(),
+            )
+        } else {
+            (0, carrier["min"].as_i64().unwrap().into(), carrier["max"].as_i64().unwrap().into())
+        };
+        let scaled = num * BigInt::from(10u32).pow(t);
+        let on_grid = (&scaled % &den) == BigInt::from(0);
+        let outcome = if !on_grid && mode == "exact" {
+            json!({"refused": "inexact_conversion"})
+        } else {
+            // nearest-even: the quotient rounded half to even (the vectors use positive values).
+            let (q, rem) = (&scaled / &den, &scaled % &den);
+            let twice = &rem * 2;
+            let coefficient = if on_grid || twice < den || (twice == den && (&q % 2) == BigInt::from(0)) { q } else { q + 1 };
+            if coefficient < lo || coefficient > hi {
+                json!({"refused": if carrier["form"] == "decimal_range" { "decimal_out_of_domain" } else { "integer_out_of_domain" }})
+            } else {
+                json!({"completed": coefficient.to_string()})
+            }
+        };
+        match expected["disposition"].as_str().unwrap() {
+            "refused" => assert_eq!(outcome["refused"], expected["code"], "{id}"),
+            "completed" => {
+                let got = outcome["completed"].as_str().unwrap_or_else(|| panic!("{id}: completes"));
+                let want = expected.get("coefficient").or_else(|| expected.get("integer")).unwrap();
+                assert_eq!(got, want.to_string(), "{id}");
+            }
+            "incomplete" => {
+                // Charge exhaustion precedes the membership decision; the limits are authoritative.
+                assert!(case["limits"].is_array(), "{id}");
+                assert_eq!(expected["charge_point"], "unit.target-domain", "{id}");
+            }
+            other => panic!("{id}: unknown disposition {other}"),
+        }
+    }
+}

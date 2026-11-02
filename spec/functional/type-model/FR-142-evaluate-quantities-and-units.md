@@ -247,6 +247,49 @@ quantity magnitude has no bound. The operand of an affine unit refuses
 `ill_typed` at type checking before any charge, as every other arithmetic on an
 affine unit does. The operation lowers to `quire.op.quantity.negate` (FR-322).
 
+**Carried quantity.** `Quantity<u, C>` is the type of the quantities whose
+unit is `u` and whose magnitude is a value of the numeric carrier `C`, which is
+exactly one of `Int[lo, hi]` and `Decimal[lo, hi; smin, smax]`, either with an
+optional trailing `; mode` naming a rounding mode (FR-140; omitted means
+`exact`; the grammar takes any `type-ref` there and the checker refuses the rest). The carrier is bounded: bare `Integer` and bare `Decimal` are not
+carriers. The magnitude of a `Quantity<u, C>` is the carrier value read as an
+exact rational, in the unit `u`. `Quantity<u>` and `Quantity<u, C>` are distinct
+types, as are two carried types that differ in unit, carrier bound or mode; no
+value of one is accepted where another is required, and no conversion between
+them is implicit. A carried quantity is produced only by
+`convert<Quantity<u, C>>(e)`, where `e` has type `Quantity<u'>` or
+`Quantity<u', C'>` with `u'` and `u` of the same dimension (FR-142-AC-2 decides
+incompatible dimensions); it is consumed by being stored, passed, returned or
+converted back with `convert<Quantity<u''>>(e)`. A carried quantity is not an
+operand of quantity addition, subtraction, negation, multiplication, division,
+power, equality or ordering, which refuse `ill_typed`/`type-mismatch` at the
+operand before any charge.
+
+The rounding mode of `Quantity<u, C>` is the mode of `C`: for a `Decimal`
+carrier the mode of its `Decimal[..]` (FR-322 "Derived type forms and
+forwarding" requires the type to agree), and for an `Int` carrier the mode as
+written, `exact` when omitted. Rounding is never implicit: no operation
+chooses a mode, a conversion rounds only under the mode its target type names,
+and any rounding under a different mode is a separate, explicit operation
+naming that mode, which this requirement does not define.
+
+A conversion into `Quantity<u, C>` composes the exact value as for any
+conversion, then decides the target as FR-140 decides a `Decimal[..]` target and
+as the value-accounting definition decides an integer target (an integer target
+is a decimal target at scale zero), at the charge positions already defined
+for conversion. Under mode `exact` it is exact-or-refuse: when the exact value
+is not an integer multiple of `10^-smax` (`smax` is zero for an `Int` carrier, and FR-140 fixes the target scale at `smax`), the conversion refuses
+`refused { code: inexact_conversion, cause: inexact-conversion }` at the
+`convert` node, before `unit.target-domain`, retaining `expected`, the target
+carrier, and no value; this replaces `inexact_decimal` for a quantity
+conversion only. A decimal or integer conversion target other than a carrier is not a source form of a quantity conversion, so no quantity conversion refuses `inexact_decimal`; every other FR-140 decimal step keeps it. A non-`exact` mode rounds under FR-140 and records its
+`DecimalLoss`. The carrier's bounds are then checked as before: a value outside
+them refuses `decimal_out_of_domain` or `integer_out_of_domain` with
+`outside-domain` after `unit.target-domain` and before `unit.result-retain`,
+atomically. Inexactness is decided from the converted value and the carrier, not
+from the unit factor alone: `3 m` converts exactly into `Int[-2, 2]` and `1 in`
+does not.
+
 Multiplication, division and integer power first convert every non-affine
 operand to its dimension's canonical root, perform exact value arithmetic and
 normalize the resulting base-dimension exponents. The result unit is an
@@ -512,6 +555,14 @@ the element of `Option` and of the collection types, and the target of
   (FR-154 "Unit bounds").
 - The checker SHALL NOT admit `Quantity<D>` over a dimension `D` as a type
   form; a source that wants it declares a unit of `D` and writes `Quantity<u>`.
+- The checker SHALL read `Quantity<u, C>` as the carried quantity type of
+  "Carried quantity", and SHALL refuse `ill_typed`/`type-mismatch` at `C` when
+  `C` is not a bounded `Int[..]` or `Decimal[..]` type (a carrier with `lo > hi`
+  or `smin > smax` is refused as FR-140 refuses its `Decimal[..]`). It SHALL lower
+  `Quantity<u, C>` to the anonymous `scalar_type`/`carried_quantity` node of
+  FR-322 "Derived type forms and forwarding", and `convert<Quantity<u, C>>(e)`
+  to `quire.op.quantity.convert` whose `result_type` is that node and whose
+  `rounding` mode is the carrier's.
 - The checker SHALL lower a quantity literal to a checked-package `literal` term
   of `value_kind` `quantity` typed by the unit's node.
 - The checker SHALL read a unit `typeRef` of a domain-package member as FR-322
@@ -548,6 +599,10 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-24 | An equivalence never anchors a base dimension: with `acme/rpc` declaring base dimension `Mass` with root unit `kg` and `acme/flow` declaring base dimension `Mass` with no unit, `dimension R::Mass ~ F::Mass by 1 R::kg = 1 F::kg;` refuses `missing_declaration`/`missing-name` at `F::kg`, and `dimension Force = F::Mass; unit n : Force = 1;` refuses `missing_declaration`/`missing-name` by the base-dimension rule naming `ix://acme/flow/dimension/Mass` and `n`. The normalized map of a product, quotient or power holds the base class representative: `(3 R::s) / (3 F::s)` and `(3 R::s) / (3 R::s)` are the same dimensionless unit and `Quantity<R::s>` squared and `Quantity<F::s>` squared have one compound unit. A derived dimension converts through the compound pivot with or without an equivalence, and `dimension Torque ~ Energy by 1 N_m = 1 J;` over two derived dimensions of equal map, `N_m` and `J` each the root of its dimension, admits the direct conversion of `N_m` to `J`, which without the declaration refuses `ill_typed`; `by 1 N_m = 2 J` refuses `invalid_package`/`incompatible-definition`, the base roots fixing the ratio 1. | Test (TC-187) |
 | FR-142-AC-25 | Unary minus over a non-affine quantity returns the exact negated value in the operand's own unit and type, including `-(2 m)` as `-2 m`, `-(3 ms)` as `-3 ms` in `ms`, `-(0 m)` as `0 m` and a compound-unit operand in its compound unit, with no edge charge; unary minus over an affine-unit quantity refuses `ill_typed` before any charge; `-(2 m) + 1 m` is `-1 m`. | Test (TC-187) |
 | FR-142-AC-26 | The root ratio carries the size of one package's canonical root in the other's. With `acme/rpc` (alias `R`, root `s`) and `acme/clock` (alias `G`, base dimension `Time`, root unit `ms`, and `unit s : Time = 1000 * ms;`), `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;` and `dimension R::Time ~ G::Time by 1 R::s = 1 G::s;` state one root ratio, 1000 (`b` is 1000 for `G::s`), and `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;` is the same equivalence written the other way; the class root is the root `R::s` of the member with the least key. `convert<Quantity<G::ms>>(3 R::s)` is `3000 G::ms` with one identification edge charged, `convert<Quantity<R::s>>(1500 G::ms)` is `3/2 R::s`, `convert<Quantity<G::s>>(3 R::s)` is `3 G::s` with two edges charged, `3 R::s / 3 G::ms` is the dimensionless `1000`, `(3 R::s) * (2 G::ms)` is `3/500` of the compound unit with the one term `R::s` at exponent 2, and `3 R::s + 3 G::ms` refuses `ill_typed` as distinct units. With `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` of FR-142-AC-23 (`acme/flow` root `s`) and the first of the declarations above declared, `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` is admitted and `dimension F::Time ~ G::Time by 1 F::s = 1001 G::ms;` refuses `invalid_package`/`conflicting-definition` at itself, retaining the three declarations in source order, because the ratios around the cycle multiply to 1.001. | Test (TC-187) |
+| FR-142-AC-27 | `Quantity<u, C>` is a distinct type from `Quantity<u>` and from every carried type of another unit, carrier bound or mode: a `Quantity<u, C>` where `Quantity<u>` is required, the reverse, and a carried quantity as an operand of quantity addition, subtraction, negation, multiplication, division, power, equality or ordering each refuse `ill_typed`/`type-mismatch` at the expression before any charge, while `convert<Quantity<u'>>(e)` of a carried quantity of the same dimension is admitted and of another dimension refuses `ill_typed` by incompatible dimensions (TC-187 U41). A carrier that is not a bounded `Int[..]` or `Decimal[..]` (`Integer`, `Decimal`, `Rational[..]`, `Text[..]`, a record) refuses `ill_typed`/`type-mismatch` at the carrier. | Test (TC-187) |
+| FR-142-AC-28 | Converting into a `Quantity<u, C>` under mode `exact` admits exactly the values the carrier holds and refuses every other exact value `refused { code: inexact_conversion, cause: inexact-conversion }` at the `convert` node, retaining the carrier as `expected`, before `unit.target-domain` and with no value: U07 (`1 in` into `Decimal[-100, 100; 2, 2]` at scale two refuses, `25 cm` converts to `(25, 2) m`), U16 (the same refusal after one read, one edge and two rational events, four work units, under work limit six and under work limit four, where it is still refused and not incomplete) and U29 (`1 in` into `Int[-2, 2]` refuses likewise, `2 m` converts). The vectors are `quantity-carrier-vectors.json` `CQ-E01`, `CQ-E02`, `CQ-E07`, `CQ-E08`, `CQ-E12` and `CQ-E13`, with `CQ-E20` for a carrier whose `smin` is below `smax` (TC-187 U42). | Test (TC-187) |
+| FR-142-AC-29 | A conversion whose exact value is on the carrier's grid but outside its bounds, after rounding under a non-`exact` mode, refuses `decimal_out_of_domain` (a `Decimal` carrier) or `integer_out_of_domain` (an `Int` carrier) with `outside-domain` after `unit.target-domain` and before `unit.result-retain`, publishing no value (or returns `incomplete` where the charge is denied, as TC-187 U43 lists): U08 (`-2 m` and `2 m` into `Decimal[-2, 2; 0, 0]` succeed, `-3 m` and `3 m` refuse), U17 (`3 m` refuses by membership under work limit two and is `incomplete` at `unit.target-domain` under work limit one), U18 (`1 m` into `Decimal[0, 1; 0, 4294967295]` is `incomplete` at `unit.target-domain` for `decimal_digits` with the retained coefficient never materialized) and U29 (`3 m` into `Int[-2, 2]`). An inexact value that is also out of bounds refuses `inexact_conversion` first (TC-187 U43). | Test (TC-187) |
+| FR-142-AC-30 | The rounding mode of a carried quantity is the mode of its carrier and no operation supplies another: a `Decimal` carrier's mode is its own, an `Int` carrier's is as written (`exact` when omitted), a non-`exact` mode rounds under FR-140 with a `DecimalLoss` record and a conversion never rounds under a mode its target type does not name. The nearest-even outcomes of U07, U16 and U29 are unchanged by this requirement (TC-187 U44); `CQ-E17` to `CQ-E19` (rounding precedes the bounds check) give their carried forms. A record or collection holding a carried quantity compares it by exact value in its identical type like any quantity leaf (FR-149), and `quire.op.collection.sum.quantity` is defined over `Quantity<u>` only. | Test (TC-187) |
 
 ## Dependencies
 

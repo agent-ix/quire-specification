@@ -5202,6 +5202,7 @@
                 "dimension_equivalence",
                 "unit",
                 "compound_unit",
+                "carried_quantity",
                 "enum"
               ]
             }

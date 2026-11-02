@@ -132,6 +132,7 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration nodes are read from the
   projection by owner.
+- `quantity-carrier-vectors.json` supplies the cases `CQ-W01` to `CQ-W15` (TC-280 `MU-31` to `MU-34`; FR-322-AC-301, FR-322-AC-302) and `CQ-E01` to `CQ-E20` (TC-187 `U42` to `U44`; FR-142-AC-28, FR-142-AC-29): the anonymous `scalar_type`/`carried_quantity` node of `Quantity<u, C>` over a bounded `Int` or `Decimal` carrier, its three refusal mutations, the `quire.op.quantity.convert` application into it with its `rounding` mode pinned by the node, and the exact halves of TC-187 `U07`, `U08`, `U16`, `U17`, `U18` and `U29` (`inexact_conversion`/`inexact-conversion` at the convert node, and the out-of-domain refusals). The reader and evaluator that decide them are quire-contract-ir's and quire-verification's; QSpec's test checks only shape and that each `completed` or `refused` outcome follows from the exact value and the carrier.
 - `dimension-equivalence-vectors.json` supplies the cases `XP-01` to `XP-15` of TC-280 `MU-25` to `MU-30`: equivalences over dimension nodes of three packages, each foreign operand written as a package operand `PackageNodeRef{package, node}`, two consistent graphs and thirteen refusals, `XP-11` to `XP-15` the selection, name and self-minted operand refusals (FR-322-AC-268, FR-322-AC-299). The reader that decides them is quire-contract-ir's (FR-063); the vectors are authoritative for it and QSpec's test checks only their shape.
 - `node-ordinal-vectors.json` supplies the cases `NO-01` to `NO-04` of TC-233: a `node_id.ordinal` of 0 and of 9007199254740991 is admitted, and 9007199254740992, -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the ordinal (FR-322-AC-171). `uniqueness_cases` add `NO-05` to `NO-08` (FR-322-AC-272, FR-322-AC-273): sibling nodes of one `package` and `path` at ordinals that are not `0`, not contiguous or out of graph order are admitted, and two nodes of an equal `{package, path, ordinal}` are `invalid_semantic_graph` at the second.
 - `dependency-order-vectors.json` reverses the two dependencies of node 34 in `positive-timed-model-nodes.json`; the malformed twin is descending by structural `NodeId` and expects `invalid_semantic_graph` at `/semantic_graph/nodes/34/dependencies` (FR-322-AC-10, AC-96).
@@ -237,7 +238,7 @@ structures, but any external consumer receives only the contract.
   creates no `alias` node; `Reference<T>` is an anonymous
   `composite_type`/`reference`; `Population<T>[N]` is an anonymous
   `bounded_domain`/`model_population`; and a formed compound quantity unit is
-  an anonymous `scalar_type`/`compound_unit`. Their bodies and refusal rules
+  an anonymous `scalar_type`/`compound_unit` and `Quantity<u, C>` over a numeric carrier is an anonymous `scalar_type`/`carried_quantity`. Their bodies and refusal rules
   are specified by FR-322's derived type forms section.
 - A population a domain package declares and a state clause names (`M::P`) is
   a `relation`/`population` model declaration node (FR-322 "Population

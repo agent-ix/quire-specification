@@ -296,7 +296,7 @@ a decimal target at scale zero: its rounding step, strict `exact` refusal and
 `decimal_digits` amount, and integer-domain
 membership, which charges nothing, refuses (`integer_out_of_domain`,
 `outside-domain`), other than a `sum` seed or running total, after `unit.target-domain` and
-before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
+before `unit.result-retain`. In a conversion into a `Quantity<u, C>` carrier, `Decimal` or `Int`, the strict `exact` refusal at the rounding step is `refused { code: inexact_conversion, cause: inexact-conversion }` at the `convert` node (FR-142 "Carried quantity"). Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
 
 A top-level quantity `=`, `!=`, `<`, `<=`, `>` or `>=` expression between two

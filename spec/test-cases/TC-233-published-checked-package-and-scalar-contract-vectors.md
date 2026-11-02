@@ -214,7 +214,7 @@ population-identity payload keys. Parse the `invalid_result` rows of both and
 the first cells of FR-331's "Result entries" table, and require FR-272-AC-23's
 causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, and require the `resource_exhausted` rows and
 `value-accounting.md` to state FR-272-AC-19's `stage` rule. Parse
-the rows of FR-272-AC-11's eleven codes in both documents and require each to
+the rows of FR-272-AC-11's twelve codes in both documents and require each to
 list exactly that criterion's causes and payload keys, and require FR-272's
 canonical payload-name list to hold every one of those keys. A payload key is
 any backticked name written `key`: after the cause list, canonical or not.
@@ -674,7 +674,7 @@ native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
 the `resource_exhausted` and `cancelled` rows of both each list exactly
 FR-272-AC-16's causes and payload keys; the `conflicting_declaration` rows each list
 exactly FR-272-AC-17's cause and payload keys; the `runtime_invariant` rows each
-list FR-272-AC-18's cause and keys and the `stage` rule matches FR-272-AC-19; the rows of FR-272-AC-11's eleven codes each list exactly that criterion's
+list FR-272-AC-18's cause and keys and the `stage` rule matches FR-272-AC-19; the rows of FR-272-AC-11's twelve codes each list exactly that criterion's
 causes and payload keys, every one of them a canonical FR-272 payload name;
 FR-270's Revision cell quotes the header's revision; FR-271 has one row
 for each FR-271-AC-6 code; both `invalid_source_identity` rows state the
