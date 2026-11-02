@@ -141,7 +141,8 @@ run in this order and the first failing check is its defect:
    `buffers` is an aggregate of aggregates of exactly `subformula` then
    `capacity`, and each premise is an `integer` literal, else
    `invalid_semantic_graph` at the first binding, in body order, that breaks
-   the rule.
+   the rule; for an absent binding the locus is the index it would occupy
+   and for an extra binding the index after the twelfth.
 2. **References.** Each reference resolves to a node of the form stated above
    and each entry is a `function`/`pure_function` node with no `declaration`,
    else `invalid_semantic_graph` at the binding.
@@ -154,9 +155,9 @@ run in this order and the first failing check is its defect:
    the literal.
 5. **Buffers and state.** `buffers` is strictly ascending by subformula node id,
    each subformula is reached by the clause's formula, and the `state` record
-   has `now` and exactly one `buffer_<n>` sequence field per entry, else
+   has exactly the field `now` (an `integer`) and then one `buffer_<n>` sequence field per `buffers` entry, in that order, and no other field, else
    `invalid_semantic_graph` at the `buffers` binding (order, repeat or
-   unreached subformula) or the `state` binding (a missing or mistyped field).
+   unreached subformula) or the `state` binding (a missing, mistyped, extra or misordered field).
 
 A `dependencies` list other than the nodes the body references and the
 `semantic_type` is FR-322's graph-shape refusal, `invalid_semantic_graph` at the
@@ -176,18 +177,18 @@ a body.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-487-AC-1 | A plan root over a clause, a `State` record (`now`, `buffer_0`, `buffer_1`), the three entries with the signatures above, the six-case `Outcome` union and the premises `counter_width_bits` 32, `max_reading_gap` 1000, `max_event_rate` 10 and two buffers of capacity 4 and 7 is admitted; its `node_id` embeds the index segments of its entries and the decimal premises, and an edit of an entry body, a capacity or the width yields a different `node_id` (`MP-01`, `MP-02`). | Test (TC-978) |
-| FR-487-AC-2 | A root with a binding missing, reordered or extra, or with a premise that is not an `integer` literal, refuses `invalid_semantic_graph` at the first breaking binding; a `clause` that is not a `temporal_clause`, a `state` that is not a record and an entry that is not a `pure_function` refuse the same at the binding (`MP-03` to `MP-09`). | Test (TC-978) |
-| FR-487-AC-3 | `init` with a parameter, `on_event` with two parameters or with the delta before the state, `on_watermark` whose boundary is not an `integer`, and an entry whose result is not the `(State, Results)` tuple refuse `ill_typed`/`type-mismatch` at the entry's binding; an `Outcome` union missing `Pending`, with an extra case or with a `Failed` payload that is not `ReadingGapExceeded` refuses the same at `results` (`MP-10` to `MP-17`). | Test (TC-978) |
-| FR-487-AC-4 | `counter_width_bits` 0 and 65, `max_reading_gap` `2^width`, `max_event_rate` 0 and a `capacity` 0 refuse `invalid_package`/`invalid-value` at the literal; `buffers` out of ascending order, with a repeated subformula or naming an unreached subformula, and a `state` lacking `buffer_1` or holding a non-sequence `buffer_1`, refuse `invalid_semantic_graph` at `buffers` or `state` (`MP-18` to `MP-27`). | Test (TC-978) |
-| FR-487-AC-5 | Buffer extension is `flatten(sequence(s, sequence(x)))` over the existing operations `quire.op.collection.flatten` and `quire.op.collection.sequence`: both are in the closed operation catalog, the extension of a `Sequence<T>` by a `T` is a `Sequence<T>`, and the catalog and both V2 schemas are unchanged (`MP-28`). | Test (TC-978) |
+| FR-487-AC-1 | A plan root over a clause, a `State` record (`now`, `buffer_0`, `buffer_1`), the three entries with the signatures above, the six-case `Outcome` union and the premises `counter_width_bits` 32, `max_reading_gap` 1000, `max_event_rate` 10 and two buffers of capacity 4 and 7 is admitted; a capacity edit is still admitted (`MP-01`, `MP-02`). | Test (TC-978) |
+| FR-487-AC-2 | A root with a binding missing, reordered or extra, or with a premise that is not an `integer` literal, refuses `invalid_semantic_graph` at the first breaking binding; a `clause` that is not a `temporal_clause`, a `state` that is not a record and an entry that is not a `pure_function` refuse the same at the binding (`MP-03` to `MP-09` and `MP-28`). | Test (TC-978) |
+| FR-487-AC-3 | `init` with a parameter, `on_event` with two parameters or with the delta before the state, `on_watermark` whose boundary is not an `integer`, and an entry whose result is not the `(State, Results)` tuple refuse `ill_typed`/`type-mismatch` at the entry's binding; an `Outcome` union missing `Pending`, with an extra case or with a `Failed` payload that is not `ReadingGapExceeded` refuses the same at `results` (`MP-10` to `MP-17` and `MP-29`). | Test (TC-978) |
+| FR-487-AC-4 | `counter_width_bits` 0 and 65, `max_reading_gap` `2^width`, `max_event_rate` 0 and a `capacity` 0 refuse `invalid_package`/`invalid-value` at the literal; `buffers` out of ascending order, with a repeated subformula or naming an unreached subformula, and a `state` lacking `buffer_1` or holding a non-sequence `buffer_1`, refuse `invalid_semantic_graph` at `buffers` or `state` (`MP-18` to `MP-27`, `MP-30` and `MP-31`). | Test (TC-978) |
+| FR-487-AC-5 | Buffer extension is `flatten(sequence(s, sequence(x)))` over the existing operations `quire.op.collection.flatten` and `quire.op.collection.sequence`: both are in the closed operation catalog, the extension of a `Sequence<T>` by a `T` is a `Sequence<T>`, and the catalog and both V2 schemas are unchanged (`MP-32`). | Test (TC-978) |
 
 ## Published artifacts
 
 `proposals/checked-package-v2/schema.json` admits `monitor_plan` among the
 `temporal` node's `semantic_form` values.
 `proposals/checked-package-v2/monitor-plan-vectors.json` publishes the cases
-`MP-01` to `MP-28`.
+`MP-01` to `MP-32`.
 
 ## Dependencies
 

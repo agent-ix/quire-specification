@@ -21598,20 +21598,23 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     if bindings.len() > expected.len() {
         return refuse("invalid_semantic_graph", None, at(expected.len()));
     }
-    // 2. reference kinds, in binding order.
+    for (index, name) in [(8, "counter_width_bits"), (9, "max_reading_gap"), (10, "max_event_rate")] {
+        if !plan["premises"][name].is_u64() {
+            return refuse("invalid_semantic_graph", None, at(index));
+        }
+    }
+    // 2. reference kinds (and no declaration on an entry), in binding order.
     let form_is = |value: &Value, form: &str| value.as_str() == Some(form);
-    let checks: [(usize, bool); 11] = [
+    let undeclared = |name: &str| plan["entries"][name]["declared"] == false;
+    let checks: [(usize, bool); 8] = [
         (0, form_is(&plan["clause_form"], "temporal_clause")),
         (1, form_is(&plan["state"]["form"], "record")),
         (2, form_is(&plan["inputs_form"], "record")),
         (3, form_is(&plan["scope_form"], "record")),
         (4, form_is(&plan["results_form"], "sequence")),
-        (5, form_is(&plan["entries"]["init"]["form"], "pure_function")),
-        (6, form_is(&plan["entries"]["on_event"]["form"], "pure_function")),
-        (7, form_is(&plan["entries"]["on_watermark"]["form"], "pure_function")),
-        (8, plan["premises"]["counter_width_bits"].is_u64()),
-        (9, plan["premises"]["max_reading_gap"].is_u64()),
-        (10, plan["premises"]["max_event_rate"].is_u64()),
+        (5, form_is(&plan["entries"]["init"]["form"], "pure_function") && undeclared("init")),
+        (6, form_is(&plan["entries"]["on_event"]["form"], "pure_function") && undeclared("on_event")),
+        (7, form_is(&plan["entries"]["on_watermark"]["form"], "pure_function") && undeclared("on_watermark")),
     ];
     if let Some((index, _)) = checks.iter().find(|(_, ok)| !ok) {
         return refuse("invalid_semantic_graph", None, at(*index));
@@ -21636,7 +21639,11 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         ["Pending", null],
         ["True", null]
     ]);
-    if plan["outcome"]["cases"] != union_cases {
+    let payloads = json!({
+        "LimitReached": ["limit", "value", "setting"],
+        "ReadingGapExceeded": ["gap", "max_reading_gap"]
+    });
+    if plan["outcome"]["cases"] != union_cases || plan["payload_fields"] != payloads {
         return refuse("ill_typed", Some("type-mismatch"), at(4));
     }
     // 4. premise ranges.
@@ -21708,7 +21715,7 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 27);
+    assert_eq!(cases.len(), 31);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
     for case in cases {
@@ -21732,13 +21739,11 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (2, 25));
-    // MP-02 differs from MP-01 only in a capacity: a different plan, not a different shape.
-    assert_ne!(cases[0]["set"], cases[1]["set"]);
+    assert_eq!((admitted, refused), (2, 29));
 
-    // MP-28: append is existing operations; the catalog and the Operation schema are unchanged.
+    // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
     let append = &vectors["append"];
-    assert_eq!(append["id"], "MP-28");
+    assert_eq!(append["id"], "MP-32");
     let catalog = parsed_fixture(OPERATION_CATALOG);
     let entries = catalog["operations"].as_array().unwrap();
     let schema = parsed_fixture(SCHEMA);

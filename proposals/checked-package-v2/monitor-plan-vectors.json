@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its three state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the integer premises and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-28 (append) is not an edit: it names the existing operations that extend a sequence.",
+  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its three state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the integer premises and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-32 (append) is not an edit: it names the existing operations that extend a sequence.",
   "base": {
     "bindings": [
       "clause",
@@ -110,7 +110,18 @@
         "capacity": 7,
         "reached": true
       }
-    ]
+    ],
+    "payload_fields": {
+      "LimitReached": [
+        "limit",
+        "value",
+        "setting"
+      ],
+      "ReadingGapExceeded": [
+        "gap",
+        "max_reading_gap"
+      ]
+    }
   },
   "cases": [
     {
@@ -650,10 +661,99 @@
       "code": "invalid_semantic_graph",
       "cause": null,
       "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-28",
+      "note": "the on_event entry carries a declaration",
+      "set": [
+        [
+          "entries.on_event.declared",
+          true
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/6"
+    },
+    {
+      "id": "MP-29",
+      "note": "the LimitReached payload lacks the setting field",
+      "set": [
+        [
+          "payload_fields.LimitReached",
+          [
+            "limit",
+            "value"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/4"
+    },
+    {
+      "id": "MP-30",
+      "note": "state field now is text, not integer",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "text"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-31",
+      "note": "the state holds a field beyond now and the buffers",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "extra",
+              "integer"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
     }
   ],
   "append": {
-    "id": "MP-28",
+    "id": "MP-32",
     "note": "append(s, x) = flatten(sequence(s, sequence(x))) over ordinary Sequence<T>; no catalog addition",
     "operations": [
       "quire.op.collection.flatten",
