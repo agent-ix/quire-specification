@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "note": "FR-322-AC-306 (TC-233 TB-04..TB-05): the body of a bounded_domain/text_bounds node as its aggregate members in order (each a binding with the literal's value_kind and value). The reader that decides these outcomes is quire-contract-ir's (FR-038); QSpec's test applies the stated shape rule and checks that the published fixture's text_bounds node passes it.",
+  "profiles": [
+    "unicode-scalars",
+    "nfc",
+    "nfd",
+    "nfkc",
+    "nfkd",
+    "binary-utf8"
+  ],
+  "cases": [
+    {
+      "id": "TS-01",
+      "note": "Text[0, 64; nfc]",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "0"
+        },
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "64"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfc"
+        }
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "TS-02",
+      "note": "Text[2, 2; binary-utf8], min equal to max",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "2"
+        },
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "2"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "binary-utf8"
+        }
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "TS-03",
+      "note": "profile-only Text[nfc]",
+      "members": [
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfc"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-04",
+      "note": "missing min",
+      "members": [
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "64"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfc"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-05",
+      "note": "missing max",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "0"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfc"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-06",
+      "note": "missing text_profile",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "0"
+        },
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "64"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-07",
+      "note": "a member beside the three",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "0"
+        },
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "64"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfc"
+        },
+        {
+          "name": "extra",
+          "value_kind": "integer",
+          "value": "1"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-08",
+      "note": "min above max",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "5"
+        },
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "4"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfc"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-09",
+      "note": "a profile outside the six",
+      "members": [
+        {
+          "name": "min",
+          "value_kind": "integer",
+          "value": "0"
+        },
+        {
+          "name": "max",
+          "value_kind": "integer",
+          "value": "64"
+        },
+        {
+          "name": "text_profile",
+          "value_kind": "text",
+          "value": "nfkd2"
+        }
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    },
+    {
+      "id": "TS-10",
+      "note": "no members",
+      "members": [],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape",
+      "locus": "/semantic_graph/nodes/{n}"
+    }
+  ]
+}
