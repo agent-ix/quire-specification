@@ -21139,7 +21139,7 @@ fn read_operation_effects(
     Ok(())
 }
 
-#[trace("TC-977", "FR-322-AC-301")]
+#[trace("TC-977", "FR-322-AC-303")]
 #[test]
 fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() {
     let vectors: Value =
