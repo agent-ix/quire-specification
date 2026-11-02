@@ -45,8 +45,8 @@ two-valued result is `pending` when declared progress could resolve it and
 `indeterminate` when the closed evidence remains conflicting. An empty
 possibility set is an inconsistent-input refusal, not false.
 
-An event time is an exact closed interval `[earliest, latest]` in a canonical
-unit. Event `a` is definitely before `b` only when `a.latest < b.earliest`; it is
+An event time is an exact interval `[earliest, latest]` in a canonical
+unit, closed at both ends unless its endpoint flags (below) say otherwise. Event `a` is definitely before `b` only when `a.latest < b.earliest`; it is
 possibly before when `a.earliest < b.latest`. Overlap preserves both admissible
 orders. A repair identifies the superseded revision and atom/event identities,
 invalidates their temporal dependency closure, and recomputes that closure in
@@ -77,9 +77,10 @@ Over intervals of dense time with these flags, for `a` and `b`:
   is open. A bound `b - a <= d` is **true** when the difference's upper end is
   at most `d` (open or closed), **false** when its lower end exceeds `d`, or
   equals `d` and is open, and otherwise **indeterminate**. A bound `b - a < d`
-  is decided the same way with the strict forms.
+  is **true** when the upper end is below `d`, or equals `d` and is open,
+  **false** when the lower end is at least `d`, and otherwise **indeterminate**.
 
-For a bound of 3000 ticks, an interval-uncertainty of 0 and a request at tick 0,
+For a bound of 3000 ticks, a clock uncertainty of 0 and a request at tick 0,
 an acknowledgement at tick 2998 satisfies `ack - req <= 3000` (true), tick 3000
 is indeterminate (the difference `(2999, 3001)` straddles the bound) and tick
 3001 is false (the difference `(3000, 3002)` lies above it, its lower end open).
@@ -103,7 +104,6 @@ The vectors are `proposals/checked-package-v2/tick-cover-vectors.json`.
   wording is superseded by "Counter-tick intervals and endpoints" above, which
   fixes the half-open cover `[k, k + 1)` that QSL FR-251-AC-1 and RT FR-276-AC-1
   require. ADR-026 lives in the QSL repository and is amended there.
-
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
