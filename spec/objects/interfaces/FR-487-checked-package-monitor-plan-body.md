@@ -150,8 +150,12 @@ whose rules below do not hold, with the first refusal in the reader order below.
   An unbounded operator (root `always`, `eventually`, or a nested future
   operator without an upper bound) keeps no history buffer: it keeps one
   `activations` element, of constant size, per live obligation instance, which
-  holds the instance's status and origin tick. A nested future operator under a
-  bounded outer window is bounded by that outer buffer's capacity.
+  holds the instance's status and origin tick. A nested future operator that has
+  an upper bound is bounded by the capacity of the outer buffer that holds it;
+  an unbounded operator nested under a bounded one still keeps one constant-size
+  `activations` element per pending instance, and those instances count against
+  the one shared `activation_capacity` (overflow is
+  `Incomplete(LimitReached{limit: activation, setting: monitor.max_activations})`).
 - **results and outcomes** — the `results` element is a `composite_type`/`record`
   with the fields `instance` (a record of `subject` (`string`), `subformula`
   (`integer`) and `origin` (`integer`, the unwrapped tick at which the
