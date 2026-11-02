@@ -21,6 +21,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-310
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-311
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-312
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
@@ -735,6 +739,8 @@ spans, while malformed rows cover absent, foreign, wrong-kind and mismapped
 identities, missing occurrences and duplicate keys. The 26-unit work boundary
 admits; one fewer unit refuses at the final probabilistic-claim row with no
 partial data view (FR-322-AC-288..292, AC-296..297). A protocol-location row
-whose `application` names a leaf (`literal`) node instead of an application
-refuses `invalid_package`/`invalid-value` at that row's `application`; a leaf
-takes its location from its own node (FR-322-AC-310).
+whose `application` names an admitted leaf node (literal, Local parameter or
+reference; the PL-R3 vectors carry the graph) refuses
+`invalid_package`/`invalid-value` at that row's `application`, also when the
+leaf row copies an enclosing application's location, while a row naming the
+admitted application admits (FR-322-AC-310..312).

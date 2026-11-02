@@ -2518,18 +2518,276 @@
       ]
     },
     {
-      "id": "PL-R3-leaf-row",
+      "id": "PL-R3-leaf-literal",
       "target": "ProtocolSemanticLocation[]",
-      "mutation": "row names a literal leaf node, not an application; a leaf takes its location from its own node",
+      "mutation": "row names an admitted value/literal leaf node",
       "expected_code": "invalid_package",
       "expected_cause": "invalid-value",
       "locus": "/checked_term_data/protocol_locations/0/application",
+      "graph": {
+        "nodes": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "semantic_form": "call"
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                "protocol-leaf"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "value",
+            "semantic_form": "literal"
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              "protocol-leaf"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-local",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "row names an admitted value/parameter (Local) leaf node",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/0/application",
+      "graph": {
+        "nodes": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "semantic_form": "call"
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "protocol-local"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "value",
+            "semantic_form": "parameter"
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "protocol-local"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-reference",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "row names an admitted expression/reference leaf node",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/0/application",
+      "graph": {
+        "nodes": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "semantic_form": "call"
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "reference",
+                "protocol-reference"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "semantic_form": "reference"
+          }
+        ]
+      },
       "value": [
         {
           "application": {
             "package": "example",
             "path": [
               "expression",
+              "reference",
+              "protocol-reference"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-copies-enclosing-location",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "a valid application row is followed by a leaf row that copies the enclosing application's location; the leaf does not inherit it",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/1/application",
+      "graph": {
+        "nodes": [
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "semantic_form": "call"
+          },
+          {
+            "node_id": {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                "protocol-leaf"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "value",
+            "semantic_form": "literal"
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "call",
+              "protocol-application"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        },
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "value",
               "literal",
               "protocol-leaf"
             ],

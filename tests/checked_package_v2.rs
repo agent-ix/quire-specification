@@ -20105,7 +20105,9 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-292",
     "FR-322-AC-296",
     "FR-322-AC-297",
-    "FR-322-AC-310"
+    "FR-322-AC-310",
+    "FR-322-AC-311",
+    "FR-322-AC-312"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20284,6 +20286,13 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         shared_terms[1]["term_ordinal"]
     );
     assert_ne!(shared_terms[0]["location"], shared_terms[1]["location"]);
+    for row in location_rows {
+        assert_eq!(
+            row["application"]["path"][1], "application",
+            "{} names an application, never a leaf (FR-322-AC-312)",
+            row["id"]
+        );
+    }
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
         let mut wire = row.clone();
@@ -20583,29 +20592,36 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                     "positive root and missing-term witness must differ"
                 );
             }
-            "PL-R3-leaf-row" => {
+            id if id.starts_with("PL-R3-") => {
                 let rows = value.as_array().unwrap();
-                assert_eq!(rows.len(), 1);
-                assert!(
-                    location.is_valid(&rows[0]),
-                    "a leaf row remains structurally valid"
-                );
-                // Protocol locations are application-only: the row names a literal leaf.
-                assert_eq!(rows[0]["application"]["path"][0], "expression");
-                assert_eq!(rows[0]["application"]["path"][1], "literal");
-                for positive in vectors["positive"]["protocol_locations"].as_array().unwrap() {
-                    assert_eq!(
-                        positive["application"]["path"][1], "application",
-                        "{} names an application, never a leaf",
-                        positive["id"]
+                for row in rows {
+                    assert!(location.is_valid(row), "{id}: a leaf row stays structurally valid");
+                }
+                let nodes = case["graph"]["nodes"].as_array().unwrap();
+                // The vector isolates the leaf rule: every row names a node of the graph.
+                for row in rows {
+                    assert!(
+                        nodes.iter().any(|node| node["node_id"] == row["application"]),
+                        "{id}: the row names an admitted node, not an absent or foreign one"
                     );
                 }
-                assert_eq!(case["expected_code"], "invalid_package");
-                assert_eq!(case["expected_cause"], "invalid-value");
                 assert_eq!(
-                    case["locus"],
-                    "/checked_term_data/protocol_locations/0/application"
+                    decide_protocol_locations(nodes, rows),
+                    Err((
+                        case["expected_code"].as_str().unwrap().to_owned(),
+                        case["expected_cause"].as_str().unwrap().to_owned(),
+                        case["locus"].as_str().unwrap().to_owned(),
+                    )),
+                    "{id}"
                 );
+                // FR-322-AC-312: the same graph admits a row naming its application.
+                let application = nodes
+                    .iter()
+                    .find(|node| node["semantic_form"] == "call")
+                    .expect("the graph holds an admitted application");
+                let mut control = rows[0].clone();
+                control["application"] = application["node_id"].clone();
+                assert_eq!(decide_protocol_locations(nodes, &[control]), Ok(()), "{id}");
             }
             "DT-R1-duplicate-selection-key" => {
                 assert!(
@@ -21586,6 +21602,35 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
         );
         assert_eq!(read_operation_effects(documents, &rows), Err(expected), "{id}");
     }
+}
+
+type ProtocolLocationRefusal = (String, String, String);
+
+/// FR-322 `protocol_locations` join: a row names an admitted application node
+/// (FR-322-AC-291, AC-310). A leaf node (`value` nodes and `expression`/`reference`)
+/// takes its location from its own node, so a row naming one refuses
+/// `invalid_package`/`invalid-value` at the row's `application`. The repository has
+/// no production reader; this decider is the executable statement of the rule over a
+/// vector's node list.
+fn decide_protocol_locations(nodes: &[Value], rows: &[Value]) -> Result<(), ProtocolLocationRefusal> {
+    for (index, row) in rows.iter().enumerate() {
+        let refuse = || {
+            Err((
+                "invalid_package".to_owned(),
+                "invalid-value".to_owned(),
+                format!("/checked_term_data/protocol_locations/{index}/application"),
+            ))
+        };
+        let Some(node) = nodes.iter().find(|node| node["node_id"] == row["application"]) else {
+            return refuse();
+        };
+        let is_leaf = node["node_tag"] == "value"
+            || (node["node_tag"] == "expression" && node["semantic_form"] == "reference");
+        if node["node_tag"] != "expression" || is_leaf {
+            return refuse();
+        }
+    }
+    Ok(())
 }
 
 const MONITOR_PLAN_VECTORS: &str =
