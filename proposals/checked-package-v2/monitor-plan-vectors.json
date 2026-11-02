@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its three state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the integer premises and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-32 (append) is not an edit: it names the existing operations that extend a sequence.",
+  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its three state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the premises (integers, rationals, the counter name), the tick unit and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-32 (append) is not an edit: it names the existing operations that extend a sequence. The identity-bearing premises are the counter name, the tick unit, the width, the gap, the rate, the uncertainty and the buffers: each admitted case other than MP-01 changes one and must yield a different root key. The tick intervals are not bound; they follow from the clause's interval bounds, the clause's clock-unit scale and the tick unit's scale.",
   "base": {
     "bindings": [
       "clause",
@@ -14,7 +14,10 @@
       "counter_width_bits",
       "max_reading_gap",
       "max_event_rate",
-      "buffers"
+      "buffers",
+      "counter",
+      "tick_unit",
+      "uncertainty"
     ],
     "clause_form": "temporal_clause",
     "state": {
@@ -97,7 +100,9 @@
     "premises": {
       "counter_width_bits": 32,
       "max_reading_gap": 1000,
-      "max_event_rate": 10
+      "max_event_rate": "10",
+      "counter": "ticks",
+      "uncertainty": "1/2"
     },
     "buffers": [
       {
@@ -121,6 +126,11 @@
         "gap",
         "max_reading_gap"
       ]
+    },
+    "tick_unit": {
+      "form": "unit",
+      "dimension": "Time",
+      "index": 7
     }
   },
   "cases": [
@@ -158,7 +168,10 @@
             "on_watermark",
             "counter_width_bits",
             "max_reading_gap",
-            "max_event_rate"
+            "max_event_rate",
+            "counter",
+            "tick_unit",
+            "uncertainty"
           ]
         ]
       ],
@@ -185,7 +198,10 @@
             "counter_width_bits",
             "max_reading_gap",
             "max_event_rate",
-            "buffers"
+            "buffers",
+            "counter",
+            "tick_unit",
+            "uncertainty"
           ]
         ]
       ],
@@ -213,6 +229,9 @@
             "max_reading_gap",
             "max_event_rate",
             "buffers",
+            "counter",
+            "tick_unit",
+            "uncertainty",
             "extra"
           ]
         ]
@@ -220,7 +239,7 @@
       "expected": "refused",
       "code": "invalid_semantic_graph",
       "cause": null,
-      "locus": "/semantic_graph/nodes/{n}/body/members/12"
+      "locus": "/semantic_graph/nodes/{n}/body/members/15"
     },
     {
       "id": "MP-06",
@@ -526,7 +545,7 @@
       "set": [
         [
           "premises.max_event_rate",
-          0
+          "0"
         ]
       ],
       "expected": "refused",
@@ -750,6 +769,219 @@
       "code": "invalid_semantic_graph",
       "cause": null,
       "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-33",
+      "note": "uncertainty 0: a different plan identity",
+      "set": [
+        [
+          "premises.uncertainty",
+          "0"
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-34",
+      "note": "negative uncertainty",
+      "set": [
+        [
+          "premises.uncertainty",
+          "-1/2"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/14/value"
+    },
+    {
+      "id": "MP-35",
+      "note": "uncertainty is an integer literal, not a rational",
+      "set": [
+        [
+          "premises.uncertainty",
+          1
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/14"
+    },
+    {
+      "id": "MP-36",
+      "note": "negative max_event_rate",
+      "set": [
+        [
+          "premises.max_event_rate",
+          "-1/2"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/10/value"
+    },
+    {
+      "id": "MP-37",
+      "note": "max_event_rate is an integer literal, not a rational",
+      "set": [
+        [
+          "premises.max_event_rate",
+          10
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/10"
+    },
+    {
+      "id": "MP-38",
+      "note": "empty counter name",
+      "set": [
+        [
+          "premises.counter",
+          ""
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/12/value"
+    },
+    {
+      "id": "MP-39",
+      "note": "the uncertainty binding is missing",
+      "set": [
+        [
+          "bindings",
+          [
+            "clause",
+            "state",
+            "inputs",
+            "scope",
+            "results",
+            "init",
+            "on_event",
+            "on_watermark",
+            "counter_width_bits",
+            "max_reading_gap",
+            "max_event_rate",
+            "buffers",
+            "counter",
+            "tick_unit"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/14"
+    },
+    {
+      "id": "MP-40",
+      "note": "tick_unit is not a unit node",
+      "set": [
+        [
+          "tick_unit.form",
+          "record"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/13"
+    },
+    {
+      "id": "MP-41",
+      "note": "tick_unit is a unit of the Length dimension",
+      "set": [
+        [
+          "tick_unit.dimension",
+          "Length"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/13"
+    },
+    {
+      "id": "MP-42",
+      "note": "counter is an integer literal, not a text literal",
+      "set": [
+        [
+          "premises.counter",
+          7
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/12"
+    },
+    {
+      "id": "MP-43",
+      "note": "another counter name: a different plan identity",
+      "set": [
+        [
+          "premises.counter",
+          "ticks2"
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-44",
+      "note": "max_event_rate 1/10 events per tick: a different plan identity",
+      "set": [
+        [
+          "premises.max_event_rate",
+          "1/10"
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-45",
+      "note": "another tick unit node: a different plan identity",
+      "set": [
+        [
+          "tick_unit.index",
+          8
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-46",
+      "note": "max_event_rate 2/4 is not in lowest terms",
+      "set": [
+        [
+          "premises.max_event_rate",
+          "2/4"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/10/value"
+    },
+    {
+      "id": "MP-47",
+      "note": "uncertainty 1/0 has a zero denominator",
+      "set": [
+        [
+          "premises.uncertainty",
+          "1/0"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/14/value"
     }
   ],
   "append": {

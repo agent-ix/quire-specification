@@ -21587,8 +21587,11 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         "max_reading_gap",
         "max_event_rate",
         "buffers",
+        "counter",
+        "tick_unit",
+        "uncertainty",
     ];
-    // 1. shape: the twelve bindings, in order.
+    // 1. shape: the fifteen bindings, in order.
     let bindings: Vec<&str> = plan["bindings"].as_array().unwrap().iter().map(|b| b.as_str().unwrap()).collect();
     for (index, name) in expected.iter().enumerate() {
         if bindings.get(index) != Some(name) {
@@ -21598,25 +21601,37 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     if bindings.len() > expected.len() {
         return refuse("invalid_semantic_graph", None, at(expected.len()));
     }
-    for (index, name) in [(8, "counter_width_bits"), (9, "max_reading_gap"), (10, "max_event_rate")] {
-        if !plan["premises"][name].is_u64() {
-            return refuse("invalid_semantic_graph", None, at(index));
-        }
+    let is_rational = |value: &Value| {
+        let Some(text) = value.as_str() else { return false };
+        let (numerator, denominator) = text.split_once('/').unwrap_or((text, "1"));
+        let digits = |t: &str| !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
+        numerator.strip_prefix('-').map_or(digits(numerator), digits) && digits(denominator)
+    };
+    let premises_ok = [
+        (8, plan["premises"]["counter_width_bits"].is_u64()),
+        (9, plan["premises"]["max_reading_gap"].is_u64()),
+        (10, is_rational(&plan["premises"]["max_event_rate"])),
+        (12, plan["premises"]["counter"].is_string()),
+        (14, is_rational(&plan["premises"]["uncertainty"])),
+    ];
+    if let Some((index, _)) = premises_ok.iter().find(|(_, ok)| !ok) {
+        return refuse("invalid_semantic_graph", None, at(*index));
     }
     // 2. reference kinds (and no declaration on an entry), in binding order.
     let form_is = |value: &Value, form: &str| value.as_str() == Some(form);
     let undeclared = |name: &str| plan["entries"][name]["declared"] == false;
-    let checks: [(usize, bool); 8] = [
+    let checks: [(usize, bool); 9] = [
         (0, form_is(&plan["clause_form"], "temporal_clause")),
         (1, form_is(&plan["state"]["form"], "record")),
         (2, form_is(&plan["inputs_form"], "record")),
         (3, form_is(&plan["scope_form"], "record")),
         (4, form_is(&plan["results_form"], "sequence")),
+        (13, form_is(&plan["tick_unit"]["form"], "unit") && form_is(&plan["tick_unit"]["dimension"], "Time")),
         (5, form_is(&plan["entries"]["init"]["form"], "pure_function") && undeclared("init")),
         (6, form_is(&plan["entries"]["on_event"]["form"], "pure_function") && undeclared("on_event")),
         (7, form_is(&plan["entries"]["on_watermark"]["form"], "pure_function") && undeclared("on_watermark")),
     ];
-    if let Some((index, _)) = checks.iter().find(|(_, ok)| !ok) {
+    if let Some((index, _)) = checks.iter().filter(|(_, ok)| !ok).min_by_key(|(index, _)| *index) {
         return refuse("invalid_semantic_graph", None, at(*index));
     }
     // 3. signatures: each entry, then the Outcome union.
@@ -21656,7 +21671,24 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     if gap >= 1u128 << width {
         return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(9)));
     }
-    if premises["max_event_rate"].as_u64().unwrap() < 1 {
+    let rational = |value: &Value| {
+        let text = value.as_str().unwrap();
+        let (numerator, denominator) = text.split_once('/').unwrap_or((text, "1"));
+        (numerator.parse::<i128>().unwrap(), denominator.parse::<i128>().unwrap())
+    };
+    let canonical = |value: &Value| {
+        let (numerator, denominator) = rational(value);
+        let text = value.as_str().unwrap();
+        let spelled = |t: &str| t == "0" || (!t.starts_with('0') && !t.starts_with("-0"));
+        let (n, d) = text.split_once('/').unwrap_or((text, "1"));
+        spelled(n) && spelled(d) && denominator >= 1 && (!text.contains('/') || (denominator >= 2 && numerator != 0 && numerator.abs().gcd(&denominator) == 1))
+    };
+    for (index, name) in [(10, "max_event_rate")] {
+        if !canonical(&premises[name]) {
+            return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(index)));
+        }
+    }
+    if rational(&premises["max_event_rate"]).0 <= 0 {
         return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(10)));
     }
     let buffers = plan["buffers"].as_array().unwrap();
@@ -21668,6 +21700,12 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
                 format!("{}/value/members/{k}/members/1/value", at(11)),
             );
         }
+    }
+    if premises["counter"].as_str().unwrap().is_empty() {
+        return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(12)));
+    }
+    if !canonical(&premises["uncertainty"]) || rational(&premises["uncertainty"]).0 < 0 {
+        return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(14)));
     }
     // 5. buffers (ascending, no repeat, reached) and the state fields they imply.
     let subformulas: Vec<u64> = buffers.iter().map(|b| b["subformula"].as_u64().unwrap()).collect();
@@ -21682,6 +21720,25 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         return refuse("invalid_semantic_graph", None, at(1));
     }
     Ok(())
+}
+
+/// The root's key path: every identity-bearing premise (FR-487 "Properties").
+fn monitor_plan_key(plan: &Value) -> Vec<String> {
+    let premises = &plan["premises"];
+    let text = |value: &Value| value.to_string();
+    let mut key = vec![
+        text(&premises["counter_width_bits"]),
+        text(&premises["max_reading_gap"]),
+        text(&premises["max_event_rate"]),
+    ];
+    for buffer in plan["buffers"].as_array().unwrap() {
+        key.push(text(&buffer["subformula"]));
+        key.push(text(&buffer["capacity"]));
+    }
+    key.push(text(&premises["counter"]));
+    key.push(text(&plan["tick_unit"]["index"]));
+    key.push(text(&premises["uncertainty"]));
+    key
 }
 
 fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
@@ -21709,13 +21766,15 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
     "FR-487-AC-3",
     "FR-487-AC-4",
     "FR-487-AC-5",
+    "FR-487-AC-6",
     "FR-322-AC-308"
 )]
 #[test]
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 31);
+    assert_eq!(cases.len(), 46);
+    let base_key = monitor_plan_key(&vectors["base"]);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
     for case in cases {
@@ -21728,6 +21787,9 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
         let decided = decide_monitor_plan(&plan);
         if case["expected"] == "admitted" {
             assert_eq!(decided, Ok(()), "{id}");
+            if id != "MP-01" {
+                assert_ne!(monitor_plan_key(&plan), base_key, "{id}: an identity-bearing edit changes the key");
+            }
             admitted += 1;
         } else {
             let expected = (
@@ -21739,7 +21801,7 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (2, 29));
+    assert_eq!((admitted, refused), (6, 40));
 
     // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
     let append = &vectors["append"];
