@@ -20626,32 +20626,26 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                 let mut control = rows[0].clone();
                 control["application"] = application["node_id"].clone();
                 assert_eq!(decide_protocol_locations(nodes, &[control]), Ok(()), "{id}");
-                // The rule over every form the schema admits (FR-322-AC-310): every
-                // ValueNode form and expression/reference is a leaf, every other
-                // ExpressionNode form is an application.
+                // Every leaf form the rule names refuses with the leaf code (FR-322-AC-310);
+                // no other expression form is asserted here, they stay under FR-322-AC-291.
                 let form_node = |tag: &str, form: &str, row: &Value| {
                     let mut named = row.clone();
                     named["application"] = json!({"package": "example", "path": [tag, form, "x"], "ordinal": 0});
                     let node = json!({"node_id": named["application"], "node_tag": tag, "semantic_form": form});
                     decide_protocol_locations(&[node], &[named])
                 };
+                let leaf_refusal = Err((
+                    "invalid_package".to_owned(),
+                    "invalid-value".to_owned(),
+                    "/checked_term_data/protocol_locations/0/application".to_owned(),
+                ));
                 for form in schema["$defs"]["ValueNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
                     .as_array()
                     .unwrap()
                 {
-                    assert!(form_node("value", form.as_str().unwrap(), &rows[0]).is_err(), "value/{form} is a leaf");
+                    assert_eq!(form_node("value", form.as_str().unwrap(), &rows[0]), leaf_refusal, "value/{form}");
                 }
-                for form in schema["$defs"]["ExpressionNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
-                    .as_array()
-                    .unwrap()
-                {
-                    let form = form.as_str().unwrap();
-                    assert_eq!(
-                        form_node("expression", form, &rows[0]).is_err(),
-                        form == "reference",
-                        "expression/{form}"
-                    );
-                }
+                assert_eq!(form_node("expression", "reference", &rows[0]), leaf_refusal);
             }
             "DT-R1-duplicate-selection-key" => {
                 assert!(
@@ -21636,27 +21630,25 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
 
 type ProtocolLocationRefusal = (String, String, String);
 
-/// FR-322 `protocol_locations` join: a row names an admitted application node
-/// (FR-322-AC-291, AC-310). A leaf node (every `value` form and `expression`/`reference`)
-/// takes its location from its own node, so a row naming one refuses
-/// `invalid_package`/`invalid-value` at the row's `application`. The repository has
-/// no production reader; this decider is the executable statement of the rule over a
-/// vector's node list.
+/// FR-322 `protocol_locations` leaf rule (FR-322-AC-310): a row naming an admitted leaf
+/// node (every `ValueNode` form and `expression`/`reference`) refuses
+/// `invalid_package`/`invalid-value` at the row's `application`. Any other node, absent,
+/// foreign or non-application, is judged by FR-322-AC-291 alone, which this decider
+/// does not assign a code to. The repository has no production reader; this decider
+/// is the executable statement of the leaf rule over a vector's node list.
 fn decide_protocol_locations(nodes: &[Value], rows: &[Value]) -> Result<(), ProtocolLocationRefusal> {
     for (index, row) in rows.iter().enumerate() {
-        let refuse = || {
-            Err((
+        let Some(node) = nodes.iter().find(|node| node["node_id"] == row["application"]) else {
+            continue;
+        };
+        let is_leaf = node["node_tag"] == "value"
+            || (node["node_tag"] == "expression" && node["semantic_form"] == "reference");
+        if is_leaf {
+            return Err((
                 "invalid_package".to_owned(),
                 "invalid-value".to_owned(),
                 format!("/checked_term_data/protocol_locations/{index}/application"),
-            ))
-        };
-        let Some(node) = nodes.iter().find(|node| node["node_id"] == row["application"]) else {
-            return refuse();
-        };
-        let is_application = node["node_tag"] == "expression" && node["semantic_form"] != "reference";
-        if !is_application {
-            return refuse();
+            ));
         }
     }
     Ok(())

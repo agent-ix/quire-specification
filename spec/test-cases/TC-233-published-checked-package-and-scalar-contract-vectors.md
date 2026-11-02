@@ -743,4 +743,4 @@ whose `application` names an admitted leaf node (literal, Local parameter or
 reference; the PL-R3 vectors carry the graph) refuses
 `invalid_package`/`invalid-value` at that row's `application`, also when the
 leaf row copies an enclosing application's location, while a row naming the
-admitted application admits (FR-322-AC-310..312).
+admitted application is not refused by the leaf rule (FR-322-AC-310..312).

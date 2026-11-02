@@ -57,3 +57,18 @@ Round 1, head bc207688.
 | FND-002 | fixed | Each PL-R3 vector carries a graph holding the admitted leaf and an admitted expression/call; the test asserts the row names a graph node, so absent/foreign (AC-291) is excluded; value/literal, value/parameter and expression/reference are real forms in schema.json (ValueNode, ExpressionNode enums). |
 | FND-003 | fixed | AC-310 rule, AC-311 refusals (4 vectors incl. leaf copying enclosing location at index 1), AC-312 positive rows; paragraph states it refines AC-291 and keeps absent/foreign under AC-291. |
 | FND-004 | still-open | Low; new this round, not yet routed. Mergeable without a fix. |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | "Application" now means every non-reference ExpressionNode form (unary, binary, let, quantify, ...), a wider reading than AC-291's "expression/application node"; a design decision not in the planner ruling. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1124-1135 |
+
+## Dispositions (continued)
+
+Round 2, head a1bd441e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | Graph nodes are validated against SemanticNode in the test; the leaf set is every ValueNode form plus expression/reference and the rule text and decider agree; the test loops over the schema's ValueNode and ExpressionNode enums. Mutations (record_value treated as application; let treated as leaf) both go red. |
+| FND-005 | still-open | Low, new this round; mergeable. Owner to confirm that every non-reference expression form is an application for protocol_locations. |
