@@ -1,6 +1,6 @@
 {
   "version": "quire.protocol-node-mutation-manifest/v1",
-  "note": "STD-609 PR 1. Executable form of the machine-derivable vectors of protocol-node-vectors.json. Each row edits fixtures/protocol-node-base.json with RFC 6902 operations and states the typed outcome. 'later' lists vectors a following pull request carries; 'pending' lists vectors whose outcome the spec text leaves open.",
+  "note": "STD-609 PR 1. Executable form of the machine-derivable vectors of protocol-node-vectors.json. Each row edits fixtures/protocol-node-base.json with RFC 6902 operations and states the typed outcome. 'later' lists vectors a following pull request carries; 'pending' lists vectors whose outcome the spec text leaves open. Reproducibility: protocol-node-base.json and this manifest are the source of truth and are edited by patch only; there is no generator. The test recomputes every edited protocol node's dependencies from its body references, so a hand edit cannot be masked by a graph-stage refusal. A row states the first defect in reader order only (FR-464 'Reader order'); later defects are masked by design. The 26 Q-LAYOUT vectors stay pending: schema.json defines ProtocolControlApplication but references it nowhere, and referencing it from the ProtocolNode body rule makes the base package itself fail at the parallel, choice and protocol-clause nodes, so no first schema error path exists for them until the schema is fixed in its own pull request.",
   "base": {
     "fixture": "protocol-node-base.json",
     "domain_document": "../domain-package-acme-orders.json",
@@ -16,8 +16,9 @@
   "reader_order": "When a row names no node, the first offending node is the lowest node-id (FR-322 ascending structural key order, which puts the clause Example::OrderFlow before its members) among the nodes the refusal's step visits; steps run in FR-464 'Reader order'. A row asserts only the first defect in reader order; later defects are masked by design.",
   "loci": {
     "rule": "locus is the JSON pointer of the first offending node or entry in reader order; 'at the node' is /semantic_graph/nodes/{i}, 'at the target' is the pointer of the reference term that names the target, and a graph-stage dependency defect is /semantic_graph/nodes/{i}/dependencies (FR-322-AC-96).",
-    "wire": "for malformed_wire the locus is the instance path of the first error of the repository's V2 schema validator (schema.json, jsonschema crate 0.55.0) on the edited package.",
-    "no_package_location": "a refusal with no package location uses the FR-096 locus convention of its stage."
+    "wire": "for malformed_wire the locus is the instance path of the first error of the repository's V2 schema validator (schema.json, jsonschema crate 0.55.0) on the edited package;",
+    "no_package_location": "a refusal with no package location uses the FR-096 locus convention of its stage.",
+    "granularity": "The locus is the node pointer /semantic_graph/nodes/{i} unless the vector names a target or a field (a reference term, a count, a value), as C10, CP11 and PA4 do; the field-level pointer of a node-level refusal is recorded in document_pointer (FR-322-AC-152). locus_basis records per row which of these applied."
   },
   "rows": [
     {
@@ -25,7 +26,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none",
       "edit": [],
@@ -38,7 +39,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`Requested`'s body applies `quire.op.state.clause`",
       "edit": [
@@ -71,7 +72,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "schema_error_path",
       "base": "protocol-node-base.json",
       "edit_prose": "a `quire.op.protocol.control` application nested as an argument of `Main`",
       "edit": [
@@ -205,7 +206,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`Requested`'s member is `null`",
       "edit": [
@@ -221,7 +222,8 @@
         "stage": "reader",
         "code": "invalid_package",
         "cause": "operation-member-mismatch",
-        "locus": "/semantic_graph/nodes/64/body/operation/member"
+        "locus": "/semantic_graph/nodes/64",
+        "document_pointer": "/semantic_graph/nodes/64/body/operation/member"
       }
     },
     {
@@ -229,7 +231,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`Requested`'s `laws` is empty",
       "edit": [
@@ -245,7 +247,8 @@
         "stage": "reader",
         "code": "invalid_package",
         "cause": "operation-law-missing",
-        "locus": "/semantic_graph/nodes/64/body/operation/laws"
+        "locus": "/semantic_graph/nodes/64",
+        "document_pointer": "/semantic_graph/nodes/64/body/operation/laws"
       }
     },
     {
@@ -253,7 +256,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`Requested`'s law names the package's `temporal_profile` definition",
       "edit": [
@@ -277,7 +280,8 @@
         "stage": "reader",
         "code": "invalid_package",
         "cause": "operation-law-mismatch",
-        "locus": "/semantic_graph/nodes/64/body/operation/laws/0"
+        "locus": "/semantic_graph/nodes/64",
+        "document_pointer": "/semantic_graph/nodes/64/body/operation/laws/0"
       }
     },
     {
@@ -285,7 +289,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "the lock has no `protocol_profile` row",
       "edit": [
@@ -299,7 +303,8 @@
         "stage": "reader",
         "code": "invalid_package",
         "cause": "operation-law-unselected",
-        "locus": "/semantic_graph/nodes/82/body/operation/laws/0/definition"
+        "locus": "/semantic_graph/nodes/82",
+        "document_pointer": "/semantic_graph/nodes/82/body/operation/laws/0/definition"
       }
     },
     {
@@ -307,7 +312,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`Requested`'s `result_type` and `semantic_type` are the integer node",
       "edit": [
@@ -351,7 +356,7 @@
       "test_case": "TC-946",
       "section": "Placement and operators",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "a state clause's condition references `Requested`",
       "edit": [
@@ -448,7 +453,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "swap `Orders` and `Payments` in the clause's `roles` set",
       "edit": [
@@ -501,7 +506,7 @@
       ],
       "expect": {
         "decision": "refuse",
-        "stage": "graph",
+        "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
         "locus": "/semantic_graph/nodes/82"
@@ -512,7 +517,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "retarget `Applied`'s `of` from `Charged` to `Requested`",
       "edit": [
@@ -599,7 +604,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "an acyclic protocol node adds a lone `recursion_group` label",
       "edit": [
@@ -619,7 +624,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "schema_error_path",
       "base": "protocol-node-base.json",
       "edit_prose": "a `queue` node carries a `declaration`",
       "edit": [
@@ -650,7 +655,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "schema_error_path",
       "base": "protocol-node-base.json",
       "edit_prose": "a `role` node has no `declaration` occurrence",
       "edit": [
@@ -679,7 +684,7 @@
       "test_case": "TC-946",
       "section": "Clause body",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none",
       "edit": [],
@@ -692,7 +697,7 @@
       "test_case": "TC-946",
       "section": "Clause body",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`requirements` names a `state`/`state_clause` node",
       "edit": [
@@ -960,7 +965,7 @@
       "test_case": "TC-946",
       "section": "Clause body",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`relationships` names a `protocol`/`role` node",
       "edit": [
@@ -1203,7 +1208,10 @@
         "cause": "wrong-export",
         "locus": "/semantic_graph/nodes/82/body/arguments/4/value/members/0/target",
         "retains": {
-          "required_kind": "relationship"
+          "required_kind": "relationship",
+          "actual_kind": "role",
+          "required_key": "ix://acme/orders/relationship/Order-order-Order",
+          "actual_key": "Example::OrderFlow::role::Orders"
         }
       }
     },
@@ -1212,7 +1220,7 @@
       "test_case": "TC-946",
       "section": "Clause body",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "dependencies_list",
       "base": "protocol-node-base.json",
       "edit_prose": "`compensations` names a node of the graph that is not in the clause's `dependencies`",
       "edit": [
@@ -1442,7 +1450,7 @@
       "test_case": "TC-948",
       "section": "Layouts",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none",
       "edit": [],
@@ -1455,7 +1463,7 @@
       "test_case": "TC-947",
       "section": "Role vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none: three static roles",
       "edit": [],
@@ -1468,7 +1476,7 @@
       "test_case": "TC-947",
       "section": "Channel vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none: `fifo` by `message.order`, `at-least-once`",
       "edit": [],
@@ -1481,7 +1489,7 @@
       "test_case": "TC-947",
       "section": "Channel vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`from` names the `Charges` queue node",
       "edit": [
@@ -1591,7 +1599,7 @@
       "test_case": "TC-947",
       "section": "Channel vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`carries` names a `role` node",
       "edit": [
@@ -1695,7 +1703,7 @@
       "test_case": "TC-947",
       "section": "Queue vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none: `literal 4`, `reject`",
       "edit": [],
@@ -1708,7 +1716,7 @@
       "test_case": "TC-947",
       "section": "Queue vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`literal` capacity `-1`",
       "edit": [
@@ -1744,7 +1752,7 @@
       "test_case": "TC-947",
       "section": "Queue vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`channel` names a `role` node",
       "edit": [
@@ -1797,7 +1805,7 @@
       "test_case": "TC-947",
       "section": "Queue vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "schema_error_path",
       "base": "protocol-node-base.json",
       "edit_prose": "the queue's occurrence has role `declaration`",
       "edit": [
@@ -1826,7 +1834,7 @@
       "test_case": "TC-947",
       "section": "Finish and terminal vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none: `finish Closed as (closed) { closed.order = order }`",
       "edit": [],
@@ -1839,7 +1847,7 @@
       "test_case": "TC-947",
       "section": "Finish and terminal vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "the constraint is an integer term",
       "edit": [
@@ -1903,7 +1911,7 @@
       "test_case": "TC-947",
       "section": "Finish and terminal vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`binder` names an `expression` node",
       "edit": [
@@ -1995,7 +2003,7 @@
       "test_case": "TC-947",
       "section": "Finish and terminal vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "none: `terminal any`",
       "edit": [],
@@ -2004,283 +2012,11 @@
       }
     },
     {
-      "id": "TM9",
-      "test_case": "TC-947",
-      "section": "Finish and terminal vectors",
-      "class": "refuse",
-      "locus_basis": "derived",
-      "base": "protocol-node-base.json",
-      "edit_prose": "`terminal` removed from the clause",
-      "edit": [
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/82/body/arguments/9/value",
-          "value": {
-            "term": "aggregate",
-            "members": []
-          },
-          "node": "Example::OrderFlow"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/82/dependencies",
-          "value": [
-            {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "relation",
-                "relationship",
-                "ix://acme/orders/relationship/Order-order-Order"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "channel",
-                "Charges"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "compensate",
-                "Refund"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "finish",
-                "Closed"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "role",
-                "Fulfillment"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "role",
-                "Orders"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "role",
-                "Payments"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "OrderFlow",
-                "run",
-                "Main"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "expression",
-                "query",
-                {
-                  "node": 21
-                },
-                "quire.op.record.project",
-                {
-                  "node": 9
-                },
-                "order",
-                "query",
-                {
-                  "node": 1
-                }
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "protocol",
-                "queue",
-                "Charges"
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "temporal",
-                "temporal_clause",
-                {
-                  "node": 19
-                },
-                {
-                  "node": 2
-                },
-                "model-steps",
-                "kind",
-                "origin",
-                {
-                  "node": 57
-                },
-                "quire.op.temporal.clause",
-                "quire.temporal.event-position.false-extension/v1",
-                "temporal",
-                {
-                  "node": 0
-                }
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "node": 2
-                },
-                "opened",
-                "level",
-                {
-                  "node": 1
-                },
-                "1",
-                {
-                  "node": 9
-                }
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "node": 2
-                },
-                "order",
-                "level",
-                {
-                  "node": 1
-                },
-                "2",
-                {
-                  "node": 1
-                }
-              ]
-            },
-            {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "node": 2
-                },
-                "view",
-                "level",
-                {
-                  "node": 1
-                },
-                "0",
-                {
-                  "node": 17
-                }
-              ]
-            }
-          ],
-          "node": "Example::OrderFlow"
-        }
-      ],
-      "expect": {
-        "decision": "refuse",
-        "stage": "reader",
-        "code": "invalid_semantic_graph",
-        "cause": null,
-        "locus": "/semantic_graph/nodes/80"
-      },
-      "note": "with the clause no longer listing it, the terminal node is unattached (FR-464 Membership: unattached nodes)"
-    },
-    {
-      "id": "L2",
-      "test_case": "TC-948",
-      "section": "Layouts",
-      "class": "refuse",
-      "locus_basis": "derived",
-      "base": "protocol-node-base.json",
-      "edit_prose": "none",
-      "edit": [
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/78/body/arguments/0/value/members",
-          "value": [],
-          "node": "Example::OrderFlow::run::Main"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/78/dependencies",
-          "value": [],
-          "node": "Example::OrderFlow::run::Main"
-        }
-      ],
-      "expect": {
-        "decision": "refuse",
-        "stage": "reader",
-        "code": "invalid_semantic_graph",
-        "cause": null,
-        "locus": "/semantic_graph/nodes/67"
-      },
-      "note": "emptying Main's children leaves the controls held by nothing (FR-464 Containment); the empty sequence itself is admitted The first unheld control in node-id order is Applied."
-    },
-    {
       "id": "S2",
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "a child of `Main` that is a `role` node",
       "edit": [
@@ -2410,7 +2146,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "dependencies_list",
       "base": "protocol-node-base.json",
       "edit_prose": "a child of `Main` that is a node of the graph absent from `dependencies`",
       "edit": [
@@ -2512,7 +2248,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "a child of `Main` that is a local node id no node of the graph carries, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "edit": [
@@ -2644,7 +2380,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`owner` names a channel",
       "edit": [
@@ -2757,7 +2493,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`cases` listed `shipped`, `failed` (not in ascending label order)",
       "edit": [
@@ -2903,7 +2639,7 @@
       ],
       "expect": {
         "decision": "refuse",
-        "stage": "graph",
+        "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
         "locus": "/semantic_graph/nodes/73"
@@ -2914,7 +2650,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`branches` listed `west`, `east`",
       "edit": [
@@ -3010,7 +2746,7 @@
       ],
       "expect": {
         "decision": "refuse",
-        "stage": "graph",
+        "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
         "locus": "/semantic_graph/nodes/70"
@@ -3021,7 +2757,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`joined` is `[west, east]` (branch order reversed)",
       "edit": [
@@ -3061,7 +2797,7 @@
       ],
       "expect": {
         "decision": "refuse",
-        "stage": "graph",
+        "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
         "locus": "/semantic_graph/nodes/70"
@@ -3072,7 +2808,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`joined` is `[east, east, west]`",
       "edit": [
@@ -3125,7 +2861,7 @@
       ],
       "expect": {
         "decision": "refuse",
-        "stage": "graph",
+        "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
         "locus": "/semantic_graph/nodes/70"
@@ -3136,7 +2872,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`joined` is `[east, middle]`",
       "edit": [
@@ -3187,7 +2923,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`join all [east]`",
       "edit": [
@@ -3225,7 +2961,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`quorum` with `count` 0, and with `count` 3 over two joined branches",
       "edit": [
@@ -3288,7 +3024,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`any` with an empty `joined`",
       "edit": [
@@ -3339,7 +3075,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`predicate` naming a `role` node",
       "edit": [
@@ -3442,7 +3178,7 @@
       "test_case": "TC-948",
       "section": "Repeat and await",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "`Poll` with `maximum` 3 and `exhausted`",
       "edit": [],
@@ -3455,7 +3191,7 @@
       "test_case": "TC-948",
       "section": "Repeat and await",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "`Poll` with `maximum: 0`",
       "edit": [
@@ -3492,7 +3228,7 @@
       "test_case": "TC-948",
       "section": "Repeat and await",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "node",
       "base": "protocol-node-base.json",
       "edit_prose": "`Poll`'s guard is an integer term",
       "edit": [
@@ -3520,7 +3256,8 @@
         "stage": "reader",
         "code": "ill_typed",
         "cause": "non-boolean-root",
-        "locus": "/semantic_graph/nodes/76/body/arguments/4/value"
+        "locus": "/semantic_graph/nodes/76",
+        "document_pointer": "/semantic_graph/nodes/76/body/arguments/4/value"
       }
     },
     {
@@ -3528,7 +3265,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "`Refund` with `commit never`",
       "edit": [
@@ -3724,7 +3461,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`forward` names `Charged` (an `attempt`)",
       "edit": [
@@ -3945,7 +3682,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`operation` names a `state`/`state_clause` node",
       "edit": [
@@ -4180,7 +3917,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`record_type` names a `scalar_type` node",
       "edit": [
@@ -4398,7 +4135,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "target",
       "base": "protocol-node-base.json",
       "edit_prose": "`commit` names `Charged`",
       "edit": [
@@ -4624,7 +4361,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`attempts.maximum` is `0`",
       "edit": [
@@ -4660,7 +4397,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "`attempts.maximum` is `1`",
       "edit": [
@@ -4692,7 +4429,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "field",
       "base": "protocol-node-base.json",
       "edit_prose": "`within` is `{lower: 31, upper: 30}`",
       "edit": [
@@ -4754,7 +4491,7 @@
       "test_case": "TC-948",
       "section": "Compensation vectors",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "the base `Refund`: `commit Finalized`, `attempts 3 of M::RefundAttempt`",
       "edit": [],
@@ -4767,7 +4504,7 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "class": "refuse",
-      "locus_basis": "derived",
+      "locus_basis": "schema_error_path",
       "base": "protocol-node-base.json",
       "edit_prose": "Omit `owner_model`, or use an external `PackageNodeKey`",
       "edit": [
@@ -4790,13 +4527,2309 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "class": "admit",
-      "locus_basis": "derived",
+      "locus_basis": "not_applicable",
       "base": "protocol-node-base.json",
       "edit_prose": "Keep the `over` argument and add `owner_model` as the object-type node of the model owned by a selected declaration that the source clause's `over` type names",
       "edit": [],
       "expect": {
         "decision": "admit"
       }
+    },
+    {
+      "id": "B8",
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Received`'s constraint reads `sent`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/65/body/arguments/4/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "node": 38
+                },
+                {
+                  "node": 22
+                },
+                "quire.op.integer.eq",
+                "binary",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow::run::Main::Received"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/65/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "channel",
+                "Charges"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Requested"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "node": 38
+                },
+                {
+                  "node": 22
+                },
+                "quire.op.integer.eq",
+                "binary",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "got",
+                "level",
+                {
+                  "node": 1
+                },
+                "4",
+                {
+                  "node": 10
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Received"
+        }
+      ],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "Received's constraint becomes the Requested constraint node (sent.order = order)"
+    },
+    {
+      "id": "BS1",
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Received` reads `sent`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/65/body/arguments/4/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "node": 38
+                },
+                {
+                  "node": 22
+                },
+                "quire.op.integer.eq",
+                "binary",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow::run::Main::Received"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/65/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "channel",
+                "Charges"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Requested"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "node": 38
+                },
+                {
+                  "node": 22
+                },
+                "quire.op.integer.eq",
+                "binary",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "got",
+                "level",
+                {
+                  "node": 1
+                },
+                "4",
+                {
+                  "node": 10
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Received"
+        }
+      ],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "Received's constraint becomes the Requested constraint node (sent.order = order)"
+    },
+    {
+      "id": "B12",
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Finalized`'s constraint reads `eastRes`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/77/body/arguments/2/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow::run::Main::Finalized"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/77/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Orders"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "done",
+                "level",
+                {
+                  "node": 1
+                },
+                "9",
+                {
+                  "node": 11
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Finalized"
+        }
+      ],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "Finalized's constraint becomes the Done check node (eastRes.ok)"
+    },
+    {
+      "id": "BS5",
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Finalized` reads `eastRes`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/77/body/arguments/2/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow::run::Main::Finalized"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/77/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Orders"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "done",
+                "level",
+                {
+                  "node": 1
+                },
+                "9",
+                {
+                  "node": 11
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Finalized"
+        }
+      ],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "Finalized's constraint becomes the Done check node (eastRes.ok)"
+    },
+    {
+      "id": "B18",
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the `finish` constraint reads `eastRes`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/79/body/arguments/1/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow::finish::Closed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/79/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "closed",
+                "level",
+                {
+                  "node": 1
+                },
+                "10",
+                {
+                  "node": 10
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::finish::Closed"
+        }
+      ],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "the finish constraint becomes the Done check node (eastRes.ok); finish reads Out(root)"
+    },
+    {
+      "id": "FN3",
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the constraint reads `eastRes`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/79/body/arguments/1/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow::finish::Closed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/79/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "closed",
+                "level",
+                {
+                  "node": 1
+                },
+                "10",
+                {
+                  "node": 10
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::finish::Closed"
+        }
+      ],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "the finish constraint becomes the Done check node (eastRes.ok); finish reads Out(root)"
+    },
+    {
+      "id": "B10",
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Done`'s `check` reads `eastRes`",
+      "edit": [],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "the base already holds the edit: Done's check reads eastRes.ok (join all exposes the branches' binders after Shipments)"
+    },
+    {
+      "id": "E1",
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Requested` and `Received` over `Charges`, binders typed `M::ChargeRequest`",
+      "edit": [],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "the property holds in the unmodified base, so the edit is empty"
+    },
+    {
+      "id": "E10",
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`East.contracts` is `[]`",
+      "edit": [],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "the property holds in the unmodified base, so the edit is empty"
+    },
+    {
+      "id": "E12",
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "class": "admit",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Applied.of` names `Charged`",
+      "edit": [],
+      "expect": {
+        "decision": "admit"
+      },
+      "note": "the property holds in the unmodified base, so the edit is empty"
+    },
+    {
+      "id": "B1",
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "class": "property",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "none",
+      "edit": [],
+      "expect": {
+        "decision": "property",
+        "assertions": [
+          {
+            "kind": "binder_levels",
+            "levels": [
+              {
+                "binder": "view",
+                "level": 0
+              },
+              {
+                "binder": "opened",
+                "level": 1
+              },
+              {
+                "binder": "order",
+                "level": 2
+              },
+              {
+                "binder": "sent",
+                "level": 3
+              },
+              {
+                "binder": "got",
+                "level": 4
+              },
+              {
+                "binder": "charge",
+                "level": 5
+              },
+              {
+                "binder": "paid",
+                "level": 6
+              }
+            ]
+          }
+        ]
+      },
+      "note": "binder levels are read from the base parameter nodes (the level segment of each node id)"
+    },
+    {
+      "id": "R1",
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "class": "property",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "none",
+      "edit": [],
+      "expect": {
+        "decision": "property",
+        "assertions": [
+          {
+            "kind": "causal_edges",
+            "acyclic": true,
+            "edges": [
+              {
+                "relation": "message",
+                "from": {
+                  "node": "Example::OrderFlow::run::Main::Requested",
+                  "end": "exit"
+                },
+                "to": {
+                  "node": "Example::OrderFlow::run::Main::Received",
+                  "end": "enter"
+                }
+              },
+              {
+                "relation": "effect",
+                "from": {
+                  "node": "Example::OrderFlow::run::Main::Charged",
+                  "end": "exit"
+                },
+                "to": {
+                  "node": "Example::OrderFlow::run::Main::Applied",
+                  "end": "enter"
+                }
+              },
+              {
+                "relation": "join",
+                "from": {
+                  "node": "Example::OrderFlow::run::Main::Shipments::East",
+                  "end": "exit"
+                },
+                "to": {
+                  "node": "Example::OrderFlow::run::Main::Shipments",
+                  "end": "exit"
+                }
+              },
+              {
+                "relation": "join",
+                "from": {
+                  "node": "Example::OrderFlow::run::Main::Shipments::West",
+                  "end": "exit"
+                },
+                "to": {
+                  "node": "Example::OrderFlow::run::Main::Shipments",
+                  "end": "exit"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "A1",
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "class": "property",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "none",
+      "edit": [],
+      "expect": {
+        "decision": "property",
+        "assertions": [
+          {
+            "kind": "activation_relation",
+            "rows": [
+              {
+                "clause": "Example::OrderFlow",
+                "activation": "each",
+                "trigger": "[\"value\",\"parameter\",\"name\",{\"node\":2},\"opened\",\"level\",{\"node\":1},\"1\",{\"node\":9}]",
+                "temporal_clause": "[\"temporal\",\"temporal_clause\",{\"node\":19},{\"node\":2},\"model-steps\",\"kind\",\"origin\",{\"node\":57},\"quire.op.temporal.clause\",\"quire.temporal.event-position.false-extension/v1\",\"temporal\",{\"node\":0}]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RT3",
+      "test_case": "TC-947",
+      "section": "Runtime-subject vectors",
+      "class": "property",
+      "locus_basis": "not_applicable",
+      "base": "protocol-node-base.json",
+      "edit_prose": "read the operators of the base package",
+      "edit": [],
+      "expect": {
+        "decision": "property",
+        "assertions": [
+          {
+            "kind": "package_byte_equal",
+            "to": "base"
+          },
+          {
+            "kind": "runtime_subject_kinds",
+            "operators": [
+              {
+                "operator": "protocol",
+                "kinds": [
+                  "workflow-instance"
+                ]
+              },
+              {
+                "operator": "role",
+                "kinds": [
+                  "role-instance"
+                ]
+              },
+              {
+                "operator": "send",
+                "kinds": [
+                  "message",
+                  "send"
+                ]
+              },
+              {
+                "operator": "receive",
+                "kinds": [
+                  "receive",
+                  "delivery"
+                ]
+              },
+              {
+                "operator": "attempt",
+                "kinds": [
+                  "operation-attempt"
+                ]
+              },
+              {
+                "operator": "effect",
+                "kinds": [
+                  "business-effect"
+                ]
+              },
+              {
+                "operator": "commit",
+                "kinds": [
+                  "commit"
+                ]
+              },
+              {
+                "operator": "compensate",
+                "kinds": [
+                  "compensation"
+                ]
+              },
+              {
+                "operator": "finish",
+                "kinds": [
+                  "workflow-closure-observation"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "note": "reading the operators changes no node, so the package stays byte-equal to the base; 'compensation' stands for the compensation kinds of the vector, which the vector does not list"
+    },
+    {
+      "id": "V16",
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "class": "refuse",
+      "locus_basis": "node",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the lock selects no `temporal_profile` (the base's `Refund` template reads a clock role)",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/lock/profile_selections/0"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "missing_declaration",
+        "cause": "missing-selection",
+        "locus": "/semantic_graph/nodes/81"
+      },
+      "masks": "the lock edit also leaves OrderClosureBounded's temporal_profile law unselected, but FR-370 accepts a temporal clause whose law names a known FR-250 profile, and the operation step's operation-law-unselected runs after the protocol step"
+    },
+    {
+      "id": "CP28",
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "class": "refuse",
+      "locus_basis": "node",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the lock selects no `temporal_profile`",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/lock/profile_selections/0"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "missing_declaration",
+        "cause": "missing-selection",
+        "locus": "/semantic_graph/nodes/81"
+      },
+      "note": "same edit and outcome as V16"
+    },
+    {
+      "id": "C13a",
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "class": "refuse",
+      "locus_basis": "target",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`compensations` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/8/value/members",
+          "value": [
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "compensate",
+                  "Ghost"
+                ]
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "compensate",
+                  "Refund"
+                ]
+              },
+              "term": "reference"
+            }
+          ],
+          "node": "Example::OrderFlow"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "acme/orders",
+              "path": [
+                "relation",
+                "relationship",
+                "ix://acme/orders/relationship/Order-order-Order"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "channel",
+                "Charges"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "compensate",
+                "Ghost"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "compensate",
+                "Refund"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "finish",
+                "Closed"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Fulfillment"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Orders"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Payments"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "terminal"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 21
+                },
+                "quire.op.record.project",
+                {
+                  "node": 9
+                },
+                "order",
+                "query",
+                {
+                  "node": 1
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "protocol",
+                "queue",
+                "Charges"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "temporal",
+                "temporal_clause",
+                {
+                  "node": 19
+                },
+                {
+                  "node": 2
+                },
+                "model-steps",
+                "kind",
+                "origin",
+                {
+                  "node": 57
+                },
+                "quire.op.temporal.clause",
+                "quire.temporal.event-position.false-extension/v1",
+                "temporal",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "opened",
+                "level",
+                {
+                  "node": 1
+                },
+                "1",
+                {
+                  "node": 9
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "order",
+                "level",
+                {
+                  "node": 1
+                },
+                "2",
+                {
+                  "node": 1
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "view",
+                "level",
+                {
+                  "node": 1
+                },
+                "0",
+                {
+                  "node": 17
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "missing_declaration",
+        "cause": "missing-name",
+        "locus": "/semantic_graph/nodes/82/body/arguments/8/value/members/0/target"
+      },
+      "note": "the ghost id sorts before Refund, Refund stays listed, so Membership step 5 passes and the missing name is the first defect"
+    },
+    {
+      "id": "FN6",
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "class": "refuse",
+      "locus_basis": "target",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the clause's `finish` names the `terminal` node",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/9/value/members/0",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "finish",
+                "Closed"
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/12/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "terminal"
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "invalid_model_binding",
+        "cause": "malformed-declaration",
+        "locus": "/semantic_graph/nodes/82/body/arguments/9/value/members/0/target"
+      },
+      "masks": "the finish binding (argument 13) also names the wrong form; the terminal binding (argument 10) is first in argument order",
+      "note": "finish and terminal are swapped so both obligation nodes stay listed and Membership step 5 passes; FN6 and TM8 are the one edit"
+    },
+    {
+      "id": "TM8",
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "class": "refuse",
+      "locus_basis": "target",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the clause's `terminal` names the `finish` node",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/9/value/members/0",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "finish",
+                "Closed"
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/12/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "terminal"
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "invalid_model_binding",
+        "cause": "malformed-declaration",
+        "locus": "/semantic_graph/nodes/82/body/arguments/9/value/members/0/target"
+      },
+      "masks": "the finish binding (argument 13) also names the wrong form; the terminal binding (argument 10) is first in argument order",
+      "note": "finish and terminal are swapped so both obligation nodes stay listed and Membership step 5 passes; FN6 and TM8 are the one edit"
+    },
+    {
+      "id": "C12",
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "class": "refuse",
+      "locus_basis": "node",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`run` names a `role` node",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/11/value",
+          "value": {
+            "target": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Orders"
+              ]
+            },
+            "term": "reference"
+          },
+          "node": "Example::OrderFlow"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "acme/orders",
+              "path": [
+                "relation",
+                "relationship",
+                "ix://acme/orders/relationship/Order-order-Order"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "channel",
+                "Charges"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "compensate",
+                "Refund"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "finish",
+                "Closed"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Fulfillment"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Orders"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Payments"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "terminal"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 21
+                },
+                "quire.op.record.project",
+                {
+                  "node": 9
+                },
+                "order",
+                "query",
+                {
+                  "node": 1
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "protocol",
+                "queue",
+                "Charges"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "temporal",
+                "temporal_clause",
+                {
+                  "node": 19
+                },
+                {
+                  "node": 2
+                },
+                "model-steps",
+                "kind",
+                "origin",
+                {
+                  "node": 57
+                },
+                "quire.op.temporal.clause",
+                "quire.temporal.event-position.false-extension/v1",
+                "temporal",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "opened",
+                "level",
+                {
+                  "node": 1
+                },
+                "1",
+                {
+                  "node": 9
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "order",
+                "level",
+                {
+                  "node": 1
+                },
+                "2",
+                {
+                  "node": 1
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "view",
+                "level",
+                {
+                  "node": 1
+                },
+                "0",
+                {
+                  "node": 17
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "invalid_semantic_graph",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/67"
+      },
+      "note": "vector prose defect: the prose expects invalid_model_binding/malformed-declaration at the target, but a run that names a role leaves the control tree unrooted, so Membership step 5 (Containment: a control held by nothing) is the first defect in reader order. The expected node is the first unheld control in node-id order as recommended by the STD-609 review; the root control Main is itself unrooted and the node-id order that picks Applied over Main is the reviewer's, not stated by FR-464."
+    },
+    {
+      "id": "M1",
+      "test_case": "TC-946",
+      "section": "Membership",
+      "class": "refuse",
+      "locus_basis": "node",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Orders` listed in `roles` twice",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/3/value/members",
+          "value": [
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "role",
+                  "Fulfillment"
+                ]
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "role",
+                  "Orders"
+                ]
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "role",
+                  "Orders"
+                ]
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "role",
+                  "Payments"
+                ]
+              },
+              "term": "reference"
+            }
+          ],
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "invalid_semantic_graph",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/82"
+      },
+      "note": "the repeat is inside one set argument, so it is the canonical-order rule 'repeats an entry refuses invalid_semantic_graph at the node' (the clause node), not Single listing (a node named by two arguments or two clauses)"
+    },
+    {
+      "id": "M8",
+      "test_case": "TC-946",
+      "section": "Membership",
+      "class": "refuse",
+      "locus_basis": "node",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Done`'s declaration is `OrderFlow, run, Done`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/71/node_id",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "OrderFlow",
+              "run",
+              "Done"
+            ]
+          },
+          "node": "Example::OrderFlow::run::Main::Outcome::Done"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/73/body/arguments/2/value/members/1/members/2/value/target",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "OrderFlow",
+              "run",
+              "Done"
+            ]
+          },
+          "node": "Example::OrderFlow::run::Main::Outcome"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/71/node_id",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "OrderFlow",
+              "run",
+              "Done"
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/71/declaration/qualified_name",
+          "value": [
+            "Example",
+            "OrderFlow",
+            "run",
+            "Done"
+          ],
+          "node": "Example::OrderFlow::run::Main::Outcome::Done"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/73/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Fulfillment"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Done"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Outcome",
+                "Failed"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "query",
+                {
+                  "node": 27
+                },
+                "quire.op.record.project",
+                {
+                  "node": 12
+                },
+                "ok",
+                "query",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "unary",
+                {
+                  "node": 41
+                },
+                "quire.op.boolean.not",
+                "unary",
+                {
+                  "node": 0
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Outcome"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "invalid_semantic_graph",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/71"
+      },
+      "note": "a declaration-only edit trips invalid_package/declaration-nominal-mismatch (step 3), so the node id, every reference to it, its source_map entry and the dependency lists are renamed with the declaration"
+    },
+    {
+      "id": "M9",
+      "test_case": "TC-946",
+      "section": "Membership",
+      "class": "refuse",
+      "locus_basis": "node",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Applied`'s declaration begins with another protocol's name",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/67/node_id",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Other",
+              "run",
+              "Main",
+              "Applied"
+            ]
+          },
+          "node": "Example::OrderFlow::run::Main::Applied"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/body/arguments/0/value/members/3/target",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Other",
+              "run",
+              "Main",
+              "Applied"
+            ]
+          },
+          "node": "Example::OrderFlow::run::Main"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/body/arguments/0/value/target",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Other",
+              "run",
+              "Main",
+              "Applied"
+            ]
+          },
+          "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/67/node_id",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Other",
+              "run",
+              "Main",
+              "Applied"
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/67/declaration/qualified_name",
+          "value": [
+            "Example",
+            "Other",
+            "run",
+            "Main",
+            "Applied"
+          ],
+          "node": "Example::OrderFlow::run::Main::Applied"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Charged"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Finalized"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Outcome"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Poll"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Received"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Requested"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Shipments"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "Other",
+                "run",
+                "Main",
+                "Applied"
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/dependencies",
+          "value": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "role",
+                "Payments"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Finalized"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "Other",
+                "run",
+                "Main",
+                "Applied"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "M",
+                "RefundAttempt"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "state",
+                "operation_anchor",
+                "context",
+                {
+                  "node": 7
+                },
+                "operation",
+                {
+                  "node": 2
+                },
+                "refund",
+                "frame",
+                {
+                  "node": 48
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "node": 0
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "earlier",
+                "level",
+                {
+                  "node": 1
+                },
+                "5",
+                {
+                  "node": 13
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "forward",
+                "level",
+                {
+                  "node": 1
+                },
+                "3",
+                {
+                  "node": 11
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "later",
+                "level",
+                {
+                  "node": 1
+                },
+                "6",
+                {
+                  "node": 13
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "recovery",
+                "level",
+                {
+                  "node": 1
+                },
+                "7",
+                {
+                  "node": 11
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "node": 2
+                },
+                "trigger",
+                "level",
+                {
+                  "node": 1
+                },
+                "4",
+                {
+                  "node": 11
+                }
+              ]
+            }
+          ],
+          "node": "Example::OrderFlow::compensate::Refund"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "reader",
+        "code": "invalid_semantic_graph",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/67"
+      },
+      "note": "renamed as M8: the declaration prefix names another protocol, node id and references follow"
+    },
+    {
+      "id": "V3",
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the `Orders` role node's operator is `channel`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/59/body/operation/member/operator",
+          "value": "channel",
+          "node": "Example::OrderFlow::role::Orders"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/59",
+        "step_alone": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "locus": "/semantic_graph/nodes/59"
+        }
+      },
+      "note": "schema.json refuses first (malformed_wire); step_alone is the reader code of the prose when the protocol step runs alone on the same edit (FR-464-AC-19)"
+    },
+    {
+      "id": "V4",
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the `Orders` node's `semantic_form` is `control` with the `role` operator",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/59/semantic_form",
+          "value": "control",
+          "node": "Example::OrderFlow::role::Orders"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/59/body/operation/member/operator",
+          "value": "role",
+          "node": "Example::OrderFlow::role::Orders"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/59",
+        "step_alone": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "locus": "/semantic_graph/nodes/59"
+        }
+      },
+      "note": "schema.json refuses first (malformed_wire); step_alone is the reader code of the prose when the protocol step runs alone on the same edit (FR-464-AC-19)"
+    },
+    {
+      "id": "V7",
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Requested`'s member operator is `jump`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/64/body/operation/member/operator",
+          "value": "jump",
+          "node": "Example::OrderFlow::run::Main::Requested"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/64",
+        "step_alone": {
+          "code": "invalid_package",
+          "cause": "operation-member-mismatch",
+          "locus": "/semantic_graph/nodes/64"
+        }
+      },
+      "note": "schema.json refuses first (malformed_wire); step_alone is the reader code of the prose when the protocol step runs alone on the same edit (FR-464-AC-19)"
+    },
+    {
+      "id": "L19",
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Requested`'s member operator is `jump`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/64/body/operation/member/operator",
+          "value": "jump",
+          "node": "Example::OrderFlow::run::Main::Requested"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/64",
+        "step_alone": {
+          "code": "invalid_package",
+          "cause": "operation-member-mismatch",
+          "locus": "/semantic_graph/nodes/64"
+        }
+      },
+      "note": "schema.json refuses first (malformed_wire); step_alone is the reader code of the prose when the protocol step runs alone on the same edit (FR-464-AC-19)"
     }
   ],
   "later": [
@@ -4818,7 +6851,8 @@
       "id": "K1",
       "test_case": "TC-946",
       "class": "source_edit",
-      "reason": "needs_source_edit_params"
+      "reason": "needs_source_edit_params",
+      "detail": "parameters are typed in the schema (reformat, add_comment, add_reference, reorder_declarations); the four sub-cases need a producer replayer, which this manifest does not carry"
     },
     {
       "id": "K2",
@@ -4861,7 +6895,7 @@
     {
       "id": "K14",
       "test_case": "TC-946",
-      "class": "admit",
+      "class": "property",
       "reason": "node_set_case"
     },
     {
@@ -4915,8 +6949,8 @@
     {
       "id": "K15",
       "test_case": "TC-946",
-      "class": "admit",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "C2",
@@ -4987,12 +7021,6 @@
       "reason": "needs_new_nodes"
     },
     {
-      "id": "B1",
-      "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
       "id": "B2",
       "test_case": "TC-946",
       "class": "refuse",
@@ -5040,14 +7068,14 @@
     {
       "id": "B22",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "B23",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5061,7 +7089,7 @@
     {
       "id": "B25",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5080,13 +7108,6 @@
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
-      "id": "B8",
-      "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
       "id": "B9",
       "test_case": "TC-946",
       "class": "refuse",
@@ -5094,21 +7115,7 @@
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
-      "id": "B10",
-      "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
       "id": "B11",
-      "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
-      "id": "B12",
       "test_case": "TC-946",
       "class": "refuse",
       "reason": "needs_base_extension",
@@ -5144,14 +7151,7 @@
     {
       "id": "B17",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
-      "id": "B18",
-      "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5163,12 +7163,6 @@
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
-      "id": "R1",
-      "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
       "id": "R2",
       "test_case": "TC-946",
       "class": "refuse",
@@ -5177,7 +7171,7 @@
     {
       "id": "R3",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5195,7 +7189,7 @@
     {
       "id": "R6",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5220,32 +7214,32 @@
     {
       "id": "R10",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "R11",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "R12",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "R13",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "R14",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5265,7 +7259,7 @@
     {
       "id": "R17",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "multi_outcome_split"
     },
     {
@@ -5302,13 +7296,13 @@
     {
       "id": "R23",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "multi_outcome_split"
     },
     {
       "id": "R24",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5388,47 +7382,41 @@
       "reason": "needs_new_nodes"
     },
     {
-      "id": "A1",
-      "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
       "id": "A2",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "A3",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "A4",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "A5",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "A6",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_base_extension",
+      "class": "property",
+      "reason": "needs_property_assertions",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "A7",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "A8",
@@ -5457,7 +7445,7 @@
     {
       "id": "RL2",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5499,7 +7487,7 @@
     {
       "id": "RL8",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5535,7 +7523,7 @@
     {
       "id": "RL14",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5567,13 +7555,13 @@
     {
       "id": "RL20",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "RL21",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5603,7 +7591,7 @@
     {
       "id": "CH2",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5628,7 +7616,7 @@
     {
       "id": "CH7",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5661,7 +7649,7 @@
     {
       "id": "CH7d",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5685,31 +7673,31 @@
     {
       "id": "CH11",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "CH13",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "CH17",
       "test_case": "TC-947",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "QU2",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "QU3",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5751,20 +7739,13 @@
     {
       "id": "QU11",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
-    },
-    {
-      "id": "FN3",
-      "test_case": "TC-947",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "FN3b",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5784,7 +7765,7 @@
     {
       "id": "TM2",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5816,7 +7797,7 @@
     {
       "id": "TM13",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5830,14 +7811,14 @@
     {
       "id": "TM11",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "RT1",
       "test_case": "TC-947",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -5847,17 +7828,10 @@
       "reason": "needs_new_nodes"
     },
     {
-      "id": "RT3",
-      "test_case": "TC-947",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
       "id": "RT4",
       "test_case": "TC-947",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "L3",
@@ -5911,7 +7885,7 @@
     {
       "id": "L18",
       "test_case": "TC-948",
-      "class": "admit",
+      "class": "refuse",
       "reason": "needs_new_nodes",
       "detail": "encoded vector"
     },
@@ -5944,7 +7918,7 @@
     {
       "id": "CE6",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5971,14 +7945,14 @@
     {
       "id": "CE11",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "CE7",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -5991,8 +7965,8 @@
     {
       "id": "PA13",
       "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "PA10",
@@ -6010,7 +7984,7 @@
     {
       "id": "PA14",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6047,13 +8021,13 @@
     {
       "id": "AW1",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "AW2",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6077,7 +8051,7 @@
     {
       "id": "AW6",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6101,7 +8075,7 @@
     {
       "id": "AW10",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6114,12 +8088,6 @@
     },
     {
       "id": "AW12",
-      "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
-      "id": "E1",
       "test_case": "TC-948",
       "class": "refuse",
       "reason": "needs_new_nodes"
@@ -6151,7 +8119,7 @@
     {
       "id": "E6",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6173,19 +8141,7 @@
       "reason": "needs_new_nodes"
     },
     {
-      "id": "E10",
-      "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
       "id": "E11",
-      "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
-      "id": "E12",
       "test_case": "TC-948",
       "class": "refuse",
       "reason": "needs_new_nodes"
@@ -6199,7 +8155,7 @@
     {
       "id": "E14",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6217,7 +8173,7 @@
     {
       "id": "E17",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6229,7 +8185,7 @@
     {
       "id": "E19",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6242,19 +8198,12 @@
     {
       "id": "E21",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "E22",
-      "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
-      "id": "BS1",
       "test_case": "TC-948",
       "class": "refuse",
       "reason": "needs_base_extension",
@@ -6270,19 +8219,12 @@
     {
       "id": "BS3",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "BS4",
-      "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_base_extension",
-      "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
-    },
-    {
-      "id": "BS5",
       "test_case": "TC-948",
       "class": "refuse",
       "reason": "needs_base_extension",
@@ -6305,7 +8247,7 @@
     {
       "id": "BS8",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6313,12 +8255,12 @@
       "id": "BS9",
       "test_case": "TC-948",
       "class": "refuse",
-      "reason": "needs_new_nodes"
+      "reason": "multi_outcome_split"
     },
     {
       "id": "BS10",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6332,7 +8274,7 @@
     {
       "id": "DF1",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6346,7 +8288,7 @@
     {
       "id": "DF3",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6414,7 +8356,7 @@
     {
       "id": "DF7c",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6449,7 +8391,7 @@
     {
       "id": "DF12",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6457,7 +8399,7 @@
       "id": "DF13",
       "test_case": "TC-948",
       "class": "refuse",
-      "reason": "needs_base_extension",
+      "reason": "multi_outcome_split",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
@@ -6470,7 +8412,7 @@
     {
       "id": "DF15",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6516,7 +8458,7 @@
     {
       "id": "CP10",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6528,13 +8470,13 @@
     {
       "id": "CP9c",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "CP9d",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6546,13 +8488,13 @@
     {
       "id": "CP9e",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "CP10b",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6577,14 +8519,14 @@
     {
       "id": "CP17",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "CP18",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6605,14 +8547,14 @@
     {
       "id": "CP21",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
     {
       "id": "CP22",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6626,7 +8568,7 @@
     {
       "id": "CP24",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6650,12 +8592,6 @@
       "reason": "needs_new_nodes"
     },
     {
-      "id": "CP28",
-      "test_case": "TC-948",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
-    },
-    {
       "id": "CP29",
       "test_case": "TC-948",
       "class": "refuse",
@@ -6672,7 +8608,7 @@
     {
       "id": "CP31",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6693,7 +8629,7 @@
     {
       "id": "CP34",
       "test_case": "TC-948",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_base_extension",
       "detail": "a binder-scope or decision-fact read edit needs new expression nodes in the base"
     },
@@ -6721,14 +8657,14 @@
     {
       "id": "OM-02",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
       "id": "OM-04",
       "test_case": "TC-946",
-      "class": "refuse",
-      "reason": "needs_new_nodes"
+      "class": "property",
+      "reason": "needs_property_assertions"
     },
     {
       "id": "OM-05",
@@ -6751,7 +8687,7 @@
     {
       "id": "OM-08",
       "test_case": "TC-946",
-      "class": "refuse",
+      "class": "admit",
       "reason": "needs_new_nodes"
     },
     {
@@ -6771,198 +8707,185 @@
       "test_case": "TC-946",
       "class": "refuse",
       "reason": "needs_new_nodes"
+    },
+    {
+      "id": "TM9",
+      "test_case": "TC-947",
+      "class": "property",
+      "reason": "node_set_case",
+      "detail": "remove the terminal node together with its clause listing, so the clause body changes and no node id changes; the PR 1 row (unlisting the terminal alone) replayed Membership step 5 'unattached nodes' instead and was withdrawn"
+    },
+    {
+      "id": "L2",
+      "test_case": "TC-948",
+      "class": "admit",
+      "reason": "needs_second_base",
+      "detail": "an all-empty run needs a second base whose Main holds no children; emptying the children of the OrderFlow base leaves the controls held by nothing (FR-464 Containment) and replayed a membership refusal instead, so the PR 1 row was withdrawn"
+    },
+    {
+      "id": "PA7b",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "reason": "multi_outcome_split",
+      "sub_case_of": "PA7",
+      "detail": "the second sub-case of PA7: quorum with count 3 over two joined branches (invalid_package/invalid-value at count); the PA7 row carries count 0"
     }
   ],
   "pending": [
     {
-      "id": "V3",
-      "test_case": "TC-946",
-      "question": "Prose names a reader-level refusal (ill_typed/operator-ineligible), but the edited package fails schema.json at /semantic_graph/nodes/59 (malformed_wire). Q-SCHEMA-FIRST: schema.json refuses before the reader (XT-06 treats it so), so the prose outcome cannot occur on this edit. Is the intended outcome malformed_wire at the schema path, or is there a schema-valid edit that reaches the reader step, and if so which?"
-    },
-    {
-      "id": "V4",
-      "test_case": "TC-946",
-      "question": "Prose names a reader-level refusal (ill_typed/operator-ineligible), but the edited package fails schema.json at /semantic_graph/nodes/59 (malformed_wire). Q-SCHEMA-FIRST: schema.json refuses before the reader (XT-06 treats it so), so the prose outcome cannot occur on this edit. Is the intended outcome malformed_wire at the schema path, or is there a schema-valid edit that reaches the reader step, and if so which?"
-    },
-    {
       "id": "V12",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
-    },
-    {
-      "id": "V16",
-      "test_case": "TC-946",
-      "question": "Removing the lock's temporal_profile selection also breaks the base's temporal clause OrderClosureBounded, which carries a temporal_profile law and precedes Refund in graph order. Is the first offending node OrderClosureBounded (operation-law-unselected) or Refund (missing-selection)?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "C5",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "C6",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "C7",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "C8",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
-    },
-    {
-      "id": "C12",
-      "test_case": "TC-946",
-      "question": "Q-MEMBERSHIP: FR-464 Reader order runs step 5 (membership: containment, listing, unattached nodes) before the clause-node reference-form checks of step 6, and before nothing else here. This edit unlists or unroots a node, so the first defect is the membership one (invalid_semantic_graph) and the prose outcome (invalid_model_binding/malformed-declaration) is masked. What edit is intended: one that keeps the node listed and rooted while changing the reference, or is the membership refusal the expected outcome?"
-    },
-    {
-      "id": "C13a",
-      "test_case": "TC-946",
-      "question": "Q-MEMBERSHIP: FR-464 Reader order runs step 5 (membership: containment, listing, unattached nodes) before the clause-node reference-form checks of step 6, and before nothing else here. This edit unlists or unroots a node, so the first defect is the membership one (invalid_semantic_graph) and the prose outcome (missing_declaration/missing-name) is masked. What edit is intended: one that keeps the node listed and rooted while changing the reference, or is the membership refusal the expected outcome?"
-    },
-    {
-      "id": "M1",
-      "test_case": "TC-946",
-      "question": "FR-464 Single listing says a role named by two arguments of one clause refuses invalid_semantic_graph at the node (the role), but the vector says at the clause node. Which locus governs?"
-    },
-    {
-      "id": "M8",
-      "test_case": "TC-946",
-      "question": "A declared node whose declaration differs from its node_id path is refused invalid_package/declaration-nominal-mismatch by the reader before the membership check; M8/M9 edit the declaration only. Is the intended edit to change node_id and every reference as well, and is the expected code still invalid_semantic_graph?"
-    },
-    {
-      "id": "M9",
-      "test_case": "TC-946",
-      "question": "Same as M8 (declaration prefix edit trips declaration-nominal-mismatch first)."
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L10",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L11",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L13",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L14",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L15",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L16",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L17",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
-    },
-    {
-      "id": "L19",
-      "test_case": "TC-948",
-      "question": "Q-SCHEMA-FIRST: operator jump is outside the schema enum (XT-06/XT-07), so malformed_wire precedes operation-member-mismatch. Is the intended outcome malformed_wire at the schema path?"
-    },
-    {
-      "id": "V7",
-      "test_case": "TC-946",
-      "question": "Q-SCHEMA-FIRST: operator jump is outside the schema enum (XT-06/XT-07), so malformed_wire precedes operation-member-mismatch. Is the intended outcome malformed_wire at the schema path?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "L12",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path). Needs a fence node the OrderFlow base does not hold, and the layout schema is not yet referenced by any node rule (see the manifest note)."
     },
     {
       "id": "RL17",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "CH15",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "CH16",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "CH14",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "CH4",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "QU6",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
-    },
-    {
-      "id": "FN6",
-      "test_case": "TC-947",
-      "question": "Q-MEMBERSHIP: FR-464 Reader order runs step 5 (membership: containment, listing, unattached nodes) before the clause-node reference-form checks of step 6, and before nothing else here. This edit unlists or unroots a node, so the first defect is the membership one (invalid_semantic_graph) and the prose outcome (invalid_model_binding/malformed-declaration) is masked. What edit is intended: one that keeps the node listed and rooted while changing the reference, or is the membership refusal the expected outcome?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "TM3",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "TM4",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
-    },
-    {
-      "id": "TM8",
-      "test_case": "TC-947",
-      "question": "Q-MEMBERSHIP: FR-464 Reader order runs step 5 (membership: containment, listing, unattached nodes) before the clause-node reference-form checks of step 6, and before nothing else here. This edit unlists or unroots a node, so the first defect is the membership one (invalid_semantic_graph) and the prose outcome (invalid_model_binding/malformed-declaration) is masked. What edit is intended: one that keeps the node listed and rooted while changing the reference, or is the membership refusal the expected outcome?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "CE1",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "PA1",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "RP2",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "RP3",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     },
     {
       "id": "RP4",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT: the prose says malformed_wire, but the edited package passes schema.json: ProtocolControlApplication (the per-operator argument layouts) is defined in schema.json and referenced by no node rule, so the schema validator reports no error path. What is the locus: (a) wire ProtocolControlApplication into the ProtocolNode body rule so the validator path exists, or (b) define it as the pointer of the first deviating argument under /semantic_graph/nodes/{i}/body/arguments?"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
     }
   ]
 }

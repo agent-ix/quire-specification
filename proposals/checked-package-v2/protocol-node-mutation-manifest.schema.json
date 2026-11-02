@@ -5,21 +5,48 @@
   "description": "Each row is one machine edit of the checked OrderFlow base package (fixtures/protocol-node-base.json) and the typed outcome a conforming reader gives that edit. The prose rows of fixtures/protocol-node-vectors.json stay the human statement; a row here carries the same id and is the replayable form. A row states the first defect in reader order only (FR-464 'Reader order'); a defect the first one masks is not asserted, by design.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "note", "base", "reader_order", "loci", "rows", "later", "pending"],
+  "required": [
+    "version",
+    "note",
+    "base",
+    "reader_order",
+    "loci",
+    "rows",
+    "later",
+    "pending"
+  ],
   "properties": {
-    "version": {"const": "quire.protocol-node-mutation-manifest/v1"},
-    "note": {"type": "string", "minLength": 1},
+    "version": {
+      "const": "quire.protocol-node-mutation-manifest/v1"
+    },
+    "note": {
+      "type": "string",
+      "minLength": 1
+    },
     "base": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["fixture", "domain_document", "deviations"],
+      "required": [
+        "fixture",
+        "domain_document",
+        "deviations"
+      ],
       "properties": {
-        "fixture": {"type": "string", "pattern": "^[A-Za-z0-9._-]+\\.json$"},
-        "domain_document": {"type": "string", "pattern": "^\\.\\./domain-package-[A-Za-z0-9._-]+\\.json$"},
+        "fixture": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+\\.json$"
+        },
+        "domain_document": {
+          "type": "string",
+          "pattern": "^\\.\\./domain-package-[A-Za-z0-9._-]+\\.json$"
+        },
         "deviations": {
           "type": "array",
           "description": "Every way the encoded base differs from the TC-946 'Base package' prose, so a replayer never reads the fixture as more than it is.",
-          "items": {"type": "string", "minLength": 1}
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -30,163 +57,1264 @@
     "loci": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["rule", "wire", "no_package_location"],
+      "required": [
+        "rule",
+        "granularity",
+        "wire",
+        "no_package_location"
+      ],
       "properties": {
-        "rule": {"type": "string"},
-        "wire": {"type": "string"},
-        "no_package_location": {"type": "string"}
+        "rule": {
+          "type": "string"
+        },
+        "wire": {
+          "type": "string"
+        },
+        "no_package_location": {
+          "type": "string"
+        },
+        "granularity": {
+          "type": "string"
+        }
       }
     },
-    "rows": {"type": "array", "items": {"$ref": "#/$defs/Row"}},
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Row"
+      }
+    },
     "later": {
       "type": "array",
       "description": "Vectors whose manifest row a later pull request carries, each with the reason it is not in this one.",
-      "items": {"$ref": "#/$defs/Later"}
+      "items": {
+        "$ref": "#/$defs/Later"
+      }
     },
     "pending": {
       "type": "array",
       "description": "Vectors whose outcome the spec text does not determine: a question for the planner, never a guess.",
-      "items": {"$ref": "#/$defs/Pending"}
+      "items": {
+        "$ref": "#/$defs/Pending"
+      }
     }
   },
   "$defs": {
-    "Pointer": {"type": "string", "pattern": "^(/([^/~]|~[01])*)*$"},
-    "VectorId": {"type": "string", "pattern": "^[A-Za-z0-9-]+$"},
-    "TestCase": {"enum": ["TC-946", "TC-947", "TC-948"]},
-    "Class": {"enum": ["admit", "refuse", "property", "source_edit", "limits"]},
+    "Pointer": {
+      "type": "string",
+      "pattern": "^(/([^/~]|~[01])*)*$"
+    },
+    "VectorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9-]+$"
+    },
+    "TestCase": {
+      "enum": [
+        "TC-946",
+        "TC-947",
+        "TC-948"
+      ]
+    },
+    "Class": {
+      "enum": [
+        "admit",
+        "refuse",
+        "property",
+        "source_edit",
+        "limits"
+      ]
+    },
     "EditOp": {
       "type": "object",
-      "description": "An RFC 6902 operation over the base package, with an absolute pointer. 'node' names the graph node the pointer enters, as its declaration path joined by '::', or its derived path rendered as JSON when it has no declaration; the test checks the pointer's node index against it so a reordered base is caught.",
-      "required": ["op", "path"],
+      "description": "An RFC 6902 add, remove or replace operation over the base package, with an absolute pointer ('-' appends to an array). 'node' names the graph node the pointer enters, as its declaration path joined by '::', or its derived path rendered as compact JSON when it has no declaration; the test checks the pointer's node index against it so a reordered base is caught.",
+      "required": [
+        "op",
+        "path"
+      ],
       "additionalProperties": false,
       "properties": {
-        "op": {"enum": ["add", "remove", "replace", "move"]},
-        "path": {"$ref": "#/$defs/Pointer"},
+        "op": {
+          "enum": [
+            "add",
+            "remove",
+            "replace"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/Pointer"
+        },
         "value": {},
-        "from": {"$ref": "#/$defs/Pointer"},
-        "node": {"type": "string", "minLength": 1}
+        "node": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "allOf": [
-        {"if": {"properties": {"op": {"enum": ["add", "replace"]}}, "required": ["op"]}, "then": {"required": ["value"]}},
-        {"if": {"properties": {"op": {"const": "move"}}, "required": ["op"]}, "then": {"required": ["from"]}}
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "replace"
+                ]
+              }
+            },
+            "required": [
+              "op"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ]
+          }
+        }
       ]
     },
     "Refusal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["decision", "stage", "code", "cause", "locus"],
+      "required": [
+        "decision",
+        "stage",
+        "code",
+        "cause",
+        "locus"
+      ],
       "properties": {
-        "decision": {"const": "refuse"},
-        "stage": {
-          "enum": ["schema", "graph", "reader"],
-          "description": "schema: the edited package fails the V2 schema (malformed_wire at the first schema error path). graph: FR-322/FR-464 graph-shape and dependency joins, before any protocol step. reader: a protocol step or later."
+        "decision": {
+          "const": "refuse"
         },
-        "code": {"type": "string", "pattern": "^[a-z][a-z_]*$"},
-        "cause": {"type": ["string", "null"], "pattern": "^[a-z][a-z-]*$"},
-        "locus": {"$ref": "#/$defs/Pointer"},
+        "stage": {
+          "enum": [
+            "schema",
+            "graph",
+            "reader"
+          ],
+          "description": "schema: the edited package fails the V2 schema (malformed_wire at the first schema error path). graph: FR-322 graph-stage joins of a node's dependencies, before any protocol step. reader: a protocol step or later, including the local shape and canonical-order checks of FR-464 steps 4 and 6."
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z][a-z_]*$"
+        },
+        "cause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z-]*$"
+        },
+        "locus": {
+          "$ref": "#/$defs/Pointer",
+          "description": "Granularity follows 'loci.granularity': the node pointer, unless the vector names a target or a field."
+        },
         "retains": {
           "type": "object",
-          "description": "Typed detail the refusal must carry (FR-466 'retaining ...'), by member name.",
-          "additionalProperties": true
+          "additionalProperties": false,
+          "description": "Typed detail the refusal must carry (FR-466 'retaining ...').",
+          "properties": {
+            "required_kind": {
+              "type": "string"
+            },
+            "actual_kind": {
+              "type": "string"
+            },
+            "required_key": {
+              "type": "string"
+            },
+            "actual_key": {
+              "type": "string"
+            }
+          }
+        },
+        "document_pointer": {
+          "$ref": "#/$defs/Pointer",
+          "description": "The absolute pointer of the field inside the locus node, when the locus is the node (FR-322-AC-152 puts the refusal at the node and the field in document_pointer)."
+        },
+        "step_alone": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "cause",
+            "locus"
+          ],
+          "description": "The reader refusal of the prose vector when the protocol step runs alone on a schema-first edit (FR-464-AC-19); the schema refusal in 'code' comes first in a complete reader.",
+          "properties": {
+            "code": {
+              "type": "string",
+              "pattern": "^[a-z][a-z_]*$"
+            },
+            "cause": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[a-z][a-z-]*$"
+            },
+            "locus": {
+              "$ref": "#/$defs/Pointer"
+            }
+          }
         }
       }
     },
     "Admission": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["decision"],
-      "properties": {"decision": {"const": "admit"}}
+      "required": [
+        "decision"
+      ],
+      "properties": {
+        "decision": {
+          "const": "admit"
+        }
+      }
     },
     "Assertion": {
       "description": "The typed assertion vocabulary of a property row. Nodes are named as in EditOp.node.",
       "oneOf": [
-        {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"const": "admitted"}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"const": "node_ids_unchanged"}, "nodes": {"type": "array", "items": {"type": "string"}}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind", "node"], "properties": {"kind": {"const": "node_id_changed"}, "node": {"type": "string"}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind", "node"], "properties": {"kind": {"const": "body_changed"}, "node": {"type": "string"}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind", "node"], "properties": {"kind": {"const": "body_unchanged"}, "node": {"type": "string"}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind", "count"], "properties": {"kind": {"const": "distinct_node_ids"}, "count": {"type": "integer", "minimum": 1}, "nodes": {"type": "array", "items": {"type": "string"}}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind", "node", "member", "value"], "properties": {"kind": {"const": "member_equals"}, "node": {"type": "string"}, "member": {"$ref": "#/$defs/Pointer"}, "value": {}}},
-        {"type": "object", "additionalProperties": false, "required": ["kind", "rows"], "properties": {"kind": {"const": "activation_relation"}, "rows": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["clause", "activation", "temporal_clause"], "properties": {"clause": {"type": "string"}, "activation": {"enum": ["origin", "each"]}, "trigger": {"type": "string"}, "temporal_clause": {"type": "string"}}}}}}
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "admitted"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "node_ids_unchanged"
+            },
+            "nodes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "scope": {
+              "const": "all"
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "nodes"
+              ]
+            },
+            {
+              "required": [
+                "scope"
+              ]
+            }
+          ],
+          "description": "Exactly one of 'nodes' (those nodes) or 'scope: all' (every node of the package)."
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "node"
+          ],
+          "properties": {
+            "kind": {
+              "const": "node_id_changed"
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "node"
+          ],
+          "properties": {
+            "kind": {
+              "const": "body_changed"
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "node"
+          ],
+          "properties": {
+            "kind": {
+              "const": "body_unchanged"
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "count"
+          ],
+          "properties": {
+            "kind": {
+              "const": "distinct_node_ids"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "node",
+            "member",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "member_equals"
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            },
+            "member": {
+              "$ref": "#/$defs/Pointer"
+            },
+            "value": {}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "rows"
+          ],
+          "properties": {
+            "kind": {
+              "const": "activation_relation"
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "clause",
+                  "activation",
+                  "temporal_clause"
+                ],
+                "properties": {
+                  "clause": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "activation": {
+                    "enum": [
+                      "origin",
+                      "each"
+                    ]
+                  },
+                  "trigger": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "temporal_clause": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "levels"
+          ],
+          "properties": {
+            "kind": {
+              "const": "binder_levels"
+            },
+            "levels": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "binder",
+                  "level"
+                ],
+                "properties": {
+                  "binder": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "acyclic",
+            "edges"
+          ],
+          "properties": {
+            "kind": {
+              "const": "causal_edges"
+            },
+            "acyclic": {
+              "type": "boolean"
+            },
+            "edges": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "relation",
+                  "from",
+                  "to"
+                ],
+                "properties": {
+                  "relation": {
+                    "enum": [
+                      "message",
+                      "effect",
+                      "join",
+                      "commit",
+                      "compensation"
+                    ]
+                  },
+                  "from": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "node",
+                      "end"
+                    ],
+                    "properties": {
+                      "node": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "end": {
+                        "enum": [
+                          "enter",
+                          "exit"
+                        ]
+                      }
+                    }
+                  },
+                  "to": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "node",
+                      "end"
+                    ],
+                    "properties": {
+                      "node": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "end": {
+                        "enum": [
+                          "enter",
+                          "exit"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "operators"
+          ],
+          "properties": {
+            "kind": {
+              "const": "runtime_subject_kinds"
+            },
+            "operators": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operator",
+                  "kinds"
+                ],
+                "properties": {
+                  "operator": {
+                    "enum": [
+                      "protocol",
+                      "role",
+                      "channel",
+                      "queue",
+                      "finish",
+                      "terminal",
+                      "sequence",
+                      "choice",
+                      "parallel",
+                      "repeat",
+                      "await",
+                      "check",
+                      "send",
+                      "receive",
+                      "attempt",
+                      "effect",
+                      "event",
+                      "commit",
+                      "fence",
+                      "compensate"
+                    ]
+                  },
+                  "kinds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "to"
+          ],
+          "properties": {
+            "kind": {
+              "const": "package_byte_equal"
+            },
+            "to": {
+              "const": "base"
+            }
+          }
+        }
       ]
     },
     "Property": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["decision", "assertions"],
+      "required": [
+        "decision",
+        "assertions"
+      ],
       "properties": {
-        "decision": {"const": "property"},
-        "assertions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Assertion"}}
+        "decision": {
+          "const": "property"
+        },
+        "assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Assertion"
+          }
+        }
       }
     },
     "SourceEdit": {
-      "type": "object",
-      "description": "An edit of the QSL source the base was compiled from, replayed by the producer, with structured parameters.",
-      "additionalProperties": false,
-      "required": ["kind", "params"],
-      "properties": {
-        "kind": {"enum": ["reformat", "add_comment", "add_reference", "reorder_declarations", "rename_declaration", "set_literal", "remove_clause", "add_clause"]},
-        "params": {"type": "object"}
-      }
+      "description": "An edit of the QSL source the base was compiled from, replayed by the producer, with parameters typed per kind.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "reformat"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [],
+              "properties": {}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "add_comment"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "before",
+                "text"
+              ],
+              "properties": {
+                "before": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "add_reference"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "from",
+                "to"
+              ],
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                },
+                "to": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "reorder_declarations"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "A declaration path joined by '::'."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "rename_declaration"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "from",
+                "to"
+              ],
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                },
+                "to": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "set_literal"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "declaration",
+                "member",
+                "value"
+              ],
+              "properties": {
+                "declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                },
+                "member": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "value": {
+                  "type": [
+                    "string",
+                    "integer",
+                    "boolean"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "remove_clause"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "declaration"
+              ],
+              "properties": {
+                "declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "params"
+          ],
+          "properties": {
+            "kind": {
+              "const": "add_clause"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "declaration",
+                "source"
+              ],
+              "properties": {
+                "declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A declaration path joined by '::'."
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "Limits": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["limit", "relation", "of"],
+      "required": [
+        "limit",
+        "relation",
+        "of"
+      ],
       "properties": {
-        "limit": {"enum": ["work", "depth", "nodes", "bytes"]},
-        "relation": {"enum": ["below", "at", "above"]},
-        "of": {"type": "string", "description": "What the bound is measured against, in words the replayer resolves."}
+        "limit": {
+          "enum": [
+            "work",
+            "depth",
+            "nodes",
+            "bytes"
+          ]
+        },
+        "relation": {
+          "enum": [
+            "below",
+            "at",
+            "above"
+          ]
+        },
+        "of": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "subject"
+          ],
+          "description": "What the bound is measured against: a closed subject, optionally narrowed to a node.",
+          "properties": {
+            "subject": {
+              "enum": [
+                "package",
+                "protocol_clause",
+                "control_tree",
+                "nested_repeat",
+                "node_body"
+              ]
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ac": {
+              "type": "string",
+              "pattern": "^FR-[0-9]+-AC-[0-9]+$"
+            }
+          }
+        }
       }
     },
     "Row": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "test_case", "section", "class", "locus_basis", "base", "edit", "expect"],
+      "required": [
+        "id",
+        "test_case",
+        "section",
+        "class",
+        "locus_basis",
+        "expect"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/VectorId"},
-        "test_case": {"$ref": "#/$defs/TestCase"},
-        "section": {"type": "string", "minLength": 1},
-        "class": {"$ref": "#/$defs/Class"},
-        "locus_basis": {"enum": ["derived"], "description": "derived: the locus follows from the Q1 rule (or the schema rule for wire rows) applied to this edit; nothing was copied from a reader's output."},
-        "base": {"type": "string", "pattern": "^[A-Za-z0-9._-]+\\.json$"},
-        "edit_prose": {"type": "string"},
-        "edit": {"type": "array", "items": {"$ref": "#/$defs/EditOp"}},
-        "source_edit": {"$ref": "#/$defs/SourceEdit"},
-        "limits": {"$ref": "#/$defs/Limits"},
-        "expect": {"oneOf": [{"$ref": "#/$defs/Admission"}, {"$ref": "#/$defs/Refusal"}, {"$ref": "#/$defs/Property"}]},
-        "masks": {"type": "string", "description": "Later defects this row's edit also carries, masked by design (first defect in reader order)."},
-        "note": {"type": "string"}
+        "id": {
+          "$ref": "#/$defs/VectorId"
+        },
+        "test_case": {
+          "$ref": "#/$defs/TestCase"
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "class": {
+          "$ref": "#/$defs/Class"
+        },
+        "locus_basis": {
+          "enum": [
+            "node",
+            "target",
+            "field",
+            "dependencies_list",
+            "schema_error_path",
+            "not_applicable"
+          ],
+          "description": "How this row's locus was set. node: the node pointer (the vector says 'at the node'). target: the pointer of the reference term the vector names. field: a named field or value inside the node. dependencies_list: the node's dependencies pointer (FR-322-AC-96). schema_error_path: the first error path of the schema validator. not_applicable: the row asserts no refusal."
+        },
+        "base": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+\\.json$"
+        },
+        "edit_prose": {
+          "type": "string"
+        },
+        "edit": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EditOp"
+          }
+        },
+        "source_edit": {
+          "$ref": "#/$defs/SourceEdit"
+        },
+        "limits": {
+          "$ref": "#/$defs/Limits"
+        },
+        "expect": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Admission"
+            },
+            {
+              "$ref": "#/$defs/Refusal"
+            },
+            {
+              "$ref": "#/$defs/Property"
+            }
+          ]
+        },
+        "masks": {
+          "type": "string",
+          "description": "Later defects this row's edit also carries, masked by design (first defect in reader order)."
+        },
+        "note": {
+          "type": "string"
+        }
       },
       "allOf": [
-        {"if": {"properties": {"class": {"const": "admit"}}, "required": ["class"]}, "then": {"properties": {"expect": {"$ref": "#/$defs/Admission"}}}},
-        {"if": {"properties": {"class": {"const": "refuse"}}, "required": ["class"]}, "then": {"properties": {"expect": {"$ref": "#/$defs/Refusal"}}}},
-        {"if": {"properties": {"class": {"const": "property"}}, "required": ["class"]}, "then": {"properties": {"expect": {"$ref": "#/$defs/Property"}}}},
-        {"if": {"properties": {"class": {"const": "source_edit"}}, "required": ["class"]}, "then": {"required": ["source_edit"]}},
-        {"if": {"properties": {"class": {"const": "limits"}}, "required": ["class"]}, "then": {"required": ["limits"]}}
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "enum": [
+                  "admit",
+                  "refuse",
+                  "property"
+                ]
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "required": [
+              "base",
+              "edit"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "const": "admit"
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "$ref": "#/$defs/Admission"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "const": "refuse"
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "$ref": "#/$defs/Refusal"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "const": "property"
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "$ref": "#/$defs/Property"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "const": "source_edit"
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "required": [
+              "source_edit"
+            ],
+            "properties": {
+              "expect": {
+                "$ref": "#/$defs/Property"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "const": "limits"
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "required": [
+              "limits"
+            ],
+            "properties": {
+              "expect": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/Admission"
+                  },
+                  {
+                    "$ref": "#/$defs/Refusal"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "decision": {
+                    "const": "refuse"
+                  }
+                },
+                "required": [
+                  "decision"
+                ]
+              }
+            },
+            "required": [
+              "expect"
+            ]
+          },
+          "then": {
+            "properties": {
+              "locus_basis": {
+                "enum": [
+                  "node",
+                  "target",
+                  "field",
+                  "dependencies_list",
+                  "schema_error_path"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "admit",
+                      "property"
+                    ]
+                  }
+                },
+                "required": [
+                  "decision"
+                ]
+              }
+            },
+            "required": [
+              "expect"
+            ]
+          },
+          "then": {
+            "properties": {
+              "locus_basis": {
+                "const": "not_applicable"
+              }
+            }
+          }
+        }
       ]
     },
     "Later": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "test_case", "class", "reason"],
+      "required": [
+        "id",
+        "test_case",
+        "class",
+        "reason"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/VectorId"},
-        "test_case": {"$ref": "#/$defs/TestCase"},
-        "class": {"$ref": "#/$defs/Class"},
-        "reason": {"enum": ["needs_new_nodes", "needs_base_extension", "needs_source_edit_params", "multi_outcome_split", "node_set_case", "needs_property_assertions", "needs_limits_params", "needs_second_base"]},
-        "detail": {"type": "string"}
+        "id": {
+          "$ref": "#/$defs/VectorId"
+        },
+        "test_case": {
+          "$ref": "#/$defs/TestCase"
+        },
+        "class": {
+          "$ref": "#/$defs/Class"
+        },
+        "reason": {
+          "enum": [
+            "needs_new_nodes",
+            "needs_base_extension",
+            "needs_source_edit_params",
+            "multi_outcome_split",
+            "node_set_case",
+            "needs_property_assertions",
+            "needs_limits_params",
+            "needs_second_base"
+          ]
+        },
+        "detail": {
+          "type": "string"
+        },
+        "sub_case_of": {
+          "$ref": "#/$defs/VectorId",
+          "description": "This entry is a further sub-case of a vector that has its own row or later entry; it is not a vector id of the prose corpus and is outside the partition."
+        }
       }
     },
     "Pending": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "test_case", "question"],
+      "required": [
+        "id",
+        "test_case",
+        "question"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/VectorId"},
-        "test_case": {"$ref": "#/$defs/TestCase"},
-        "question": {"type": "string", "minLength": 1},
-        "evidence": {"type": "string"}
+        "id": {
+          "$ref": "#/$defs/VectorId"
+        },
+        "test_case": {
+          "$ref": "#/$defs/TestCase"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string"
+        }
       }
     }
   }
