@@ -41,3 +41,22 @@ Ticket: QSL-852. PR: quire-specification#604, head b306f04. The site-name regist
 ## Verdict
 
 Mergeable once FND-001 and FND-002 are fixed or explicitly dispositioned; no high finding. The registry and the protocol_attempt statement are accurate against the checker.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | AC-316 says a protocol_attempt origin appears in the two rows of PL-R1-duplicate-term, but the test asserts only the vector id; AC-317 bundles the PL-03 origin name with a no-bare-type-name rule | tests/checked_package_v2.rs:20339 |
+
+## Dispositions
+
+Round 1 reviewed head 2ffa802. Mutations rerun: PL-R3-leaf-local origin renamed to Handshake fails at the AC-315 assertion; PL-03-declaration renamed to Handshake fails at the AC-313/AC-317 assertion. cargo test --test checked_package_v2 passes 162 of 162. quire validate on FR-322, TC-233 and this SR file matches main apart from line numbers.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | AC-315 asserts every PL-R2 and PL-R3 row origin equals PL-02-child's origin; the PL-R3 mutation now fails. |
+| FND-002 | fixed | PL-03-declaration now reads "protocol Handshake" (AC-317); the Handshake escape clause is removed and the test asserts exact names. |
+| FND-003 | fixed | AC-313 split into AC-313..317, each one claim; path rule is AC-314 and states root versus child. |
+| FND-004 | deferred | Low nit, not merge-blocking; the lead may fold it into the next edit of AC-316/AC-317. |
+
+Note (not a defect): PL-03-declaration keeps child path [1]. The checker records a protocol declaration only at the location root, and region resolution returns no region for a non-root path on a name-only site. The vector is a carrier-shape example of a named type origin with a non-root path, which the schema admits and the IR consumer round-trips without source-region inference, so it is acceptable. A root path would mirror the checker more closely but is not required.

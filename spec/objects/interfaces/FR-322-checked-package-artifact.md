@@ -1118,7 +1118,7 @@ A frame body refusal, meaning-join or canonical-order
   of the nodes anchored to that attempt and is not the origin of a protocol slot
   expression. Every protocol slot expression, and every other site of a protocol
   declaration, is located at the root of a `type_declaration` origin whose
-  `name` is that site's own spaced name (FR-322-AC-313..317), so that no two sites of
+  `name` is that site's own spaced name (FR-322-AC-313..318), so that no two sites of
   a protocol share an origin and no site name equals a declared type name.
   The site-name forms are the registry below, where `P` is the protocol name:
   `protocol P`; `protocol P finish F`; `protocol P finish F body`;
@@ -4140,7 +4140,8 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-314 | A protocol location's `path` is empty exactly when it locates the slot's root term and is the child-index path of the term otherwise: PL-01-root carries `[]` and PL-02-child, the same slot's child term, carries `[2, 0]`, so the two rows share one origin and differ in location. | Test (TC-233) |
 | FR-322-AC-315 | Each protocol-location row of the PL-R2 and PL-R3 reader-refusal vectors carries the same `type_declaration` site-name origin as PL-02-child, so each refuses for the defect it isolates and not for its origin. | Test (TC-233) |
 | FR-322-AC-316 | A `protocol_attempt` origin appears in no positive protocol-location row and in the reader-refusal vectors only in the two rows of PL-R1-duplicate-term. | Test (TC-233) |
-| FR-322-AC-317 | A protocol declaration's own location, PL-03-declaration, carries the `type_declaration` origin named `protocol Handshake`, the checker's declaration-site form, and no protocol-location row names a bare declared-type name as an origin. | Test (TC-233) |
+| FR-322-AC-317 | A protocol declaration's own location, PL-03-declaration, carries the `type_declaration` origin named `protocol Handshake`, the checker's declaration-site form. | Test (TC-233) |
+| FR-322-AC-318 | No positive protocol-location row carries a bare declared-type name as its origin: every positive row's origin `name` is a spaced `protocol ...` site name. | Test (TC-233) |
 
 ## Dependencies
 

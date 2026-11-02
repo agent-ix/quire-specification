@@ -20112,7 +20112,8 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-314",
     "FR-322-AC-315",
     "FR-322-AC-316",
-    "FR-322-AC-317"
+    "FR-322-AC-317",
+    "FR-322-AC-318"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20309,6 +20310,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             SLOT_SITE
         };
         assert_eq!(origin["name"], expected, "{} (AC-313, AC-317)", row["id"]);
+        assert!(
+            origin["name"].as_str().unwrap().starts_with("protocol "),
+            "{} names a protocol site, not a bare type (AC-318)",
+            row["id"]
+        );
     }
     let site = |id: &str| {
         location_rows.iter().find(|row| row["id"] == id).unwrap()["location"].clone()
@@ -20334,10 +20340,22 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let attempt_rows: Vec<&str> = refusals
         .iter()
         .chain(vectors["schema_invalid"].as_array().unwrap())
-        .filter(|v| v.to_string().contains("protocol_attempt"))
-        .map(|v| v["id"].as_str().unwrap())
+        .flat_map(|vector| {
+            let id = vector["id"].as_str().unwrap();
+            let rows = vector["value"]
+                .as_array()
+                .cloned()
+                .unwrap_or_else(|| vec![vector["value"].clone()]);
+            rows.into_iter()
+                .filter(|row| row["location"]["origin"]["kind"] == "protocol_attempt")
+                .map(move |_| id)
+        })
         .collect();
-    assert_eq!(attempt_rows, ["PL-R1-duplicate-term"], "AC-316");
+    assert_eq!(
+        attempt_rows,
+        ["PL-R1-duplicate-term", "PL-R1-duplicate-term"],
+        "AC-316"
+    );
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
         let mut wire = row.clone();
