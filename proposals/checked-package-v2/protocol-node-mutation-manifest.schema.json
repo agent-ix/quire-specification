@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:quire:checked-package-protocol-node-mutation-manifest:v1",
+  "title": "Executable mutation manifest for the protocol node vectors (TC-946, TC-947, TC-948)",
+  "description": "Each row is one machine edit of the checked OrderFlow base package (fixtures/protocol-node-base.json) and the typed outcome a conforming reader gives that edit. The prose rows of fixtures/protocol-node-vectors.json stay the human statement; a row here carries the same id and is the replayable form. A row states the first defect in reader order only (FR-464 'Reader order'); a defect the first one masks is not asserted, by design.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "note", "base", "reader_order", "loci", "rows", "later", "pending"],
+  "properties": {
+    "version": {"const": "quire.protocol-node-mutation-manifest/v1"},
+    "note": {"type": "string", "minLength": 1},
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture", "domain_document", "deviations"],
+      "properties": {
+        "fixture": {"type": "string", "pattern": "^[A-Za-z0-9._-]+\\.json$"},
+        "domain_document": {"type": "string", "pattern": "^\\.\\./domain-package-[A-Za-z0-9._-]+\\.json$"},
+        "deviations": {
+          "type": "array",
+          "description": "Every way the encoded base differs from the TC-946 'Base package' prose, so a replayer never reads the fixture as more than it is.",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "reader_order": {
+      "type": "string",
+      "description": "How 'first offending node or entry in reader order' resolves when a row names no node: ascending graph index, then the FR-464 step order."
+    },
+    "loci": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "wire", "no_package_location"],
+      "properties": {
+        "rule": {"type": "string"},
+        "wire": {"type": "string"},
+        "no_package_location": {"type": "string"}
+      }
+    },
+    "rows": {"type": "array", "items": {"$ref": "#/$defs/Row"}},
+    "later": {
+      "type": "array",
+      "description": "Vectors whose manifest row a later pull request carries, each with the reason it is not in this one.",
+      "items": {"$ref": "#/$defs/Later"}
+    },
+    "pending": {
+      "type": "array",
+      "description": "Vectors whose outcome the spec text does not determine: a question for the planner, never a guess.",
+      "items": {"$ref": "#/$defs/Pending"}
+    }
+  },
+  "$defs": {
+    "Pointer": {"type": "string", "pattern": "^(/([^/~]|~[01])*)*$"},
+    "VectorId": {"type": "string", "pattern": "^[A-Za-z0-9-]+$"},
+    "TestCase": {"enum": ["TC-946", "TC-947", "TC-948"]},
+    "Class": {"enum": ["admit", "refuse", "property", "source_edit", "limits"]},
+    "EditOp": {
+      "type": "object",
+      "description": "An RFC 6902 operation over the base package, with an absolute pointer. 'node' names the graph node the pointer enters, as its declaration path joined by '::', or its derived path rendered as JSON when it has no declaration; the test checks the pointer's node index against it so a reordered base is caught.",
+      "required": ["op", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "op": {"enum": ["add", "remove", "replace", "move"]},
+        "path": {"$ref": "#/$defs/Pointer"},
+        "value": {},
+        "from": {"$ref": "#/$defs/Pointer"},
+        "node": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"op": {"enum": ["add", "replace"]}}, "required": ["op"]}, "then": {"required": ["value"]}},
+        {"if": {"properties": {"op": {"const": "move"}}, "required": ["op"]}, "then": {"required": ["from"]}}
+      ]
+    },
+    "Refusal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "stage", "code", "cause", "locus"],
+      "properties": {
+        "decision": {"const": "refuse"},
+        "stage": {
+          "enum": ["schema", "graph", "reader"],
+          "description": "schema: the edited package fails the V2 schema (malformed_wire at the first schema error path). graph: FR-322/FR-464 graph-shape and dependency joins, before any protocol step. reader: a protocol step or later."
+        },
+        "code": {"type": "string", "pattern": "^[a-z][a-z_]*$"},
+        "cause": {"type": ["string", "null"], "pattern": "^[a-z][a-z-]*$"},
+        "locus": {"$ref": "#/$defs/Pointer"},
+        "retains": {
+          "type": "object",
+          "description": "Typed detail the refusal must carry (FR-466 'retaining ...'), by member name.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "Admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision"],
+      "properties": {"decision": {"const": "admit"}}
+    },
+    "Assertion": {
+      "description": "The typed assertion vocabulary of a property row. Nodes are named as in EditOp.node.",
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"const": "admitted"}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"const": "node_ids_unchanged"}, "nodes": {"type": "array", "items": {"type": "string"}}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "node"], "properties": {"kind": {"const": "node_id_changed"}, "node": {"type": "string"}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "node"], "properties": {"kind": {"const": "body_changed"}, "node": {"type": "string"}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "node"], "properties": {"kind": {"const": "body_unchanged"}, "node": {"type": "string"}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "count"], "properties": {"kind": {"const": "distinct_node_ids"}, "count": {"type": "integer", "minimum": 1}, "nodes": {"type": "array", "items": {"type": "string"}}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "node", "member", "value"], "properties": {"kind": {"const": "member_equals"}, "node": {"type": "string"}, "member": {"$ref": "#/$defs/Pointer"}, "value": {}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "rows"], "properties": {"kind": {"const": "activation_relation"}, "rows": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["clause", "activation", "temporal_clause"], "properties": {"clause": {"type": "string"}, "activation": {"enum": ["origin", "each"]}, "trigger": {"type": "string"}, "temporal_clause": {"type": "string"}}}}}}
+      ]
+    },
+    "Property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "assertions"],
+      "properties": {
+        "decision": {"const": "property"},
+        "assertions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Assertion"}}
+      }
+    },
+    "SourceEdit": {
+      "type": "object",
+      "description": "An edit of the QSL source the base was compiled from, replayed by the producer, with structured parameters.",
+      "additionalProperties": false,
+      "required": ["kind", "params"],
+      "properties": {
+        "kind": {"enum": ["reformat", "add_comment", "add_reference", "reorder_declarations", "rename_declaration", "set_literal", "remove_clause", "add_clause"]},
+        "params": {"type": "object"}
+      }
+    },
+    "Limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limit", "relation", "of"],
+      "properties": {
+        "limit": {"enum": ["work", "depth", "nodes", "bytes"]},
+        "relation": {"enum": ["below", "at", "above"]},
+        "of": {"type": "string", "description": "What the bound is measured against, in words the replayer resolves."}
+      }
+    },
+    "Row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "test_case", "section", "class", "locus_basis", "base", "edit", "expect"],
+      "properties": {
+        "id": {"$ref": "#/$defs/VectorId"},
+        "test_case": {"$ref": "#/$defs/TestCase"},
+        "section": {"type": "string", "minLength": 1},
+        "class": {"$ref": "#/$defs/Class"},
+        "locus_basis": {"enum": ["derived"], "description": "derived: the locus follows from the Q1 rule (or the schema rule for wire rows) applied to this edit; nothing was copied from a reader's output."},
+        "base": {"type": "string", "pattern": "^[A-Za-z0-9._-]+\\.json$"},
+        "edit_prose": {"type": "string"},
+        "edit": {"type": "array", "items": {"$ref": "#/$defs/EditOp"}},
+        "source_edit": {"$ref": "#/$defs/SourceEdit"},
+        "limits": {"$ref": "#/$defs/Limits"},
+        "expect": {"oneOf": [{"$ref": "#/$defs/Admission"}, {"$ref": "#/$defs/Refusal"}, {"$ref": "#/$defs/Property"}]},
+        "masks": {"type": "string", "description": "Later defects this row's edit also carries, masked by design (first defect in reader order)."},
+        "note": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"class": {"const": "admit"}}, "required": ["class"]}, "then": {"properties": {"expect": {"$ref": "#/$defs/Admission"}}}},
+        {"if": {"properties": {"class": {"const": "refuse"}}, "required": ["class"]}, "then": {"properties": {"expect": {"$ref": "#/$defs/Refusal"}}}},
+        {"if": {"properties": {"class": {"const": "property"}}, "required": ["class"]}, "then": {"properties": {"expect": {"$ref": "#/$defs/Property"}}}},
+        {"if": {"properties": {"class": {"const": "source_edit"}}, "required": ["class"]}, "then": {"required": ["source_edit"]}},
+        {"if": {"properties": {"class": {"const": "limits"}}, "required": ["class"]}, "then": {"required": ["limits"]}}
+      ]
+    },
+    "Later": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "test_case", "class", "reason"],
+      "properties": {
+        "id": {"$ref": "#/$defs/VectorId"},
+        "test_case": {"$ref": "#/$defs/TestCase"},
+        "class": {"$ref": "#/$defs/Class"},
+        "reason": {"enum": ["needs_new_nodes", "needs_base_extension", "needs_source_edit_params", "multi_outcome_split", "node_set_case", "needs_property_assertions", "needs_limits_params", "needs_second_base"]},
+        "detail": {"type": "string"}
+      }
+    },
+    "Pending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "test_case", "question"],
+      "properties": {
+        "id": {"$ref": "#/$defs/VectorId"},
+        "test_case": {"$ref": "#/$defs/TestCase"},
+        "question": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string"}
+      }
+    }
+  }
+}
