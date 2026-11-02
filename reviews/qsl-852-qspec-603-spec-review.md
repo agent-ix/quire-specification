@@ -3,7 +3,7 @@ id: SR-202611022032
 title: "Spec review of PR #603: protocol_locations is application-only (FR-322-AC-310, QSL-852)"
 type: SpecReview
 analysis: base
-scope: "agent-ix/quire-specification@87ce9e02; git diff origin/main...HEAD (PR #603): FR-322 protocol_locations paragraph, FR-322-AC-310, TC-233, vector PL-R3-leaf-row, tests/checked_package_v2.rs; ticket QSL-852"
+scope: "agent-ix/quire-specification@90afa09b (final); git diff origin/main...HEAD (PR #603): FR-322 protocol_locations paragraph, FR-322-AC-310, TC-233, vector PL-R3-leaf-row, tests/checked_package_v2.rs; ticket QSL-852"
 review_set: subset
 date: '2026-11-02'
 relationships:
@@ -17,7 +17,7 @@ Ticket: QSL-852. The PR adds the application-only rule to FR-322's protocol_loca
 
 ## Verdict
 
-PASS with findings: no high findings; mergeable. FND-001 and FND-002 are worth fixing forward.
+PASS: mergeable at 90afa09b. FND-001..005 are fixed across three disposition rounds; no finding is open.
 
 ## Scope
 
@@ -72,3 +72,11 @@ Round 2, head a1bd441e.
 | --- | --- | --- |
 | FND-004 | fixed | Graph nodes are validated against SemanticNode in the test; the leaf set is every ValueNode form plus expression/reference and the rule text and decider agree; the test loops over the schema's ValueNode and ExpressionNode enums. Mutations (record_value treated as application; let treated as leaf) both go red. |
 | FND-005 | still-open | Low, new this round; mergeable. Owner to confirm that every non-reference expression form is an application for protocol_locations. |
+
+## Dispositions (round 3)
+
+Round 3, head 90afa09b.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | The rule now says a valid row names an expression/application node exactly as FR-322-AC-291 states and does not widen application; the leaf code is the only code the rule assigns; let, conditional, absent and foreign nodes stay under AC-291 with no new code. The decider returns a refusal only for leaves (value nodes and expression/reference) and continues otherwise. Mutations (parameter dropped from the leaf set; leaf test inverted) both go red; 162/162 pass. |
