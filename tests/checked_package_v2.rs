@@ -21061,6 +21061,36 @@ fn read_operation_effects(
                 }
             }
         }
+        for (position, entry) in effect["deletes_scoped"].as_array().unwrap().iter().enumerate() {
+            if entry["kind"] == "parameter" {
+                let declared_parameter = declared_operation["params"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|parameter| parameter["name"] == entry["name"]);
+                if !declared_parameter {
+                    return Err(refuse(
+                        "missing_declaration",
+                        Some("missing-name"),
+                        at(&format!("/effect/deletes_scoped/{position}/name")),
+                    ));
+                }
+            }
+        }
+        let scoped_order: Vec<(u8, String)> = effect["deletes_scoped"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|entry| {
+                (
+                    u8::from(entry["kind"] == "parameter"),
+                    entry["name"].as_str().unwrap_or("").to_owned(),
+                )
+            })
+            .collect();
+        if scoped_order.windows(2).any(|pair| pair[0] >= pair[1]) {
+            return Err(refuse("invalid_semantic_graph", None, at("/effect/deletes_scoped")));
+        }
         for kind in ["modifies", "creates", "deletes"] {
             let order: Vec<_> = effect[kind]
                 .as_array()
@@ -21210,7 +21240,7 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
     }
 
     let reader_refusals = vectors["reader_refusals"].as_array().expect("reader refusals");
-    assert_eq!(reader_refusals.len(), 22);
+    assert_eq!(reader_refusals.len(), 26);
     for case in reader_refusals {
         let id = case["id"].as_str().unwrap();
         assert_eq!(case["schema"], "valid", "{id}");

@@ -43,11 +43,13 @@ and locus (`expected_cause` null means no cause, as FR-340's
 ## Expected Results
 
 All positive cases read back. The 14 schema refusals (OES-01 to OES-14) are
-`malformed_wire`. The reader refusals are: OER-01 `missing_declaration`/
-`missing-selection`; OER-02, OER-10 and OER-12 `missing_declaration`/
-`missing-name`; OER-03, OER-05, OER-08, OER-09 and OER-14 to OER-19
-`invalid_package`/`invalid-value` (OER-20 `conflicting-definition`, OER-21
-`invalid-value`, OER-22 `invalid-value` at `/operation_effects`); OER-04,
-OER-06 and OER-07 `ill_typed`/`operator-ineligible`; OER-11 `invalid_model_binding`/
-`malformed-declaration`; OER-13 `invalid_semantic_graph`. The IR reader
-exposes the admitted effect by key and owns no mirror type; QSL owns emission.
+`malformed_wire`. The 26 reader refusals (OER-01 to OER-26) are: OER-01
+`missing_declaration`/`missing-selection`; OER-02, OER-10, OER-12 and OER-24
+`missing_declaration`/`missing-name`; OER-03, OER-05, OER-08, OER-09, OER-14 to
+OER-19 and OER-22 `invalid_package`/`invalid-value` (OER-22 at
+`/operation_effects`); OER-20 `invalid_package`/`conflicting-definition`; OER-21
+`invalid_package`/`invalid-value`; OER-04, OER-06, OER-07, OER-25 and OER-26
+`ill_typed`/`operator-ineligible`; OER-11 `invalid_model_binding`/
+`malformed-declaration`; OER-13 and OER-23 `invalid_semantic_graph`. The IR
+reader exposes the admitted effect by key and owns no mirror type; QSL owns
+emission.

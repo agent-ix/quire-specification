@@ -3246,7 +3246,10 @@ canonical order and entry checks (`FrameModifiesEntry`, `NodeRef`,
 locus root; a process or state-machine row refuses the receiver forms as
 FR-340 does. All four members are required and any may be the empty array: an
 operation with no frame entries has a row of four empty arrays, which is not an
-absent row. No effect kind is dropped, collapsed or inferred: `modifies`
+absent row. A `persistence_interface` declares operations but has no FR-013
+frame (FR-340 admits only an object type, process or state machine as a frame
+context), so it has no row, and as a declaring node of a row it refuses
+`ill_typed`/`operator-ineligible` at `declaring`. No effect kind is dropped, collapsed or inferred: `modifies`
 (field entries with their `receiver` or `every-object` scope, and relationship
 entries), `creates`, type-wide `deletes` and the `deletes_scoped` receiver and
 parameter entries are each carried as the selected document's frame states
@@ -3273,16 +3276,21 @@ the member identity above (`invalid_package`/`invalid-value` at
 `provenance/member`); each `effect` entry joins as FR-340 states
 (`missing_declaration`/`missing-name`, `invalid_model_binding`/
 `malformed-declaration`, at the entry's FR-340 locus under `effect`); the
-`effect` arrays are in FR-340's canonical order (`invalid_semantic_graph` at the
-member array, no cause, as FR-340); and finally `effect` equals the lift of the
+`deletes_scoped` parameter entry names a parameter the operation declares
+(`missing_declaration`/`missing-name` at the entry's `name`); the four `effect`
+arrays are in FR-340's canonical order (`invalid_semantic_graph` at the member
+array, no cause, as FR-340; `deletes_scoped` is the receiver entry, then
+parameter entries by name in UTF-8 bytes); and finally `effect` equals the lift of the
 selected document's operation frame member by member, in the order `modifies`,
 `creates`, `deletes`, `deletes_scoped`, the first differing member refusing
 `invalid_package`/`invalid-value` at `effect/{member}`. A dropped, added,
 altered or wrong-owner entry is that difference; a frame node of FR-340 for the
 same operation, when present, is the same lift and so agrees. After the row
-joins it checks repeated keys (`invalid_package`/`conflicting-definition` at the
-later row) before key order (`invalid_package`/`invalid-value` at the later row)
-and checks coverage last: an operation with no row refuses `invalid_package`/
+joins it visits each later row in array order and checks its key against every
+earlier key (`invalid_package`/`conflicting-definition` at that row) before
+against its predecessor's (`invalid_package`/`invalid-value` at that row). Key
+order compares `document` as UTF-8 bytes, then `declaring` by structural
+`NodeRef` order, then `operation` as UTF-8 bytes. Coverage is checked last: an operation with no row refuses `invalid_package`/
 `invalid-value` at `/operation_effects`. The closed schema refuses a missing or
 extra row member, a missing `effect` member (so no kind is silently omitted),
 an unknown effect member or entry kind, a duplicate entry, an unknown
