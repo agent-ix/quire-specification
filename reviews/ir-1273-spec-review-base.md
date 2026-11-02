@@ -63,6 +63,23 @@ Mergeable once FND-001 and FND-002 are resolved (wording and a one-line scope ru
 | FND-005 | medium | FR-323 replay sources check order is unspecified between entries and between failure kinds; the test decider checks every claim's syntax first, then missing-bytes and mismatch interleaved per entry, and no vector pins it | spec/objects/interfaces/FR-323-native-runtime-envelope.md:39-49 |
 | FND-006 | low | TC-969 (relationships, Scope, trace line) does not list FR-336-AC-9/10 although the new test is tagged to it; FR-323-AC-29..33 are verified by TC-233 not TC-277 (the FR-323 replay TC) | spec/test-cases/TC-969-conformance-corpus-v1-schema-admits-the-fixture-and-refuses-out-of-domain-shapes.md:17,36 |
 
+## Dispositions (round 2)
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-005 | fixed | Head 24a6bb6: FR-323 states one total order (claim syntax of all entries first, then per entry bytes then digest, first failing entry decides); FR-323-AC-34/35 and vectors RP-R5/R6/R7 pin it. Mutations: dropping the syntax-first pass turns RP-R7 red; separate all-entries absent then digest passes turn RP-R5 red. |
+| FND-006 | fixed | Head 24a6bb6: TC-969 Scope and relationships list FR-336-AC-9/10 with a tagged test; FR-323-AC-29..35 are verified by TC-277 (renamed test tc_277_replay_sources_are_checked_against_byte_provision, rows BP-20..BP-23) and removed from TC-233. |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | low | TC-277 rows BP-20..BP-23 reuse row labels that TC-431 already uses for BP-20 and BP-21; labels are scoped per document so nothing fails, but a reader citing BP-20 is ambiguous | spec/test-cases/TC-277-replay-byte-provision.md:71-74 |
+
 ## Verdict (disposition pass 1)
 
 FND-001..004 fixed. FND-005 and FND-006 are new and open; neither changes any shipped vector, both are spec wording or trace fixes. Mergeable once FND-005 and FND-006 are fixed or the owner defers them. Checks at bfe3d2a: cargo test all 18 targets 283 passed; FR-323 and FR-336 quire validate diagnostics identical to main; digests recomputed equal; no ID collisions with open PRs (AC-319..341, FR-323-AC-29..33, FR-336-AC-9/10); mutations of SI-R16 and RP-R4 expectations turn the tests red.
+
+## Verdict (disposition pass 2)
+
+FND-005 and FND-006 fixed; one new low (FND-007) remains. Mergeable with lows. Checks at 24a6bb6: cargo test all 18 targets 283 passed; quire validate of FR-323, TC-277 and TC-969 identical to main; no ID collisions with open PRs (#600 adds TC-980 only; #602 nothing in range); both order mutations turn the replay test red.
