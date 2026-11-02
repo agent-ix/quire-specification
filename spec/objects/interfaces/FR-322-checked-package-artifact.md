@@ -1121,15 +1121,18 @@ A frame body refusal, meaning-join or canonical-order
   the reader SHALL refuse `malformed_wire` at that `kind` member, not at the
   containing origin object.
 
-  `protocol_locations` is application-only. A non-application leaf node (a
-  `value`/`literal`, a `value`/`parameter` Local, or an `expression`/`reference`
-  node) SHALL take its semantic location from its own admitted node, never
-  from a `protocol_locations` row, and SHALL NOT inherit the location of an
-  enclosing application's row. A row whose `application` names an admitted
-  leaf node refuses `invalid_package`/`invalid-value` at that row's
-  `application` member (FR-322-AC-310, AC-311, AC-312). This refines the
-  non-application refusal of FR-322-AC-291, which leaves the code unstated;
-  an absent or foreign node stays under AC-291.
+  `protocol_locations` is application-only. A row's `application` SHALL name an
+  admitted `expression` node whose `semantic_form` is not `reference`. A leaf
+  node is every `value` node (any `semantic_form` the schema's `ValueNode`
+  admits: `literal`, `enum_value`, `collection_value`, `record_value`,
+  `tuple_value`, `union_value`, `option_value`, `parameter`, the Local) and
+  every `expression`/`reference` node. A leaf SHALL take its semantic location
+  from its own admitted node, never from a `protocol_locations` row, and SHALL
+  NOT inherit the location of an enclosing application's row. A row whose
+  `application` names an admitted leaf node refuses `invalid_package`/`invalid-value`
+  at that row's `application` member (FR-322-AC-310, AC-311, AC-312). This
+  refines the non-application refusal of FR-322-AC-291, which leaves the code
+  unstated; an absent or foreign node stays under AC-291.
 
   `dispatch_tables` retains the producer's admitted candidate table for a
   selected model-operation dispatch. A table names the exact application and
@@ -4107,9 +4110,9 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-307 | `quire.op.ieee.float64.fma` over three `float64` operands typed `Float64[nearest-even]`, and `quire.op.ieee.float32.fma` over three `float32` operands typed `Float32[toward-zero]`, are admitted as applications of operator `call` with three `reference` arguments a, b, c, `result_type` of the operands' width, the law `ieee_profile` and a `rounding` mode, no member and no leaves (the catalog entry of QVC `checked-operation-catalog-v1.json`). Two arguments, four arguments, a `float32` operand of the `float64` identity (mixed width included), an `integer` operand and a `float32` `result_type` of the `float64` identity refuse `ill_typed`/`operator-ineligible`; a node with mode `null` refuses `invalid_package`/`operation-mode-mismatch` and one with no `ieee_profile` law `invalid_package`/`operation-law-missing` (`proposals/checked-package-v2/fma-application-vectors.json`, `FM-01` to `FM-12`). | Test (TC-233) |
 | FR-322-AC-308 | A `temporal`/`monitor_plan` root is admitted by the reader only with the seventeen ordered bindings, the entry signatures, the `Outcome` union and the premises of FR-487, and refuses with the codes and loci of FR-487 otherwise; buffer extension adds no operation identity to the closed catalog or to either V2 schema (`proposals/checked-package-v2/monitor-plan-vectors.json`, `MP-01` to `MP-82`). | Test (TC-978) |
 | FR-322-AC-309 | A declaration-less `function` node has the derived path `["function", <semantic_form>, <decimal parameter count>, <parameter index segments in order>, <body root index segment>, <measure index segment if any>]`: equal parameters, body root and measure give an equal path, and a changed body root, a changed or reordered parameter or an added measure gives a different one; two nodes with equal `package`, `path` and `ordinal` are refused as a duplicate `node_id`, and a model-owned accessor with an owner-chosen label is admitted unchanged (`proposals/checked-package-v2/entry-key-vectors.json`, `EK-01` to `EK-08`). | Test (TC-979) |
-| FR-322-AC-310 | `protocol_locations` is application-only: a leaf node (`value`/`literal`, `value`/`parameter` Local, `expression`/`reference`) takes its semantic location from its own admitted node, never from a row, and does not inherit an enclosing application's row location. | Test (TC-233) |
-| FR-322-AC-311 | A row naming an admitted leaf node refuses `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations/{i}/application`, `i` the row index, for each of PL-R3-leaf-literal, PL-R3-leaf-local and PL-R3-leaf-reference (each graph holds the admitted leaf and an admitted `expression`/`call` application, and the row is otherwise valid) and for PL-R3-leaf-copies-enclosing-location, whose valid application row at index 0 does not admit the following leaf row at index 1 that copies its location. These isolate the leaf rule: the node exists and is local, unlike the absent or foreign node of FR-322-AC-291. | Test (TC-233) |
-| FR-322-AC-312 | A row naming the admitted `expression`/`call` application node of those graphs admits, and every positive row PL-01-root, PL-02-child and PL-03-declaration names an `["expression", "application", ...]` node, none a leaf. | Test (TC-233) |
+| FR-322-AC-310 | `protocol_locations` is application-only: a row admits only an `expression` node whose `semantic_form` is not `reference`. Every `value` node form of the schema's `ValueNode` and `expression`/`reference` is a leaf that takes its semantic location from its own admitted node, never from a row, and does not inherit an enclosing application's row location. | Test (TC-233) |
+| FR-322-AC-311 | A row naming an admitted leaf node refuses `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations/{i}/application`, `i` the row index, for each of PL-R3-leaf-literal, PL-R3-leaf-local and PL-R3-leaf-reference (each graph holds two schema-valid `SemanticNode`s, the admitted leaf and an admitted `expression`/`call` application, and the row is otherwise valid); every `ValueNode` form and `expression`/`reference` refuses the same way and for PL-R3-leaf-copies-enclosing-location, whose valid application row at index 0 does not admit the following leaf row at index 1 that copies its location. These isolate the leaf rule: the node exists and is local, unlike the absent or foreign node of FR-322-AC-291. | Test (TC-233) |
+| FR-322-AC-312 | A row naming the admitted `expression`/`call` application node of those graphs admits, as does a row naming any other non-`reference` `ExpressionNode` form; every positive row PL-01-root, PL-02-child and PL-03-declaration names an `["expression", "call", ...]` node, the same form the PL-R3 graphs use, none a leaf. | Test (TC-233) |
 
 ## Dependencies
 

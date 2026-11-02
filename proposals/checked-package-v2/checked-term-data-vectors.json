@@ -843,7 +843,7 @@
           "package": "example",
           "path": [
             "expression",
-            "application",
+            "call",
             "protocol-declaration-term"
           ],
           "ordinal": 0
@@ -869,7 +869,7 @@
           "package": "example",
           "path": [
             "expression",
-            "application",
+            "call",
             "shared-protocol-node"
           ],
           "ordinal": 0
@@ -894,7 +894,7 @@
           "package": "example",
           "path": [
             "expression",
-            "application",
+            "call",
             "shared-protocol-node"
           ],
           "ordinal": 0
@@ -1960,7 +1960,7 @@
             "package": "example",
             "path": [
               "expression",
-              "application",
+              "call",
               "shared-protocol-node"
             ],
             "ordinal": 0
@@ -1984,7 +1984,7 @@
             "package": "example",
             "path": [
               "expression",
-              "application",
+              "call",
               "shared-protocol-node"
             ],
             "ordinal": 0
@@ -2493,7 +2493,7 @@
             "package": "example",
             "path": [
               "expression",
-              "application",
+              "call",
               "shared-protocol-node"
             ],
             "ordinal": 0
@@ -2527,6 +2527,79 @@
       "graph": {
         "nodes": [
           {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
             "node_id": {
               "package": "example",
               "path": [
@@ -2537,9 +2610,38 @@
               "ordinal": 0
             },
             "node_tag": "expression",
-            "semantic_form": "call"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
           },
           {
+            "body": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "audit",
+              "value_kind": "text"
+            },
+            "dependencies": [],
             "node_id": {
               "package": "example",
               "path": [
@@ -2550,7 +2652,22 @@
               "ordinal": 0
             },
             "node_tag": "value",
-            "semantic_form": "literal"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "literal",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            }
           }
         ]
       },
@@ -2594,6 +2711,79 @@
       "graph": {
         "nodes": [
           {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
             "node_id": {
               "package": "example",
               "path": [
@@ -2604,9 +2794,64 @@
               "ordinal": 0
             },
             "node_tag": "expression",
-            "semantic_form": "call"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
           },
           {
+            "body": {
+              "members": [
+                {
+                  "name": "name",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ]
+                    },
+                    "value": "self",
+                    "value_kind": "text"
+                  }
+                },
+                {
+                  "name": "level",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "value": "0",
+                    "value_kind": "integer"
+                  }
+                }
+              ],
+              "term": "aggregate"
+            },
+            "dependencies": [],
             "node_id": {
               "package": "example",
               "path": [
@@ -2617,7 +2862,25 @@
               "ordinal": 0
             },
             "node_tag": "value",
-            "semantic_form": "parameter"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "parameter",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "composite_type",
+                "reference",
+                {
+                  "node": 44
+                }
+              ]
+            }
           }
         ]
       },
@@ -2661,6 +2924,79 @@
       "graph": {
         "nodes": [
           {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
             "node_id": {
               "package": "example",
               "path": [
@@ -2671,9 +3007,45 @@
               "ordinal": 0
             },
             "node_tag": "expression",
-            "semantic_form": "call"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
           },
           {
+            "body": {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "enabled"
+                ]
+              },
+              "term": "reference"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "enabled"
+                ]
+              }
+            ],
             "node_id": {
               "package": "example",
               "path": [
@@ -2684,7 +3056,22 @@
               "ordinal": 0
             },
             "node_tag": "expression",
-            "semantic_form": "reference"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "reference",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "Flag"
+              ]
+            }
           }
         ]
       },
@@ -2728,6 +3115,79 @@
       "graph": {
         "nodes": [
           {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
             "node_id": {
               "package": "example",
               "path": [
@@ -2738,9 +3198,38 @@
               "ordinal": 0
             },
             "node_tag": "expression",
-            "semantic_form": "call"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
           },
           {
+            "body": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "audit",
+              "value_kind": "text"
+            },
+            "dependencies": [],
             "node_id": {
               "package": "example",
               "path": [
@@ -2751,7 +3240,22 @@
               "ordinal": 0
             },
             "node_tag": "value",
-            "semantic_form": "literal"
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "literal",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            }
           }
         ]
       },

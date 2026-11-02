@@ -40,3 +40,20 @@ PASS with findings: no high findings; mergeable. FND-001 and FND-002 are worth f
 ## Open decision
 
 Code and locus invalid_package/invalid-value at the row's application member match EQ-R1 and PC-R2; FR-322-AC-291 records none for the non-application case. Not a defect; the planner should confirm the choice.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | PL-R3 graph nodes carry only node_id, node_tag and semantic_form and are never validated against the schema's ExpressionNode/ValueNode, and the decider refuses every `value` node while the rule text names only literal and parameter. | proposals/checked-package-v2/checked-term-data-vectors.json; tests/checked_package_v2.rs:decide_protocol_locations |
+
+## Dispositions
+
+Round 1, head bc207688.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Test-local decide_protocol_locations is run on each PL-R3 vector. Mutation: disabling the refusal gives Ok(()) vs Err for PL-R3-leaf-literal and fails the test; removing the reference-as-leaf clause also fails. Restored; 162/162 pass. |
+| FND-002 | fixed | Each PL-R3 vector carries a graph holding the admitted leaf and an admitted expression/call; the test asserts the row names a graph node, so absent/foreign (AC-291) is excluded; value/literal, value/parameter and expression/reference are real forms in schema.json (ValueNode, ExpressionNode enums). |
+| FND-003 | fixed | AC-310 rule, AC-311 refusals (4 vectors incl. leaf copying enclosing location at index 1), AC-312 positive rows; paragraph states it refines AC-291 and keeps absent/foreign under AC-291. |
+| FND-004 | still-open | Low; new this round, not yet routed. Mergeable without a fix. |
