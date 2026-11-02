@@ -195,9 +195,11 @@ setting: monitor.atom_projection}` and replayable evidence: the reader does not
 refuse the plan (it is a run outcome, not a wire defect), the atom is not
 dropped, and no new `Outcome` case or payload shape exists. The `limit` kind
 names the resource counter in the manner of `event_buffer` and `activation`.
-`monitor.atom_projection` is not a runtime tunable: it names the remedy, the
+`monitor.atom_projection` is not a runtime tunable and is the one outcome
+FR-461 excepts from its raising-setting rule: it names the remedy, the
 plan-declared capture binding of the atom (QSL FR-251) that supplies an admitted
-projection, FR-461's one name for the limit. The closed `limit` kinds of the
+projection, and no `--limit` or library setter exists for it; `value` is the
+atom's identity, not a count. The closed `limit` kinds of the
 plan root are therefore `event_buffer`, `activation` and `atom_projection`.
 
 ### Counter-gap path

@@ -21955,6 +21955,15 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             assert_eq!(case["limit_reached_fields"], json!(["limit", "value", "setting"]), "{id}");
         }
     }
+    // The closed kinds and their settings are the ones FR-487 spells, and the published activation payload agrees.
+    let doc = include_str!("../spec/objects/interfaces/FR-487-checked-package-monitor-plan-body.md");
+    for (kind, setting) in limits["limit_kinds"].as_object().unwrap() {
+        assert!(doc.contains(&format!("`limit` `{kind}`")), "FR-487 spells the limit kind {kind}");
+        assert!(doc.contains(&format!("`{}`", setting.as_str().unwrap())), "FR-487 spells {setting}");
+    }
+    for case in gaps["overflow_cases"].as_array().unwrap() {
+        assert_eq!(case["expected"]["result"]["payload"]["setting"], limits["limit_kinds"]["activation"]);
+    }
     // The union and payload shapes of the base plan are untouched by the new limit kind.
     assert_eq!(vectors["base"]["outcome"]["cases"].as_array().unwrap().len(), 6);
 

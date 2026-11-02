@@ -75,11 +75,15 @@ setting.
    certificate checkers, the scheduler, and the window, sample-step and time
    budgets. Its setting name is the engine's name, a dot and the member, for
    example `model_check.max_states`, `statistical.max_samples` or
-   `zone_check.max_symbolic_states`, and the tick monitor's `monitor.max_event_rate`, `monitor.max_activations` and `monitor.atom_projection` (FR-487). The list of counters is open: each engine's limits
+   `zone_check.max_symbolic_states`, and the tick monitor's `monitor.max_event_rate` and `monitor.max_activations` (FR-487). The list of counters is open: each engine's limits
    type defines its members, and each member has exactly one setting name. An
    engine item that stops at a limit settles `incomplete` and names the limit,
    its value and its setting, and the same name raises it at every entry
-   point.
+   point. One outcome is not a configurable limit: FR-487's `atom_projection`
+   (an atom with no admitted projection) has no raising setting and no CLI or
+   library setter; its `value` is the denied atom's identity and its `setting`
+   names the remedy, the plan-declared capture binding, so Behavior 3 and 4 do
+   not apply to it.
 6. **Execution budgets name their counter.** An `incomplete` execution
    outcome names its `quire.value.accounting/v1` counter, for example
    `work_units`, as its limit. A counter of the evaluation meter, one of the
