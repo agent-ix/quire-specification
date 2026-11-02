@@ -78,7 +78,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
     `function`/`pure_function` node with no `declaration`;
   - `counter_width_bits` — an `integer` literal, 1 to 64;
   - `max_reading_gap` — an `integer` literal, 0 to `2^counter_width_bits - 1`;
-  - `max_event_rate` — a `rational` literal, greater than 0, the plan's
+  - `max_event_rate` — a `rational` literal in the canonical spelling of FR-322-AC-114, greater than 0, the plan's
     `monitor.max_event_rate` setting in events per tick (QSL FR-251's
     `rate_limit`, an exact rational: the default of one event per microsecond
     converts to a rational number of events per tick);
@@ -93,18 +93,20 @@ whose rules below do not hold, with the first refusal in the reader order below.
     component of the plan's tick clock binding key (QSL FR-251
     `ClockBindingKey`; the clause's `temporal_bindings` row keeps the clause's
     own clock name and kind, and the plan's counter is a separate premise);
-  - `tick_unit` — a `reference` to the `scalar_type`/`unit` node of the base
-    `Time` dimension (FR-322-AC-127) that names one tick's unit; the unit's
+  - `tick_unit` — a `reference` to the `scalar_type`/`unit` node whose `dimension_node_id` equals, by identity, the
+    exact base `Time` dimension node (the test of FR-322-AC-127; this reader's
+    refusal of a node that fails it is the reference-kind refusal below, not the
+    timed root's `invalid-time-quantity`) that names one tick's unit; the unit's
     exact `root_scale` is the tick scale, so no scale is repeated and the width
     is `counter_width_bits`;
-  - `uncertainty` — a `rational` literal, at least 0, in ticks: the `u` of the
+  - `uncertainty` — a `rational` literal in the canonical spelling of FR-322-AC-114, at least 0, in ticks: the `u` of the
     widened cover `[k - u, k + 1 + u)` (FR-160 "Counter-tick intervals and
     endpoints").
 
   The tick intervals of QSL FR-251 are not bindings. Each is the clause's
   interval bounds (in the clause's clock unit, FR-322 "Temporal clock
   bindings") multiplied by the scale of that unit and divided by the scale of
-  `tick_unit`, an exact rational with no rounding; the clause and `tick_unit`
+  `tick_unit`, an exact rational; the plan carries no rounded value, and the evaluator's sound rounding of a bound to a tick (QSL FR-251) acts on it with the cover widened by `u`; the clause and `tick_unit`
   are in the root's key, so the interval association is as identified as the
   clause.
 - **entry signatures** — a `function`'s parameters are its `parameters`
@@ -181,8 +183,9 @@ run in this order and the first failing check is its defect:
    the stated record refuses the same at the `results` binding.
 4. **Premises.** In body order, `counter_width_bits`, `max_reading_gap`,
    `max_event_rate`, each `capacity`, `counter` and `uncertainty` meet their
-   range, else `invalid_package`/`invalid-value` at
-   the literal.
+   range, and each `rational` literal is in the canonical spelling of
+   FR-322-AC-114, else `invalid_package`/`invalid-value` at the literal's
+   `value`.
 5. **Buffers and state.** `buffers` is strictly ascending by subformula node id,
    each subformula is reached by the clause's formula, and the `state` record
    has exactly the field `now` (an `integer`) and then one `buffer_<n>` sequence field per `buffers` entry, in that order, and no other field, else
@@ -208,9 +211,9 @@ a body.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-487-AC-1 | A plan root over a clause, a `State` record (`now`, `buffer_0`, `buffer_1`), the three entries with the signatures above, the six-case `Outcome` union and the premises `counter_width_bits` 32, `max_reading_gap` 1000, `max_event_rate` 10 and two buffers of capacity 4 and 7 is admitted; a capacity edit is still admitted (`MP-01`, `MP-02`). | Test (TC-978) |
-| FR-487-AC-2 | A root with a binding missing (including `uncertainty`, `MP-39`), reordered or extra, or with `counter_width_bits` or `max_reading_gap` that is not an `integer` literal, `max_event_rate` or `uncertainty` that is not a `rational` literal (`MP-35`, `MP-37`) or a `counter` that is not a `text` literal (`MP-42`), refuses `invalid_semantic_graph` at the first breaking binding; a `clause` that is not a `temporal_clause`, a `state` that is not a record and an entry that is not a `pure_function` refuse the same at the binding (`MP-03` to `MP-09` `MP-28`, `MP-40` and `MP-41`). | Test (TC-978) |
+| FR-487-AC-2 | A root with a binding missing (including `uncertainty`, `MP-39`), reordered or extra, or with `counter_width_bits` or `max_reading_gap` that is not an `integer` literal, `max_event_rate` or `uncertainty` that is not a `rational` literal (`MP-35`, `MP-37`) or a `counter` that is not a `text` literal (`MP-42`), refuses `invalid_semantic_graph` at the first breaking binding; a `clause` that is not a `temporal_clause`, a `state` that is not a record and an entry that is not a `pure_function` refuse the same at the binding (`MP-03` to `MP-09` and `MP-28`, `MP-40` and `MP-41`). | Test (TC-978) |
 | FR-487-AC-3 | `init` with a parameter, `on_event` with two parameters or with the delta before the state, `on_watermark` whose boundary is not an `integer`, and an entry whose result is not the `(State, Results)` tuple refuse `ill_typed`/`type-mismatch` at the entry's binding; an `Outcome` union missing `Pending`, with an extra case or with a `Failed` payload that is not `ReadingGapExceeded` refuses the same at `results` (`MP-10` to `MP-17` and `MP-29`). | Test (TC-978) |
-| FR-487-AC-4 | `counter_width_bits` 0 and 65, `max_reading_gap` `2^width`, `max_event_rate` 0 or negative, a negative `uncertainty`, an empty `counter` and a `capacity` 0 refuse `invalid_package`/`invalid-value` at the literal; `buffers` out of ascending order, with a repeated subformula or naming an unreached subformula, and a `state` lacking `buffer_1` or holding a non-sequence `buffer_1`, refuse `invalid_semantic_graph` at `buffers` or `state` (`MP-18` to `MP-27`, `MP-30`, `MP-31`, `MP-34`, `MP-36` and `MP-38`). | Test (TC-978) |
+| FR-487-AC-4 | `counter_width_bits` 0 and 65, `max_reading_gap` `2^width`, `max_event_rate` 0 or negative, a negative `uncertainty`, an empty `counter` and a `capacity` 0 refuse `invalid_package`/`invalid-value` at the literal; `buffers` out of ascending order, with a repeated subformula or naming an unreached subformula, and a `state` lacking `buffer_1` or holding a non-sequence `buffer_1`, refuse `invalid_semantic_graph` at `buffers` or `state` (`MP-18` to `MP-27`, `MP-30`, `MP-31`, `MP-34`, `MP-36`, `MP-38`, `MP-46` and `MP-47`). | Test (TC-978) |
 | FR-487-AC-5 | Buffer extension is `flatten(sequence(s, sequence(x)))` over the existing operations `quire.op.collection.flatten` and `quire.op.collection.sequence`: both are in the closed operation catalog, the extension of a `Sequence<T>` by a `T` is a `Sequence<T>`, and the catalog and both V2 schemas are unchanged (`MP-32`). | Test (TC-978) |
 | FR-487-AC-6 | The identity-bearing premises are bindings of the root and part of its key: the `counter` name, the `tick_unit` node, `counter_width_bits`, `max_reading_gap`, `max_event_rate`, `uncertainty` and the buffer capacities. A different `uncertainty` (`0`), `counter`, `max_event_rate` (`1/10`, a rational), `tick_unit` node or capacity yields a different root key (`MP-02`, `MP-33`, `MP-43` to `MP-45`); a `tick_unit` that is not a `scalar_type`/`unit` node, or is a unit of the `Length` dimension, refuses `invalid_semantic_graph` at the `tick_unit` binding (`MP-40`, `MP-41`). The tick intervals are derived from the clause and the unit scales and are not bound. | Test (TC-978) |
 
@@ -219,7 +222,7 @@ a body.
 `proposals/checked-package-v2/schema.json` admits `monitor_plan` among the
 `temporal` node's `semantic_form` values.
 `proposals/checked-package-v2/monitor-plan-vectors.json` publishes the cases
-`MP-01` to `MP-45`.
+`MP-01` to `MP-47`.
 
 ## Dependencies
 

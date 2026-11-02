@@ -21591,7 +21591,7 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         "tick_unit",
         "uncertainty",
     ];
-    // 1. shape: the twelve bindings, in order.
+    // 1. shape: the fifteen bindings, in order.
     let bindings: Vec<&str> = plan["bindings"].as_array().unwrap().iter().map(|b| b.as_str().unwrap()).collect();
     for (index, name) in expected.iter().enumerate() {
         if bindings.get(index) != Some(name) {
@@ -21676,6 +21676,18 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         let (numerator, denominator) = text.split_once('/').unwrap_or((text, "1"));
         (numerator.parse::<i128>().unwrap(), denominator.parse::<i128>().unwrap())
     };
+    let canonical = |value: &Value| {
+        let (numerator, denominator) = rational(value);
+        let text = value.as_str().unwrap();
+        let spelled = |t: &str| t == "0" || (!t.starts_with('0') && !t.starts_with("-0"));
+        let (n, d) = text.split_once('/').unwrap_or((text, "1"));
+        spelled(n) && spelled(d) && denominator >= 1 && (!text.contains('/') || (denominator >= 2 && numerator != 0 && numerator.abs().gcd(&denominator) == 1))
+    };
+    for (index, name) in [(10, "max_event_rate")] {
+        if !canonical(&premises[name]) {
+            return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(index)));
+        }
+    }
     if rational(&premises["max_event_rate"]).0 <= 0 {
         return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(10)));
     }
@@ -21692,7 +21704,7 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     if premises["counter"].as_str().unwrap().is_empty() {
         return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(12)));
     }
-    if rational(&premises["uncertainty"]).0 < 0 {
+    if !canonical(&premises["uncertainty"]) || rational(&premises["uncertainty"]).0 < 0 {
         return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(14)));
     }
     // 5. buffers (ascending, no repeat, reached) and the state fields they imply.
@@ -21761,7 +21773,7 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 44);
+    assert_eq!(cases.len(), 46);
     let base_key = monitor_plan_key(&vectors["base"]);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
@@ -21789,7 +21801,7 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (6, 38));
+    assert_eq!((admitted, refused), (6, 40));
 
     // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
     let append = &vectors["append"];
