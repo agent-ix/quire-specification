@@ -20104,7 +20104,10 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-291",
     "FR-322-AC-292",
     "FR-322-AC-296",
-    "FR-322-AC-297"
+    "FR-322-AC-297",
+    "FR-322-AC-310",
+    "FR-322-AC-311",
+    "FR-322-AC-312"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20283,6 +20286,13 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         shared_terms[1]["term_ordinal"]
     );
     assert_ne!(shared_terms[0]["location"], shared_terms[1]["location"]);
+    for row in location_rows {
+        assert_eq!(
+            row["application"]["path"][1], "call",
+            "{} names a call application, never a leaf (FR-322-AC-312)",
+            row["id"]
+        );
+    }
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
         let mut wire = row.clone();
@@ -20581,6 +20591,61 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                     rows[0], root,
                     "positive root and missing-term witness must differ"
                 );
+            }
+            id if id.starts_with("PL-R3-") => {
+                let rows = value.as_array().unwrap();
+                for row in rows {
+                    assert!(location.is_valid(row), "{id}: a leaf row stays structurally valid");
+                }
+                let nodes = case["graph"]["nodes"].as_array().unwrap();
+                let node_schema = schema_for_def(&schema, "SemanticNode");
+                for node in nodes {
+                    assert!(node_schema.is_valid(node), "{id}: graph node meets SemanticNode");
+                }
+                // The vector isolates the leaf rule: every row names a node of the graph.
+                for row in rows {
+                    assert!(
+                        nodes.iter().any(|node| node["node_id"] == row["application"]),
+                        "{id}: the row names an admitted node, not an absent or foreign one"
+                    );
+                }
+                assert_eq!(
+                    decide_protocol_locations(nodes, rows),
+                    Err((
+                        case["expected_code"].as_str().unwrap().to_owned(),
+                        case["expected_cause"].as_str().unwrap().to_owned(),
+                        case["locus"].as_str().unwrap().to_owned(),
+                    )),
+                    "{id}"
+                );
+                // FR-322-AC-312: the same graph admits a row naming its application.
+                let application = nodes
+                    .iter()
+                    .find(|node| node["semantic_form"] == "call")
+                    .expect("the graph holds an admitted application");
+                let mut control = rows[0].clone();
+                control["application"] = application["node_id"].clone();
+                assert_eq!(decide_protocol_locations(nodes, &[control]), Ok(()), "{id}");
+                // Every leaf form the rule names refuses with the leaf code (FR-322-AC-310);
+                // no other expression form is asserted here, they stay under FR-322-AC-291.
+                let form_node = |tag: &str, form: &str, row: &Value| {
+                    let mut named = row.clone();
+                    named["application"] = json!({"package": "example", "path": [tag, form, "x"], "ordinal": 0});
+                    let node = json!({"node_id": named["application"], "node_tag": tag, "semantic_form": form});
+                    decide_protocol_locations(&[node], &[named])
+                };
+                let leaf_refusal = Err((
+                    "invalid_package".to_owned(),
+                    "invalid-value".to_owned(),
+                    "/checked_term_data/protocol_locations/0/application".to_owned(),
+                ));
+                for form in schema["$defs"]["ValueNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
+                    .as_array()
+                    .unwrap()
+                {
+                    assert_eq!(form_node("value", form.as_str().unwrap(), &rows[0]), leaf_refusal, "value/{form}");
+                }
+                assert_eq!(form_node("expression", "reference", &rows[0]), leaf_refusal);
             }
             "DT-R1-duplicate-selection-key" => {
                 assert!(
@@ -21561,6 +21626,32 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
         );
         assert_eq!(read_operation_effects(documents, &rows), Err(expected), "{id}");
     }
+}
+
+type ProtocolLocationRefusal = (String, String, String);
+
+/// FR-322 `protocol_locations` leaf rule (FR-322-AC-310): a row naming an admitted leaf
+/// node (every `ValueNode` form and `expression`/`reference`) refuses
+/// `invalid_package`/`invalid-value` at the row's `application`. Any other node, absent,
+/// foreign or non-application, is judged by FR-322-AC-291 alone, which this decider
+/// does not assign a code to. The repository has no production reader; this decider
+/// is the executable statement of the leaf rule over a vector's node list.
+fn decide_protocol_locations(nodes: &[Value], rows: &[Value]) -> Result<(), ProtocolLocationRefusal> {
+    for (index, row) in rows.iter().enumerate() {
+        let Some(node) = nodes.iter().find(|node| node["node_id"] == row["application"]) else {
+            continue;
+        };
+        let is_leaf = node["node_tag"] == "value"
+            || (node["node_tag"] == "expression" && node["semantic_form"] == "reference");
+        if is_leaf {
+            return Err((
+                "invalid_package".to_owned(),
+                "invalid-value".to_owned(),
+                format!("/checked_term_data/protocol_locations/{index}/application"),
+            ));
+        }
+    }
+    Ok(())
 }
 
 const MONITOR_PLAN_VECTORS: &str =

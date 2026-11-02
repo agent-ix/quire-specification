@@ -843,7 +843,7 @@
           "package": "example",
           "path": [
             "expression",
-            "application",
+            "call",
             "protocol-declaration-term"
           ],
           "ordinal": 0
@@ -869,7 +869,7 @@
           "package": "example",
           "path": [
             "expression",
-            "application",
+            "call",
             "shared-protocol-node"
           ],
           "ordinal": 0
@@ -894,7 +894,7 @@
           "package": "example",
           "path": [
             "expression",
-            "application",
+            "call",
             "shared-protocol-node"
           ],
           "ordinal": 0
@@ -1960,7 +1960,7 @@
             "package": "example",
             "path": [
               "expression",
-              "application",
+              "call",
               "shared-protocol-node"
             ],
             "ordinal": 0
@@ -1984,7 +1984,7 @@
             "package": "example",
             "path": [
               "expression",
-              "application",
+              "call",
               "shared-protocol-node"
             ],
             "ordinal": 0
@@ -2493,7 +2493,7 @@
             "package": "example",
             "path": [
               "expression",
-              "application",
+              "call",
               "shared-protocol-node"
             ],
             "ordinal": 0
@@ -2503,6 +2503,805 @@
             "ordinal": 0
           },
           "term_ordinal": 1,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-literal",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "row names an admitted value/literal leaf node",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/0/application",
+      "graph": {
+        "nodes": [
+          {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          },
+          {
+            "body": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "audit",
+              "value_kind": "text"
+            },
+            "dependencies": [],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                "protocol-leaf"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "literal",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            }
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              "protocol-leaf"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-local",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "row names an admitted value/parameter (Local) leaf node",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/0/application",
+      "graph": {
+        "nodes": [
+          {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          },
+          {
+            "body": {
+              "members": [
+                {
+                  "name": "name",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ]
+                    },
+                    "value": "self",
+                    "value_kind": "text"
+                  }
+                },
+                {
+                  "name": "level",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "value": "0",
+                    "value_kind": "integer"
+                  }
+                }
+              ],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "protocol-local"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "parameter",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "composite_type",
+                "reference",
+                {
+                  "node": 44
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "protocol-local"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-reference",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "row names an admitted expression/reference leaf node",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/0/application",
+      "graph": {
+        "nodes": [
+          {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          },
+          {
+            "body": {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "enabled"
+                ]
+              },
+              "term": "reference"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "enabled"
+                ]
+              }
+            ],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "reference",
+                "protocol-reference"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "reference",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "Flag"
+              ]
+            }
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "reference",
+              "protocol-reference"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "PL-R3-leaf-copies-enclosing-location",
+      "target": "ProtocolSemanticLocation[]",
+      "mutation": "a valid application row is followed by a leaf row that copies the enclosing application's location; the leaf does not inherit it",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/checked_term_data/protocol_locations/1/application",
+      "graph": {
+        "nodes": [
+          {
+            "body": {
+              "arguments": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "expression",
+                      "reference",
+                      {
+                        "node": 46
+                      },
+                      {
+                        "node": 58
+                      }
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.model.dispatch_call",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Counter"
+                    ]
+                  },
+                  "kind": "operation",
+                  "name": "run"
+                },
+                "mode": null
+              },
+              "operator": "call",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "term": "application"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Counter"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "reference",
+                  {
+                    "node": 46
+                  },
+                  {
+                    "node": 58
+                  }
+                ]
+              }
+            ],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "expression",
+                "call",
+                "protocol-application"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "call",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          },
+          {
+            "body": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "audit",
+              "value_kind": "text"
+            },
+            "dependencies": [],
+            "node_id": {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                "protocol-leaf"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "literal",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            }
+          }
+        ]
+      },
+      "value": [
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "expression",
+              "call",
+              "protocol-application"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
+          "location": {
+            "origin": {
+              "kind": "protocol_attempt",
+              "protocol": 0,
+              "attempt": 0
+            },
+            "path": [
+              2,
+              0
+            ]
+          }
+        },
+        {
+          "application": {
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              "protocol-leaf"
+            ],
+            "ordinal": 0
+          },
+          "occurrence": {
+            "role": "expression",
+            "ordinal": 0
+          },
+          "term_ordinal": 0,
           "location": {
             "origin": {
               "kind": "protocol_attempt",
