@@ -12566,6 +12566,78 @@ fn tc_233_text_literal_vectors_follow_the_membership_rule() {
     assert_eq!(by_id("TX-13s")["length"], 2);
 }
 
+const TEXT_BOUNDS_SHAPE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/text-bounds-shape-vectors.json");
+
+/// The FR-322 "Text bounds are complete" rule over the aggregate members of a
+/// `text_bounds` body: exactly `min`, `max` (canonical nonnegative integers,
+/// `min <= max`) and `text_profile` (one of FR-141's six), in that order.
+fn text_bounds_body_is_complete(members: &[Value], profiles: &[&str]) -> bool {
+    let names: Vec<&str> = members.iter().filter_map(|m| m["name"].as_str()).collect();
+    if names != ["min", "max", "text_profile"] || members.len() != 3 {
+        return false;
+    }
+    let integer = |member: &Value| -> Option<u64> {
+        let text = member["value"].as_str()?;
+        let canonical = text == "0" || (!text.starts_with('0') && !text.is_empty());
+        (member["value_kind"] == "integer" && canonical).then(|| text.parse().ok()).flatten()
+    };
+    let (Some(min), Some(max)) = (integer(&members[0]), integer(&members[1])) else {
+        return false;
+    };
+    members[2]["value_kind"] == "text"
+        && min <= max
+        && members[2]["value"].as_str().is_some_and(|profile| profiles.contains(&profile))
+}
+
+/// FR-322-AC-306: a `text_bounds` node is `Text[min, max; profile]` and no other
+/// form; a profile-only or otherwise incomplete node is malformed.
+#[trace("TC-233", "FR-322-AC-306")]
+#[test]
+fn tc_233_text_bounds_nodes_must_be_complete() {
+    let vectors = parsed_fixture(TEXT_BOUNDS_SHAPE_VECTORS);
+    let profiles: Vec<&str> = vectors["profiles"].as_array().unwrap().iter().map(|p| p.as_str().unwrap()).collect();
+    let mut seen = BTreeSet::new();
+    let (mut admitted, mut refused) = (0, 0);
+    for case in vectors["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: ids are unique");
+        let complete = text_bounds_body_is_complete(case["members"].as_array().unwrap(), &profiles);
+        match case["expected"].as_str().unwrap() {
+            "admitted" => {
+                assert!(complete, "{id}");
+                admitted += 1;
+            }
+            "refused" => {
+                assert!(!complete, "{id}");
+                assert_eq!(case["code"], "invalid_package", "{id}");
+                assert_eq!(case["cause"], "invalid-derived-shape", "{id}");
+                assert_eq!(case["locus"], "/semantic_graph/nodes/{n}", "{id}");
+                refused += 1;
+            }
+            other => panic!("{id}: unknown expectation {other}"),
+        }
+    }
+    assert_eq!((admitted, refused), (2, 8));
+    // Every published text_bounds node is complete.
+    let mut published = 0;
+    for (label, package) in published_v2_packages() {
+        for node in package["semantic_graph"]["nodes"].as_array().unwrap() {
+            if node["semantic_form"] != "text_bounds" {
+                continue;
+            }
+            let members = node["body"]["members"].as_array().expect("aggregate members");
+            let shaped: Vec<Value> = members
+                .iter()
+                .map(|m| json!({"name": m["name"], "value_kind": m["value"]["value_kind"], "value": m["value"]["value"]}))
+                .collect();
+            assert!(text_bounds_body_is_complete(&shaped, &profiles), "{label}: a published text_bounds node is complete");
+            published += 1;
+        }
+    }
+    assert!(published >= 1, "a published fixture carries a text_bounds node");
+}
+
 #[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
 #[test]
 fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {

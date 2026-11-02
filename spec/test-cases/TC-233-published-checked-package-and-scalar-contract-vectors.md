@@ -443,6 +443,8 @@ body changed, canonical order and `dependencies` kept (FR-322-AC-54).
 | TB-01 | `temporal_bindings` rows for a clause and two compensations (operator `compensate`) sharing model, selected profile and clock name, under an `event_position` selection (`CB-01`); then the two compensations alone (`CB-02`) | Admitted: each compensation has its own row keyed by its `node_id`, rows in ascending `NodeRef` order | FR-322-AC-305 |
 | TB-02 | the two compensations with the second row removed (`CB-03`), the first row repeated (`CB-04`), the second row's `clock_name` changed (`CB-05`), then the first row's configuration a `fixed_sample` one (`CB-06`) | Each `invalid_package`/`timed-node-reference`, at `/semantic_graph/nodes/11/body`, `/temporal_bindings/1`, `/temporal_bindings/1/clock_name` and `/temporal_bindings/0/clock/kind` | FR-322-AC-305 |
 | TB-03 | a row naming an `await` control (`CB-07`); then compensations under a lock selecting no clock-configured profile with no `temporal_bindings` (`CB-08`) | `invalid_package`/`timed-node-reference` at `/temporal_bindings/1/declaration`; the second admitted | FR-322-AC-305 |
+| TB-04 | `text_bounds` nodes `Text[0, 64; nfc]` and `Text[2, 2; binary-utf8]` (`TS-01`, `TS-02`) | Admitted: the body is `aggregate{min, max, text_profile}` | FR-322-AC-306 |
+| TB-05 | a profile-only `Text[nfc]`, then nodes missing `min`, `max` and `text_profile`, a member beside the three, `min` 5 above `max` 4, the profile `nfkd2` and an empty body (`TS-03` to `TS-10`) | Each `invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/{n}`, before any literal typed by the node is checked | FR-322-AC-306 |
 
 ### One-occurrence collection vectors
 

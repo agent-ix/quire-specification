@@ -2087,6 +2087,7 @@ The executable reader matrix covers the accepted and refused cells below:
 | `bounded_domain`/`model_population` | `semantic_type` is `set<reference<T>>`; either one canonical nonnegative integer `max` binding (a bounded population) or no member (the unbounded population) | negative `max`; non-integer `max`; a member beside `max`; arbitrary set element |
 | `scalar_type`/`compound_unit` | self-typed node; targetless canonical nominal unit roots whose semantic type is the dimension node; nonzero exponents in strict node-id order | non-self-typed node; non-unit root; reordered terms |
 | `scalar_type`/`carried_quantity` | self-typed node; a nominal unit, a bounded integer or decimal range carrier and a `rounding` mode agreeing with a decimal carrier's | dimension as unit; unbounded or rational carrier; mode disagreement |
+| `bounded_domain`/`text_bounds` | `semantic_type` is the `scalar_type`/`text` node; body `aggregate` of exactly the bindings `min`, `max` and `text_profile`, in that order | a profile-only node; a missing `min`, `max` or `text_profile`; a member beside them; `min` above `max`; a profile outside FR-141's six |
 
 The required-`max` rule applies to a bounded population only. A
 `model_population` node whose `max` member is absent is the unbounded
@@ -2100,6 +2101,22 @@ is not any other bound, and a `max` that is present is a bounded population read
 as before. A `population` link of a `quire.op.model.reaches` application that
 names an unbounded population node is admitted and states no bound for the
 application.
+
+**Text bounds are complete.** A `bounded_domain`/`text_bounds` node is the type
+`Text[min, max; profile]` of the step 4 row and has no other form: its body is
+the `aggregate` of exactly the three bindings `min`, `max` (each a canonical
+nonnegative integer `literal`, `min <= max`) and `text_profile` (a `text` literal
+that is one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and
+`binary-utf8`), in that order. A node missing `min`, `max` or `text_profile` (a
+profile-only `Text[nfc]` included), carrying any other member, with `min` above
+`max` or with another profile is malformed and refuses
+`invalid_package`/`invalid-derived-shape` at the node, as every derived-shape
+refusal above does, and no unbounded `Text[profile]` type exists (a bare `Text`
+or a `Text` bound without `min`, `max` and `profile` is already refused at
+intake, FR-322-AC-44, FR-322-AC-181, FR-322-AC-182). The refusal precedes
+"Text literal membership": a literal typed by a malformed node is never checked
+for membership (`proposals/checked-package-v2/text-bounds-shape-vectors.json`,
+FR-322-AC-306).
 
 The reader checks the semantic shape: a
 `composite_type`/`reference` whose body target is not a model declaration
@@ -4026,6 +4043,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-303 | A package carries `operation_effects` or omits it; when omitted the effects are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, effect, provenance}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)`, with all four `effect` members always present. Each of `modifies`, `creates`, `deletes` and `deletes_scoped` is carried exactly as the selected document's operation frame lifts under FR-013-AC-13 and FR-340, so no effect kind is dropped, and an operation with no frame entries has an all-empty row. One member name under another declaring node or document is another row. The positive vectors OEC-01 to OEC-07 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed`, `invalid_model_binding`, `invalid_semantic_graph` and `invalid_package` refusals and loci for missing/extra members, unknown effect or entry kinds, wrong provenance, a field or undeclared operation, a dropped or invented effect, a repeated key, key order and missing coverage are in TC-977. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-977) |
 | FR-322-AC-304 | A `text` literal typed by `Text[min, max; profile]` is admitted exactly when its `value` is already normalized under `profile` (`nfc`, `nfd`, `nfkc`, `nfkd`; the reader normalizes nothing) and its length (scalar count, or UTF-8 byte count under `binary-utf8`) lies in `[min, max]`, both bounds inclusive. A length below `min`, a length above `max` and a `value` not in the profile's normal form each refuse `ill_typed`/`type-mismatch` at `/semantic_graph/nodes/{n}/body/value`; under `binary-utf8` a two-scalar, four-byte `value` against `Text[1, 3; binary-utf8]` refuses while the same `value` against `Text[1, 3; unicode-scalars]` is admitted (`proposals/checked-package-v2/text-literal-vectors.json`, `TX-01` to `TX-14`). | Test (TC-233) |
 | FR-322-AC-305 | A `temporal_bindings` row may be keyed by the `node_id` of a `protocol`/`compensation` node (operator `compensate`) as well as of a `temporal`/`temporal_clause` node; its `clock_name` is the compensation's `clock` text and its configuration kind is the one the lock's `temporal_profile` selection determines (no per-node law). When that selection is clock-configured every compensation node has exactly one row. A compensation with no row refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{N}/body` (`CB-03`); a repeated compensation row at the second row `/temporal_bindings/{i}` (`CB-04`); a compensation row whose `clock_name` differs from the node's `clock` at `/temporal_bindings/{i}/clock_name` (`CB-05`) before a configuration kind inconsistent with the lock's selection at `/temporal_bindings/{i}/clock/kind` (`CB-06`); a row naming a node that is neither a temporal clause nor a compensation, an `await` included, at `/temporal_bindings/{i}/declaration` (`CB-07`). A clause beside two compensations sharing model, profile and clock name (`CB-01`), compensations alone (`CB-02`) and the same rows under a profile with no clock configuration (`CB-08`, no rows, member absent) are admitted. The schema and every existing payload are unchanged (`proposals/checked-package-v2/temporal-clock-binding-vectors.json`). | Test (TC-233) |
+| FR-322-AC-306 | A `bounded_domain`/`text_bounds` node is admitted only with the complete body `aggregate{min, max, text_profile}` (`min`, `max` nonnegative integer literals, `min <= max`, `text_profile` one of FR-141's six): `Text[0, 64; nfc]` and `Text[2, 2; binary-utf8]` are admitted. A profile-only node (`Text[nfc]`), a node missing `min`, a node missing `max`, a node missing `text_profile`, a member beside the three, `min` above `max` and a profile outside the six each refuse `invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/{n}`, before any literal typed by the node is checked for membership; no unbounded `Text[profile]` exists (`proposals/checked-package-v2/text-bounds-shape-vectors.json`, `TS-01` to `TS-10`). | Test (TC-233) |
 
 ## Dependencies
 
