@@ -445,6 +445,10 @@ body changed, canonical order and `dependencies` kept (FR-322-AC-54).
 | TB-03 | a row naming an `await` control (`CB-07`); then compensations under a lock selecting no clock-configured profile with no `temporal_bindings` (`CB-08`) | `invalid_package`/`timed-node-reference` at `/temporal_bindings/1/declaration`; the second admitted | FR-322-AC-305 |
 | TB-04 | `text_bounds` nodes `Text[0, 64; nfc]` and `Text[2, 2; binary-utf8]` (`TS-01`, `TS-02`) | Admitted: the body is `aggregate{min, max, text_profile}` | FR-322-AC-306 |
 | TB-05 | a profile-only `Text[nfc]`, then nodes missing `min`, `max` and `text_profile`, a member beside the three, `min` 5 above `max` 4, the profile `nfkd2` and an empty body (`TS-03` to `TS-10`) | Each `invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/{n}`, before any literal typed by the node is checked | FR-322-AC-306 |
+| FM-01 | `quire.op.ieee.float64.fma` over three `Float64[nearest-even]` operands and `quire.op.ieee.float32.fma` over three `Float32[toward-zero]` operands, operator `call`, `reference` arguments a, b, c, the `ieee_profile` law and a `rounding` mode (`FM-01`, `FM-02`) | Admitted; the wire is the generic application | FR-322-AC-307 |
+| FM-02 | two, four and one arguments (`FM-03` to `FM-05`) | `ill_typed`/`operator-ineligible` | FR-322-AC-307 |
+| FM-03 | `float32` operands under the `float64` identity, a mixed-width triple under either identity, an `integer` operand and a `float32` `result_type` under the `float64` identity (`FM-06` to `FM-10`) | `ill_typed`/`operator-ineligible` | FR-322-AC-307 |
+| FM-04 | `FM-01`'s application with mode `null`, then with no `ieee_profile` law (`FM-11`, `FM-12`) | `invalid_package`/`operation-mode-mismatch`; `invalid_package`/`operation-law-missing` | FR-322-AC-307 |
 
 ### One-occurrence collection vectors
 

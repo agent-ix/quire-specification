@@ -452,7 +452,18 @@ boundary.
   distinct identities, and `quire.op.ieee.float32.negate` and
   `quire.op.ieee.float64.negate` are the sign-bit flip of one float of their
   width, with the law `ieee_profile` and mode `null` (the operation rounds
-  nothing). A comparison reaching a float leaf is admitted: `=` over a bare
+  nothing).
+  `quire.op.ieee.float32.fma` and `quire.op.ieee.float64.fma` are fused
+  multiply-add, `a * b + c` rounded once: an application of operator `call`
+  with exactly three `reference` arguments, in the order a, b, c, each of the
+  identity's width (`float32` or `float64`), the same width as `result_type`,
+  the law `ieee_profile` and the `rounding` mode the operand and result types
+  pin (FR-148); the wire is the generic application, with no dedicated FMA
+  node. A wrong argument count, an operand of the other width or of another
+  family and a `result_type` of another width refuse `ill_typed`/`operator-ineligible`,
+  a node with no `rounding` mode `invalid_package`/`operation-mode-mismatch` and
+  one with no `ieee_profile` law `operation-law-missing`
+  (`proposals/checked-package-v2/fma-application-vectors.json`, FR-322-AC-307). A comparison reaching a float leaf is admitted: `=` over a bare
   float is `quire.op.ieee.numeric_equal` and `!=` is `quire.op.boolean.not`
   over it, and `quire.op.structural.eq` and `.ne` over a type holding a float
   at any depth list that float leaf (FR-149 "IEEE relations"). The
@@ -4044,6 +4055,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-304 | A `text` literal typed by `Text[min, max; profile]` is admitted exactly when its `value` is already normalized under `profile` (`nfc`, `nfd`, `nfkc`, `nfkd`; the reader normalizes nothing) and its length (scalar count, or UTF-8 byte count under `binary-utf8`) lies in `[min, max]`, both bounds inclusive. A length below `min`, a length above `max` and a `value` not in the profile's normal form each refuse `ill_typed`/`type-mismatch` at `/semantic_graph/nodes/{n}/body/value`; under `binary-utf8` a two-scalar, four-byte `value` against `Text[1, 3; binary-utf8]` refuses while the same `value` against `Text[1, 3; unicode-scalars]` is admitted (`proposals/checked-package-v2/text-literal-vectors.json`, `TX-01` to `TX-14`). | Test (TC-233) |
 | FR-322-AC-305 | A `temporal_bindings` row may be keyed by the `node_id` of a `protocol`/`compensation` node (operator `compensate`) as well as of a `temporal`/`temporal_clause` node; its `clock_name` is the compensation's `clock` text and its configuration kind is the one the lock's `temporal_profile` selection determines (no per-node law). When that selection is clock-configured every compensation node has exactly one row. A compensation with no row refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{N}/body` (`CB-03`); a repeated compensation row at the second row `/temporal_bindings/{i}` (`CB-04`); a compensation row whose `clock_name` differs from the node's `clock` at `/temporal_bindings/{i}/clock_name` (`CB-05`) before a configuration kind inconsistent with the lock's selection at `/temporal_bindings/{i}/clock/kind` (`CB-06`); a row naming a node that is neither a temporal clause nor a compensation, an `await` included, at `/temporal_bindings/{i}/declaration` (`CB-07`). A clause beside two compensations sharing model, profile and clock name (`CB-01`), compensations alone (`CB-02`) and the same rows under a profile with no clock configuration (`CB-08`, no rows, member absent) are admitted. The schema and every existing payload are unchanged (`proposals/checked-package-v2/temporal-clock-binding-vectors.json`). | Test (TC-233) |
 | FR-322-AC-306 | A `bounded_domain`/`text_bounds` node is admitted only with the complete body `aggregate{min, max, text_profile}` (`min`, `max` nonnegative integer literals, `min <= max`, `text_profile` one of FR-141's six): `Text[0, 64; nfc]` and `Text[2, 2; binary-utf8]` are admitted. A profile-only node (`Text[nfc]`), a node missing `min`, a node missing `max`, a node missing `text_profile`, a member beside the three, `min` above `max` and a profile outside the six each refuse `invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/{n}`, before any literal typed by the node is checked for membership; no unbounded `Text[profile]` exists (`proposals/checked-package-v2/text-bounds-shape-vectors.json`, `TS-01` to `TS-10`). | Test (TC-233) |
+| FR-322-AC-307 | `quire.op.ieee.float64.fma` over three `float64` operands typed `Float64[nearest-even]`, and `quire.op.ieee.float32.fma` over three `float32` operands typed `Float32[toward-zero]`, are admitted as applications of operator `call` with three `reference` arguments a, b, c, `result_type` of the operands' width, the law `ieee_profile` and a `rounding` mode, no member and no leaves (the catalog entry of QVC `checked-operation-catalog-v1.json`). Two arguments, four arguments, a `float32` operand of the `float64` identity (mixed width included), an `integer` operand and a `float32` `result_type` of the `float64` identity refuse `ill_typed`/`operator-ineligible`; a node with mode `null` refuses `invalid_package`/`operation-mode-mismatch` and one with no `ieee_profile` law `invalid_package`/`operation-law-missing` (`proposals/checked-package-v2/fma-application-vectors.json`, `FM-01` to `FM-12`). | Test (TC-233) |
 
 ## Dependencies
 

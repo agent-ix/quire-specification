@@ -12639,6 +12639,87 @@ fn tc_233_text_bounds_nodes_must_be_complete() {
     assert!(published >= 1, "a published fixture carries a text_bounds node");
 }
 
+const FMA_APPLICATION_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/fma-application-vectors.json");
+
+/// FR-322-AC-307: `quire.op.ieee.float{32,64}.fma` is the generic `call`
+/// application with three `reference` arguments. Each vector is decided against
+/// the catalog entry, and the derived operation member meets the closed schema.
+#[trace("TC-233", "FR-322-AC-307")]
+#[test]
+fn tc_233_fma_applications_follow_the_catalog_entry() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let entries = catalog["operations"].as_array().unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let operation_schema = schema_for_def(&schema, "Operation");
+    let vectors = parsed_fixture(FMA_APPLICATION_VECTORS);
+    // The base operation member is the float64.add application of the fixture.
+    let fixture = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let base = fixture["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|node| node["body"]["operation"]["identity"] == "quire.op.ieee.float64.add")
+        .expect("the fixture carries a float64.add application")["body"]
+        .clone();
+    let mut seen = BTreeSet::new();
+    let (mut admitted, mut refused) = (0, 0);
+    for case in vectors["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: ids are unique");
+        let identity = case["identity"].as_str().unwrap();
+        let entry = entries
+            .iter()
+            .find(|entry| entry["identity"] == identity)
+            .unwrap_or_else(|| panic!("{id}: {identity} is catalogued"));
+        assert_eq!(entry["operator"], "call", "{id}");
+        assert_eq!(entry["laws"], json!(["ieee_profile"]), "{id}");
+        assert_eq!(entry["mode"], "rounding", "{id}");
+        // The wire: the generic application with the fma identity, operator call and one reference per argument.
+        let widths = case["argument_widths"].as_array().unwrap();
+        let mut operation = base["operation"].clone();
+        operation["identity"] = json!(identity);
+        if case["mode"].is_null() {
+            operation["mode"] = Value::Null;
+        }
+        if case["laws"].as_array().unwrap().is_empty() {
+            operation["laws"] = json!([]);
+        }
+        assert!(operation_schema.is_valid(&operation), "{id}: the operation member meets the closed schema");
+        let mut application = base.clone();
+        application["operator"] = json!("call");
+        application["operation"] = operation;
+        application["arguments"] = Value::Array(vec![base["arguments"][0].clone(); widths.len()]);
+        assert_eq!(application["arguments"].as_array().unwrap().len(), widths.len());
+        // The decision, from the catalog entry.
+        let operands: Vec<&str> = entry["operands"].as_array().unwrap().iter().map(|o| o.as_str().unwrap()).collect();
+        let shape_ok = widths.len() == operands.len()
+            && widths.iter().zip(&operands).all(|(width, operand)| width == operand)
+            && case["result_width"] == entry["result"];
+        let outcome = if !shape_ok {
+            ("ill_typed", "operator-ineligible")
+        } else if case["mode"].is_null() {
+            ("invalid_package", "operation-mode-mismatch")
+        } else if case["laws"].as_array().unwrap().is_empty() {
+            ("invalid_package", "operation-law-missing")
+        } else {
+            ("", "")
+        };
+        match case["expected"].as_str().unwrap() {
+            "admitted" => {
+                assert_eq!(outcome, ("", ""), "{id}");
+                admitted += 1;
+            }
+            "refused" => {
+                assert_eq!((case["code"].as_str().unwrap(), case["cause"].as_str().unwrap()), outcome, "{id}");
+                refused += 1;
+            }
+            other => panic!("{id}: unknown expectation {other}"),
+        }
+    }
+    assert_eq!((admitted, refused), (2, 10));
+}
+
 #[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
 #[test]
 fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {
