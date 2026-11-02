@@ -62,7 +62,8 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-25 | ZC-23 with the completion template's `slot` changed to a slot not bound to its live job | `certificate-rejected`, `successor-missing` at node 0 |
 | ZC-26 | A closed source product with no reachable checked task release and interval demand | Valid `ZoneCertificate`; the reader proves the no-release closure and does not use either demand endpoint |
 | ZC-27 | ZC-26 with `live_job_cap` changed to 1 | Not a `ZoneCertificate` |
-| ZC-28 | ZC-26 bound to `TC-372/CtlFp`, whose checked source release is reachable | Schema-valid; `certificate-rejected`, `successor-missing` at node 0 |
+| ZC-28 | ZC-30 bound to `TC-372/CtlFp`, whose checked `Cell::set` source release is reachable | Schema-valid; `certificate-rejected`, `successor-missing` at node 0 |
+| ZC-30 | A schema-valid no-release closure certificate with the exact `TC-372/CtlFp` obligation identity and `Ctl.a` demand row, used as ZC-28’s base | Wire-valid; the strict reader refuses it when it recomputes the reachable source release |
 | ZC-29 | ZC-26 with `queue_bounds` empty | Not a `ZoneCertificate` |
 
 ## Expected Results

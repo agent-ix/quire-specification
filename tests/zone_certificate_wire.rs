@@ -63,7 +63,7 @@ fn vector(id: &str) -> Value {
 fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
     let valid = validator();
     let rows = vectors();
-    assert_eq!(rows.len(), 6);
+    assert_eq!(rows.len(), 7);
     for row in &rows {
         let id = row["id"].as_str().unwrap();
         let document = &row["document"];
@@ -138,7 +138,7 @@ fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identiti
         if id == "ZC-28" {
             assert_eq!(case["checked_task_model"], "TC-372/CtlFp");
             assert_eq!(case["expected"]["at"], json!({"node": 0}));
-            assert_eq!(case["value"][0]["transition"]["operation"], "Task::release");
+            assert_eq!(case["value"][0]["transition"]["operation"], "Cell::set");
         }
     }
 

@@ -998,6 +998,138 @@
       },
       "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":0},\"bounds\":[],\"edges\":[],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"TaskSet\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false}]]}],\"scale\":\"1\",\"task_product\":{\"abstraction\":\"bounded-subtraction-diagonal/v1\",\"clock_ceilings\":[],\"diagonal_constraints\":[],\"queue_bounds\":[{\"arrival\":\"periodic\",\"interarrival\":{\"denominator\":\"1\",\"numerator\":\"2\"},\"max_jitter\":{\"denominator\":\"1\",\"numerator\":\"0\"},\"max_jobs\":1,\"relative_deadline\":{\"denominator\":\"1\",\"numerator\":\"2\"},\"task\":\"A\",\"taskset\":\"S\",\"work_lower\":{\"denominator\":\"1\",\"numerator\":\"1\"},\"work_upper\":{\"denominator\":\"1\",\"numerator\":\"2\"}}],\"subtractions\":[],\"time_progress\":{\"closure\":\"recompute-all-source-successors-no-task-release/v1\",\"live_job_cap\":0,\"method\":\"closed-no-release-product/v1\"}}}",
       "byte_length": 1012
+    },
+    {
+      "id": "ZC-30",
+      "description": "Schema-valid no-release closure certificate bound to the checked CtlFp claim and its task row; ZC-28 uses it to isolate reachable-release refusal.",
+      "document": {
+        "identity": {
+          "node_id": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "a",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "model": "test/litmus",
+          "ordinal": 0
+        },
+        "scale": "1",
+        "bounds": [],
+        "nodes": [
+          {
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
+            "automaton": 0,
+            "zone": [
+              [
+                {
+                  "bound": "0",
+                  "strict": false
+                }
+              ]
+            ]
+          }
+        ],
+        "edges": [],
+        "initials": [
+          0
+        ],
+        "admitted": {
+          "start": 0,
+          "edges": []
+        },
+        "task_product": {
+          "abstraction": "bounded-subtraction-diagonal/v1",
+          "queue_bounds": [
+            {
+              "taskset": "Ctl",
+              "task": "a",
+              "arrival": "periodic",
+              "interarrival": {
+                "numerator": "4",
+                "denominator": "1"
+              },
+              "relative_deadline": {
+                "numerator": "4",
+                "denominator": "1"
+              },
+              "max_jitter": {
+                "numerator": "0",
+                "denominator": "1"
+              },
+              "work_lower": {
+                "numerator": "1",
+                "denominator": "1"
+              },
+              "work_upper": {
+                "numerator": "1",
+                "denominator": "1"
+              },
+              "max_jobs": 2
+            }
+          ],
+          "clock_ceilings": [],
+          "diagonal_constraints": [],
+          "subtractions": [],
+          "time_progress": {
+            "method": "closed-no-release-product/v1",
+            "live_job_cap": 0,
+            "closure": "recompute-all-source-successors-no-task-release/v1"
+          }
+        }
+      },
+      "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":0},\"bounds\":[],\"edges\":[],\"identity\":{\"model\":\"test/litmus\",\"node_id\":{\"ordinal\":0,\"package\":\"package\",\"path\":[\"claim\",\"schedulability\",\"kind\",\"schedulable\",\"policy\",\"fixed-priority\",\"task\",\"bound\",\"tasks\",\"task\",\"name\",\"a\",\"arrival\",\"periodic\",\"period\",\"4/1\",{\"node\":6},\"deadline\",\"4/1\",{\"node\":6},\"bcet\",\"1/1\",{\"node\":6},\"wcet\",\"1/1\",{\"node\":6},\"wcet_hi\",\"criticality\",\"lo\",\"priority\",\"1\",\"jitter\",\"0/1\",{\"node\":6},\"blocking\",\"0/1\",{\"node\":6}]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false}]]}],\"scale\":\"1\",\"task_product\":{\"abstraction\":\"bounded-subtraction-diagonal/v1\",\"clock_ceilings\":[],\"diagonal_constraints\":[],\"queue_bounds\":[{\"arrival\":\"periodic\",\"interarrival\":{\"denominator\":\"1\",\"numerator\":\"4\"},\"max_jitter\":{\"denominator\":\"1\",\"numerator\":\"0\"},\"max_jobs\":2,\"relative_deadline\":{\"denominator\":\"1\",\"numerator\":\"4\"},\"task\":\"a\",\"taskset\":\"Ctl\",\"work_lower\":{\"denominator\":\"1\",\"numerator\":\"1\"},\"work_upper\":{\"denominator\":\"1\",\"numerator\":\"1\"}}],\"subtractions\":[],\"time_progress\":{\"closure\":\"recompute-all-source-successors-no-task-release/v1\",\"live_job_cap\":0,\"method\":\"closed-no-release-product/v1\"}}}",
+      "byte_length": 1332
     }
   ],
   "malformed_vectors": [
@@ -1147,16 +1279,16 @@
     },
     {
       "id": "ZC-28",
-      "description": "A no-release closure bound to TC-372 CtlFp is refused because its checked source release binding is reachable, and no corresponding task-product successor is certified.",
+      "description": "A no-release closure matching TC-372 CtlFp is refused because its checked Cell::set release binding is reachable and no corresponding task-product successor is certified.",
       "checked_task_model": "TC-372/CtlFp",
-      "base": "ZC-26",
+      "base": "ZC-30",
       "pointer": "/edges",
       "value": [
         {
           "node": 0,
           "transition": {
             "type": "transition",
-            "operation": "Task::release",
+            "operation": "Cell::set",
             "receiver": null,
             "arguments": []
           },
