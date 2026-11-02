@@ -12,6 +12,7 @@
       "expected_path": [
         "function",
         "pure_function",
+        "0",
         {
           "node": 40
         }
@@ -31,6 +32,7 @@
       "expected_path": [
         "function",
         "pure_function",
+        "3",
         {
           "node": 10
         },
@@ -59,6 +61,7 @@
       "expected_path": [
         "function",
         "pure_function",
+        "3",
         {
           "node": 10
         },
@@ -88,6 +91,7 @@
       "expected_path": [
         "function",
         "pure_function",
+        "3",
         {
           "node": 10
         },
@@ -117,6 +121,7 @@
       "expected_path": [
         "function",
         "pure_function",
+        "3",
         {
           "node": 11
         },
@@ -146,6 +151,7 @@
       "expected_path": [
         "function",
         "pure_function",
+        "3",
         {
           "node": 10
         },

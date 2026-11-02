@@ -20,7 +20,7 @@ its owner-chosen label.
 ## Test Procedure
 
 Read `proposals/checked-package-v2/entry-key-vectors.json`. For each case with
-`parameters`, derive the path `["function", semantic_form, ...parameter index
+`parameters`, derive the path `["function", semantic_form, parameter count text, ...parameter index
 segments, body root index segment, measure index segment if any]` and compare it
 with `expected_path`; a case naming `equal_to` must equal that case's path and a
 case naming `differs_from` must differ from it. EK-07 gives two nodes with equal

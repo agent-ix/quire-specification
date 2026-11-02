@@ -21996,7 +21996,11 @@ const ENTRY_KEY_VECTORS: &str = include_str!("../proposals/checked-package-v2/en
 /// FR-322-AC-309: the producer's derived path of a declaration-less `function` node, built from
 /// the index segments of its parameters, body root and measure.
 fn derived_function_path(case: &Value) -> Value {
-    let mut path = vec![json!("function"), case["semantic_form"].clone()];
+    let mut path = vec![
+        json!("function"),
+        case["semantic_form"].clone(),
+        json!(case["parameters"].as_array().unwrap().len().to_string()),
+    ];
     let mut segments: Vec<Value> = case["parameters"].as_array().unwrap().clone();
     segments.push(case["body_root"].clone());
     if !case["measure"].is_null() {
@@ -22028,6 +22032,9 @@ fn tc_979_declaration_less_function_keys_follow_content() {
             }
         }
     }
+    // The arity segment keeps distinct content apart: params [10,11,12] with body 41 is not params [10,11] with body 12 and measure 41.
+    let shifted = json!({"semantic_form": "pure_function", "parameters": [10, 11], "body_root": 12, "measure": 41});
+    assert_ne!(derived_function_path(by_id("EK-02")), derived_function_path(&shifted));
     // EK-07: equal package, path and ordinal on two nodes is a duplicate node_id.
     let duplicate = by_id("EK-07");
     let key = |ordinal: u64| (derived_function_path(duplicate).to_string(), ordinal);
