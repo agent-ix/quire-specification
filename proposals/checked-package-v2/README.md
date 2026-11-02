@@ -56,6 +56,15 @@ structures, but any external consumer receives only the contract.
   FR-150 `EffectiveId` selection keys (never checked-package `NodeRef`s).
   Positive and malformed cases exercise wire shapes, joins, and the unavailable
   versus empty-table distinction (FR-322-AC-288 to AC-292).
+- `schedulability-claim-vectors.json` publishes the closed
+  `schedulability_claims` identity rows for FR-482's checked
+  `claim`/`schedulability` body. Positive rows use the exact TC-372/CtlFp
+  structural identity and its two-occurrence variant; schema and reader
+  refusals cover malformed row shape, foreign/wrong-form references, unowned
+  occurrences, duplicate keys, absent coverage and row order. This typed claim
+  handle is in checked-package-v2; FR-418 `TaskTransitionTemplate` remains in
+  the separate backend-provider-v1 certificate, where QSL owns successor
+  recomputation.
 - `temporal-fairness-target-vectors.json` publishes complete fairness members
   for operation, protocol-root, attempt-node, parallel-branch,
   compensation-template and hybrid-transition targets, plus closed-shape

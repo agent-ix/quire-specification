@@ -49,6 +49,13 @@
         "$ref": "#/$defs/TemporalBinding"
       }
     },
+    "schedulability_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/SchedulabilityClaimRef"
+      }
+    },
     "capability_report": {
       "type": "array",
       "items": {
@@ -180,6 +187,23 @@
         },
         "clock_name": {
           "$ref": "#/$defs/Nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SchedulabilityClaimRef": {
+      "type": "object",
+      "required": [
+        "declaration",
+        "occurrence"
+      ],
+      "properties": {
+        "declaration": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "additionalProperties": false

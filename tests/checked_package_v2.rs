@@ -46,6 +46,10 @@ const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const TEMPORAL_CLOCK_BINDING_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/temporal-clock-binding-vectors.json");
+const SCHEDULABILITY_CLAIM_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/schedulability-claim-vectors.json");
+const ZONE_CERTIFICATE_VECTORS: &str =
+    include_str!("../proposals/backend-provider-v1/zone-certificate-vectors.json");
 const OPTION_VALUE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/option-value-vectors.json");
 const SELECTED_TIMED_SLOT_DOCUMENT: &str =
@@ -20476,4 +20480,81 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
             .unwrap()
             .contains("no partial data view")
     );
+}
+
+#[trace("TC-976", "FR-322-AC-300", "FR-482-AC-4", "FR-418-AC-12")]
+#[test]
+fn schedulability_claim_carrier_vectors_match_the_closed_member_schema() {
+    let vectors: Value = serde_json::from_str(SCHEDULABILITY_CLAIM_VECTORS)
+        .expect("schedulability claim carrier vectors JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let certificate_vectors = parsed_fixture(ZONE_CERTIFICATE_VECTORS);
+    let row_validator = schema_for_def(&schema, "SchedulabilityClaimRef");
+    assert_eq!(
+        schema["properties"]["schedulability_claims"]["items"]["$ref"],
+        "#/$defs/SchedulabilityClaimRef"
+    );
+    assert!(
+        !schema["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("schedulability_claims")),
+        "the carrier is absent when a package has no schedulability claim"
+    );
+    assert!(schema["$defs"]["TaskTransitionTemplate"].is_null());
+
+    let positive = vectors["positive"].as_array().expect("positive cases");
+    assert_eq!(positive.len(), 2);
+    let task_claim = certificate_vectors["vectors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["id"] == "ZC-30")
+        .expect("TC-372 task claim certificate vector")["document"]["identity"]["node_id"]
+        .clone();
+    for case in positive {
+        assert_eq!(case["semantic_form"], "schedulability");
+        let rows = case["rows"].as_array().expect("claim rows");
+        assert!(!rows.is_empty());
+        for row in rows {
+            assert!(
+                row_validator.is_valid(row),
+                "{} row is closed: {:?}",
+                case["id"],
+                row_validator
+                    .iter_errors(row)
+                    .map(|error| error.to_string())
+                    .collect::<Vec<_>>()
+            );
+            assert_eq!(row["declaration"], task_claim, "{} exact identity", case["id"]);
+        }
+        if case["id"] == "SCC-02-shared-node-two-claim-occurrences" {
+            assert_eq!(rows.len(), 2);
+            assert_eq!(rows[0]["declaration"], rows[1]["declaration"]);
+            assert_eq!(rows[0]["occurrence"], 0);
+            assert_eq!(rows[1]["occurrence"], 1);
+        }
+    }
+
+    for case in vectors["schema_refusals"].as_array().unwrap() {
+        let id = case["id"].as_str().expect("case id");
+        assert_eq!(case["expected_code"], "malformed_wire", "{id}");
+        assert!(
+            !row_validator.is_valid(&case["row"]),
+            "{id} violates the closed carrier schema"
+        );
+    }
+    for case in vectors["reader_refusals"].as_array().unwrap() {
+        let id = case["id"].as_str().expect("case id");
+        assert_eq!(case["schema"], "valid", "{id}");
+        for row in case["rows"].as_array().expect("reader mutation rows") {
+            assert!(
+                row_validator.is_valid(row),
+                "{id} is a semantic reader mutation, not a wire mutation"
+            );
+        }
+        assert_eq!(case["expected_code"], "invalid_package", "{id}");
+        assert!(case["expected_cause"].is_string(), "{id} has a typed cause");
+        assert!(case["locus"].as_str().unwrap().starts_with("/schedulability_claims"));
+    }
 }

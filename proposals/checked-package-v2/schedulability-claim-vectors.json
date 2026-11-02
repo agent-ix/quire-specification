@@ -1,0 +1,2501 @@
+{
+  "note": "STD-638. The row is the checked-package identity index for FR-482's authenticated claim body; it does not carry task-transition templates or copy the task-set data.",
+  "positive": [
+    {
+      "id": "SCC-01-single-schedulability-occurrence",
+      "claim_case": "TC-967/SC-01",
+      "semantic_form": "schedulability",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "id": "SCC-02-shared-node-two-claim-occurrences",
+      "claim_case": "TC-967/SC-06",
+      "semantic_form": "schedulability",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 1
+        }
+      ]
+    }
+  ],
+  "schema_refusals": [
+    {
+      "id": "SCC-03-missing-occurrence",
+      "row": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "schedulability",
+            "CtlFp"
+          ],
+          "ordinal": 0
+        }
+      },
+      "expected_code": "malformed_wire",
+      "locus": "/schedulability_claims/0"
+    },
+    {
+      "id": "SCC-04-negative-occurrence",
+      "row": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "schedulability",
+            "CtlFp"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": -1
+      },
+      "expected_code": "malformed_wire",
+      "locus": "/schedulability_claims/0/occurrence"
+    },
+    {
+      "id": "SCC-05-extra-identity-member",
+      "row": {
+        "declaration": {
+          "package": "example",
+          "path": [
+            "claim",
+            "schedulability",
+            "CtlFp"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": 0,
+        "taskset": "Ctl"
+      },
+      "expected_code": "malformed_wire",
+      "locus": "/schedulability_claims/0"
+    }
+  ],
+  "reader_refusals": [
+    {
+      "id": "SCC-06-foreign-package",
+      "mutation": "declaration.package=foreign",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/schedulability_claims/0/declaration",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "foreign",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ],
+      "base_case": "TC-967/SC-01"
+    },
+    {
+      "id": "SCC-07-wrong-node-form",
+      "base_case": "TC-960/SN-01+TC-967/SC-01 compiled in one package",
+      "mutation": "declaration resolves to claim/state_graph",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/schedulability_claims/0/declaration",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ],
+      "target_node_tag": "claim",
+      "target_semantic_form": "state_graph",
+      "target_node_case": "TC-960/SN-01"
+    },
+    {
+      "id": "SCC-08-unowned-occurrence",
+      "mutation": "occurrence is absent from the named node's claim occurrences",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/schedulability_claims/0/occurrence",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 7
+        }
+      ],
+      "declared_occurrences": [
+        0
+      ],
+      "base_case": "TC-967/SC-01"
+    },
+    {
+      "id": "SCC-09-duplicate-key",
+      "mutation": "repeat declaration and occurrence",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/schedulability_claims/1",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ],
+      "base_case": "TC-967/SC-06"
+    },
+    {
+      "id": "SCC-10-missing-claim-coverage",
+      "mutation": "omit the row for occurrence 1 of a claim node with occurrences 0 and 1",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/schedulability_claims",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ],
+      "declared_claim_occurrences": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 1
+        }
+      ],
+      "base_case": "TC-967/SC-06",
+      "omitted_occurrences": [
+        1
+      ]
+    },
+    {
+      "id": "SCC-11-noncanonical-order",
+      "mutation": "reverse the two distinct schedulability declaration rows",
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/schedulability_claims/1",
+      "rows": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "edf",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ],
+      "expected_order": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "edf",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ],
+      "base_case": "TC-967/SC-01+SC-02 compiled in one package",
+      "declared_claim_occurrences": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "fixed-priority",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "package",
+            "path": [
+              "claim",
+              "schedulability",
+              "kind",
+              "schedulable",
+              "policy",
+              "edf",
+              "task",
+              "bound",
+              "tasks",
+              "task",
+              "name",
+              "t1",
+              "arrival",
+              "periodic",
+              "period",
+              "4/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "4/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "1/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "1",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t2",
+              "arrival",
+              "periodic",
+              "period",
+              "6/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "6/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "2/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "2",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              },
+              "task",
+              "name",
+              "t3",
+              "arrival",
+              "periodic",
+              "period",
+              "12/1",
+              {
+                "node": 6
+              },
+              "deadline",
+              "12/1",
+              {
+                "node": 6
+              },
+              "bcet",
+              "0/1",
+              {
+                "node": 6
+              },
+              "wcet",
+              "5/1",
+              {
+                "node": 6
+              },
+              "wcet_hi",
+              "criticality",
+              "lo",
+              "priority",
+              "3",
+              "jitter",
+              "0/1",
+              {
+                "node": 6
+              },
+              "blocking",
+              "0/1",
+              {
+                "node": 6
+              }
+            ]
+          },
+          "occurrence": 0
+        }
+      ]
+    }
+  ]
+}

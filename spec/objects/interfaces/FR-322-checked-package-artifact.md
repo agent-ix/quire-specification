@@ -1161,6 +1161,17 @@ A frame body refusal, meaning-join or canonical-order
   caller's finite work limit before inspection. Equality `term_path` is always
   empty, so it contributes zero path-segment work. Exhaustion returns the
   attempted work and first uncharged locus without a partial data view.
+- `schedulability_claims` — an optional, closed index of the authenticated
+  task-set/schedulability claims carried by the graph. When absent, the graph
+  has no `claim`/`schedulability` occurrence; when present it is a non-empty
+  array with one `{declaration, occurrence}` row for each such occurrence.
+  `declaration` is the local structural `NodeRef` of the exact
+  `claim`/`schedulability` node, and `occurrence` is one of that node's
+  `claim` occurrence ordinals. Rows are unique and ordered by structural
+  `NodeRef`, then occurrence. The row repeats no claim body, task field,
+  policy, source binding or transition; the body remains the sole source of
+  authenticated task-set data under FR-482. This member is the checked-package
+  carrier IR admits and exposes as a typed claim read.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -3099,6 +3110,65 @@ profile, configuration kind, and clause clock name agree in every single- and
 multi-clause positive. The vector file is the
 machine-readable form consumed by the QSpec qualification test.
 
+### Schedulability claim carrier
+
+`schedulability_claims` is the typed checked-package index for the
+`claim`/`schedulability` body defined by FR-482. It is absent when no such
+claim occurrence exists and otherwise contains one row for every occurrence.
+Each row is exactly:
+
+```json
+{
+  "declaration": {"package": "<package>", "path": ["<segment>"], "ordinal": 0},
+  "occurrence": 0
+}
+```
+
+The local `declaration` resolves to a `claim` node with
+`semantic_form: "schedulability"`; `occurrence` resolves to one of that
+node's occurrences with role `claim`. Rows sort by structural declaration
+identity and then occurrence and contain no duplicate pair. Every
+`claim`/`schedulability` occurrence has exactly one row. A missing member or
+missing occurrence row refuses `invalid_package`/`invalid-value` at
+`/schedulability_claims`. A row naming an absent, foreign, wrong-kind or
+non-schedulability node refuses `invalid_package`/`invalid-value` at
+`/schedulability_claims/{i}/declaration`; an occurrence not owned by that node
+refuses the same code and cause at `/schedulability_claims/{i}/occurrence`. A
+repeated key refuses `invalid_package`/`conflicting-definition` at the later
+row. A row out of canonical order refuses `invalid_package`/`invalid-value` at
+the later row. The closed schema refuses a missing row member, a non-integer
+or negative occurrence, or an extra member as `malformed_wire` at the row or
+member that breaks the schema.
+
+After aggregate-order validation and before the FR-482 body checks, the reader
+visits rows in array order. For each row it checks the declaration join before
+the occurrence join. It then checks repeated keys before canonical order, and
+checks total occurrence coverage last; missing coverage refuses at
+`/schedulability_claims`. Each visited row consumes one validation visit from
+the caller's finite reader budget before inspection. Exhaustion returns the
+reader's `incomplete` result at the first uncharged row without a partial
+typed claim view.
+
+This index is an authenticated handle, not a second copy of the task claim.
+The IR reader validates the row join and the complete FR-482 body, then exposes
+the admitted policy, task fields, units and claim occurrence as a typed read.
+It does not bind the claim to a timed model, interpret source release
+declarations or compute task successors. The QSL checker consumes the typed
+claim and the selected timed model, resolves each task release binding, and
+recomputes the source-plus-scheduler product and each finite
+`TaskTransitionTemplate` successor under FR-418. The template and
+`TaskProductCertificate` remain in `backend-provider-v1`; neither is a
+checked-package member. Exact `TaskTransitionIdentity` values remain replay
+evidence and are never substituted by finite certificate templates.
+
+`schedulability-claim-vectors.json` publishes positive one-occurrence and
+shared-node/two-occurrence handles, schema-invalid rows and schema-valid
+reader mutations for absent, foreign, wrong-kind and non-schedulability
+declarations, an unowned occurrence, a duplicate key, missing coverage and
+out-of-order rows. The positive handles name the FR-482/TC-967 claim form; the
+vector file is the machine-readable contract consumed by the QSpec
+qualification test.
+
 ### Timed-model nodes
 
 CheckedPackage V2 carries admitted timed models in `semantic_graph.nodes`.
@@ -3765,6 +3835,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-297 | Each probabilistic claim has exactly one `probabilistic_claims` row naming its exact local `claim`/`probabilistic_claim` declaration `NodeRef` and one declared `claim` occurrence. Rows sort by structural declaration identity then occurrence. A second row for one declaration refuses `invalid_package`/`conflicting-definition` even when it names a different valid occurrence (`PC-R4`); a repeated `(declaration, occurrence)` key refuses at the later row (`PC-R5`) with the same typed code/cause. Missing occurrence fails the closed schema; absent-local, foreign, wrong-kind and non-probabilistic declarations or an occurrence not owned by the named declaration refuse `invalid_package`/`invalid-value` at the first mismatching member (`PC-R1`..`PC-R3`, `PC-R6`). Reversing two otherwise valid rows refuses `invalid_package`/`invalid-semantic-graph` at the second row (`PC-R7`). PC-01 and PC-02 have equal display names and source spans but distinct declaration nodes and remain distinct; no name, span or declaration-order inference is permitted. | Test (TC-233) |
 | FR-322-AC-298 | An option value type `OptInt` over `ix://quire/native/Integer` and an option value type `OptUnit` over `ix://quire/unit/ms`, a field `a` typed `OptInt` with presence `required`, a field `b` typed `ix://quire/native/Integer` with presence `optional`, a field `c` typed `OptUnit`, a field `d` typed `OptInt` with multiplicity `[0, 3]`, ordered and not unique, and an operation parameter and result typed `OptInt` have the types `Option<Integer>`, `Option<Integer>`, `Option<Quantity<ms>>`, `Sequence<Option<Integer>>[0, 3]`, `Option<Integer>` and `Option<Integer>`; `a` and `b` derive the same `composite_type`/`option` node over the `Integer` node. | Test (TC-280) |
 | FR-322-AC-299 | A `dimension_node_ids` operand is a local `NodeRef` of a dimension node of the importing graph or a package operand `{package, node}` naming a dimension node of a direct dependency, resolved by lookup in that dependency's admitted package and never minted into the importing graph (`XP-01` to `XP-10` write every foreign dimension as a package operand and are decided as before). An operand whose `package` is not in the direct `dependency_selections` refuses `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/{i}/body/dimension_node_ids/{k}/package`: a package only in the derived closure (`XP-11`), a package in no selection (`XP-12`) and the importing package itself (`XP-15`). A `node` absent from the dependency's admitted package refuses `missing_declaration`/`missing-name` at `.../{k}/node` (`XP-13`). A `NodeRef` naming a foreign package (self-minted) refuses `invalid_semantic_graph` at `.../{k}` (`XP-14`). | Test (TC-280) |
+| FR-322-AC-300 | A package with no `claim`/`schedulability` occurrence omits `schedulability_claims`; a package with such occurrences contains exactly one closed `{declaration, occurrence}` row for each, in structural-`NodeRef`, then occurrence order. Each row resolves only to its local `claim`/`schedulability` node and one of that node's `claim` occurrences; it copies no claim body, task value, source release binding, policy or task-transition template. The positive and shared-node/multiple-occurrence vectors are schema-valid. Missing coverage, a foreign, absent or wrong-form node, an unowned occurrence, a repeated key and a non-canonical row order have the exact `invalid_package` refusal and locus in TC-976; missing/extra row members and a non-integer or negative occurrence are `malformed_wire`. The IR typed read exposes the FR-482 body and identity without evaluating model releases or task successors; the QSL FR-418 checker alone recomputes source/scheduler successors. `TaskTransitionTemplate` remains in the backend-provider-v1 certificate and is not a checked-package member. | Test (TC-976) |
 
 ## Dependencies
 
