@@ -1,0 +1,2022 @@
+{
+  "version": 1,
+  "note": "FR-142-AC-27 to FR-142-AC-30, FR-322-AC-301 and FR-322-AC-302 (TC-187 U41 to U44, TC-280 MU-31 to MU-34): the carried quantity type `Quantity<u, C>` (`scalar_type`/`carried_quantity`) and its conversion. `nodes` lists the nodes of one importing package `example` by key; a path segment `{\"node\": key}` is the structural id of the node `key` (the path of FR-322 \"Derived type forms and forwarding\"). `wire` holds CQ-W01 to CQ-W14: the shape and conversion-application cases, each `admitted`, `distinct` (two nodes with different paths) or a refusal with `code`, `cause` and the node `at`. `evaluation` holds CQ-E01 to CQ-E20, the exact halves of TC-187 U07, U08, U16, U17, U18 and U29 and the precedence case U43: each names the `source` value, its `unit`, the `target` carrier node, the mode (`exact` except CQ-E17 to CQ-E19, the carried forms of the unchanged nearest-even halves of U07 and U29 and rounding before bounds), the optional `limits` tuple `L(i,d,e,o,w,r)` of TC-187 as a list `[integer_bits, decimal_digits, unit_edges, value_occurrences, work_units, result_units]`, and the `expected` disposition. The reader and evaluator that decide these outcomes are quire-contract-ir's and quire-verification's; the vectors are authoritative for them and QSpec's test checks only their shape and that each `completed` or `refused` outcome follows from the exact value and the carrier.",
+  "units": {
+    "m": "1",
+    "cm": "1/100",
+    "in": "127/5000"
+  },
+  "nodes": {
+    "integer": {
+      "tag": "scalar_type",
+      "form": "integer",
+      "path": [
+        "scalar_type",
+        "integer"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      }
+    },
+    "text": {
+      "tag": "scalar_type",
+      "form": "text",
+      "path": [
+        "scalar_type",
+        "text"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      }
+    },
+    "decimal": {
+      "tag": "scalar_type",
+      "form": "decimal",
+      "path": [
+        "scalar_type",
+        "decimal"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      }
+    },
+    "rational": {
+      "tag": "scalar_type",
+      "form": "rational",
+      "path": [
+        "scalar_type",
+        "rational"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      }
+    },
+    "dim_L": {
+      "tag": "scalar_type",
+      "form": "dimension",
+      "path": [
+        "scalar_type",
+        "dimension",
+        "L"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      }
+    },
+    "dim_T": {
+      "tag": "scalar_type",
+      "form": "dimension",
+      "path": [
+        "scalar_type",
+        "dimension",
+        "T"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      }
+    },
+    "unit_m": {
+      "tag": "scalar_type",
+      "form": "unit",
+      "path": [
+        "scalar_type",
+        "unit",
+        "m"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      },
+      "dimension": "dim_L"
+    },
+    "unit_cm": {
+      "tag": "scalar_type",
+      "form": "unit",
+      "path": [
+        "scalar_type",
+        "unit",
+        "cm"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      },
+      "dimension": "dim_L"
+    },
+    "unit_in": {
+      "tag": "scalar_type",
+      "form": "unit",
+      "path": [
+        "scalar_type",
+        "unit",
+        "in"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      },
+      "dimension": "dim_L"
+    },
+    "unit_s": {
+      "tag": "scalar_type",
+      "form": "unit",
+      "path": [
+        "scalar_type",
+        "unit",
+        "s"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": []
+      },
+      "dimension": "dim_T"
+    },
+    "dec_cents": {
+      "tag": "bounded_domain",
+      "form": "decimal_range",
+      "path": [
+        "bounded_domain",
+        "decimal_range",
+        "coefficient_min",
+        {
+          "node": "integer"
+        },
+        "-100",
+        "coefficient_max",
+        "100",
+        "scale_min",
+        "2",
+        "scale_max",
+        "2",
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact",
+        {
+          "node": "decimal"
+        }
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "coefficient_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "coefficient_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "base": "decimal",
+      "coefficient_min": -100,
+      "coefficient_max": 100,
+      "scale_min": 2,
+      "scale_max": 2,
+      "rounding": "exact"
+    },
+    "dec_cents_ne": {
+      "tag": "bounded_domain",
+      "form": "decimal_range",
+      "path": [
+        "bounded_domain",
+        "decimal_range",
+        "coefficient_min",
+        {
+          "node": "integer"
+        },
+        "-100",
+        "coefficient_max",
+        "100",
+        "scale_min",
+        "2",
+        "scale_max",
+        "2",
+        "rounding",
+        {
+          "node": "text"
+        },
+        "nearest-even",
+        {
+          "node": "decimal"
+        }
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "coefficient_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "coefficient_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "nearest-even",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "base": "decimal",
+      "coefficient_min": -100,
+      "coefficient_max": 100,
+      "scale_min": 2,
+      "scale_max": 2,
+      "rounding": "nearest-even"
+    },
+    "dec_pm2": {
+      "tag": "bounded_domain",
+      "form": "decimal_range",
+      "path": [
+        "bounded_domain",
+        "decimal_range",
+        "coefficient_min",
+        {
+          "node": "integer"
+        },
+        "-2",
+        "coefficient_max",
+        "2",
+        "scale_min",
+        "0",
+        "scale_max",
+        "0",
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact",
+        {
+          "node": "decimal"
+        }
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "coefficient_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "coefficient_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "0",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "0",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "base": "decimal",
+      "coefficient_min": -2,
+      "coefficient_max": 2,
+      "scale_min": 0,
+      "scale_max": 0,
+      "rounding": "exact"
+    },
+    "dec_wide": {
+      "tag": "bounded_domain",
+      "form": "decimal_range",
+      "path": [
+        "bounded_domain",
+        "decimal_range",
+        "coefficient_min",
+        {
+          "node": "integer"
+        },
+        "0",
+        "coefficient_max",
+        "1",
+        "scale_min",
+        "0",
+        "scale_max",
+        "4294967295",
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact",
+        {
+          "node": "decimal"
+        }
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "coefficient_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "0",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "coefficient_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "1",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "0",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "4294967295",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "base": "decimal",
+      "coefficient_min": 0,
+      "coefficient_max": 1,
+      "scale_min": 0,
+      "scale_max": 4294967295,
+      "rounding": "exact"
+    },
+    "int_pm2": {
+      "tag": "bounded_domain",
+      "form": "integer_range",
+      "path": [
+        "bounded_domain",
+        "integer_range",
+        "min",
+        {
+          "node": "integer"
+        },
+        "-2",
+        "max",
+        "2"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          }
+        ]
+      },
+      "min": -2,
+      "max": 2
+    },
+    "q_dec": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_cents"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_cents"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_cents",
+      "rounding": "exact"
+    },
+    "q_dec_ne": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_cents_ne"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "nearest-even"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_cents_ne"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "nearest-even",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_cents_ne",
+      "rounding": "nearest-even"
+    },
+    "q_pm2": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_pm2"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_pm2"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_pm2",
+      "rounding": "exact"
+    },
+    "q_int": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "int_pm2"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "int_pm2"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "int_pm2",
+      "rounding": "exact"
+    },
+    "q_int_ne": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "int_pm2"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "nearest-even"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "int_pm2"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "nearest-even",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "int_pm2",
+      "rounding": "nearest-even"
+    },
+    "q_wide": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_wide"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_wide"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_wide",
+      "rounding": "exact"
+    },
+    "dec_wide_s": {
+      "tag": "bounded_domain",
+      "form": "decimal_range",
+      "path": [
+        "bounded_domain",
+        "decimal_range",
+        "coefficient_min",
+        {
+          "node": "integer"
+        },
+        "-100",
+        "coefficient_max",
+        "100",
+        "scale_min",
+        "0",
+        "scale_max",
+        "2",
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact",
+        {
+          "node": "decimal"
+        }
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "coefficient_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "coefficient_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "100",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "0",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "scale_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "2",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "base": "decimal",
+      "coefficient_min": -100,
+      "coefficient_max": 100,
+      "scale_min": 0,
+      "scale_max": 2,
+      "rounding": "exact"
+    },
+    "q_dec_range": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_wide_s"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_wide_s"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_wide_s",
+      "rounding": "exact"
+    },
+    "q_dec_s": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_s"
+        },
+        {
+          "node": "dec_cents"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_s"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_cents"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_s",
+      "carrier": "dec_cents",
+      "rounding": "exact"
+    },
+    "bad_unit": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "dim_L"
+        },
+        {
+          "node": "dec_cents"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dim_L"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_cents"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "dim_L",
+      "carrier": "dec_cents",
+      "rounding": "exact"
+    },
+    "bad_carrier_rational": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "rational"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "rational"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "rational",
+      "rounding": "exact"
+    },
+    "bad_carrier_decimal": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "decimal"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "decimal"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "decimal",
+      "rounding": "exact"
+    },
+    "bad_mode": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "dec_cents"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "nearest-even"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "dec_cents"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "nearest-even",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "dec_cents",
+      "rounding": "nearest-even"
+    }
+  },
+  "wire": [
+    {
+      "id": "CQ-W01",
+      "description": "Quantity<m, Decimal[-100, 100; 2, 2; exact]>",
+      "expected": "admitted",
+      "node": "q_dec",
+      "family": "quantity"
+    },
+    {
+      "id": "CQ-W02",
+      "description": "Quantity<m, Int[-2, 2]>",
+      "expected": "admitted",
+      "node": "q_int",
+      "family": "quantity"
+    },
+    {
+      "id": "CQ-W03",
+      "description": "Quantity<m, Int[-2, 2; nearest-even]>",
+      "expected": "admitted",
+      "node": "q_int_ne",
+      "family": "quantity"
+    },
+    {
+      "id": "CQ-W04",
+      "description": "the Int[-2, 2] exact and nearest-even carried quantities are two nodes",
+      "expected": "distinct",
+      "nodes": [
+        "q_int",
+        "q_int_ne"
+      ]
+    },
+    {
+      "id": "CQ-W05",
+      "description": "unit is a dimension node",
+      "expected": "invalid_package/invalid-derived-shape",
+      "node": "bad_unit",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape"
+    },
+    {
+      "id": "CQ-W06",
+      "description": "carrier is a rational scalar_type node",
+      "expected": "invalid_package/invalid-derived-shape",
+      "node": "bad_carrier_rational",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape"
+    },
+    {
+      "id": "CQ-W07",
+      "description": "carrier is the unbounded decimal scalar_type node",
+      "expected": "invalid_package/invalid-derived-shape",
+      "node": "bad_carrier_decimal",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape"
+    },
+    {
+      "id": "CQ-W08",
+      "description": "decimal carrier exact, node rounding nearest-even",
+      "expected": "invalid_package/invalid-derived-shape",
+      "node": "bad_mode",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape"
+    },
+    {
+      "id": "CQ-W09",
+      "description": "convert 1 in into q_dec, mode exact",
+      "expected": "admitted",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_in"
+        ],
+        "result_type": "q_dec",
+        "mode": {
+          "kind": "rounding",
+          "value": "exact"
+        }
+      }
+    },
+    {
+      "id": "CQ-W10",
+      "description": "convert into q_dec_ne, mode nearest-even",
+      "expected": "admitted",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_in"
+        ],
+        "result_type": "q_dec_ne",
+        "mode": {
+          "kind": "rounding",
+          "value": "nearest-even"
+        }
+      }
+    },
+    {
+      "id": "CQ-W11",
+      "description": "convert into q_dec_ne, mode exact",
+      "expected": "invalid_package/operation-mode-type-mismatch",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_in"
+        ],
+        "result_type": "q_dec_ne",
+        "mode": {
+          "kind": "rounding",
+          "value": "exact"
+        }
+      },
+      "code": "invalid_package",
+      "cause": "operation-mode-type-mismatch"
+    },
+    {
+      "id": "CQ-W12",
+      "description": "convert into q_dec, mode null",
+      "expected": "invalid_package/operation-mode-type-mismatch",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_in"
+        ],
+        "result_type": "q_dec",
+        "mode": null
+      },
+      "code": "invalid_package",
+      "cause": "operation-mode-type-mismatch"
+    },
+    {
+      "id": "CQ-W13",
+      "description": "convert a length quantity into q_dec_s (a time unit)",
+      "expected": "ill_typed/operator-ineligible",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_in"
+        ],
+        "result_type": "q_dec_s",
+        "mode": {
+          "kind": "rounding",
+          "value": "exact"
+        }
+      },
+      "code": "ill_typed",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "CQ-W14",
+      "description": "quire.op.quantity.add over a q_dec operand",
+      "expected": "ill_typed/operator-ineligible",
+      "application": {
+        "operation": "quire.op.quantity.add",
+        "operand_types": [
+          "q_dec",
+          "q_dec"
+        ],
+        "result_type": "q_dec",
+        "mode": null
+      },
+      "code": "ill_typed",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "CQ-W15",
+      "description": "convert a q_pm2 operand (carried, unit m) into q_dec, mode exact",
+      "expected": "admitted",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "q_pm2"
+        ],
+        "result_type": "q_dec",
+        "mode": {
+          "kind": "rounding",
+          "value": "exact"
+        }
+      }
+    }
+  ],
+  "evaluation": [
+    {
+      "id": "CQ-E01",
+      "row": "U07 exact: 1 in into scale two",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E02",
+      "row": "U07 positive exact: 25 cm",
+      "source": {
+        "magnitude": "25",
+        "unit": "cm"
+      },
+      "target": "q_dec",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "coefficient": 25,
+        "scale": 2,
+        "loss": null
+      }
+    },
+    {
+      "id": "CQ-E03",
+      "row": "U08 members of the domain",
+      "source": {
+        "magnitude": "-2",
+        "unit": "m"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "coefficient": -2,
+        "scale": 0,
+        "loss": null
+      }
+    },
+    {
+      "id": "CQ-E04",
+      "row": "U08 members of the domain",
+      "source": {
+        "magnitude": "2",
+        "unit": "m"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "coefficient": 2,
+        "scale": 0,
+        "loss": null
+      }
+    },
+    {
+      "id": "CQ-E05",
+      "row": "U08 one below the domain",
+      "source": {
+        "magnitude": "-3",
+        "unit": "m"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "decimal_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Decimal[-2, 2; 0, 0]"
+      }
+    },
+    {
+      "id": "CQ-E06",
+      "row": "U08 one over the domain",
+      "source": {
+        "magnitude": "3",
+        "unit": "m"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "decimal_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Decimal[-2, 2; 0, 0]"
+      }
+    },
+    {
+      "id": "CQ-E07",
+      "row": "U16 exact under L(15,5,1,1,6,1)",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec",
+      "mode": "exact",
+      "limits": [
+        15,
+        5,
+        1,
+        1,
+        6,
+        1
+      ],
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "consumed": {
+          "unit.identity-read": 1,
+          "unit.edge": 1,
+          "unit.rational-arithmetic": 2,
+          "work_units": 4
+        },
+        "before": "unit.target-domain",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E08",
+      "row": "U16 exact under L(15,5,1,1,4,1): still refused, not incomplete",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec",
+      "mode": "exact",
+      "limits": [
+        15,
+        5,
+        1,
+        1,
+        4,
+        1
+      ],
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "consumed": {
+          "unit.identity-read": 1,
+          "unit.edge": 1,
+          "unit.rational-arithmetic": 2,
+          "work_units": 4
+        },
+        "before": "unit.target-domain",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E09",
+      "row": "U17 3 m into U08's target under L(2,1,0,1,2,0)",
+      "source": {
+        "magnitude": "3",
+        "unit": "m"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": [
+        2,
+        1,
+        0,
+        1,
+        2,
+        0
+      ],
+      "expected": {
+        "disposition": "refused",
+        "code": "decimal_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Decimal[-2, 2; 0, 0]"
+      }
+    },
+    {
+      "id": "CQ-E10",
+      "row": "U17 3 m into U08's target under L(2,1,0,1,1,0)",
+      "source": {
+        "magnitude": "3",
+        "unit": "m"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": [
+        2,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "expected": {
+        "disposition": "incomplete",
+        "limit_kind": "work_units",
+        "limit": 1,
+        "consumed": 1,
+        "next_charge": 1,
+        "charge_point": "unit.target-domain"
+      }
+    },
+    {
+      "id": "CQ-E11",
+      "row": "U18 1 m into Decimal[0, 1; 0, 4294967295; exact]",
+      "source": {
+        "magnitude": "1",
+        "unit": "m"
+      },
+      "target": "q_wide",
+      "mode": "exact",
+      "limits": [
+        18446744073709551615,
+        64,
+        0,
+        1,
+        2,
+        1
+      ],
+      "expected": {
+        "disposition": "incomplete",
+        "limit_kind": "decimal_digits",
+        "limit": 64,
+        "consumed": 0,
+        "next_charge": 4294967296,
+        "charge_point": "unit.target-domain"
+      }
+    },
+    {
+      "id": "CQ-E12",
+      "row": "U29 exact: 1 in into Int[-2, 2] under L(15,0,1,1,4,1)",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_int",
+      "mode": "exact",
+      "limits": [
+        15,
+        0,
+        1,
+        1,
+        4,
+        1
+      ],
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "consumed": {
+          "unit.identity-read": 1,
+          "unit.edge": 1,
+          "unit.rational-arithmetic": 2,
+          "work_units": 4
+        },
+        "before": "unit.target-domain",
+        "at": "convert",
+        "expected": "Int[-2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E13",
+      "row": "U29 positive exact: 2 m into Int[-2, 2]",
+      "source": {
+        "magnitude": "2",
+        "unit": "m"
+      },
+      "target": "q_int",
+      "mode": "exact",
+      "limits": [
+        2,
+        0,
+        0,
+        1,
+        2,
+        1
+      ],
+      "expected": {
+        "disposition": "completed",
+        "integer": 2,
+        "loss": null
+      }
+    },
+    {
+      "id": "CQ-E14",
+      "row": "U29 3 m into Int[-2, 2] under L(2,0,0,1,2,0)",
+      "source": {
+        "magnitude": "3",
+        "unit": "m"
+      },
+      "target": "q_int",
+      "mode": "exact",
+      "limits": [
+        2,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      "expected": {
+        "disposition": "refused",
+        "code": "integer_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Int[-2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E15",
+      "row": "U29 3 m into Int[-2, 2] under L(2,0,0,1,1,0)",
+      "source": {
+        "magnitude": "3",
+        "unit": "m"
+      },
+      "target": "q_int",
+      "mode": "exact",
+      "limits": [
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "expected": {
+        "disposition": "incomplete",
+        "limit_kind": "work_units",
+        "limit": 1,
+        "consumed": 1,
+        "next_charge": 1,
+        "charge_point": "unit.target-domain"
+      }
+    },
+    {
+      "id": "CQ-E16",
+      "row": "U43 inexact and out of bounds: 250 cm = 5/2 m into Decimal[-2, 2; 0, 0]",
+      "source": {
+        "magnitude": "250",
+        "unit": "cm"
+      },
+      "target": "q_pm2",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "at": "convert",
+        "expected": "Decimal[-2, 2; 0, 0]"
+      }
+    },
+    {
+      "id": "CQ-E17",
+      "row": "U44 carried form of U07 nearest-even: 1 in into Decimal[-100, 100; 2, 2; nearest-even]",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec_ne",
+      "mode": "nearest-even",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "coefficient": 3,
+        "scale": 2,
+        "loss": {
+          "exact_numerator": 127,
+          "exact_denominator": 5000,
+          "rounded_coefficient": 3,
+          "rounded_scale": 2,
+          "mode": "nearest-even"
+        }
+      }
+    },
+    {
+      "id": "CQ-E18",
+      "row": "U44 25 cm into Int[-2, 2; nearest-even]",
+      "source": {
+        "magnitude": "25",
+        "unit": "cm"
+      },
+      "target": "q_int_ne",
+      "mode": "nearest-even",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "integer": 0,
+        "loss": {
+          "exact_numerator": 1,
+          "exact_denominator": 4,
+          "rounded_coefficient": 0,
+          "rounded_scale": 0,
+          "mode": "nearest-even"
+        }
+      }
+    },
+    {
+      "id": "CQ-E19",
+      "row": "U44 rounding precedes bounds: 13/5 m into Int[-2, 2; nearest-even]",
+      "source": {
+        "magnitude": "13/5",
+        "unit": "m"
+      },
+      "target": "q_int_ne",
+      "mode": "nearest-even",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "integer_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Int[-2, 2]"
+      }
+    },
+    {
+      "id": "CQ-E20",
+      "row": "scale grid is 10^-smax: 1 in into Decimal[-100, 100; 0, 2; exact] (smin < smax) refuses",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_dec_range",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "inexact_conversion",
+        "cause": "inexact-conversion",
+        "at": "convert",
+        "expected": "Decimal[-100, 100; 0, 2]"
+      }
+    }
+  ]
+}

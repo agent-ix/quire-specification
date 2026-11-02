@@ -89,6 +89,7 @@ catalog).
 | `invalid_semantic_graph` | A semantic graph that breaks the reader's graph rules: a dependency, key, owner or term order the artifact refuses. |
 | `unsupported_node_tag` | A node whose `node_tag` is outside the closed tag set (QSL ADR-013 O-14, QC-19). |
 | `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
+| `inexact_conversion` | Strict `exact` met a rounding step of a carried-quantity conversion: the converted value is not on the target carrier's scale grid. |
 | `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
 | `division_out_of_domain` | A `div` quotient or a `rem` remainder outside the bounded consumer's domain. Only the member the operator exposes is checked; the refused member is not exposed. |
 | `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain. |
@@ -162,7 +163,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-3 | The key order over code spellings is not cited as a severity or precedence ordering. | Analysis |
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
-| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
+| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the eleven evaluator value-refusal codes: `inexact_decimal`, `inexact_conversion`, `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
 | FR-271-AC-7 | The values table has exactly one row for each of `unknown_contract_version`, `malformed_wire`, `duplicate_member`, `unknown_member`, `unknown_required_capability`, `invalid_semantic_graph` and `unsupported_node_tag`, the codes of the FR-322 reader vocabulary that no other row holds. | Test (TC-233) |
 
 ## Resolved catalog namespaces
@@ -197,7 +198,7 @@ and candidate-set negotiation, `duplicate_selection` for a second selection of
 an already-selected domain-package identity, `stage_limit_exceeded` for a stage
 limit, `noncanonical_wire` for a JSON number that RFC 8785 cannot carry
 exactly and for the FR-322 V2 reader's non-canonical bytes, and
-`inexact_decimal`, `decimal_out_of_domain`,
+`inexact_decimal`, `inexact_conversion`, `decimal_out_of_domain`,
 `division_out_of_domain`, `modulo_out_of_domain`,
 `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and

@@ -328,7 +328,7 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
                 '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
               | 'Reference', '<', qualified-name, '>'
-              | 'Quantity', '<', qualified-name, '>'
+              | 'Quantity', '<', qualified-name, [ ',', type-ref ], '>'
               | 'Population', '<', qualified-name, '>', [ '[', uint, ']' ] ;
 qualified-name = ident, { '::', member-name } ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
@@ -1079,7 +1079,7 @@ aliases, functions, predicates, protocols, claims and declared values, the type
 namespace) are three namespaces, so a unit may
 share its name with a dimension or with a type. Ambiguous cross-unit
 declarations refuse. A bare `type-ref` looks up the type namespace only, and
-`Quantity<u>` is the one `type-ref` that looks up the unit namespace. A unit
+`Quantity<u>` and `Quantity<u, C>` are the `type-ref`s that look up the unit namespace; the checker restricts `C` to a bounded `Int[..]` or `Decimal[..]` (FR-142 "Carried quantity"), and an `Int[lo, hi; mode]` carrier is the one place `Int` takes a trailing rounding mode. A unit
 containing only model-independent Boolean predicates needs no dummy model import.
 Any referenced model declaration still requires an exact explicit import, except that a domain package's own clauses name its declarations through the self alias of their owner and need no import (FR-470). Predicate
 parameters and lexical binders are unique in their enclosing declaration and

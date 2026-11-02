@@ -546,7 +546,7 @@ A frame body refusal, meaning-join or canonical-order
   independent dangling `reference` term and the cycle check of the
   recursion-group rule, last; (2) the owner join of the
   owner-bearing nodes; (3) the derived-shape semantic checks, which refuse a
-  derived shape (reference, population, compound unit) whose body is not well
+  derived shape (reference, population, compound unit, carried quantity) whose body is not well
   formed, and a model declaration node whose body is not the empty aggregate,
   as `invalid_package`/`invalid-derived-shape` at the node's `node_id`
   (FR-322-AC-74, `RM-CU-ORDER`, `TW-27`); (4) the edge existence check of a
@@ -586,7 +586,7 @@ A frame body refusal, meaning-join or canonical-order
   `boolean` and `integer`, `composite_type` `reference`, `option`, `set`, `bag`,
   `sequence` and `ordered_set`, `bounded_domain` `integer_range`,
   `collection_bounds` and `model_population`, or `scalar_type`
-  `compound_unit`) is its own `semantic_type` for a `scalar_type` or
+  `compound_unit` and `carried_quantity`) is its own `semantic_type` for a `scalar_type` or
   `composite_type`; a node that breaks its form's shape refuses
   `invalid_package`/`invalid-derived-shape` at the node's `node_id`. A model
   declaration node whose body is not the empty aggregate refuses it at
@@ -757,6 +757,7 @@ A frame body refusal, meaning-join or canonical-order
   | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
   | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
   | `scalar_type`/`compound_unit` | each unit its terms reference |
+  | `scalar_type`/`carried_quantity` | the unit and the carrier its `unit` and `carrier` bindings reference, in ascending node-id order; the text type of the `rounding` literal is not listed |
   | `relation`/`refinement` | the unique node-id-ascending local body keys and term references of FR-375, including local `abstract` and `protocol` keys even with no rows; no external `{package, node}` reference, profile `DefinitionRef` or standalone `semantic_type` edge |
 | `extension`/`extension_form` | the unique node-id-ascending targets of its clause bindings |
   | `function`, a clause function included | each node its body references: its parameter nodes, its body's root node and its measure's node |
@@ -2024,6 +2025,19 @@ literal values" says.
 | `Reference<O>` | `composite_type`/`reference`, self-typed | `aggregate{[reference(M_O)]}`, where `M_O` is `O`'s model declaration node. A derived reference target SHALL be a `model`/`object_type`, `model`/`process`, `model`/`state_machine`, `model`/`systems_interface` or `relation`/`relationship` declaration; scalar, value, function and other composite nodes are refused. | `["composite_type", "reference", M_O's node_id]`: `Ref = Reference<Order>` and a parameter typed `Ref` both name the one node with that path |
 | `Population<O>[N]`; `Population<O>` with no maximum | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}`; for `Population<O>` with no maximum, `aggregate{[]}`, the `max` member absent | `["bounded_domain", "model_population", S_O's node_id, "N"]` with `N` the maximum's decimal text, and `["bounded_domain", "model_population", S_O's node_id]` for the unbounded population: `Bucket = Population<Order>[3]` and `Population<Order>[5]` name two nodes, and `Open = Population<Order>` a third whose `semantic_type` is the same `S_O` |
 | a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}`. Each `U` is a targetless canonical nominal root (a `scalar_type`/`unit` node with an empty body and `semantic_type` equal to its dimension node). | `["scalar_type", "compound_unit", U_1's node_id, "e_1", ..., U_n's node_id, "e_n"]`, one node id and one exponent string per term, the terms in the body's order: ascending node-id order of their root units, the order of `quire.value.compound-unit/v1` and of FR-201's `UnitId` `terms`. `e_i` is the exponent's canonical decimal-integer text: an optional leading `-`, then ASCII digits with no leading zero, and no `+`. `metre / second` has the path `["scalar_type", "compound_unit", U_metre's node_id, "1", U_second's node_id, "-1"]` when `U_metre` sorts first; `metre^2` has `["scalar_type", "compound_unit", U_metre's node_id, "2"]` and `metre^-1` has `["scalar_type", "compound_unit", U_metre's node_id, "-1"]`, two paths, so neither relies on an `ordinal` to differ; the dimensionless unit has `["scalar_type", "compound_unit"]`. Equal terms give one path and one node, which a producer keys at `ordinal` `0`. |
+| `Quantity<u, C>` | `scalar_type`/`carried_quantity`, self-typed (family `quantity`) | `aggregate` of `binding "unit" = reference(U)`, `binding "carrier" = reference(C)` and `binding "rounding" = literal` of `value_kind` `text` typed by the `scalar_type`/`text` node, whose `value` is a rounding mode name; `U` is a `scalar_type`/`unit` node and `C` a `bounded_domain`/`integer_range` or `bounded_domain`/`decimal_range` node | `["scalar_type", "carried_quantity", U's node_id, C's node_id, "rounding", T's node_id, "<mode>"]`, `T` the `scalar_type`/`text` node: `Quantity<m, Int[-2, 2]>` and `Quantity<m, Int[-2, 2; nearest-even]>` name two nodes, as do two units, two carriers or a carrier of another bound |
+
+A `carried_quantity` node's `rounding` literal equals the mode of a
+`decimal_range` carrier's own `rounding` binding, and for an `integer_range`
+carrier is any rounding mode, `exact` for `Quantity<m, Int[-2, 2]>`. The node
+carries no declaration, owner or recursion group, and its `semantic_type` is
+itself. A `carried_quantity` whose `unit` is not a `scalar_type`/`unit` node,
+whose `carrier` is not a `bounded_domain` of form `integer_range` or
+`decimal_range`, whose `rounding` is not a mode name, whose `decimal_range`
+carrier's mode differs from its `rounding`, whose members are not exactly those
+three in that order, or whose path disagrees with its body is refused by the
+semantic shape check (`invalid_package`/`invalid-derived-shape`,
+`RM-CQ-UNIT`, `RM-CQ-CARRIER`, `RM-CQ-MODE`).
 
 A derived shape is identified by its structural path and by nothing else,
 independently of a package version and of a source alias spelling.
@@ -2044,6 +2058,9 @@ The named refusal vectors are:
 | `RM-REF-TARGET` | Change R1's `reference(M1)` target to a scalar node; the schema remains valid. | `invalid_package`/`invalid-derived-shape` at R1. |
 | `RM-POP-MAX` | Change PO1's integer `max` to negative `-1`; the schema remains valid. | `invalid_package`/`invalid-derived-shape` at PO1. |
 | `RM-CU-ORDER` | Swap U2's two unit terms; the schema remains valid. | `invalid_package`/`invalid-derived-shape` at U2. |
+| `RM-CQ-UNIT` | Change a carried quantity's `unit` target to a dimension node; the schema remains valid. | `invalid_package`/`invalid-derived-shape` at the node. |
+| `RM-CQ-CARRIER` | Change a carried quantity's `carrier` to a `rational` or unbounded `decimal` node; the schema remains valid. | `invalid_package`/`invalid-derived-shape` at the node. |
+| `RM-CQ-MODE` | Change a decimal carried quantity's `rounding` so that it differs from its carrier's `rounding` binding; the schema remains valid. | `invalid_package`/`invalid-derived-shape` at the node. |
 
 The executable reader matrix covers the accepted and refused cells below:
 
@@ -2052,6 +2069,7 @@ The executable reader matrix covers the accepted and refused cells below:
 | `composite_type`/`reference` | body target is a model declaration node | scalar, function and value targets |
 | `bounded_domain`/`model_population` | `semantic_type` is `set<reference<T>>`; either one canonical nonnegative integer `max` binding (a bounded population) or no member (the unbounded population) | negative `max`; non-integer `max`; a member beside `max`; arbitrary set element |
 | `scalar_type`/`compound_unit` | self-typed node; targetless canonical nominal unit roots whose semantic type is the dimension node; nonzero exponents in strict node-id order | non-self-typed node; non-unit root; reordered terms |
+| `scalar_type`/`carried_quantity` | self-typed node; a nominal unit, a bounded integer or decimal range carrier and a `rounding` mode agreeing with a decimal carrier's | dimension as unit; unbounded or rational carrier; mode disagreement |
 
 The required-`max` rule applies to a bounded population only. A
 `model_population` node whose `max` member is absent is the unbounded
@@ -2714,7 +2732,7 @@ disagreement between them is a catalog defect, not a reader choice.
 A type node's **family** is read from the type the node resolves to through its
 `bounded_domain` base chain: `scalar_type` forms `boolean`, `integer`,
 `rational`, `decimal`, `float32`, `float64`, `text`, `string`, `uuid` and `timestamp` are their own family, a
-`unit` is `quantity`, an enum is `ordered_enum` when its body's `ordered` is
+`unit` and a `carried_quantity` are `quantity`, an enum is `ordered_enum` when its body's `ordered` is
 true and `enum` otherwise; `composite_type` forms `option`, `record`,
 `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are
 their own family; a `model`/`record_value_type` or `model`/`event_type`
@@ -2987,6 +3005,21 @@ one value equal to `mode.value`, else `operation-mode-type-mismatch`. So
 `quire.op.collection.set`, `bag`, `ordered_set`, `map`, `flat_map`, `flatten`
 and `quire.op.collection.convert` carry the text leaves of a keyed result's
 element type.
+
+**Carried-quantity conversion.** A `quire.op.quantity.convert` application
+whose `result_type` is a `scalar_type`/`carried_quantity` node (FR-142 "Carried
+quantity") is admitted when operand 0 is a `quantity` typed by a unit node or by
+a `carried_quantity` node, the unit of operand 0 and the `unit` of the result
+carry the same `dimension_node_id`, and its `rounding` mode equals the result
+node's `rounding`. A `mode` that differs from that value, or is `null`, refuses
+`invalid_package`/`operation-mode-type-mismatch` at the application, decided before a result of
+another dimension, which refuses `ill_typed`/`operator-ineligible`. The application
+publishes no rounding other than the node's: the node pins the mode, so a
+conversion to a unit node pins `exact`. A carried quantity is not an operand
+of any other quantity operation, which refuses `ill_typed`/`operator-ineligible`.
+At evaluation, under mode `exact`, a value off the carrier's grid refuses
+`inexact_conversion`/`inexact-conversion` at the application (FR-142 "Carried
+quantity").
 
 `quire.op.quantity.negate` is the unary quantity negation of FR-142 "Quantity
 negation": one `quantity` operand, result `operand:0` (the operand's own unit
@@ -3835,6 +3868,8 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-297 | Each probabilistic claim has exactly one `probabilistic_claims` row naming its exact local `claim`/`probabilistic_claim` declaration `NodeRef` and one declared `claim` occurrence. Rows sort by structural declaration identity then occurrence. A second row for one declaration refuses `invalid_package`/`conflicting-definition` even when it names a different valid occurrence (`PC-R4`); a repeated `(declaration, occurrence)` key refuses at the later row (`PC-R5`) with the same typed code/cause. Missing occurrence fails the closed schema; absent-local, foreign, wrong-kind and non-probabilistic declarations or an occurrence not owned by the named declaration refuse `invalid_package`/`invalid-value` at the first mismatching member (`PC-R1`..`PC-R3`, `PC-R6`). Reversing two otherwise valid rows refuses `invalid_package`/`invalid-semantic-graph` at the second row (`PC-R7`). PC-01 and PC-02 have equal display names and source spans but distinct declaration nodes and remain distinct; no name, span or declaration-order inference is permitted. | Test (TC-233) |
 | FR-322-AC-298 | An option value type `OptInt` over `ix://quire/native/Integer` and an option value type `OptUnit` over `ix://quire/unit/ms`, a field `a` typed `OptInt` with presence `required`, a field `b` typed `ix://quire/native/Integer` with presence `optional`, a field `c` typed `OptUnit`, a field `d` typed `OptInt` with multiplicity `[0, 3]`, ordered and not unique, and an operation parameter and result typed `OptInt` have the types `Option<Integer>`, `Option<Integer>`, `Option<Quantity<ms>>`, `Sequence<Option<Integer>>[0, 3]`, `Option<Integer>` and `Option<Integer>`; `a` and `b` derive the same `composite_type`/`option` node over the `Integer` node. | Test (TC-280) |
 | FR-322-AC-299 | A `dimension_node_ids` operand is a local `NodeRef` of a dimension node of the importing graph or a package operand `{package, node}` naming a dimension node of a direct dependency, resolved by lookup in that dependency's admitted package and never minted into the importing graph (`XP-01` to `XP-10` write every foreign dimension as a package operand and are decided as before). An operand whose `package` is not in the direct `dependency_selections` refuses `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/{i}/body/dimension_node_ids/{k}/package`: a package only in the derived closure (`XP-11`), a package in no selection (`XP-12`) and the importing package itself (`XP-15`). A `node` absent from the dependency's admitted package refuses `missing_declaration`/`missing-name` at `.../{k}/node` (`XP-13`). A `NodeRef` naming a foreign package (self-minted) refuses `invalid_semantic_graph` at `.../{k}` (`XP-14`). | Test (TC-280) |
+| FR-322-AC-301 | A `scalar_type`/`carried_quantity` node over the unit node of `m` and a `decimal_range` carrier `Decimal[-100, 100; 2, 2; exact]`, one over an `integer_range` carrier `Int[-2, 2]` with `rounding` `exact`, and one over `Int[-2, 2]` with `rounding` `nearest-even` are admitted, self-typed, of family `quantity`, with the path of "Derived type forms and forwarding", and the three are three nodes; the V2 schema enumerates `carried_quantity` among the `scalar_type` forms. Their refusals are `RM-CQ-UNIT`, `RM-CQ-CARRIER` and `RM-CQ-MODE`, each `invalid_package`/`invalid-derived-shape` at the node (`CQ-W01` to `CQ-W08`). | Test (TC-280) |
+| FR-322-AC-302 | A `quire.op.quantity.convert` application whose operand 0 is typed by the unit node of `in` and whose `result_type` is a carried quantity node over `m` with a `Decimal[-100, 100; 2, 2; exact]` carrier is admitted with `mode` `{kind: rounding, value: exact}`, and one with the carrier's mode `nearest-even` with that mode; a `mode` differing from the result node's `rounding`, `null` included, refuses `invalid_package`/`operation-mode-type-mismatch`; a result over a unit of another dimension refuses `ill_typed`/`operator-ineligible`; a carried quantity as an operand of `quire.op.quantity.add` refuses `ill_typed`/`operator-ineligible` (`CQ-W09` to `CQ-W15`; `CQ-W15` converts a carried quantity into another). | Test (TC-280) |
 | FR-322-AC-300 | A package with no `claim`/`schedulability` occurrence omits `schedulability_claims`; a package with such occurrences contains exactly one closed `{declaration, occurrence}` row for each, in structural-`NodeRef`, then occurrence order. Each row resolves only to its local `claim`/`schedulability` node and one of that node's `claim` occurrences; it copies no claim body, task value, source release binding, policy or task-transition template. The positive and shared-node/multiple-occurrence vectors are schema-valid. Missing coverage, a foreign, absent or wrong-form node, an unowned occurrence, a repeated key and a non-canonical row order have the exact `invalid_package` refusal and locus in TC-976; missing/extra row members and a non-integer or negative occurrence are `malformed_wire`. The IR typed read exposes the FR-482 body and identity without evaluating model releases or task successors; the QSL FR-418 checker alone recomputes source/scheduler successors. `TaskTransitionTemplate` remains in the backend-provider-v1 certificate and is not a checked-package member. | Test (TC-976) |
 
 ## Dependencies

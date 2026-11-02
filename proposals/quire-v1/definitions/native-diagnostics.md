@@ -102,6 +102,7 @@ context, but that context cannot replace a required cause field or variant.
 | `unimplemented_capability` | `backend-not-supplied`, `untranslatable-entry` or `unimplemented-meaning`; for `backend-not-supplied` retain `backend`: the requested execution backend (`interpreter`, `aot` or `jit`) that is not available to the run, because the caller did not supply it or the producer has not built it; for `untranslatable-entry` retain `backend`: the execution backend that cannot run the entry, `construct`: the kind of the entry's first construct, in clause-node order, that the backend cannot translate (`expression-form`, `value-type` or `operation`), `construct_name`: that construct's form name, value type's canonical name or operation node key, and `location`: its source location; for `unimplemented-meaning` retain `capability`: the name of the valid complete-V1 meaning the selected producer does not implement. Category unsupported. |
 | `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`: the first of the source labels `authority` and `identity`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. The label check runs first, over the labels in that order, and the first blank label decides `blank-label`; `empty-path` is reported only when every label is non-blank and the source path is empty. Neither cause names a source region. |
 | `inexact_decimal` | `nonzero-discarded-digit`; retain `expected`: the target type's declared domain, whose maximum scale is the rounding step's target scale (an integer target has scale zero). Strict `exact` met a rounding step: at least one discarded digit is nonzero. No rounded or exact value is retained. |
+| `inexact_conversion` | `inexact-conversion`; retain `expected`: the target carrier of a `Quantity<u, C>` conversion (`Int[lo, hi]` or `Decimal[lo, hi; smin, smax]`). Strict `exact` met a rounding step of a quantity conversion (FR-142 "Carried quantity"): the exact converted value is not on the carrier's scale grid. No rounded or exact value is retained. |
 | `decimal_out_of_domain` | `outside-domain`; retain `expected`: the target `Decimal[lo, hi; smin, smax]` domain whose membership the result fails. No coefficient or scale of the result is retained. |
 | `division_out_of_domain` | `quotient-outside-domain` or `remainder-outside-domain`; retain `expected`: the bounded consumer's integer domain. Under the selected integer-division profile, `quotient-outside-domain` is a `div` whose quotient fails membership and `remainder-outside-domain` a `rem` whose remainder fails it. Only the member the operator exposes is checked; the other member is never checked and cannot refuse. No member is retained. |
 | `modulo_out_of_domain` | `outside-domain`; retain `expected`: the bounded consumer's integer domain the Euclidean `mod` remainder fails. No remainder is retained. |
@@ -115,7 +116,7 @@ context, but that context cannot replace a required cause field or variant.
 
 `ambiguous_dispatch`, `foreign_reference`, `invalid_capability`,
 `duplicate_selection`, `conflicting_declaration`, `stage_limit_exceeded`, `noncanonical_wire`,
-`inexact_decimal`,
+`inexact_decimal`, `inexact_conversion`,
 `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`,
 `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and
@@ -191,8 +192,8 @@ and `edge-count-exceeded`, `occurrence-count-exceeded` and
 `diagnostic-count-exceeded` for the I2 reader's graph dependency-edge,
 occurrence and source-map, and diagnostic-entry limits (QSL ADR-013 QC-28).
 
-Ten codes cover the evaluator's value refusals, one per refusal: `inexact_decimal` for strict `exact` at a decimal rounding step
-(FR-140, FR-142), `decimal_out_of_domain` (FR-140), `division_out_of_domain`
+Eleven codes cover the evaluator's value refusals, one per refusal: `inexact_decimal` for strict `exact` at a decimal rounding step
+(FR-140), `inexact_conversion` for strict `exact` at the rounding step of a carried-quantity conversion (FR-142), `decimal_out_of_domain` (FR-140), `division_out_of_domain`
 and `modulo_out_of_domain` (FR-147), `text_length_out_of_domain` (FR-141),
 `integer_out_of_domain` for an integer-target unit conversion (FR-142) and a
 bounded integer arithmetic result (FR-044), `rational_out_of_domain` for a
@@ -205,7 +206,7 @@ admit its result. None is undefined, incomplete or a type error, and none
 retains the refused value. A `sum` seed or running total outside `N`'s domain
 is none of these refusals: FR-145 makes it a located undefined outcome, since
 a running total is not the expression's result. The causes of
-`invalid_source_identity` are closed as `blank-label` and `empty-path`. In these eleven
+`invalid_source_identity` are closed as `blank-label` and `empty-path`. In these twelve
 rows, each backticked payload name after the cause list is the exact key of
 that payload item in a refusal record's fields, written `key`: before the
 item it names, and every one of them
