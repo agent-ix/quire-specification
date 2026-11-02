@@ -37,7 +37,7 @@ fn definitely_before(a: Interval, b: Interval) -> bool {
     a.2 < b.0 || (a.2 == b.0 && (a.3 || b.1))
 }
 
-#[trace("TC-199", "FR-160-AC-6", "FR-160-AC-7")]
+#[trace("TC-199", "FR-160-AC-6", "FR-160-AC-7", "FR-160-AC-8")]
 #[test]
 fn tc_199_counter_tick_cover_is_half_open() {
     let vectors: Value = serde_json::from_str(VECTORS).expect("vectors parse");
@@ -64,7 +64,7 @@ fn tc_199_counter_tick_cover_is_half_open() {
             other => panic!("{id}: unknown kind {other}"),
         }
     }
-    assert_eq!(ids.len(), 12);
+    assert_eq!(ids.len(), 15);
 }
 
 /// A closed cover would decide the 3001 boundary indeterminate: the published

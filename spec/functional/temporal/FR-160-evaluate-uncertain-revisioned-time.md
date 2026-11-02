@@ -84,6 +84,11 @@ For a bound of 3000 ticks, a clock uncertainty of 0 and a request at tick 0,
 an acknowledgement at tick 2998 satisfies `ack - req <= 3000` (true), tick 3000
 is indeterminate (the difference `(2999, 3001)` straddles the bound) and tick
 3001 is false (the difference `(3000, 3002)` lies above it, its lower end open).
+Two events stamped by the same tick `k` carry the same cover, so their
+difference `b - a` is the open interval `(-(1 + 2u), 1 + 2u)`: it is not clamped
+to zero, and a same-tick pair is ordered neither by the clamp nor by ingestion
+order (FR-160-AC-5). Under uncertainty 0 the bound `b - a <= 0` is therefore
+indeterminate, `b - a <= 1` true and `b - a <= -1` false.
 The vectors are `proposals/checked-package-v2/tick-cover-vectors.json`.
 
 ## Acceptance Criteria
@@ -97,6 +102,7 @@ The vectors are `proposals/checked-package-v2/tick-cover-vectors.json`.
 | FR-160-AC-5 | Interval ordering uses endpoints exactly and never substitutes a midpoint or ingestion order. | Test (TC-199) |
 | FR-160-AC-6 | A counter reading `k` covers the half-open interval `[k, k + 1)`, widened by an uncertainty of `u` ticks to `[k - u, k + 1 + u)`. Two adjacent ticks are definitely ordered, a tick is not definitely before itself, and an interval open at an endpoint is definitely before one starting there. | Test (TC-199) |
 | FR-160-AC-7 | With a bound of 3000 ticks, uncertainty 0 and a request at tick 0, `ack - req <= 3000` is true for an acknowledgement at tick 2998, indeterminate at tick 3000 and false at tick 3001; the same bound with uncertainty 1 decides the neighbouring ticks by the same endpoint rule (`proposals/checked-package-v2/tick-cover-vectors.json`, `TCV-01` to `TCV-12`). | Test (TC-199) |
+| FR-160-AC-8 | Two events at the same tick `k` under uncertainty 0 have the difference `(-1, 1)`, open at both ends and not clamped to zero: `b - a <= 0` is indeterminate, `b - a <= 1` true and `b - a <= -1` false (`proposals/checked-package-v2/tick-cover-vectors.json`, `TCV-13` to `TCV-15`). | Test (TC-199) |
 
 ## Dependencies
 
