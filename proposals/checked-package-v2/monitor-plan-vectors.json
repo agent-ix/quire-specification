@@ -44,6 +44,10 @@
         [
           "activations",
           "sequence"
+        ],
+        [
+          "event_position",
+          "integer"
         ]
       ],
       "activation_fields": [
@@ -685,6 +689,10 @@
             [
               "activations",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
             ]
           ]
         ]
@@ -720,6 +728,10 @@
             [
               "activations",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
             ]
           ]
         ]
@@ -786,6 +798,10 @@
             [
               "activations",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
             ]
           ]
         ]
@@ -821,6 +837,10 @@
             [
               "activations",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
             ],
             [
               "extra",
@@ -1245,6 +1265,10 @@
             [
               "activations",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
             ]
           ]
         ]
@@ -1276,6 +1300,10 @@
             [
               "buffer_1",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
             ]
           ]
         ]
@@ -1328,6 +1356,123 @@
             [
               "activations",
               "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-74",
+      "note": "the state lacks event_position",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "history_start",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "activations",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-75",
+      "note": "event_position is text, not an integer",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "history_start",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "activations",
+              "sequence"
+            ],
+            [
+              "event_position",
+              "text"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-76",
+      "note": "event_position placed before activations",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "history_start",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "event_position",
+              "integer"
+            ],
+            [
+              "activations",
+              "sequence"
             ]
           ]
         ]
@@ -1348,7 +1493,7 @@
     "expected": "admitted"
   },
   "gap_cases": {
-    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline. overflow_cases: an activation arriving while the live count equals activation_capacity.",
+    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline. overflow_cases: an activation arriving while the live count equals activation_capacity. The baseline entry [\"baseline\", 0] is on_event(0) and counts as an event; on_gap, on_watermark and a poll leave event_position unchanged.",
     "calls": [
       {
         "id": "MP-54",
@@ -1511,7 +1656,8 @@
         ],
         "calls": [
           [
-            "baseline"
+            "baseline",
+            0
           ],
           [
             "on_event",
@@ -1525,6 +1671,12 @@
             "on_event",
             10
           ]
+        ],
+        "event_positions": [
+          1,
+          2,
+          2,
+          3
         ]
       },
       {
@@ -1544,7 +1696,8 @@
         ],
         "calls": [
           [
-            "baseline"
+            "baseline",
+            0
           ],
           [
             "poll"
@@ -1553,6 +1706,11 @@
             "on_event",
             80
           ]
+        ],
+        "event_positions": [
+          1,
+          1,
+          2
         ]
       }
     ],
@@ -1714,6 +1872,25 @@
             }
           }
         }
+      }
+    ],
+    "position_cases": [
+      {
+        "id": "MP-77",
+        "note": "event_position: init 0, +1 per event, unchanged by a watermark",
+        "steps": [
+          "event",
+          "watermark",
+          "event",
+          "event"
+        ],
+        "positions": [
+          1,
+          1,
+          2,
+          3
+        ],
+        "init": 0
       }
     ]
   }
