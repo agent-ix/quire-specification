@@ -578,7 +578,16 @@ and abstraction steps among them), and before any operation refusal
 ([FR-322](FR-322-checked-package-artifact.md)). Strict wire validation, which
 refuses a nested protocol application and, for a protocol application, a
 layout, term shape or enumerated value outside its operator's layout
-(`malformed_wire`), precedes it. The step reports the first defect, in this
+(`malformed_wire`), precedes it. The V2 schema carries that wire layer in its
+`ProtocolNode` body rule, which applies `ProtocolControlApplication` to every
+protocol node except a `protocol_reference` carrier: the operator's argument
+names, order and count, the references the layout names (`over`, a `trigger`,
+a `binder`), the Tuple-of-Groups records (`captures`, `cases`, `branches`,
+`related`, the `compensate` captures), the minimum of two `cases` and
+`branches`, every enumerated text, the exactly-when presence of `count`,
+`predicate`, `key`, `loss`, `condition`, `exhausted` and the `proof` pair, and
+a single `protocol_profile` law. The locus of such a refusal is the first error
+path of the strict schema validator. The step reports the first defect, in this
 order:
 
 1. **Placement** of every `quire.op.protocol.control` application and of
