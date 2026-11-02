@@ -5568,7 +5568,8 @@
                 "window",
                 "activation",
                 "deadline",
-                "terminal"
+                "terminal",
+                "monitor_plan"
               ]
             }
           }

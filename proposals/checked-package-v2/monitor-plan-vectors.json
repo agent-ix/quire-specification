@@ -1,0 +1,764 @@
+{
+  "version": 1,
+  "note": "FR-487 (TC-978): the tick-monitor plan root `temporal`/`monitor_plan` and its three state-passing entries. `base` describes a plan by the facts the reader checks (binding order, the form of each referenced node, the state record's fields, the Outcome union's cases and payloads, each entry's parameter and result types, the integer premises and the buffers); each case applies its `set` edits (dotted paths, list indexes numeric) to the base and states the outcome. A refusal names its code, cause (null for none) and the pointer of the first defect, `{n}` the root's graph index and `members/k` the k-th binding of the body. The reader that decides them is quire-contract-ir's (IR-721); QSpec's test applies the stated reader order to the described plan. MP-32 (append) is not an edit: it names the existing operations that extend a sequence.",
+  "base": {
+    "bindings": [
+      "clause",
+      "state",
+      "inputs",
+      "scope",
+      "results",
+      "init",
+      "on_event",
+      "on_watermark",
+      "counter_width_bits",
+      "max_reading_gap",
+      "max_event_rate",
+      "buffers"
+    ],
+    "clause_form": "temporal_clause",
+    "state": {
+      "form": "record",
+      "fields": [
+        [
+          "now",
+          "integer"
+        ],
+        [
+          "buffer_0",
+          "sequence"
+        ],
+        [
+          "buffer_1",
+          "sequence"
+        ]
+      ]
+    },
+    "inputs_form": "record",
+    "scope_form": "record",
+    "results_form": "sequence",
+    "outcome": {
+      "form": "union",
+      "cases": [
+        [
+          "Failed",
+          "ReadingGapExceeded"
+        ],
+        [
+          "False",
+          null
+        ],
+        [
+          "Incomplete",
+          "LimitReached"
+        ],
+        [
+          "Indeterminate",
+          null
+        ],
+        [
+          "Pending",
+          null
+        ],
+        [
+          "True",
+          null
+        ]
+      ]
+    },
+    "entries": {
+      "init": {
+        "form": "pure_function",
+        "declared": false,
+        "params": [],
+        "result": "State"
+      },
+      "on_event": {
+        "form": "pure_function",
+        "declared": false,
+        "params": [
+          "State",
+          "integer",
+          "Inputs"
+        ],
+        "result": "Step"
+      },
+      "on_watermark": {
+        "form": "pure_function",
+        "declared": false,
+        "params": [
+          "State",
+          "integer",
+          "Scope"
+        ],
+        "result": "Step"
+      }
+    },
+    "premises": {
+      "counter_width_bits": 32,
+      "max_reading_gap": 1000,
+      "max_event_rate": 10
+    },
+    "buffers": [
+      {
+        "subformula": 1,
+        "capacity": 4,
+        "reached": true
+      },
+      {
+        "subformula": 2,
+        "capacity": 7,
+        "reached": true
+      }
+    ],
+    "payload_fields": {
+      "LimitReached": [
+        "limit",
+        "value",
+        "setting"
+      ],
+      "ReadingGapExceeded": [
+        "gap",
+        "max_reading_gap"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "MP-01",
+      "note": "the base plan",
+      "set": [],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-02",
+      "note": "capacity 5 for the first buffer: a different plan identity",
+      "set": [
+        [
+          "buffers.0.capacity",
+          5
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-03",
+      "note": "the buffers binding is missing",
+      "set": [
+        [
+          "bindings",
+          [
+            "clause",
+            "state",
+            "inputs",
+            "scope",
+            "results",
+            "init",
+            "on_event",
+            "on_watermark",
+            "counter_width_bits",
+            "max_reading_gap",
+            "max_event_rate"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/11"
+    },
+    {
+      "id": "MP-04",
+      "note": "init and on_event swapped in order",
+      "set": [
+        [
+          "bindings",
+          [
+            "clause",
+            "state",
+            "inputs",
+            "scope",
+            "results",
+            "on_event",
+            "init",
+            "on_watermark",
+            "counter_width_bits",
+            "max_reading_gap",
+            "max_event_rate",
+            "buffers"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/5"
+    },
+    {
+      "id": "MP-05",
+      "note": "an extra binding at the end",
+      "set": [
+        [
+          "bindings",
+          [
+            "clause",
+            "state",
+            "inputs",
+            "scope",
+            "results",
+            "init",
+            "on_event",
+            "on_watermark",
+            "counter_width_bits",
+            "max_reading_gap",
+            "max_event_rate",
+            "buffers",
+            "extra"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/12"
+    },
+    {
+      "id": "MP-06",
+      "note": "a premise that is not an integer literal",
+      "set": [
+        [
+          "premises.counter_width_bits",
+          "32"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/8"
+    },
+    {
+      "id": "MP-07",
+      "note": "the clause is a formula, not a temporal_clause",
+      "set": [
+        [
+          "clause_form",
+          "formula"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/0"
+    },
+    {
+      "id": "MP-08",
+      "note": "the state is a tuple, not a record",
+      "set": [
+        [
+          "state.form",
+          "tuple"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-09",
+      "note": "on_event is a predicate, not a pure_function",
+      "set": [
+        [
+          "entries.on_event.form",
+          "predicate"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/6"
+    },
+    {
+      "id": "MP-10",
+      "note": "init takes a parameter",
+      "set": [
+        [
+          "entries.init.params",
+          [
+            "State"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/5"
+    },
+    {
+      "id": "MP-11",
+      "note": "on_event takes two parameters",
+      "set": [
+        [
+          "entries.on_event.params",
+          [
+            "State",
+            "integer"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/6"
+    },
+    {
+      "id": "MP-12",
+      "note": "on_event takes the delta before the state",
+      "set": [
+        [
+          "entries.on_event.params",
+          [
+            "integer",
+            "State",
+            "Inputs"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/6"
+    },
+    {
+      "id": "MP-13",
+      "note": "on_watermark boundary is not an integer",
+      "set": [
+        [
+          "entries.on_watermark.params",
+          [
+            "State",
+            "text",
+            "Scope"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/7"
+    },
+    {
+      "id": "MP-14",
+      "note": "on_event returns the state alone, not the (State, Results) tuple",
+      "set": [
+        [
+          "entries.on_event.result",
+          "State"
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/6"
+    },
+    {
+      "id": "MP-15",
+      "note": "the Outcome union lacks Pending",
+      "set": [
+        [
+          "outcome.cases",
+          [
+            [
+              "Failed",
+              "ReadingGapExceeded"
+            ],
+            [
+              "False",
+              null
+            ],
+            [
+              "Incomplete",
+              "LimitReached"
+            ],
+            [
+              "Indeterminate",
+              null
+            ],
+            [
+              "True",
+              null
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/4"
+    },
+    {
+      "id": "MP-16",
+      "note": "the Outcome union has an extra case",
+      "set": [
+        [
+          "outcome.cases",
+          [
+            [
+              "Failed",
+              "ReadingGapExceeded"
+            ],
+            [
+              "False",
+              null
+            ],
+            [
+              "Incomplete",
+              "LimitReached"
+            ],
+            [
+              "Indeterminate",
+              null
+            ],
+            [
+              "Pending",
+              null
+            ],
+            [
+              "True",
+              null
+            ],
+            [
+              "Unknown",
+              null
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/4"
+    },
+    {
+      "id": "MP-17",
+      "note": "Failed carries LimitReached instead of ReadingGapExceeded",
+      "set": [
+        [
+          "outcome.cases",
+          [
+            [
+              "Failed",
+              "LimitReached"
+            ],
+            [
+              "False",
+              null
+            ],
+            [
+              "Incomplete",
+              "LimitReached"
+            ],
+            [
+              "Indeterminate",
+              null
+            ],
+            [
+              "Pending",
+              null
+            ],
+            [
+              "True",
+              null
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/4"
+    },
+    {
+      "id": "MP-18",
+      "note": "counter_width_bits 0",
+      "set": [
+        [
+          "premises.counter_width_bits",
+          0
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/8/value"
+    },
+    {
+      "id": "MP-19",
+      "note": "counter_width_bits 65",
+      "set": [
+        [
+          "premises.counter_width_bits",
+          65
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/8/value"
+    },
+    {
+      "id": "MP-20",
+      "note": "max_reading_gap 2^32 under width 32",
+      "set": [
+        [
+          "premises.max_reading_gap",
+          4294967296
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/9/value"
+    },
+    {
+      "id": "MP-21",
+      "note": "max_event_rate 0",
+      "set": [
+        [
+          "premises.max_event_rate",
+          0
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/10/value"
+    },
+    {
+      "id": "MP-22",
+      "note": "a capacity of 0",
+      "set": [
+        [
+          "buffers.1.capacity",
+          0
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/11/value/members/1/members/1/value"
+    },
+    {
+      "id": "MP-23",
+      "note": "buffers out of ascending subformula order",
+      "set": [
+        [
+          "buffers",
+          [
+            {
+              "subformula": 2,
+              "capacity": 7,
+              "reached": true
+            },
+            {
+              "subformula": 1,
+              "capacity": 4,
+              "reached": true
+            }
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/11"
+    },
+    {
+      "id": "MP-24",
+      "note": "a repeated subformula",
+      "set": [
+        [
+          "buffers",
+          [
+            {
+              "subformula": 1,
+              "capacity": 4,
+              "reached": true
+            },
+            {
+              "subformula": 1,
+              "capacity": 7,
+              "reached": true
+            }
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/11"
+    },
+    {
+      "id": "MP-25",
+      "note": "a subformula the clause's formula does not reach",
+      "set": [
+        [
+          "buffers.1.reached",
+          false
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/11"
+    },
+    {
+      "id": "MP-26",
+      "note": "the state lacks buffer_1",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-27",
+      "note": "buffer_1 is not a sequence",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "integer"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-28",
+      "note": "the on_event entry carries a declaration",
+      "set": [
+        [
+          "entries.on_event.declared",
+          true
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/6"
+    },
+    {
+      "id": "MP-29",
+      "note": "the LimitReached payload lacks the setting field",
+      "set": [
+        [
+          "payload_fields.LimitReached",
+          [
+            "limit",
+            "value"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "ill_typed",
+      "cause": "type-mismatch",
+      "locus": "/semantic_graph/nodes/{n}/body/members/4"
+    },
+    {
+      "id": "MP-30",
+      "note": "state field now is text, not integer",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "text"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-31",
+      "note": "the state holds a field beyond now and the buffers",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "extra",
+              "integer"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    }
+  ],
+  "append": {
+    "id": "MP-32",
+    "note": "append(s, x) = flatten(sequence(s, sequence(x))) over ordinary Sequence<T>; no catalog addition",
+    "operations": [
+      "quire.op.collection.flatten",
+      "quire.op.collection.sequence"
+    ],
+    "expected": "admitted"
+  }
+}

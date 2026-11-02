@@ -21562,3 +21562,201 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
         assert_eq!(read_operation_effects(documents, &rows), Err(expected), "{id}");
     }
 }
+
+const MONITOR_PLAN_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/monitor-plan-vectors.json");
+
+type PlanRefusal = (String, Option<String>, String);
+
+/// FR-487's reader order over the abstract plan description of the vectors.
+fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
+    let at = |index: usize| format!("/semantic_graph/nodes/{{n}}/body/members/{index}");
+    let refuse = |code: &str, cause: Option<&str>, locus: String| {
+        Err((code.to_owned(), cause.map(str::to_owned), locus))
+    };
+    let expected: Vec<&str> = vec![
+        "clause",
+        "state",
+        "inputs",
+        "scope",
+        "results",
+        "init",
+        "on_event",
+        "on_watermark",
+        "counter_width_bits",
+        "max_reading_gap",
+        "max_event_rate",
+        "buffers",
+    ];
+    // 1. shape: the twelve bindings, in order.
+    let bindings: Vec<&str> = plan["bindings"].as_array().unwrap().iter().map(|b| b.as_str().unwrap()).collect();
+    for (index, name) in expected.iter().enumerate() {
+        if bindings.get(index) != Some(name) {
+            return refuse("invalid_semantic_graph", None, at(index));
+        }
+    }
+    if bindings.len() > expected.len() {
+        return refuse("invalid_semantic_graph", None, at(expected.len()));
+    }
+    for (index, name) in [(8, "counter_width_bits"), (9, "max_reading_gap"), (10, "max_event_rate")] {
+        if !plan["premises"][name].is_u64() {
+            return refuse("invalid_semantic_graph", None, at(index));
+        }
+    }
+    // 2. reference kinds (and no declaration on an entry), in binding order.
+    let form_is = |value: &Value, form: &str| value.as_str() == Some(form);
+    let undeclared = |name: &str| plan["entries"][name]["declared"] == false;
+    let checks: [(usize, bool); 8] = [
+        (0, form_is(&plan["clause_form"], "temporal_clause")),
+        (1, form_is(&plan["state"]["form"], "record")),
+        (2, form_is(&plan["inputs_form"], "record")),
+        (3, form_is(&plan["scope_form"], "record")),
+        (4, form_is(&plan["results_form"], "sequence")),
+        (5, form_is(&plan["entries"]["init"]["form"], "pure_function") && undeclared("init")),
+        (6, form_is(&plan["entries"]["on_event"]["form"], "pure_function") && undeclared("on_event")),
+        (7, form_is(&plan["entries"]["on_watermark"]["form"], "pure_function") && undeclared("on_watermark")),
+    ];
+    if let Some((index, _)) = checks.iter().find(|(_, ok)| !ok) {
+        return refuse("invalid_semantic_graph", None, at(*index));
+    }
+    // 3. signatures: each entry, then the Outcome union.
+    let signatures = [
+        (5, "init", json!([]), "State"),
+        (6, "on_event", json!(["State", "integer", "Inputs"]), "Step"),
+        (7, "on_watermark", json!(["State", "integer", "Scope"]), "Step"),
+    ];
+    for (index, name, params, result) in signatures {
+        let entry = &plan["entries"][name];
+        if entry["params"] != params || entry["result"] != result {
+            return refuse("ill_typed", Some("type-mismatch"), at(index));
+        }
+    }
+    let union_cases = json!([
+        ["Failed", "ReadingGapExceeded"],
+        ["False", null],
+        ["Incomplete", "LimitReached"],
+        ["Indeterminate", null],
+        ["Pending", null],
+        ["True", null]
+    ]);
+    let payloads = json!({
+        "LimitReached": ["limit", "value", "setting"],
+        "ReadingGapExceeded": ["gap", "max_reading_gap"]
+    });
+    if plan["outcome"]["cases"] != union_cases || plan["payload_fields"] != payloads {
+        return refuse("ill_typed", Some("type-mismatch"), at(4));
+    }
+    // 4. premise ranges.
+    let premises = &plan["premises"];
+    let width = premises["counter_width_bits"].as_u64().unwrap();
+    if !(1..=64).contains(&width) {
+        return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(8)));
+    }
+    let gap = u128::from(premises["max_reading_gap"].as_u64().unwrap());
+    if gap >= 1u128 << width {
+        return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(9)));
+    }
+    if premises["max_event_rate"].as_u64().unwrap() < 1 {
+        return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(10)));
+    }
+    let buffers = plan["buffers"].as_array().unwrap();
+    for (k, buffer) in buffers.iter().enumerate() {
+        if buffer["capacity"].as_u64().unwrap() < 1 {
+            return refuse(
+                "invalid_package",
+                Some("invalid-value"),
+                format!("{}/value/members/{k}/members/1/value", at(11)),
+            );
+        }
+    }
+    // 5. buffers (ascending, no repeat, reached) and the state fields they imply.
+    let subformulas: Vec<u64> = buffers.iter().map(|b| b["subformula"].as_u64().unwrap()).collect();
+    let ascending = subformulas.windows(2).all(|pair| pair[0] < pair[1]);
+    let reached = buffers.iter().all(|b| b["reached"] == true);
+    if !ascending || !reached {
+        return refuse("invalid_semantic_graph", None, at(11));
+    }
+    let mut fields = vec![json!(["now", "integer"])];
+    fields.extend((0..buffers.len()).map(|k| json!([format!("buffer_{k}"), "sequence"])));
+    if plan["state"]["fields"] != Value::Array(fields) {
+        return refuse("invalid_semantic_graph", None, at(1));
+    }
+    Ok(())
+}
+
+fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
+    let mut current = plan;
+    let parts: Vec<&str> = path.split('.').collect();
+    for part in &parts[..parts.len() - 1] {
+        current = match part.parse::<usize>() {
+            Ok(index) => &mut current[index],
+            Err(_) => &mut current[*part],
+        };
+    }
+    let last = parts[parts.len() - 1];
+    match last.parse::<usize>() {
+        Ok(index) => current[index] = value,
+        Err(_) => current[last] = value,
+    }
+}
+
+/// FR-487-AC-1 to AC-5, FR-322-AC-308: the plan root's reader order, and buffer
+/// extension by the existing catalog operations with no catalog or schema addition.
+#[trace(
+    "TC-978",
+    "FR-487-AC-1",
+    "FR-487-AC-2",
+    "FR-487-AC-3",
+    "FR-487-AC-4",
+    "FR-487-AC-5",
+    "FR-322-AC-308"
+)]
+#[test]
+fn tc_978_monitor_plan_root_follows_the_reader_order() {
+    let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
+    let cases = vectors["cases"].as_array().unwrap();
+    assert_eq!(cases.len(), 31);
+    let mut seen = BTreeSet::new();
+    let (mut admitted, mut refused) = (0, 0);
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id), "{id}: ids are unique");
+        let mut plan = vectors["base"].clone();
+        for edit in case["set"].as_array().unwrap() {
+            apply_plan_edit(&mut plan, edit[0].as_str().unwrap(), edit[1].clone());
+        }
+        let decided = decide_monitor_plan(&plan);
+        if case["expected"] == "admitted" {
+            assert_eq!(decided, Ok(()), "{id}");
+            admitted += 1;
+        } else {
+            let expected = (
+                case["code"].as_str().unwrap().to_owned(),
+                case["cause"].as_str().map(str::to_owned),
+                case["locus"].as_str().unwrap().to_owned(),
+            );
+            assert_eq!(decided, Err(expected), "{id}");
+            refused += 1;
+        }
+    }
+    assert_eq!((admitted, refused), (2, 29));
+
+    // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
+    let append = &vectors["append"];
+    assert_eq!(append["id"], "MP-32");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let entries = catalog["operations"].as_array().unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let operation_schema = schema["$defs"].to_string();
+    for identity in append["operations"].as_array().unwrap() {
+        let identity = identity.as_str().unwrap();
+        assert!(entries.iter().any(|entry| entry["identity"] == identity), "{identity} is catalogued");
+        assert!(operation_schema.contains(identity), "{identity} is in the schema identity enum");
+    }
+    assert!(
+        !entries.iter().any(|entry| entry["identity"].as_str().unwrap().contains("append")),
+        "no append identity is added"
+    );
+    // The plan root is a form of the existing temporal node, not a new node tag.
+    assert_eq!(SCHEMA.matches("\"monitor_plan\"").count(), 1);
+}
