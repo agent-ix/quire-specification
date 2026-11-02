@@ -21,9 +21,9 @@ Use the subject and inputs named by FR-160. Execute its positive case, each decl
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
-| TK-A | bound 3000 ticks, uncertainty 0, request at tick 0, acknowledgements at ticks 2998, 2999, 3000, 3001 and 3002 (`TK-01` to `TK-05`) | true, true, indeterminate, false, false: the cover is half-open `[k, k + 1)` | FR-160-AC-6, FR-160-AC-7 |
-| TK-B | uncertainty 1, acknowledgements at 2997, 2998 and 3003 (`TK-06` to `TK-08`) | true, indeterminate, false | FR-160-AC-7 |
-| TK-C | ticks 5 and 6, 5 and 5, 5 and 7, and 5 and 6 under uncertainty 1 (`TK-09` to `TK-12`) | definitely before, not, definitely before, not | FR-160-AC-6 |
+| TCV-A | bound 3000 ticks, uncertainty 0, request at tick 0, acknowledgements at ticks 2998, 2999, 3000, 3001 and 3002 (`TCV-01` to `TCV-05`) | true, true, indeterminate, false, false: the cover is half-open `[k, k + 1)` | FR-160-AC-6, FR-160-AC-7 |
+| TCV-B | uncertainty 1, acknowledgements at 2997, 2998 and 3003 (`TCV-06` to `TCV-08`) | true, indeterminate, false | FR-160-AC-7 |
+| TCV-C | ticks 5 and 6, 5 and 5, 5 and 7, and 5 and 6 under uncertainty 1 (`TCV-09` to `TCV-12`) | definitely before, not, definitely before, not | FR-160-AC-6 |
 
 ## Expected Results
 

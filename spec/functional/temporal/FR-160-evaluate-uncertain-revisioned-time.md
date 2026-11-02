@@ -95,7 +95,7 @@ The vectors are `proposals/checked-package-v2/tick-cover-vectors.json`.
 | FR-160-AC-4 | Missing and conflicting atoms may share a possibility set but remain distinguishable by reason and closure behavior. | Test (TC-199) |
 | FR-160-AC-5 | Interval ordering uses endpoints exactly and never substitutes a midpoint or ingestion order. | Test (TC-199) |
 | FR-160-AC-6 | A counter reading `k` covers the half-open interval `[k, k + 1)`, widened by an uncertainty of `u` ticks to `[k - u, k + 1 + u)`. Two adjacent ticks are definitely ordered, a tick is not definitely before itself, and an interval open at an endpoint is definitely before one starting there. | Test (TC-199) |
-| FR-160-AC-7 | With a bound of 3000 ticks, uncertainty 0 and a request at tick 0, `ack - req <= 3000` is true for an acknowledgement at tick 2998, indeterminate at tick 3000 and false at tick 3001; the same bound with uncertainty 1 decides the neighbouring ticks by the same endpoint rule (`proposals/checked-package-v2/tick-cover-vectors.json`, `TK-01` to `TK-12`). | Test (TC-199) |
+| FR-160-AC-7 | With a bound of 3000 ticks, uncertainty 0 and a request at tick 0, `ack - req <= 3000` is true for an acknowledgement at tick 2998, indeterminate at tick 3000 and false at tick 3001; the same bound with uncertainty 1 decides the neighbouring ticks by the same endpoint rule (`proposals/checked-package-v2/tick-cover-vectors.json`, `TCV-01` to `TCV-12`). | Test (TC-199) |
 
 ## Dependencies
 
