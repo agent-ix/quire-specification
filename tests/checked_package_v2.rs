@@ -21725,6 +21725,7 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     let mut fields = vec![json!(["now", "integer"]), json!(["history_start", "integer"])];
     fields.extend((0..buffers.len()).map(|k| json!([format!("buffer_{k}"), "sequence"])));
     fields.push(json!(["activations", "sequence"]));
+    fields.push(json!(["event_position", "integer"]));
     if plan["state"]["activation_fields"] != json!(["subformula", "origin", "status"]) {
         return refuse("invalid_semantic_graph", None, at(1));
     }
@@ -21785,13 +21786,14 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
     "FR-487-AC-8",
     "FR-487-AC-9",
     "FR-487-AC-10",
+    "FR-487-AC-11",
     "FR-322-AC-308"
 )]
 #[test]
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 60);
+    assert_eq!(cases.len(), 63);
     let base_key = monitor_plan_key(&vectors["base"]);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
@@ -21819,7 +21821,7 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (8, 52));
+    assert_eq!((admitted, refused), (8, 55));
 
     // The counter-gap path (FR-487-AC-7): on_gap over abstract live instances, and the reading sequence.
     let gaps = &vectors["gap_cases"];
@@ -21864,17 +21866,23 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             Some(kinds) => kinds.as_array().unwrap().iter().map(|k| k.as_str().unwrap()).collect(),
             None => vec!["event"; readings.len()],
         };
-        let mut calls = vec![json!(["baseline"])];
+        let mut calls = vec![json!(["baseline", 0])];
+        let mut positions = vec![1u64];
         let mut baseline = readings[0];
         for (reading, kind) in readings.iter().zip(&kinds).skip(1) {
             if *kind == "poll" {
                 calls.push(json!(["poll"])); // a poll calls no entry and leaves the baseline
+                positions.push(*positions.last().unwrap());
                 continue;
             }
             let delta = (reading + modulus - baseline) % modulus;
             baseline = *reading;
-            calls.push(if delta > max { json!(["on_gap", delta]) } else { json!(["on_event", delta]) });
+            let faulted = delta > max;
+            calls.push(if faulted { json!(["on_gap", delta]) } else { json!(["on_event", delta]) });
+            let last = *positions.last().unwrap();
+            positions.push(if faulted { last } else { last + 1 });
         }
+        assert_eq!(Value::from(positions), sequence["event_positions"], "{id}");
         assert_eq!(Value::Array(calls), sequence["calls"], "{id}");
     }
 
@@ -21911,6 +21919,19 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             reported.push(Value::Array(now));
         }
         assert_eq!(Value::Array(reported), case["results"], "{id}");
+    }
+
+    for case in gaps["position_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let mut position = case["init"].as_u64().unwrap();
+        let mut seen = Vec::new();
+        for step in case["steps"].as_array().unwrap() {
+            if step == "event" {
+                position += 1;
+            }
+            seen.push(position);
+        }
+        assert_eq!(Value::from(seen), case["positions"], "{id}");
     }
 
     // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.
@@ -21968,4 +21989,58 @@ fn tc_233_published_positive_fixtures_carry_normalized_nfc_text_literals() {
     }
     assert!(found >= 1, "a published fixture carries an nfc text literal");
     assert!(bad.is_empty(), "{bad:#?}");
+}
+
+const ENTRY_KEY_VECTORS: &str = include_str!("../proposals/checked-package-v2/entry-key-vectors.json");
+
+/// FR-322-AC-309: the producer's derived path of a declaration-less `function` node, built from
+/// the index segments of its parameters, body root and measure.
+fn derived_function_path(case: &Value) -> Value {
+    let mut path = vec![json!("function"), case["semantic_form"].clone()];
+    let mut segments: Vec<Value> = case["parameters"].as_array().unwrap().clone();
+    segments.push(case["body_root"].clone());
+    if !case["measure"].is_null() {
+        segments.push(case["measure"].clone());
+    }
+    path.extend(segments.into_iter().map(|node| json!({"node": node})));
+    Value::Array(path)
+}
+
+#[trace("TC-979", "FR-322-AC-309")]
+#[test]
+fn tc_979_declaration_less_function_keys_follow_content() {
+    let vectors = parsed_fixture(ENTRY_KEY_VECTORS);
+    let cases = vectors["cases"].as_array().unwrap();
+    assert_eq!(cases.len(), 8);
+    let by_id = |id: &str| cases.iter().find(|case| case["id"] == id).unwrap();
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        if case.get("parameters").is_some() {
+            let path = derived_function_path(case);
+            if case.get("expected_path").is_some() {
+                assert_eq!(path, case["expected_path"], "{id}");
+            }
+            if let Some(other) = case.get("equal_to") {
+                assert_eq!(path, derived_function_path(by_id(other.as_str().unwrap())), "{id}");
+            }
+            if let Some(other) = case.get("differs_from") {
+                assert_ne!(path, derived_function_path(by_id(other.as_str().unwrap())), "{id}");
+            }
+        }
+    }
+    // EK-07: equal package, path and ordinal on two nodes is a duplicate node_id.
+    let duplicate = by_id("EK-07");
+    let key = |ordinal: u64| (derived_function_path(duplicate).to_string(), ordinal);
+    let ordinals = duplicate["ordinal"].as_array().unwrap();
+    assert_eq!(key(ordinals[0].as_u64().unwrap()), key(ordinals[1].as_u64().unwrap()));
+    assert_eq!(duplicate["code"], "invalid_semantic_graph");
+    // EK-08: the owner-chosen accessor label is the one a published fixture carries.
+    let accessor = by_id("EK-08");
+    let fixture = parsed_fixture(include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json"));
+    assert!(
+        fixture["semantic_graph"]["nodes"].as_array().unwrap().iter().any(|node| {
+            node["node_id"]["path"] == accessor["expected_path"] && node.get("declaration").is_none()
+        }),
+        "the accessor label is published"
+    );
 }

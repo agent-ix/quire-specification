@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "note": "FR-322 'Declaration-less function nodes'. A function is described by the graph indexes of its parameter nodes (in order), its body root node and an optional measure node; `path` is the derivation the producer writes. EK-07 is a duplicate node_id (equal package, path, ordinal), refused invalid_semantic_graph at the second node's node_id (NO-07). EK-08 is a model-owned accessor, admitted with its owner-chosen label; the reader recomputes no path.",
+  "cases": [
+    {
+      "id": "EK-01",
+      "note": "init: no parameters, body root 40",
+      "semantic_form": "pure_function",
+      "parameters": [],
+      "body_root": 40,
+      "measure": null,
+      "expected_path": [
+        "function",
+        "pure_function",
+        {
+          "node": 40
+        }
+      ]
+    },
+    {
+      "id": "EK-02",
+      "note": "on_event: three parameters, body root 41",
+      "semantic_form": "pure_function",
+      "parameters": [
+        10,
+        11,
+        12
+      ],
+      "body_root": 41,
+      "measure": null,
+      "expected_path": [
+        "function",
+        "pure_function",
+        {
+          "node": 10
+        },
+        {
+          "node": 11
+        },
+        {
+          "node": 12
+        },
+        {
+          "node": 41
+        }
+      ]
+    },
+    {
+      "id": "EK-03",
+      "note": "the same parameters and body root as EK-02: an equal path",
+      "semantic_form": "pure_function",
+      "parameters": [
+        10,
+        11,
+        12
+      ],
+      "body_root": 41,
+      "measure": null,
+      "expected_path": [
+        "function",
+        "pure_function",
+        {
+          "node": 10
+        },
+        {
+          "node": 11
+        },
+        {
+          "node": 12
+        },
+        {
+          "node": 41
+        }
+      ],
+      "equal_to": "EK-02"
+    },
+    {
+      "id": "EK-04",
+      "note": "another body root 42: a different path",
+      "semantic_form": "pure_function",
+      "parameters": [
+        10,
+        11,
+        12
+      ],
+      "body_root": 42,
+      "measure": null,
+      "expected_path": [
+        "function",
+        "pure_function",
+        {
+          "node": 10
+        },
+        {
+          "node": 11
+        },
+        {
+          "node": 12
+        },
+        {
+          "node": 42
+        }
+      ],
+      "differs_from": "EK-02"
+    },
+    {
+      "id": "EK-05",
+      "note": "the first two parameters swapped: a different path",
+      "semantic_form": "pure_function",
+      "parameters": [
+        11,
+        10,
+        12
+      ],
+      "body_root": 41,
+      "measure": null,
+      "expected_path": [
+        "function",
+        "pure_function",
+        {
+          "node": 11
+        },
+        {
+          "node": 10
+        },
+        {
+          "node": 12
+        },
+        {
+          "node": 41
+        }
+      ],
+      "differs_from": "EK-02"
+    },
+    {
+      "id": "EK-06",
+      "note": "a measure node 50 after the body root: a different path",
+      "semantic_form": "pure_function",
+      "parameters": [
+        10,
+        11,
+        12
+      ],
+      "body_root": 41,
+      "measure": 50,
+      "expected_path": [
+        "function",
+        "pure_function",
+        {
+          "node": 10
+        },
+        {
+          "node": 11
+        },
+        {
+          "node": 12
+        },
+        {
+          "node": 41
+        },
+        {
+          "node": 50
+        }
+      ],
+      "differs_from": "EK-02"
+    },
+    {
+      "id": "EK-07",
+      "note": "two nodes with the path of EK-02 and ordinal 0: the second is a duplicate node_id",
+      "semantic_form": "pure_function",
+      "parameters": [
+        10,
+        11,
+        12
+      ],
+      "body_root": 41,
+      "measure": null,
+      "ordinal": [
+        0,
+        0
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/{second}/node_id"
+    },
+    {
+      "id": "EK-08",
+      "note": "a model-owned accessor keeps its owner-chosen label",
+      "accessor_label": "ix://acme/orders/Order/size",
+      "expected_path": [
+        "function",
+        "pure_function",
+        "ix://acme/orders/Order/size"
+      ],
+      "expected": "admitted"
+    }
+  ]
+}
