@@ -21878,6 +21878,16 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
         assert_eq!(Value::Array(calls), sequence["calls"], "{id}");
     }
 
+    for case in gaps["overflow_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let (capacity, live) = (case["activation_capacity"].as_u64().unwrap(), case["live"].as_u64().unwrap());
+        let started = live < capacity;
+        assert_eq!(started, case["expected"]["started"], "{id}");
+        assert_eq!(live + u64::from(started), case["expected"]["activations_after"], "{id}");
+        let payload = &case["expected"]["result"]["payload"];
+        assert_eq!(payload["value"], capacity, "{id}");
+        assert_eq!(payload["limit"], "activation", "{id}");
+    }
     for case in gaps["history_cases"].as_array().unwrap() {
         let id = case["id"].as_str().unwrap();
         let start = case["now"].as_i64().unwrap() - case["b"].as_i64().unwrap();

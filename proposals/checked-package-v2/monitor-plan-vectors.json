@@ -1348,7 +1348,7 @@
     "expected": "admitted"
   },
   "gap_cases": {
-    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline.",
+    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline. overflow_cases: an activation arriving while the live count equals activation_capacity.",
     "calls": [
       {
         "id": "MP-54",
@@ -1404,7 +1404,7 @@
       },
       {
         "id": "MP-55",
-        "note": "a gap with no open instance returns no results and leaves the state",
+        "note": "a gap with no open instance returns no results; the buffers are still dropped and the time markers move",
         "width_bits": 16,
         "max_reading_gap": 100,
         "gap": 65506,
@@ -1693,6 +1693,27 @@
           ],
           []
         ]
+      }
+    ],
+    "overflow_cases": [
+      {
+        "id": "MP-73",
+        "note": "a new activation beyond activation_capacity is not started: Incomplete(LimitReached), the activations are unchanged, nothing is dropped silently",
+        "activation_capacity": 2,
+        "live": 2,
+        "activate": true,
+        "expected": {
+          "started": false,
+          "activations_after": 2,
+          "result": {
+            "outcome": "Incomplete",
+            "payload": {
+              "limit": "activation",
+              "value": 2,
+              "setting": "monitor.max_activations"
+            }
+          }
+        }
       }
     ]
   }
