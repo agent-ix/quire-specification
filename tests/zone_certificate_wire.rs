@@ -11,8 +11,7 @@ use serde_json::{Value, json};
 
 const SCHEMA: &str = include_str!("../proposals/backend-provider-v1/schema.json");
 const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
-const VECTORS: &str =
-    include_str!("../proposals/backend-provider-v1/zone-certificate-vectors.json");
+const VECTORS: &str = include_str!("../proposals/backend-provider-v1/zone-certificate-vectors.json");
 
 fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored fixture is valid JSON")
@@ -20,10 +19,7 @@ fn parsed(text: &str) -> Value {
 
 fn validator() -> jsonschema::Validator {
     let registry = jsonschema::Registry::new()
-        .add(
-            "urn:quire:checked-package:v2",
-            parsed(CHECKED_PACKAGE_SCHEMA),
-        )
+        .add("urn:quire:checked-package:v2", parsed(CHECKED_PACKAGE_SCHEMA))
         .expect("checked-package schema registers")
         .add("urn:quire:backend-provider:v1", parsed(SCHEMA))
         .expect("backend-provider schema registers")
@@ -58,10 +54,7 @@ fn vectors() -> Vec<Value> {
 }
 
 fn vector(id: &str) -> Value {
-    vectors()
-        .into_iter()
-        .find(|v| v["id"] == id)
-        .expect("vector exists")
+    vectors().into_iter().find(|v| v["id"] == id).expect("vector exists")
 }
 
 #[trace("TC-371", "FR-418-AC-6")]
@@ -87,34 +80,19 @@ fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
             "{id}: published byte length"
         );
         let second = jcs_canonicalize(&parsed(&document.to_string())).expect("canonicalizes");
-        assert_eq!(
-            first, second,
-            "{id}: equal values give byte-equal certificates"
-        );
+        assert_eq!(first, second, "{id}: equal values give byte-equal certificates");
         // Members in code-unit order, no insignificant whitespace, no trailing newline.
         assert!(first.first() == Some(&b'{') && first.last() == Some(&b'}'));
         assert!(!first.contains(&b'\n'), "no newline");
-        assert!(
-            !String::from_utf8(first.clone()).unwrap().contains("\": \""),
-            "no padding after a colon"
-        );
+        assert!(!String::from_utf8(first.clone()).unwrap().contains("\": \""), "no padding after a colon");
         let reread = parsed(std::str::from_utf8(&first).unwrap());
         assert_eq!(&reread, document, "{id}: the bytes read back to the value");
     }
     // The member order is the sorted order, whatever order the value was built in.
-    let zc10 = vector("ZC-10")["canonical_text"]
-        .as_str()
-        .unwrap()
-        .to_owned();
-    assert!(
-        zc10.starts_with("{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":"),
-        "admitted first, its members ascending"
-    );
+    let zc10 = vector("ZC-10")["canonical_text"].as_str().unwrap().to_owned();
+    assert!(zc10.starts_with("{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":"), "admitted first, its members ascending");
     assert!(zc10.ends_with(",\"scale\":\"1\"}"), "scale last");
-    assert!(
-        zc10.contains("\"initials\":[0],\"nodes\":"),
-        "initials before nodes"
-    );
+    assert!(zc10.contains("\"initials\":[0],\"nodes\":"), "initials before nodes");
 }
 
 #[trace("TC-371", "FR-418-AC-11", "FR-418-AC-13")]
@@ -136,25 +114,14 @@ fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identiti
     assert!(template.get("deadline").is_none());
 
     let malformed = parsed(VECTORS);
-    for case in malformed["malformed_vectors"]
-        .as_array()
-        .expect("malformed vectors")
-    {
+    for case in malformed["malformed_vectors"].as_array().expect("malformed vectors") {
         let id = case["id"].as_str().unwrap();
         let mut document = vector(case["base"].as_str().unwrap())["document"].clone();
         let pointer = case["pointer"].as_str().unwrap();
-        *document
-            .pointer_mut(pointer)
-            .expect("mutation pointer exists") = case["value"].clone();
-        assert!(
-            !valid.is_valid(&document),
-            "{id}: malformed finite template is refused"
-        );
+        *document.pointer_mut(pointer).expect("mutation pointer exists") = case["value"].clone();
+        assert!(!valid.is_valid(&document), "{id}: malformed finite template is refused");
     }
-    for case in malformed["task_reader_vectors"]
-        .as_array()
-        .expect("task reader vectors")
-    {
+    for case in malformed["task_reader_vectors"].as_array().expect("task reader vectors") {
         let id = case["id"].as_str().unwrap();
         let mut document = vector(case["base"].as_str().unwrap())["document"].clone();
         let pointer = case["pointer"].as_str().unwrap();
@@ -167,10 +134,7 @@ fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identiti
         );
         assert_eq!(case["expected"]["code"], "certificate-rejected", "{id}");
         assert_eq!(case["expected"]["rule"], "successor-missing", "{id}");
-        assert!(
-            case["expected"]["at"].is_object(),
-            "{id}: reader refusal has a locus"
-        );
+        assert!(case["expected"]["at"].is_object(), "{id}: reader refusal has a locus");
         if id == "ZC-28" {
             assert_eq!(case["checked_task_model"], "TC-372/CtlFp");
             assert_eq!(case["base"], "ZC-30");
@@ -181,21 +145,12 @@ fn tc_371_task_certificate_uses_finite_templates_and_rejects_exact_task_identiti
             assert_eq!(base["identity"]["ordinal"], 0);
             assert_eq!(base["identity"]["node_id"]["package"], "package");
             let identity_path = base["identity"]["node_id"]["path"].as_array().unwrap();
-            assert_eq!(
-                identity_path
-                    .iter()
-                    .filter(|part| part["node"] == 6)
-                    .count(),
-                18
-            );
-            assert_eq!(
-                base["task_product"]["queue_bounds"],
-                json!([
-                    {"taskset":"Ctl","task":"t1","arrival":"periodic","interarrival":{"numerator":"4","denominator":"1"},"relative_deadline":{"numerator":"4","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"1","denominator":"1"},"work_upper":{"numerator":"1","denominator":"1"},"max_jobs":2},
-                    {"taskset":"Ctl","task":"t2","arrival":"periodic","interarrival":{"numerator":"6","denominator":"1"},"relative_deadline":{"numerator":"6","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"2","denominator":"1"},"work_upper":{"numerator":"2","denominator":"1"},"max_jobs":2},
-                    {"taskset":"Ctl","task":"t3","arrival":"periodic","interarrival":{"numerator":"12","denominator":"1"},"relative_deadline":{"numerator":"12","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"5","denominator":"1"},"work_upper":{"numerator":"5","denominator":"1"},"max_jobs":2}
-                ])
-            );
+            assert_eq!(identity_path.iter().filter(|part| part["node"] == 6).count(), 18);
+            assert_eq!(base["task_product"]["queue_bounds"], json!([
+                {"taskset":"Ctl","task":"t1","arrival":"periodic","interarrival":{"numerator":"4","denominator":"1"},"relative_deadline":{"numerator":"4","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"1","denominator":"1"},"work_upper":{"numerator":"1","denominator":"1"},"max_jobs":2},
+                {"taskset":"Ctl","task":"t2","arrival":"periodic","interarrival":{"numerator":"6","denominator":"1"},"relative_deadline":{"numerator":"6","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"2","denominator":"1"},"work_upper":{"numerator":"2","denominator":"1"},"max_jobs":2},
+                {"taskset":"Ctl","task":"t3","arrival":"periodic","interarrival":{"numerator":"12","denominator":"1"},"relative_deadline":{"numerator":"12","denominator":"1"},"max_jitter":{"numerator":"0","denominator":"1"},"work_lower":{"numerator":"5","denominator":"1"},"work_upper":{"numerator":"5","denominator":"1"},"max_jobs":2}
+            ]));
         }
     }
 
@@ -253,11 +208,7 @@ fn tc_371_numbers_are_counts_or_integer_strings() {
     big["nodes"][1]["zone"][0][1]["bound"] = json!("-123456789123456789123456789");
     assert!(valid.is_valid(&big));
     let bytes = jcs_canonicalize(&big).unwrap();
-    assert!(
-        String::from_utf8(bytes)
-            .unwrap()
-            .contains("\"bound\":\"-123456789123456789123456789\"")
-    );
+    assert!(String::from_utf8(bytes).unwrap().contains("\"bound\":\"-123456789123456789123456789\""));
     // Infinity is the one string spelling of an unbounded entry.
     assert_eq!(base["nodes"][0]["zone"][1][0], json!("infinity"));
 }
@@ -287,19 +238,13 @@ fn tc_371_an_absent_option_is_omitted_and_never_null() {
     let mut with_null = zc10.clone();
     with_null["refinement"]["taken"][1] = Value::Null;
     assert!(valid.is_valid(&with_null));
-    assert_eq!(
-        zc10["refinement"]["taken"].as_array().unwrap().len(),
-        zc10["edges"].as_array().unwrap().len()
-    );
+    assert_eq!(zc10["refinement"]["taken"].as_array().unwrap().len(), zc10["edges"].as_array().unwrap().len());
 }
 
 fn digest_bearing_pointers(value: &Value, at: &str, out: &mut Vec<String>) {
     match value {
         Value::Object(map) => {
-            if map.contains_key("digest")
-                || map.contains_key("hash")
-                || map.contains_key("checksum")
-            {
+            if map.contains_key("digest") || map.contains_key("hash") || map.contains_key("checksum") {
                 out.push(at.to_owned());
             }
             for (key, child) in map {
@@ -324,33 +269,21 @@ fn tc_371_the_certificate_embeds_no_digest() {
         digest_bearing_pointers(&row["document"], "", &mut found);
         assert!(found.is_empty(), "{id}: digest-bearing members {found:?}");
         for member in row["document"].as_object().unwrap().keys() {
-            assert!(
-                !member.contains("digest")
-                    && !member.contains("hash")
-                    && !member.contains("checksum"),
-                "{id}: {member}"
-            );
+            assert!(!member.contains("digest") && !member.contains("hash") && !member.contains("checksum"), "{id}: {member}");
         }
     }
 }
 
 #[trace("TC-371", "FR-418-AC-10")]
 #[test]
-fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_the_reserved_index()
-{
+fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_the_reserved_index() {
     let valid = validator();
     let zc12 = vector("ZC-12")["document"].clone();
     let part = &zc12["refinement"];
     let initials = zc12["initials"].as_array().unwrap();
     assert_eq!(initials.len(), 2);
-    assert!(
-        part.get("initials").is_none(),
-        "initials is a top-level member only"
-    );
-    assert!(
-        zc12.get("initial").is_none(),
-        "the wire has one name for the concept"
-    );
+    assert!(part.get("initials").is_none(), "initials is a top-level member only");
+    assert!(zc12.get("initial").is_none(), "the wire has one name for the concept");
     let positions = part["positions"].as_array().unwrap().len() as u64;
     let locked = &zc12["nodes"][initials[0].as_u64().unwrap() as usize];
     // admitted starts at a positioned initial node, not at the locked initials[0].
@@ -359,20 +292,10 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     assert!(zc12["nodes"][start as usize].get("locked").is_none());
     assert!(zc12["nodes"][start as usize]["automaton"].as_u64().unwrap() < positions);
     assert_eq!(locked["locked"], json!(true));
-    assert_eq!(
-        locked["automaton"].as_u64().unwrap(),
-        positions,
-        "the reserved index names no position"
-    );
+    assert_eq!(locked["automaton"].as_u64().unwrap(), positions, "the reserved index names no position");
     assert_eq!(part["taken"], json!([]));
     // initials is required and nonempty; a refinement without positions is malformed.
-    for member in [
-        "positions",
-        "taken",
-        "refinement_node",
-        "concrete_package",
-        "abstract_package",
-    ] {
+    for member in ["positions", "taken", "refinement_node", "concrete_package", "abstract_package"] {
         let mut bad = zc12.clone();
         bad["refinement"].as_object_mut().unwrap().remove(member);
         assert!(!valid.is_valid(&bad), "{member} is required");
@@ -382,10 +305,7 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     assert!(!valid.is_valid(&empty));
     let mut no_positions = zc12.clone();
     no_positions["refinement"]["positions"] = json!([]);
-    assert!(
-        !valid.is_valid(&no_positions),
-        "an empty positions is not a refinement part"
-    );
+    assert!(!valid.is_valid(&no_positions), "an empty positions is not a refinement part");
     let mut alias = zc12.clone();
     alias["initial"] = json!(0);
     assert!(!valid.is_valid(&alias), "initial is not a member");
@@ -393,16 +313,10 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     for old in ["refinement", "node"] {
         let mut old_name = zc12.clone();
         let id = old_name["refinement"]["refinement_node"].clone();
-        old_name["refinement"]
-            .as_object_mut()
-            .unwrap()
-            .remove("refinement_node");
+        old_name["refinement"].as_object_mut().unwrap().remove("refinement_node");
         assert!(!valid.is_valid(&old_name), "refinement_node is required");
         old_name["refinement"][old] = id.clone();
-        assert!(
-            !valid.is_valid(&old_name),
-            "the part's node id is not named {old}"
-        );
+        assert!(!valid.is_valid(&old_name), "the part's node id is not named {old}");
         let mut extra = zc12.clone();
         extra["refinement"][old] = id;
         assert!(!valid.is_valid(&extra), "{old} is not a member of the part");
