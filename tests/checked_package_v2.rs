@@ -21591,8 +21591,9 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         "tick_unit",
         "uncertainty",
         "on_gap",
+        "activation_capacity",
     ];
-    // 1. shape: the sixteen bindings, in order.
+    // 1. shape: the seventeen bindings, in order.
     let bindings: Vec<&str> = plan["bindings"].as_array().unwrap().iter().map(|b| b.as_str().unwrap()).collect();
     for (index, name) in expected.iter().enumerate() {
         if bindings.get(index) != Some(name) {
@@ -21614,6 +21615,7 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
         (10, is_rational(&plan["premises"]["max_event_rate"])),
         (12, plan["premises"]["counter"].is_string()),
         (14, is_rational(&plan["premises"]["uncertainty"])),
+        (16, plan["premises"]["activation_capacity"].is_i64()),
     ];
     if let Some((index, _)) = premises_ok.iter().find(|(_, ok)| !ok) {
         return refuse("invalid_semantic_graph", None, at(*index));
@@ -21710,6 +21712,9 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     if !canonical(&premises["uncertainty"]) || rational(&premises["uncertainty"]).0 < 0 {
         return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(14)));
     }
+    if premises["activation_capacity"].as_i64().unwrap() < 0 {
+        return refuse("invalid_package", Some("invalid-value"), format!("{}/value", at(16)));
+    }
     // 5. buffers (ascending, no repeat, reached) and the state fields they imply.
     let subformulas: Vec<u64> = buffers.iter().map(|b| b["subformula"].as_u64().unwrap()).collect();
     let ascending = subformulas.windows(2).all(|pair| pair[0] < pair[1]);
@@ -21717,8 +21722,12 @@ fn decide_monitor_plan(plan: &Value) -> Result<(), PlanRefusal> {
     if !ascending || !reached {
         return refuse("invalid_semantic_graph", None, at(11));
     }
-    let mut fields = vec![json!(["now", "integer"])];
+    let mut fields = vec![json!(["now", "integer"]), json!(["history_start", "integer"])];
     fields.extend((0..buffers.len()).map(|k| json!([format!("buffer_{k}"), "sequence"])));
+    fields.push(json!(["activations", "sequence"]));
+    if plan["state"]["activation_fields"] != json!(["subformula", "origin", "status"]) {
+        return refuse("invalid_semantic_graph", None, at(1));
+    }
     if plan["state"]["fields"] != Value::Array(fields) {
         return refuse("invalid_semantic_graph", None, at(1));
     }
@@ -21742,6 +21751,7 @@ fn monitor_plan_key(plan: &Value) -> Vec<String> {
     key.push(text(&plan["tick_unit"]["index"]));
     key.push(text(&premises["uncertainty"]));
     key.push(text(&plan["entries"]["on_gap"]["index"]));
+    key.push(text(&premises["activation_capacity"]));
     key
 }
 
@@ -21772,13 +21782,16 @@ fn apply_plan_edit(plan: &mut Value, path: &str, value: Value) {
     "FR-487-AC-5",
     "FR-487-AC-6",
     "FR-487-AC-7",
+    "FR-487-AC-8",
+    "FR-487-AC-9",
+    "FR-487-AC-10",
     "FR-322-AC-308"
 )]
 #[test]
 fn tc_978_monitor_plan_root_follows_the_reader_order() {
     let vectors = parsed_fixture(MONITOR_PLAN_VECTORS);
     let cases = vectors["cases"].as_array().unwrap();
-    assert_eq!(cases.len(), 52);
+    assert_eq!(cases.len(), 60);
     let base_key = monitor_plan_key(&vectors["base"]);
     let mut seen = BTreeSet::new();
     let (mut admitted, mut refused) = (0, 0);
@@ -21806,14 +21819,15 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
             refused += 1;
         }
     }
-    assert_eq!((admitted, refused), (7, 45));
+    assert_eq!((admitted, refused), (8, 52));
 
     // The counter-gap path (FR-487-AC-7): on_gap over abstract live instances, and the reading sequence.
     let gaps = &vectors["gap_cases"];
     let ids: Vec<&str> = gaps["calls"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
     assert_eq!(ids, ["MP-54", "MP-55", "MP-56"]);
-    assert_eq!(gaps["sequences"].as_array().unwrap().len(), 1);
+    assert_eq!(gaps["sequences"].as_array().unwrap().len(), 2);
     assert_eq!(gaps["sequences"][0]["id"], "MP-57");
+    assert_eq!(gaps["sequences"][1]["id"], "MP-69");
     for call in gaps["calls"].as_array().unwrap() {
         let id = call["id"].as_str().unwrap();
         let gap = call["gap"].as_u64().unwrap();
@@ -21833,6 +21847,12 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
         }
         assert_eq!(Value::Array(results), call["results"], "{id}");
         assert_eq!(Value::Array(live_after), call["live_after"], "{id}");
+        // History is untrustworthy after a gap: buffers are dropped and the history starts at the faulting reading.
+        let buffers_after = vec![json!([]); call["buffers"].as_array().unwrap().len()];
+        assert_eq!(Value::Array(buffers_after), call["buffers_after"], "{id}");
+        let tick = call["now"].as_u64().unwrap() + gap;
+        assert_eq!(call["now_after"], tick, "{id}");
+        assert_eq!(call["history_start_after"], tick, "{id}");
     }
     for sequence in gaps["sequences"].as_array().unwrap() {
         let id = sequence["id"].as_str().unwrap();
@@ -21840,12 +21860,57 @@ fn tc_978_monitor_plan_root_follows_the_reader_order() {
         let max = sequence["max_reading_gap"].as_u64().unwrap();
         let readings: Vec<u64> =
             sequence["readings"].as_array().unwrap().iter().map(|r| r.as_u64().unwrap()).collect();
+        let kinds: Vec<&str> = match sequence.get("kinds") {
+            Some(kinds) => kinds.as_array().unwrap().iter().map(|k| k.as_str().unwrap()).collect(),
+            None => vec!["event"; readings.len()],
+        };
         let mut calls = vec![json!(["baseline"])];
-        for pair in readings.windows(2) {
-            let delta = (pair[1] + modulus - pair[0]) % modulus;
+        let mut baseline = readings[0];
+        for (reading, kind) in readings.iter().zip(&kinds).skip(1) {
+            if *kind == "poll" {
+                calls.push(json!(["poll"])); // a poll calls no entry and leaves the baseline
+                continue;
+            }
+            let delta = (reading + modulus - baseline) % modulus;
+            baseline = *reading;
             calls.push(if delta > max { json!(["on_gap", delta]) } else { json!(["on_event", delta]) });
         }
         assert_eq!(Value::Array(calls), sequence["calls"], "{id}");
+    }
+
+    for case in gaps["overflow_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let (capacity, live) = (case["activation_capacity"].as_u64().unwrap(), case["live"].as_u64().unwrap());
+        let started = live < capacity;
+        assert_eq!(started, case["expected"]["started"], "{id}");
+        assert_eq!(live + u64::from(started), case["expected"]["activations_after"], "{id}");
+        let payload = &case["expected"]["result"]["payload"];
+        assert_eq!(payload["value"], capacity, "{id}");
+        assert_eq!(payload["limit"], "activation", "{id}");
+    }
+    for case in gaps["history_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let start = case["now"].as_i64().unwrap() - case["b"].as_i64().unwrap();
+        let decided = if start < case["history_start"].as_i64().unwrap() { "indeterminate" } else { "determinate" };
+        assert_eq!(decided, case["expected"], "{id}");
+    }
+    for case in gaps["reporting_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let steps = case["steps"].as_array().unwrap();
+        let mut reported = Vec::new();
+        for (index, step) in steps.iter().enumerate() {
+            let mut now = Vec::new();
+            for instance in case["instances"].as_array().unwrap() {
+                let settles = instance["settles_at"].as_u64();
+                if settles == Some(index as u64) {
+                    now.push(json!([instance["id"], instance["outcome"]]));
+                } else if step == "watermark" && settles.is_none_or(|at| at > index as u64) {
+                    now.push(json!([instance["id"], "Pending"]));
+                }
+            }
+            reported.push(Value::Array(now));
+        }
+        assert_eq!(Value::Array(reported), case["results"], "{id}");
     }
 
     // MP-32: append is existing operations; the catalog and the schema identity enum are unchanged.

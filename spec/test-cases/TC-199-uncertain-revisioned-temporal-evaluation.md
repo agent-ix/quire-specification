@@ -24,6 +24,7 @@ Use the subject and inputs named by FR-160. Execute its positive case, each decl
 | TCV-A | bound 3000 ticks, uncertainty 0, request at tick 0, acknowledgements at ticks 2998, 2999, 3000, 3001 and 3002 (`TCV-01` to `TCV-05`) | true, true, indeterminate, false, false: the cover is half-open `[k, k + 1)` | FR-160-AC-6, FR-160-AC-7 |
 | TCV-B | uncertainty 1, acknowledgements at 2997, 2998 and 3003 (`TCV-06` to `TCV-08`) | true, indeterminate, false | FR-160-AC-7 |
 | TCV-C | ticks 5 and 6, 5 and 5, 5 and 7, and 5 and 6 under uncertainty 1 (`TCV-09` to `TCV-12`) | definitely before, not, definitely before, not | FR-160-AC-6 |
+| TCV-D | request and acknowledgement at the same tick 7, uncertainty 0, bounds 0, 1 and -1 (`TCV-13` to `TCV-15`) | indeterminate, true, false | FR-160-AC-8 |
 
 ## Expected Results
 

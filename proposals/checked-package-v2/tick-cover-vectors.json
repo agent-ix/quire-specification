@@ -117,6 +117,36 @@
       "a_tick": 5,
       "b_tick": 6,
       "expected": false
+    },
+    {
+      "id": "TCV-13",
+      "kind": "within_bound",
+      "note": "same tick, bound 0: the difference (-1, 1) straddles it",
+      "bound": 0,
+      "uncertainty": 0,
+      "request_tick": 7,
+      "ack_tick": 7,
+      "expected": "indeterminate"
+    },
+    {
+      "id": "TCV-14",
+      "kind": "within_bound",
+      "note": "same tick, bound 1: the open upper end 1 is at most the bound",
+      "bound": 1,
+      "uncertainty": 0,
+      "request_tick": 7,
+      "ack_tick": 7,
+      "expected": "true"
+    },
+    {
+      "id": "TCV-15",
+      "kind": "within_bound",
+      "note": "same tick, bound -1: the lower end -1 equals the bound and is open",
+      "bound": -1,
+      "uncertainty": 0,
+      "request_tick": 7,
+      "ack_tick": 7,
+      "expected": "false"
     }
   ]
 }

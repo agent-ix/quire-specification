@@ -18,7 +18,8 @@
       "counter",
       "tick_unit",
       "uncertainty",
-      "on_gap"
+      "on_gap",
+      "activation_capacity"
     ],
     "clause_form": "temporal_clause",
     "state": {
@@ -29,13 +30,26 @@
           "integer"
         ],
         [
+          "history_start",
+          "integer"
+        ],
+        [
           "buffer_0",
           "sequence"
         ],
         [
           "buffer_1",
           "sequence"
+        ],
+        [
+          "activations",
+          "sequence"
         ]
+      ],
+      "activation_fields": [
+        "subformula",
+        "origin",
+        "status"
       ]
     },
     "inputs_form": "record",
@@ -113,7 +127,8 @@
       "max_reading_gap": 1000,
       "max_event_rate": "10",
       "counter": "ticks",
-      "uncertainty": "1/2"
+      "uncertainty": "1/2",
+      "activation_capacity": 8
     },
     "buffers": [
       {
@@ -183,7 +198,8 @@
             "counter",
             "tick_unit",
             "uncertainty",
-            "on_gap"
+            "on_gap",
+            "activation_capacity"
           ]
         ]
       ],
@@ -214,7 +230,8 @@
             "counter",
             "tick_unit",
             "uncertainty",
-            "on_gap"
+            "on_gap",
+            "activation_capacity"
           ]
         ]
       ],
@@ -246,6 +263,7 @@
             "tick_unit",
             "uncertainty",
             "on_gap",
+            "activation_capacity",
             "extra"
           ]
         ]
@@ -253,7 +271,7 @@
       "expected": "refused",
       "code": "invalid_semantic_graph",
       "cause": null,
-      "locus": "/semantic_graph/nodes/{n}/body/members/16"
+      "locus": "/semantic_graph/nodes/{n}/body/members/17"
     },
     {
       "id": "MP-06",
@@ -657,7 +675,15 @@
               "integer"
             ],
             [
+              "history_start",
+              "integer"
+            ],
+            [
               "buffer_0",
+              "sequence"
+            ],
+            [
+              "activations",
               "sequence"
             ]
           ]
@@ -680,12 +706,20 @@
               "integer"
             ],
             [
+              "history_start",
+              "integer"
+            ],
+            [
               "buffer_0",
               "sequence"
             ],
             [
               "buffer_1",
               "integer"
+            ],
+            [
+              "activations",
+              "sequence"
             ]
           ]
         ]
@@ -738,11 +772,19 @@
               "text"
             ],
             [
+              "history_start",
+              "integer"
+            ],
+            [
               "buffer_0",
               "sequence"
             ],
             [
               "buffer_1",
+              "sequence"
+            ],
+            [
+              "activations",
               "sequence"
             ]
           ]
@@ -765,11 +807,19 @@
               "integer"
             ],
             [
+              "history_start",
+              "integer"
+            ],
+            [
               "buffer_0",
               "sequence"
             ],
             [
               "buffer_1",
+              "sequence"
+            ],
+            [
+              "activations",
               "sequence"
             ],
             [
@@ -886,7 +936,8 @@
             "buffers",
             "counter",
             "tick_unit",
-            "on_gap"
+            "on_gap",
+            "activation_capacity"
           ]
         ]
       ],
@@ -1019,7 +1070,8 @@
             "buffers",
             "counter",
             "tick_unit",
-            "uncertainty"
+            "uncertainty",
+            "activation_capacity"
           ]
         ]
       ],
@@ -1100,6 +1152,190 @@
         ]
       ],
       "expected": "admitted"
+    },
+    {
+      "id": "MP-58",
+      "note": "activation_capacity 0: a different plan identity",
+      "set": [
+        [
+          "premises.activation_capacity",
+          0
+        ]
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "MP-59",
+      "note": "negative activation_capacity",
+      "set": [
+        [
+          "premises.activation_capacity",
+          -1
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_package",
+      "cause": "invalid-value",
+      "locus": "/semantic_graph/nodes/{n}/body/members/16/value"
+    },
+    {
+      "id": "MP-60",
+      "note": "the activation_capacity binding is missing",
+      "set": [
+        [
+          "bindings",
+          [
+            "clause",
+            "state",
+            "inputs",
+            "scope",
+            "results",
+            "init",
+            "on_event",
+            "on_watermark",
+            "counter_width_bits",
+            "max_reading_gap",
+            "max_event_rate",
+            "buffers",
+            "counter",
+            "tick_unit",
+            "uncertainty",
+            "on_gap"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/16"
+    },
+    {
+      "id": "MP-61",
+      "note": "activation_capacity is a text literal, not an integer",
+      "set": [
+        [
+          "premises.activation_capacity",
+          "8"
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/16"
+    },
+    {
+      "id": "MP-62",
+      "note": "the state lacks history_start",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "activations",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-63",
+      "note": "the state lacks activations",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "history_start",
+              "integer"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-64",
+      "note": "an activations element lacks origin",
+      "set": [
+        [
+          "state.activation_fields",
+          [
+            "subformula",
+            "status"
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
+    },
+    {
+      "id": "MP-65",
+      "note": "history_start is text, not an integer",
+      "set": [
+        [
+          "state.fields",
+          [
+            [
+              "now",
+              "integer"
+            ],
+            [
+              "history_start",
+              "text"
+            ],
+            [
+              "buffer_0",
+              "sequence"
+            ],
+            [
+              "buffer_1",
+              "sequence"
+            ],
+            [
+              "activations",
+              "sequence"
+            ]
+          ]
+        ]
+      ],
+      "expected": "refused",
+      "code": "invalid_semantic_graph",
+      "cause": null,
+      "locus": "/semantic_graph/nodes/{n}/body/members/1"
     }
   ],
   "append": {
@@ -1112,7 +1348,7 @@
     "expected": "admitted"
   },
   "gap_cases": {
-    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances.",
+    "note": "FR-487 'Counter-gap path'. `readings` is a sequence of raw counter readings under `width_bits` and `max_reading_gap`; the first is the baseline (no call), each later reading gives on_event with the modular delta, or on_gap with the gap when the delta exceeds max_reading_gap, and then becomes the baseline. `live` lists the live instances before the call: status `open` (verdict still open), or `decided` (kept in state, verdict already given). on_gap returns Failed(ReadingGapExceeded{gap,max_reading_gap}) for each open instance, drops it from the state, and leaves decided instances. After the call every buffer is empty and `history_start` and `now` are the faulting reading's unwrapped tick (now + gap). A clock poll (`kinds` entry `poll`) calls no entry and does not move the baseline. overflow_cases: an activation arriving while the live count equals activation_capacity.",
     "calls": [
       {
         "id": "MP-54",
@@ -1145,11 +1381,30 @@
             "id": 2,
             "status": "decided"
           }
+        ],
+        "now": 1000,
+        "history_start": 0,
+        "buffers": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "now_after": 66506,
+        "history_start_after": 66506,
+        "buffers_after": [
+          [],
+          []
         ]
       },
       {
         "id": "MP-55",
-        "note": "a gap with no open instance returns no results and leaves the state",
+        "note": "a gap with no open instance returns no results; the buffers are still dropped and the time markers move",
         "width_bits": 16,
         "max_reading_gap": 100,
         "gap": 65506,
@@ -1165,6 +1420,25 @@
             "id": 2,
             "status": "decided"
           }
+        ],
+        "now": 1000,
+        "history_start": 0,
+        "buffers": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "now_after": 66506,
+        "history_start_after": 66506,
+        "buffers_after": [
+          [],
+          []
         ]
       },
       {
@@ -1201,7 +1475,26 @@
             }
           }
         ],
-        "live_after": []
+        "live_after": [],
+        "now": 1000,
+        "history_start": 0,
+        "buffers": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "now_after": 1300,
+        "history_start_after": 1300,
+        "buffers_after": [
+          [],
+          []
+        ]
       }
     ],
     "sequences": [
@@ -1233,6 +1526,194 @@
             10
           ]
         ]
+      },
+      {
+        "id": "MP-69",
+        "note": "a poll between two events does not move the baseline: 180 is 80 ticks from 100",
+        "width_bits": 16,
+        "max_reading_gap": 100,
+        "readings": [
+          100,
+          150,
+          180
+        ],
+        "kinds": [
+          "event",
+          "poll",
+          "event"
+        ],
+        "calls": [
+          [
+            "baseline"
+          ],
+          [
+            "poll"
+          ],
+          [
+            "on_event",
+            80
+          ]
+        ]
+      }
+    ],
+    "history_cases": [
+      {
+        "id": "MP-66",
+        "note": "window start 1005 is not before history_start 1000",
+        "now": 1010,
+        "history_start": 1000,
+        "b": 5,
+        "expected": "determinate"
+      },
+      {
+        "id": "MP-67",
+        "note": "window start 990 reaches before history_start 1000",
+        "now": 1010,
+        "history_start": 1000,
+        "b": 20,
+        "expected": "indeterminate"
+      },
+      {
+        "id": "MP-68",
+        "note": "the window has refilled at now 1020",
+        "now": 1020,
+        "history_start": 1000,
+        "b": 20,
+        "expected": "determinate"
+      }
+    ],
+    "reporting_cases": [
+      {
+        "id": "MP-70",
+        "note": "an interval instance settles True at event step 1 and is not repeated; the other stays pending and is reported at each watermark step",
+        "steps": [
+          "event",
+          "event",
+          "watermark",
+          "watermark"
+        ],
+        "instances": [
+          {
+            "id": 1,
+            "settles_at": 1,
+            "outcome": "True"
+          },
+          {
+            "id": 2,
+            "settles_at": null,
+            "outcome": null
+          }
+        ],
+        "results": [
+          [],
+          [
+            [
+              1,
+              "True"
+            ]
+          ],
+          [
+            [
+              2,
+              "Pending"
+            ]
+          ],
+          [
+            [
+              2,
+              "Pending"
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "MP-71",
+        "note": "a pending instance settles at a watermark step: Pending before, one settled outcome at settlement, nothing after",
+        "steps": [
+          "watermark",
+          "event",
+          "watermark",
+          "watermark"
+        ],
+        "instances": [
+          {
+            "id": 3,
+            "settles_at": 2,
+            "outcome": "False"
+          }
+        ],
+        "results": [
+          [
+            [
+              3,
+              "Pending"
+            ]
+          ],
+          [],
+          [
+            [
+              3,
+              "False"
+            ]
+          ],
+          []
+        ]
+      },
+      {
+        "id": "MP-72",
+        "note": "an unbounded root eventually reports one folded outcome per activation: Pending at watermark steps, then one True, not one per position",
+        "steps": [
+          "event",
+          "watermark",
+          "event",
+          "event",
+          "watermark"
+        ],
+        "instances": [
+          {
+            "id": 4,
+            "settles_at": 3,
+            "outcome": "True"
+          }
+        ],
+        "results": [
+          [],
+          [
+            [
+              4,
+              "Pending"
+            ]
+          ],
+          [],
+          [
+            [
+              4,
+              "True"
+            ]
+          ],
+          []
+        ]
+      }
+    ],
+    "overflow_cases": [
+      {
+        "id": "MP-73",
+        "note": "a new activation beyond activation_capacity is not started: Incomplete(LimitReached), the activations are unchanged, nothing is dropped silently",
+        "activation_capacity": 2,
+        "live": 2,
+        "activate": true,
+        "expected": {
+          "started": false,
+          "activations_after": 2,
+          "result": {
+            "outcome": "Incomplete",
+            "payload": {
+              "limit": "activation",
+              "value": 2,
+              "setting": "monitor.max_activations"
+            }
+          }
+        }
       }
     ]
   }
