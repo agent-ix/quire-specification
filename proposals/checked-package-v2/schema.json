@@ -49,6 +49,13 @@
         "$ref": "#/$defs/TemporalBinding"
       }
     },
+    "temporal_clause_names": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/TemporalClauseNameRow"
+      }
+    },
     "schedulability_claims": {
       "type": "array",
       "minItems": 1,
@@ -202,16 +209,42 @@
         }
       ]
     },
+    "TemporalClauseNameRow": {
+      "type": "object",
+      "required": [
+        "declaration",
+        "occurrence",
+        "name"
+      ],
+      "properties": {
+        "declaration": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "name": {
+          "$ref": "#/$defs/Identifier"
+        }
+      },
+      "additionalProperties": false
+    },
     "TemporalBinding": {
       "type": "object",
       "required": [
         "declaration",
+        "occurrence",
         "clock",
         "clock_name"
       ],
       "properties": {
         "declaration": {
           "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 0
         },
         "clock": {
           "$ref": "#/$defs/ClockConfiguration"

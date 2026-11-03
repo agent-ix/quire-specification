@@ -1,0 +1,745 @@
+{
+  "base": "fixtures/positive-timed-clause-nodes.json",
+  "note": "IR-1278. The clock configuration is per claim occurrence: each `temporal_bindings` row is keyed (declaration, occurrence), because structurally equal clauses share one node but each declaration selects its own configuration. Each case is an RFC 6902 patch on `base` with the placeholders of temporal-clause-name-vectors.json. Rows are checked per row in array order (declaration join, occurrence join, repeated key, order), then coverage, then clock name and kind per row.",
+  "positive": [
+    {
+      "bindings": 2,
+      "expected": {
+        "admitted": true
+      },
+      "id": "BO-P1-twins-different-configurations",
+      "note": "one shared node, two occurrences, two rows with different clock configurations (sequence authorities `order-events` and `other-events`)",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        }
+      ]
+    },
+    {
+      "bindings": 2,
+      "expected": {
+        "admitted": true
+      },
+      "id": "BO-P2-twins-same-configuration",
+      "note": "one shared node, two occurrences, two rows with equal configurations",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "order-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        }
+      ]
+    }
+  ],
+  "schema_refusals": [
+    {
+      "expected": {
+        "code": "malformed_wire",
+        "locus": "/temporal_bindings/0"
+      },
+      "id": "BO-S1-missing-occurrence",
+      "note": "a row without `occurrence`",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/temporal_bindings/0/occurrence"
+        }
+      ],
+      "schema": "invalid"
+    },
+    {
+      "expected": {
+        "code": "malformed_wire",
+        "locus": "/temporal_bindings/0/occurrence"
+      },
+      "id": "BO-S2-negative-occurrence",
+      "note": "`occurrence` is negative",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/temporal_bindings/0/occurrence",
+          "value": -1
+        }
+      ],
+      "schema": "invalid"
+    },
+    {
+      "expected": {
+        "code": "malformed_wire",
+        "locus": "/temporal_bindings/0/occurrence"
+      },
+      "id": "BO-S3-text-occurrence",
+      "note": "`occurrence` is a string",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/temporal_bindings/0/occurrence",
+          "value": "0"
+        }
+      ],
+      "schema": "invalid"
+    }
+  ],
+  "semantic_refusals": [
+    {
+      "expected": {
+        "cause": "timed-node-reference",
+        "code": "invalid_package",
+        "locus": "/semantic_graph/nodes/8/body"
+      },
+      "id": "BO-R1-occurrence-uncovered",
+      "note": "two claim occurrences and a row for one",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "timed-node-reference",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/0/occurrence"
+      },
+      "id": "BO-R2-unowned-occurrence",
+      "note": "a row naming ordinal 5, which the node has under no role",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/temporal_bindings/0/occurrence",
+          "value": 5
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "conflicting-definition",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/2"
+      },
+      "id": "BO-R3-repeated-key",
+      "note": "a second row for (clause, 1)",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/2",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "timed-node-reference",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/1/occurrence"
+      },
+      "id": "BO-R4-out-of-order",
+      "note": "the rows of the shared node in descending occurrence order",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
+          "from": "/temporal_bindings/1",
+          "op": "move",
+          "path": "/temporal_bindings/0"
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "conflicting-definition",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/2"
+      },
+      "id": "BO-R5-repeated-key-before-order",
+      "note": "rows (clause, 0), (clause, 1), (clause, 0): the third repeats a key and also descends; the repeated key is reported",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/2",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "order-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 0
+          }
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "conflicting-definition",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/1"
+      },
+      "id": "BO-R6-row-order-is-per-row",
+      "note": "a repeated key at row 1 and an absent declaration at row 2: the repeated key is reported",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "order-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 0
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/2",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "order-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 0
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/temporal_bindings/2/declaration",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "temporal",
+              "temporal_clause",
+              "absent-declaration"
+            ]
+          }
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "timed-node-reference",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/1/occurrence"
+      },
+      "id": "BO-R7-order-before-coverage",
+      "note": "three claim occurrences with rows (clause, 1), (clause, 0) and none for 2: the descent at row 1 is reported, not the missing row",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/2",
+          "value": {
+            "ordinal": 2,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/50",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 2,
+            "regions": [
+              {
+                "end": 14,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 13
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "B",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/2",
+          "value": {
+            "declaration": "<clause>",
+            "name": "C",
+            "occurrence": 2
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/temporal_bindings",
+          "value": [
+            {
+              "clock": {
+                "kind": "event_position",
+                "sequence_authority": "other-events"
+              },
+              "clock_name": "model-steps",
+              "declaration": "<clause>",
+              "occurrence": 1
+            },
+            {
+              "clock": {
+                "kind": "event_position",
+                "sequence_authority": "order-events"
+              },
+              "clock_name": "model-steps",
+              "declaration": "<clause>",
+              "occurrence": 0
+            }
+          ]
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "timed-node-reference",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/1/clock_name"
+      },
+      "id": "BO-R8-clock-name-of-second-occurrence",
+      "note": "the second occurrence's row names another clock than the body does",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "other-clock",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "timed-node-reference",
+        "code": "invalid_package",
+        "locus": "/temporal_bindings/1/clock/kind"
+      },
+      "id": "BO-R9-kind-of-second-occurrence",
+      "note": "the second occurrence's row carries a configuration kind the selected profile does not determine",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "timestamped_event",
+              "timestamp_unit": "RFC3339"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        }
+      ],
+      "schema": "valid"
+    }
+  ]
+}

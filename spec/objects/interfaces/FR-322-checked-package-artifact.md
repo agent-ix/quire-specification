@@ -1214,6 +1214,15 @@ A frame body refusal, meaning-join or canonical-order
   caller's finite work limit before inspection. Equality `term_path` is always
   empty, so it contributes zero path-segment work. Exhaustion returns the
   attempted work and first uncharged locus without a partial data view.
+- `temporal_clause_names` — the declared name of every temporal clause,
+  carried per claim occurrence. A `temporal`/`temporal_clause` node carries no
+  `declaration` and no name in its body: structurally equal clauses share one
+  node, so a name on the node could name only one of their declarations. The
+  member is absent exactly when the graph has no `temporal`/`temporal_clause`
+  node; otherwise it is a non-empty array with one closed
+  `{declaration, occurrence, name}` row for each `claim` occurrence of each such
+  node, as "Temporal clause names" below specifies. Its rows are outside every
+  node identity.
 - `schedulability_claims` — an optional, closed index of the authenticated
   task-set/schedulability claims carried by the graph. When absent, the graph
   has no `claim`/`schedulability` occurrence; when present it is a non-empty
@@ -3260,8 +3269,8 @@ indexes, one file of raw bytes per pair.
 
 ### Temporal clock bindings
 
-`temporal_bindings` carries the typed clock selection for each temporal
-declaration whose selected profile requires a clock configuration. A
+`temporal_bindings` carries the typed clock selection for each occurrence of a
+temporal declaration whose selected profile requires a clock configuration. A
 *temporal declaration* is a `temporal`/`temporal_clause` node or a
 `protocol`/`compensation` node (operator `compensate`, FR-466), whose
 `within` window is a selected temporal declaration with its own clock name. It is a
@@ -3272,32 +3281,43 @@ one, the member is absent; when present, it is a non-empty array. Absence never
 supplies a default clock or configuration for a temporal declaration that
 requires one.
 
+The clock **name** and the selected `temporal_profile` law are arguments of the
+clause body, so they belong to the node and are the same for every occurrence
+of it. The clock **configuration** is not in the body: structurally equal
+clauses share one node, and each source declaration selects its own
+configuration (period, epoch, unit, sequence authority or timestamp unit).
+The binding is therefore keyed by occurrence, one row for each occurrence of a
+node, and two occurrences of one node may carry different configurations.
+
 Each row is exactly:
 
 ```json
 {
   "declaration": {"package": "<package>", "path": ["<segment>"], "ordinal": 0},
+  "occurrence": 0,
   "clock": {"kind": "event_position", "sequence_authority": "<name>"},
   "clock_name": "<name>"
 }
 ```
 
 `declaration` is a structural `NodeRef` equal to the `node_id` of exactly one
-`temporal`/`temporal_clause` declaration node (FR-370), whose occurrence has
-role `claim`, or of exactly one `protocol`/`compensation` node (FR-466), whose
-occurrence has role `declaration`; a compensation window is keyed by the
+`temporal`/`temporal_clause` declaration node (FR-370), or of exactly one
+`protocol`/`compensation` node (FR-466); a compensation window is keyed by the
 compensation node's own `node_id` and by no `await`, `attempt` or other control
 node. It is not the referenced `temporal`/`formula` expression node,
 the model root, or a `timed_model` node: those identities do not identify the
-temporal declaration's selected clock. The row is read by that exact node id;
-a reader never selects it by array position, clock name, formula contents, or
-path-name inference. Rows are in ascending structural `NodeRef` order and each
-declaration occurs at most once.
+temporal declaration's selected clock. `occurrence` is the ordinal of one
+occurrence of that node: a `claim` occurrence of a clause, the `declaration`
+occurrence of a compensation. The row is read by that exact (`declaration`,
+`occurrence`) key; a reader never selects it by array position, clock name,
+formula contents, or path-name inference. Rows are in ascending order of
+structural `NodeRef` and then `occurrence`, and each key occurs at most once.
 
 `clock_name` is the exact non-empty text value of the clause body's `clock`
 argument (the second argument of `quire.op.temporal.clause`, FR-370), or, for a
 compensation row, of the compensation node's `clock` text argument (the fifth
-argument of `compensate`, FR-466). A reader
+argument of `compensate`, FR-466); every row of one node carries the same
+`clock_name`. A reader
 uses this typed member directly; it never parses a legacy `clock:` prefix or
 derives the name from the profile identity.
 
@@ -3322,49 +3342,159 @@ the clause's `temporal_profile` law, and requires that law to equal the matching
 law of its own (FR-464 "An `await` or a `compensate` reads a clock role"): its
 profile is the lock's `temporal_profile` selection, and no per-node law is read
 or required. The selected definition determines exactly the
-`clock.kind` above. A row for an absent or wrong-kind declaration, a duplicate
-row, a missing row for a clock-configured temporal declaration, a mismatching
-clock name, or a kind inconsistent with its selected profile is refused; no
-clock, parameter or profile is substituted. The reader exposes the admitted
+`clock.kind` above. The reader exposes the admitted
 row by reference as typed clock configuration data, without reparsing the
-wire or rechecking the profile selection during later reads. After aggregate
-order validation and before per-node joins, the reader requires exactly one row
-for every clock-configured temporal declaration: every clock-configured
-`temporal_clause`, and every `compensation` node when the lock's
-`temporal_profile` selection is one of the three clock-configured profiles (a
-compensation always carries its `within` window, FR-466). A missing row refuses at the
-first such declaration's own `/semantic_graph/nodes/{N}/body`, where `N` is its
+wire or rechecking the profile selection during later reads.
+
+A row for an absent or wrong-kind declaration, an `occurrence` that is not an
+occurrence of the stated role, a repeated key, a row out of order, a missing row
+for a clock-configured temporal declaration, a mismatching clock name, or a kind
+inconsistent with its selected profile is refused; no clock, parameter or profile
+is substituted. After aggregate order validation and before per-node joins, the
+reader visits the rows in array order and checks each row in full before the
+next: first its declaration join, then its occurrence join, then whether its key
+repeats an earlier row, then whether it is in order. An absent or wrong-kind
+declaration refuses `invalid_package`/`timed-node-reference` at
+`/temporal_bindings/{i}/declaration`; an `occurrence` that is not a `claim`
+occurrence of a clause, or the `declaration` occurrence of a compensation,
+refuses the same code and cause at `/temporal_bindings/{i}/occurrence`; a repeated
+(`declaration`, `occurrence`) key refuses `invalid_package`/`conflicting-definition`
+at the later row `/temporal_bindings/{i}`; a row that sorts before its
+predecessor refuses `invalid_package`/`timed-node-reference` at
+`/temporal_bindings/{i}/declaration` when its declaration sorts first and at
+`/temporal_bindings/{i}/occurrence` when the declarations are equal.
+The reader then requires exactly one row for every
+clock-configured temporal declaration occurrence: every `claim` occurrence of
+every clock-configured `temporal_clause`, and the `declaration` occurrence of
+every `compensation` node when the lock's `temporal_profile` selection is one of
+the three clock-configured profiles (a compensation always carries its `within`
+window, FR-466). A missing row refuses `invalid_package`/`timed-node-reference`
+at the first such node's own `/semantic_graph/nodes/{N}/body`, where `N` is its
 graph index and "first" is the lowest graph index among clauses and
-compensations. A row with an absent or wrong-kind declaration refuses at that
-row's `/temporal_bindings/{i}/declaration`; a repeated declaration refuses at
-the second row `/temporal_bindings/{i}`. Each of these semantic refusals is
-`invalid_package`/`timed-node-reference`. After aggregate order validation and
-declaration `NodeRef` resolution, the reader checks rows in ascending structural
-`NodeRef` order. For each row it compares `clock_name` before checking the
-configuration kind against the selected profile: a name mismatch refuses
+compensations. After coverage, the reader checks rows in array order. For each row
+it compares `clock_name` before checking the configuration kind against the
+selected profile: a name mismatch refuses
 `invalid_package`/`timed-node-reference` at
 `/temporal_bindings/{i}/clock_name`; a profile/configuration kind mismatch
 refuses with the same code and cause at `/temporal_bindings/{i}/clock/kind`.
-Clause and compensation rows share one array in one ascending structural
-`NodeRef` order and these checks apply to a compensation row unchanged: two
-compensations sharing a model, profile and clock name have two rows. The
-`TemporalBinding` schema is unchanged, so every existing payload stays valid.
+Clause and compensation rows share one array in one ascending order and these
+checks apply to a compensation row unchanged: two compensations sharing a model,
+profile and clock name have two rows. The closed schema refuses a row without
+`occurrence`, and an `occurrence` that is not a non-negative integer, as
+`malformed_wire`, at the row and at the member respectively.
 
 `temporal-clock-binding-vectors.json` publishes one full checked-package
 positive for each configuration kind and the schema-invalid unknown-kind,
 missing-member and wrong-type cases. Its schema-valid semantic refusals cover a
 missing required row, absent and wrong-kind declaration references, and a
-duplicate row. Further semantic refusals cover a clock-name mismatch and a
+repeated row. Further semantic refusals cover a clock-name mismatch and a
 profile/configuration kind mismatch, with their exact row loci and check order.
 The multi-clause positive has two distinct declaration `NodeRef`s with the same
 model, selected profile and clock name; their formula references distinguish
 the structural keys, and the rows are in ascending `NodeRef` order. Its `compensation_cases` (`CB-01` to `CB-08`,
 FR-322-AC-305) publish a clause beside two compensation windows, compensations
-alone, and the missing-row, duplicate-row, clock-name, clock-kind and wrong-kind-declaration
+alone, and the missing-row, repeated-row, clock-name, clock-kind and wrong-kind-declaration
 refusals of a compensation row. The selected
 profile, configuration kind, and clause clock name agree in every single- and
-multi-clause positive. The vector file is the
+multi-clause positive. `temporal-clock-occurrence-vectors.json` publishes the
+per-occurrence cases `BO-P1` to `BO-R9`: twins of one node with different and
+with equal configurations, the schema-invalid `occurrence`, and the reader
+refusals for an uncovered and an unowned occurrence, a repeated key, a row
+out of order, the per-row order, and the clock name and kind of a second
+occurrence. The vector files are the
 machine-readable form consumed by the QSpec qualification test.
+
+### Temporal clause names
+
+A `temporal`/`temporal_clause` node is identified by its structure: its body
+holds the clock, activation, captures, fairness, formula and profile, and no
+name (FR-370). Two source clauses that are structurally equal therefore share
+one node, and each is one `claim` occurrence of it with its own ordinal and its
+own source region. The declared name of a clause belongs to the occurrence, not
+the node, so a checked package carries it in `temporal_clause_names`. The
+member is not a graph node and changes no `node_id`, as `temporal_bindings`
+and `schedulability_claims` do not. A name is never stored in the node's
+`declaration` member: the schema refuses a `declaration` on every `temporal`
+node, and a reader refuses one on a `temporal_clause` node as
+`invalid_semantic_graph` at `/semantic_graph/nodes/{N}/declaration`, as before.
+
+`temporal_clause_names` is absent when the graph has no `temporal_clause`
+node and otherwise is a non-empty array with one row for every `claim`
+occurrence of every `temporal_clause` node. Each row is exactly:
+
+```json
+{
+  "declaration": {"package": "<package>", "path": ["<segment>"], "ordinal": 0},
+  "occurrence": 0,
+  "name": "<identifier>"
+}
+```
+
+`declaration` is the local structural `NodeRef` of the `temporal`/`temporal_clause`
+node; `occurrence` is the ordinal of one of that node's `claim` occurrences;
+`name` is the clause's declared name, one identifier of the identifier
+grammar of `declaration.qualified_name` segments, matched byte for byte. The
+name is the identifier the source writes at the clause's declaration; it is
+never derived from a source region, a source map entry, a `NodeRef` path, a
+requirement label or the formula. Rows are unique by (`declaration`,
+`occurrence`) and sorted by structural `NodeRef` and then occurrence, the order of
+`schedulability_claims`. A name is not a node-identity input: renaming a clause
+changes no `node_id` and no node, and two clauses that differ only in name
+remain one node with two occurrences. Two occurrences of one node may carry
+any two names, equal or distinct; the package does not enforce the uniqueness of
+declared names and the reader does not compare names across rows; uniqueness is a
+rule of the source language.
+
+The closed schema refuses a row with a missing `declaration`, `occurrence` or
+`name` member as `malformed_wire` at the row, a row with any other member as
+`malformed_wire` at the row, and a `name` that is not an identifier (an empty
+string, a qualified path such as `a::C`, or any other JSON kind) or an
+`occurrence` that is not a non-negative integer as `malformed_wire` at that
+member. After the clock-binding checks above and before the FR-370 clause-body
+joins, the reader visits rows in array order and checks each row in full before
+the next: first its declaration join, then its occurrence join, then whether its
+key repeats an earlier row, then whether it is in order. A `declaration` that
+names no node of the graph or a node that is not a `temporal_clause` refuses
+`invalid_package`/`invalid-value` at `/temporal_clause_names/{i}/declaration`;
+an `occurrence` that is not one of that node's `claim` occurrences, whatever
+role it holds under another, refuses the same code and cause at
+`/temporal_clause_names/{i}/occurrence`; a repeated key refuses
+`invalid_package`/`conflicting-definition` at the later row; a row out of
+canonical order refuses `invalid_package`/`invalid-value` at the later row. A row
+that repeats a key and a later row with an absent declaration therefore refuse at
+the repeated key, and a row that repeats a key and also descends refuses as a
+repeated key. After every row has passed, a `claim` occurrence with no row, or a
+missing member in a graph that holds a clause, refuses
+`invalid_package`/`invalid-value` at `/temporal_clause_names`; a descent in the
+rows is therefore reported before an uncovered occurrence.
+Each visited row consumes one validation visit from the caller's finite reader
+budget, as for `schedulability_claims`.
+
+The reader exposes each admitted row by reference as the typed declared name of
+the (`declaration`, `occurrence`) pair. A consumer reads the name of an occurrence
+only from this member and never from the claim occurrence's source region,
+which covers only the name token and carries no text.
+
+**What is per node and what is per occurrence.** Per node, because they are
+arguments of the clause body and so part of its structural identity: the clock
+name, the selected `temporal_profile` law, the activation, captures, fairness and
+formula. Per occurrence, because each source declaration supplies its own: the
+declared name (this member) and the clock configuration (`temporal_bindings`,
+"Temporal clock bindings"). Two structurally equal clauses are one node with two
+occurrences, two names and two bindings, which may differ in configuration.
+`temporal_bindings` and `temporal_clause_names` both cover every `claim` occurrence
+of every clause, and are checked by the same per-row rules.
+
+`temporal-clause-name-vectors.json` publishes, over
+`fixtures/positive-timed-clause-nodes.json`, the admitted single named clause,
+the admitted shared node with two occurrences and two distinct names, each with
+its own binding row, and a rename that changes no node; the schema-invalid rows;
+and the schema-valid reader refusals for an absent row member, an uncovered
+occurrence, an absent and a wrong-kind declaration, an unowned occurrence, a
+repeated key, an out-of-order pair, the per-row order and the order of repeated
+key, order and coverage. The vector file is the machine-readable
+form consumed by the QSpec qualification test; the reader that decides it is
+quire-contract-ir's.
 
 ### Schedulability claim carrier
 
@@ -4190,7 +4320,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-291 | Each protocol location row joins to one local expression/application node and one of its exact source occurrences; two terms sharing that application and occurrence have distinct `term_ordinal` values and preserve their different semantic locations. Each captured application/occurrence group has consecutive ordinals starting at zero. PL-01-root's lone ordinal-zero row admits; PL-R2's lone ordinal-one row witnesses the missing ordinal-zero mapping and refuses `invalid_package`/`invalid-value` at `/checked_term_data/protocol_locations`. A foreign or absent node, non-application, missing occurrence, duplicate per-term key, duplicate term ordinal or malformed origin refuses at the first mismatching row; no location is inferred from a source region, display name or selected dependency. | Test |
 | FR-322-AC-292 | `checked-term-data-vectors.json` publishes positive top-level text, enum, declared-quantity, compound-quantity and plan equality records, plus two equalities beneath one `and` parent, an equality beneath `or`, aggregate-member and binding-value forms. The parent forms reference each child equality application by its exact `NodeRef`; each equality record names that child node and has an empty `term_path`. The four TC-1070 Fixture E expressions at rows 8, 12, 15 and 17 remain four separate equality rows. Positive metadata demonstrates these parent-to-child references without adding a wire member. The vectors also include two protocol terms at one application occurrence, ordered and empty dispatch candidate sets, and probabilistic claim rows whose declaration identities differ despite equal display names and source spans. Every dispatch candidate repeats the table's typed selected-operation witness, joining it with the structural FR-150 `EffectiveId` key to its body and nullable precondition. Schema-invalid cases include a checked-package `NodeRef` used as an effective identity, an invented operation-path `NodeRef` (`DT-S5`), missing identity members, a missing equality `term_path`, missing probabilistic-claim occurrence and extra identity fields. Schema-valid reader mutations cover wrong operator/operand/type/occurrence, a non-empty equality path ending at a reference to a distinct non-equality application, foreign application and effective identity, mismatched effective identity, a non-member selected operation (`DT-R6`), a candidate witness differing from its table, duplicate equality application/occurrence key, protocol key and dispatch key, duplicate selection key, missing protocol-term mapping, absent precondition join, and absent/foreign/wrong-kind/mis-mapped probabilistic claim identities. Duplicate declaration-occurrence keys refuse at the later row. Reader-level mutations have the expected refusal code, cause and exact JSON pointer. Read work charges every sidecar row and each nested unit, enum and candidate entry before inspection. The vectors contain 19 sidecar rows, 3 unit facts, 2 enum facts and 2 dispatch candidates, with zero equality `term_path` segments, for an exact 26-unit boundary; admission succeeds at 26 units. A 25-unit limit refuses `resource_exhausted` at `/checked_term_data/probabilistic_claims/1`, the final charged row, with no partial data view. | Test (TC-233) |
 | FR-322-AC-293 | A `fairness` member carries a closed `target` union: model operation (`declaration` node id and `name`), protocol root, attempt node or compensation template (each an exact structural `node` id), parallel branch (`parallel` node id and `branch` label), or hybrid transition (`declaration` node id and `name`). `temporal-fairness-target-vectors.json` publishes one positive member per variant and malformed members with a missing/unknown discriminant, missing required identity, extra identity field and invalid node ordinal; each positive satisfies the V2 `OperationMember` schema and every malformed member fails it. Eleven schema-valid reader cases distinguish absent, foreign-package and wrong-kind parallel ids, a missing branch label, wrong-kind protocol-root, attempt and compensation targets, and root, attempt, parallel and compensation targets owned by another protocol clause in the same package; each records the required refusal code, cause and exact target or label JSON pointer from FR-370-AC-15. | Test (TC-303) |
-| FR-322-AC-294 | Each clock-configured `temporal`/`temporal_clause` (and each `protocol`/`compensation` node, FR-322-AC-305) has exactly one `temporal_bindings` row keyed by its structural clause `NodeRef`; each row has the exact non-empty clause clock name and one closed `ClockConfiguration` whose kind and parameter set match the clause's selected `temporal_profile` law. The clause identity distinguishes declarations even when their model, profile and clock names agree; the multi-clause positive proves two distinct clause keys with the same model, selected profile and clock name, distinguished by their formula references, and ascending structural `NodeRef` row order. The three matching profile/configuration pairs (event-position, fixed-sample and timestamped-event) are complete checked-package positives; an unknown kind, a missing parameter or wrong-typed parameter is `malformed_wire`. A schema-valid row whose declaration `NodeRef` is absent or is neither a temporal clause nor a compensation refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/declaration`; a duplicate row refuses with that code/cause at its second row. A missing row for a clock-configured clause refuses with that code/cause at the first such clause's `/semantic_graph/nodes/{N}/body`, where `N` is its graph index. These row-coverage checks follow aggregate order validation and precede per-node joins. After declaration resolution, rows are checked in ascending structural `NodeRef` order: clock-name mismatch refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/clock_name`, before a profile/configuration kind mismatch refuses with the same code and cause at `/temporal_bindings/{i}/clock/kind`. No profile identity is repeated in the row: the reader joins the clause law to `lock.profile_selections`. When no clock-configured temporal clause or compensation exists, `temporal_bindings` is absent; its absence never defaults a required clock configuration. | Test (TC-134; TC-233) |
+| FR-322-AC-294 | Each clock-configured `temporal`/`temporal_clause` (and each `protocol`/`compensation` node, FR-322-AC-305) has exactly one `temporal_bindings` row for each of its `claim` occurrences, keyed by its structural clause `NodeRef` and that occurrence's ordinal; each row has the exact non-empty clause clock name and one closed `ClockConfiguration` whose kind and parameter set match the clause's selected `temporal_profile` law. The clause identity distinguishes declarations even when their model, profile and clock names agree; the multi-clause positive proves two distinct clause keys with the same model, selected profile and clock name, distinguished by their formula references, and ascending structural `NodeRef` row order. The three matching profile/configuration pairs (event-position, fixed-sample and timestamped-event) are complete checked-package positives; an unknown kind, a missing parameter or wrong-typed parameter is `malformed_wire`. A schema-valid row whose declaration `NodeRef` is absent or is neither a temporal clause nor a compensation refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/declaration`; a repeated (`declaration`, `occurrence`) key refuses `invalid_package`/`conflicting-definition` at its second row. A missing row for a clock-configured clause refuses with that code/cause at the first such clause's `/semantic_graph/nodes/{N}/body`, where `N` is its graph index. These row-coverage checks follow aggregate order validation and precede per-node joins. After declaration resolution, rows are checked in ascending structural `NodeRef` order: clock-name mismatch refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/clock_name`, before a profile/configuration kind mismatch refuses with the same code and cause at `/temporal_bindings/{i}/clock/kind`. No profile identity is repeated in the row: the reader joins the clause law to `lock.profile_selections`. When no clock-configured temporal clause or compensation exists, `temporal_bindings` is absent; its absence never defaults a required clock configuration. Each row names the claim occurrence it binds, so structurally equal clauses that share one node have one row each (FR-322-AC-359..370). | Test (TC-134; TC-233) |
 | FR-322-AC-295 | A quantified guard part and a quantified invariant may carry `binders`, an aggregate of references to the quantified slot `parameter` nodes. Each binder resolves in the package, is a `parameter`, occurs in the place constraint slot terms in declared order, and appears at most once; a binder that is not a slot or a repeated/out-of-order binder refuses `invalid_package`/`timed-node-reference` at the first bad binder target (`CL-58`, `CL-60`, `CL-62`). The schema admits the positive guard and invariant carrier forms (`CL-57`, `CL-59`); `CL-62` reverses two individually valid binders of a nested sequence place and refuses at the second; the closed forms omit `binders` when unquantified. | Test (TC-367; CL-57..CL-60, CL-62) |
 | FR-322-AC-296 | Every nonempty dispatch candidate carries a required `selected_operation` witness equal to the parent table's `{declaring, operation}` witness, so the strict reader can key the handle mapping by `(selected_operation, selection_key)` without an operation-member `NodeRef`; a differing candidate witness refuses `invalid_package`/`invalid-value` at `/checked_term_data/dispatch_tables/{i}/candidates/{j}/selected_operation`. Positive `DT-01` has two candidates with distinct FR-150 keys and the same exact operation witness; a schema-valid candidate witness mutation is published with its refusal and locus. Empty `DT-02` remains valid with no candidate witnesses. | Test (TC-233) |
 | FR-322-AC-297 | Each probabilistic claim has exactly one `probabilistic_claims` row naming its exact local `claim`/`probabilistic_claim` declaration `NodeRef` and one declared `claim` occurrence. Rows sort by structural declaration identity then occurrence. A second row for one declaration refuses `invalid_package`/`conflicting-definition` even when it names a different valid occurrence (`PC-R4`); a repeated `(declaration, occurrence)` key refuses at the later row (`PC-R5`) with the same typed code/cause. Missing occurrence fails the closed schema; absent-local, foreign, wrong-kind and non-probabilistic declarations or an occurrence not owned by the named declaration refuse `invalid_package`/`invalid-value` at the first mismatching member (`PC-R1`..`PC-R3`, `PC-R6`). Reversing two otherwise valid rows refuses `invalid_package`/`invalid-semantic-graph` at the second row (`PC-R7`). PC-01 and PC-02 have equal display names and source spans but distinct declaration nodes and remain distinct; no name, span or declaration-order inference is permitted. | Test (TC-233) |
@@ -4201,7 +4331,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-300 | A package with no `claim`/`schedulability` occurrence omits `schedulability_claims`; a package with such occurrences contains exactly one closed `{declaration, occurrence}` row for each, in structural-`NodeRef`, then occurrence order. Each row resolves only to its local `claim`/`schedulability` node and one of that node's `claim` occurrences; it copies no claim body, task value, source release binding, policy or task-transition template. The positive and shared-node/multiple-occurrence vectors are schema-valid. Missing coverage, a foreign, absent or wrong-form node, an unowned occurrence, a repeated key and a non-canonical row order have the exact `invalid_package` refusal and locus in TC-976; missing/extra row members and a non-integer or negative occurrence are `malformed_wire`. The IR typed read exposes the FR-482 body and identity without evaluating model releases or task successors; the QSL FR-418 checker alone recomputes source/scheduler successors. `TaskTransitionTemplate` remains in the backend-provider-v1 certificate and is not a checked-package member. | Test (TC-976) |
 | FR-322-AC-303 | A package carries `operation_effects` or omits it; when omitted the effects are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, effect, provenance}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)`, with all four `effect` members always present. Each of `modifies`, `creates`, `deletes` and `deletes_scoped` is carried exactly as the selected document's operation frame lifts under FR-013-AC-13 and FR-340, so no effect kind is dropped, and an operation with no frame entries has an all-empty row. One member name under another declaring node or document is another row. The positive vectors OEC-01 to OEC-07 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed`, `invalid_model_binding`, `invalid_semantic_graph` and `invalid_package` refusals and loci for missing/extra members, unknown effect or entry kinds, wrong provenance, a field or undeclared operation, a dropped or invented effect, a repeated key, key order and missing coverage are in TC-977. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-977) |
 | FR-322-AC-304 | A `text` literal typed by `Text[min, max; profile]` is admitted exactly when its `value` is already normalized under `profile` (`nfc`, `nfd`, `nfkc`, `nfkd`; the reader normalizes nothing) and its length (scalar count, or UTF-8 byte count under `binary-utf8`) lies in `[min, max]`, both bounds inclusive. A length below `min`, a length above `max` and a `value` not in the profile's normal form each refuse `ill_typed`/`type-mismatch` at `/semantic_graph/nodes/{n}/body/value`; under `binary-utf8` a two-scalar, four-byte `value` against `Text[1, 3; binary-utf8]` refuses while the same `value` against `Text[1, 3; unicode-scalars]` is admitted (`proposals/checked-package-v2/text-literal-vectors.json`, `TX-01` to `TX-14`). | Test (TC-233) |
-| FR-322-AC-305 | A `temporal_bindings` row may be keyed by the `node_id` of a `protocol`/`compensation` node (operator `compensate`) as well as of a `temporal`/`temporal_clause` node; its `clock_name` is the compensation's `clock` text and its configuration kind is the one the lock's `temporal_profile` selection determines (no per-node law). When that selection is clock-configured every compensation node has exactly one row. A compensation with no row refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{N}/body` (`CB-03`); a repeated compensation row at the second row `/temporal_bindings/{i}` (`CB-04`); a compensation row whose `clock_name` differs from the node's `clock` at `/temporal_bindings/{i}/clock_name` (`CB-05`) before a configuration kind inconsistent with the lock's selection at `/temporal_bindings/{i}/clock/kind` (`CB-06`); a row naming a node that is neither a temporal clause nor a compensation, an `await` included, at `/temporal_bindings/{i}/declaration` (`CB-07`). A clause beside two compensations sharing model, profile and clock name (`CB-01`), compensations alone (`CB-02`) and the same rows under a profile with no clock configuration (`CB-08`, no rows, member absent) are admitted. The schema and every existing payload are unchanged (`proposals/checked-package-v2/temporal-clock-binding-vectors.json`). | Test (TC-233) |
+| FR-322-AC-305 | A `temporal_bindings` row may be keyed by the `node_id` of a `protocol`/`compensation` node (operator `compensate`) as well as of a `temporal`/`temporal_clause` node; its `clock_name` is the compensation's `clock` text and its configuration kind is the one the lock's `temporal_profile` selection determines (no per-node law). When that selection is clock-configured every compensation node has exactly one row. A compensation with no row refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{N}/body` (`CB-03`); a repeated compensation key at the second row `/temporal_bindings/{i}` as `conflicting-definition` (`CB-04`); a compensation row whose `clock_name` differs from the node's `clock` at `/temporal_bindings/{i}/clock_name` (`CB-05`) before a configuration kind inconsistent with the lock's selection at `/temporal_bindings/{i}/clock/kind` (`CB-06`); a row naming a node that is neither a temporal clause nor a compensation, an `await` included, at `/temporal_bindings/{i}/declaration` (`CB-07`). A clause beside two compensations sharing model, profile and clock name (`CB-01`), compensations alone (`CB-02`) and the same rows under a profile with no clock configuration (`CB-08`, no rows, member absent) are admitted. A compensation row names the compensation's `declaration` occurrence, ordinal 0 in every published package (`proposals/checked-package-v2/temporal-clock-binding-vectors.json`). | Test (TC-233) |
 | FR-322-AC-306 | A `bounded_domain`/`text_bounds` node is admitted only with the complete body `aggregate{min, max, text_profile}` (`min`, `max` nonnegative integer literals, `min <= max`, `text_profile` one of FR-141's six): `Text[0, 64; nfc]` and `Text[2, 2; binary-utf8]` are admitted. A profile-only node (`Text[nfc]`), a node missing `min`, a node missing `max`, a node missing `text_profile`, a member beside the three, `min` above `max` and a profile outside the six each refuse `invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/{n}`, before any literal typed by the node is checked for membership; no unbounded `Text[profile]` exists (`proposals/checked-package-v2/text-bounds-shape-vectors.json`, `TS-01` to `TS-10`). | Test (TC-233) |
 | FR-322-AC-307 | `quire.op.ieee.float64.fma` over three `float64` operands typed `Float64[nearest-even]`, and `quire.op.ieee.float32.fma` over three `float32` operands typed `Float32[toward-zero]`, are admitted as applications of operator `call` with three `reference` arguments a, b, c, `result_type` of the operands' width, the law `ieee_profile` and a `rounding` mode, no member and no leaves (the catalog entry of QVC `checked-operation-catalog-v1.json`). Two arguments, four arguments, a `float32` operand of the `float64` identity (mixed width included), an `integer` operand and a `float32` `result_type` of the `float64` identity refuse `ill_typed`/`operator-ineligible`; a node with mode `null` refuses `invalid_package`/`operation-mode-mismatch` and one with no `ieee_profile` law `invalid_package`/`operation-law-missing` (`proposals/checked-package-v2/fma-application-vectors.json`, `FM-01` to `FM-12`). | Test (TC-233) |
 | FR-322-AC-308 | A `temporal`/`monitor_plan` root is admitted by the reader only with the seventeen ordered bindings, the entry signatures, the `Outcome` union and the premises of FR-487, and refuses with the codes and loci of FR-487 otherwise; buffer extension adds no operation identity to the closed catalog or to either V2 schema (`proposals/checked-package-v2/monitor-plan-vectors.json`, `MP-01` to `MP-82`). | Test (TC-978) |
@@ -4238,6 +4368,35 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-339 | The integrity verification runs before the owner join and source-map agreement check of FR-322-AC-52: a failing `lock.sources` claim plus a declaration region moved to another locked source refuses `invalid_package`/`source-integrity` at `/lock/sources/0` (vector SI-R14). | Test (TC-233) |
 | FR-322-AC-340 | A declaration region moved to another locked source, every claim holding, refuses `invalid_package`/`invalid-value` at its `/source_map/{i}` entry (vector SI-R15). | Test (TC-233) |
 | FR-322-AC-341 | The integrity verification runs before the closed-schema checks: a failing first `lock.sources` claim and a schema-invalid extra member on the second entry refuse `invalid_package`/`source-integrity` at `/lock/sources/0` (vector SI-R16). | Test (TC-233) |
+| FR-322-AC-342 | A `temporal`/`temporal_clause` node carries no `declaration` member: the schema refuses a `declaration` on every `temporal` node, and a reader refuses one on a `temporal_clause` node as `invalid_semantic_graph` at `/semantic_graph/nodes/{N}/declaration`, before any row check (CN-G1). | Test (TC-233) |
+| FR-322-AC-343 | Replacing the `name` of a row changes no node and no `node_id` of the package: the clause's identity is not a function of its declared name (CN-P3). | Test (TC-233) |
+| FR-322-AC-344 | Two structurally equal clauses share one `temporal_clause` node with two `claim` occurrences, and the package carries two name rows, one per occurrence ordinal, with distinct names (CN-P2). | Test (TC-233) |
+| FR-322-AC-345 | `temporal_clause_names` is absent exactly when the graph has no `temporal_clause` node: every published positive package with a clause carries it and every other omits it. | Test (TC-233) |
+| FR-322-AC-346 | A `claim` occurrence of a `temporal_clause` node with no name row refuses `invalid_package`/`invalid-value` at `/temporal_clause_names`, a shared node with two occurrences and one row included (CN-R2). | Test (TC-233) |
+| FR-322-AC-347 | A package that holds a `temporal_clause` node and no `temporal_clause_names` member refuses `invalid_package`/`invalid-value` at `/temporal_clause_names` (CN-R1). | Test (TC-233) |
+| FR-322-AC-348 | A name row without `declaration`, `occurrence` or `name` is refused by the closed schema as `malformed_wire` at the row (CN-S1..CN-S3). | Test (TC-233) |
+| FR-322-AC-349 | A name row with a member the closed row does not declare is `malformed_wire` at the row (CN-S4). | Test (TC-233) |
+| FR-322-AC-350 | A `name` that is an integer, the empty string or a qualified path, and a negative `occurrence`, are `malformed_wire` at that member (CN-S5..CN-S8). | Test (TC-233) |
+| FR-322-AC-351 | A name row whose `declaration` names no graph node, or a node that is not a `temporal_clause`, refuses `invalid_package`/`invalid-value` at `/temporal_clause_names/{i}/declaration` (CN-R3, CN-R4). | Test (TC-233) |
+| FR-322-AC-352 | A name row whose `occurrence` is not a `claim` occurrence of its node refuses `invalid_package`/`invalid-value` at `/temporal_clause_names/{i}/occurrence` (CN-R5). A clause carries `claim` occurrences only (FR-370), so an ordinal the node lacks is the way the join fails in a schema-valid package. | Test (TC-233) |
+| FR-322-AC-353 | A second name row with one (`declaration`, `occurrence`) key refuses `invalid_package`/`conflicting-definition` at the later row (CN-R6). | Test (TC-233) |
+| FR-322-AC-354 | Name rows out of (`NodeRef`, occurrence) order refuse `invalid_package`/`invalid-value` at the later row (CN-R7). | Test (TC-233) |
+| FR-322-AC-355 | Name rows are checked in full one at a time: a repeated key at row 1 is reported although row 2 has an absent declaration (CN-R9). | Test (TC-233) |
+| FR-322-AC-356 | Within one name row the repeated key is reported before the order: a third row that repeats a key and descends refuses `conflicting-definition` at that row (CN-R10). | Test (TC-233) |
+| FR-322-AC-357 | A descent in the name rows is reported before an uncovered occurrence: rows (clause, 1), (clause, 0) over three occurrences refuse `invalid-value` at row 1, not at `/temporal_clause_names` (CN-R11). | Test (TC-233) |
+| FR-322-AC-358 | A name row's declaration join is reported before the coverage check: an absent declaration with an uncovered occurrence refuses at the row's `declaration` (CN-R8). | Test (TC-233) |
+| FR-322-AC-359 | A `temporal_bindings` row is the closed `{declaration, occurrence, clock, clock_name}`, and a row without `occurrence` is refused by the schema as `malformed_wire` at the row (BO-S1). | Test (TC-233) |
+| FR-322-AC-360 | A `temporal_bindings` `occurrence` that is negative or not an integer is `malformed_wire` at that member (BO-S2, BO-S3). | Test (TC-233) |
+| FR-322-AC-361 | The clock configuration is per occurrence: one shared node with two `claim` occurrences carries two binding rows, which are admitted with different configurations (BO-P1) and with equal ones (BO-P2), and every published positive package has one row per claim occurrence of each clock-configured clause, each with `occurrence` 0 where the clause has one. | Test (TC-233) |
+| FR-322-AC-362 | A `claim` occurrence of a clock-configured clause with no binding row refuses `invalid_package`/`timed-node-reference` at the node's `/semantic_graph/nodes/{N}/body` (BO-R1). | Test (TC-233) |
+| FR-322-AC-363 | A binding row whose `occurrence` is not a `claim` occurrence of its clause refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/occurrence` (BO-R2). A clause carries `claim` occurrences only (FR-370), so an ordinal the node lacks is the way the join fails in a schema-valid package. | Test (TC-233) |
+| FR-322-AC-364 | A second binding row with one (`declaration`, `occurrence`) key refuses `invalid_package`/`conflicting-definition` at the later row, for a clause and for a compensation (BO-R3, CB-04, TCB-10). | Test (TC-233) |
+| FR-322-AC-365 | Binding rows out of (`NodeRef`, occurrence) order refuse `invalid_package`/`timed-node-reference` at the later row's `occurrence` when the declarations are equal (BO-R4). | Test (TC-233) |
+| FR-322-AC-366 | Within one binding row the repeated key is reported before the order: a row that repeats a key and descends refuses `conflicting-definition` (BO-R5). | Test (TC-233) |
+| FR-322-AC-367 | Binding rows are checked in full one at a time: a repeated key at row 1 is reported although row 2 has an absent declaration (BO-R6). | Test (TC-233) |
+| FR-322-AC-368 | A descent in the binding rows is reported before an uncovered occurrence (BO-R7). | Test (TC-233) |
+| FR-322-AC-369 | The clock name of the second occurrence's row is compared with the body's clock name: a differing name refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/clock_name` (BO-R8). | Test (TC-233) |
+| FR-322-AC-370 | The configuration kind of the second occurrence's row is compared with the selected profile: a kind the profile does not determine refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/clock/kind` (BO-R9). | Test (TC-233) |
 | FR-322-AC-371 | Every refusal in the published tuple/union intake and wire vectors (`model-tuple-union-vectors.json`) carries a `stage` member beside its code, cause and locus, drawn from the closed set `schema` (the V2 closed-schema check; `malformed_wire`), `graph` (the join stages 1 to 4 of FR-322-AC-275, in that order) and `reader` (every declaration, frame, state, operation and later step, including FR-154 intake). The vector's `stage` is the stage that raises the refusal under the order of FR-322-AC-275; it is not the `Diagnostic` `stage` member of a `ReadResult`, which stays `package_read` for the reader. A replay oracle compares admission or refusal, code, cause, RFC 6901 locus and this `stage`; an admitted case is compared by admission, and an omitted case, a refusal without a `stage` or a refusal whose stage differs from the vector's is a replay failure. Admitted-package equality is not part of the oracle: the admitted package is the published fixture itself. The stage applies to every refusal case of every section of the file (`position_cases`, `union_value_cases`, `enum_value_cases`, `equality_cases`, `intake_cases` and `wire_cases`). The `schema` wire cases are `TW-01` to `TW-04`, `TW-10` and `TW-26`; `TW-06` to `TW-09`, `TW-21`, `TW-22`, `TW-27` and `TW-28` (owner join before the dangling edge) are `graph`; the `ill_typed` query cases (`TP-03`, `TP-07`, `TU-04` to `TU-08`, `TQ-02`, `TQ-04`) and every intake refusal are `reader`; `TE-02` to `TE-04` (`invalid_semantic_graph`) are `graph`. | Test (TC-940) |
 
 ## Dependencies

@@ -13065,10 +13065,13 @@ fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
         let bindings = bindings.unwrap_or_else(|| {
             panic!("{name} has clock-configured clauses but no temporal_bindings")
         });
+        let occurrences = |node: &Value| {
+            node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim").count()
+        };
         assert_eq!(
             bindings.len(),
-            configured.len(),
-            "{name} has one row for every clock-configured clause"
+            configured.iter().map(|(node, _, _)| occurrences(node)).sum::<usize>(),
+            "{name} has one row for every claim occurrence of every clock-configured clause"
         );
         for (node, profile, kind) in configured {
             let id = &node["node_id"];
@@ -13076,8 +13079,9 @@ fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
                 .iter()
                 .filter(|row| row["declaration"] == *id)
                 .collect::<Vec<_>>();
-            assert_eq!(matching.len(), 1, "{name} binds {profile} clause {id} once");
+            assert_eq!(matching.len(), occurrences(node), "{name} binds {profile} clause {id} once per occurrence");
             let row = matching[0];
+            assert_eq!(row["occurrence"], 0, "{name}: the row names its claim occurrence");
             assert_eq!(
                 row["clock_name"], node["body"]["arguments"][1]["value"],
                 "{name} carries the clause's exact clock name"
@@ -16294,6 +16298,7 @@ fn temporal_clock_package(case: &Value) -> Value {
     replace_exact_json_value(&mut package, &old_id, &new_id);
     package["temporal_bindings"] = json!([{
         "declaration": new_id,
+        "occurrence": 0,
         "clock": case["clock"].clone(),
         "clock_name": case["clock_name"].clone()
     }]);
@@ -16438,7 +16443,13 @@ fn tc_233_compensation_rows_follow_the_temporal_binding_rules() {
             }
             "refused" => {
                 assert_eq!(case["code"], "invalid_package", "{id}");
-                assert_eq!(case["cause"], "timed-node-reference", "{id}");
+                // A repeated (declaration, occurrence) key is `conflicting-definition`; every
+                // other binding refusal is `timed-node-reference`.
+                let repeated = rows.iter().enumerate().any(|(i, row)| {
+                    rows[..i].iter().any(|earlier| earlier["declaration"] == row["declaration"])
+                });
+                let expected_cause = if repeated { "conflicting-definition" } else { "timed-node-reference" };
+                assert_eq!(case["cause"], expected_cause, "{id}");
                 assert_eq!(outcome.as_deref(), case["locus"].as_str(), "{id}: the refusal locus");
                 refused += 1;
             }
@@ -16653,7 +16664,10 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
         );
         assert_eq!(refusal["schema"], "valid");
         assert_eq!(refusal["expected_code"], "invalid_package");
-        assert_eq!(refusal["expected_cause"], "timed-node-reference");
+        assert_eq!(
+            refusal["expected_cause"],
+            if refusal["mutation"] == "duplicate-row" { "conflicting-definition" } else { "timed-node-reference" }
+        );
         assert_eq!(
             refusal["locus"].as_str().unwrap(),
             expected_locus,
@@ -22757,4 +22771,381 @@ fn tc_277_replay_sources_are_checked_against_byte_provision() {
         })();
         assert_eq!(outcome, case["expected"], "{id}");
     }
+}
+
+// ---------------------------------------------------------------------------
+// IR-1278: temporal clause names and per-occurrence clock bindings
+// (FR-322 "Temporal clause names", "Temporal clock bindings", FR-370).
+// ---------------------------------------------------------------------------
+
+const TEMPORAL_CLAUSE_NAME_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-clause-name-vectors.json");
+const TEMPORAL_CLOCK_OCCURRENCE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-clock-occurrence-vectors.json");
+
+type CarrierRefusal = (&'static str, Option<&'static str>, String);
+
+/// Resolve the vector placeholders `<clause>` and `<node 9>`.
+fn resolve_clause_name_placeholders(value: &Value, base: &Value) -> Value {
+    match value {
+        Value::String(text) => {
+            let nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+            match text.as_str() {
+                "<clause>" => nodes[8]["node_id"].clone(),
+                "<node 9>" => nodes[9]["node_id"].clone(),
+                _ => value.clone(),
+            }
+        }
+        Value::Object(map) => Value::Object(
+            map.iter()
+                .map(|(key, item)| (key.clone(), resolve_clause_name_placeholders(item, base)))
+                .collect(),
+        ),
+        Value::Array(items) => Value::Array(
+            items.iter().map(|item| resolve_clause_name_placeholders(item, base)).collect(),
+        ),
+        other => other.clone(),
+    }
+}
+
+/// RFC 6902 patch, adding array insertion to the shared object-member applier.
+fn apply_clause_name_patch(candidate: &mut Value, patch: &Value) {
+    if patch["op"] == "add" {
+        let path = patch["path"].as_str().expect("add path");
+        let (parent, member) = path.rsplit_once('/').expect("add path has a parent");
+        if let Some(array) = candidate.pointer_mut(parent).and_then(Value::as_array_mut) {
+            array.insert(member.parse().expect("array index"), patch["value"].clone());
+            return;
+        }
+    }
+    apply_authored_patch(candidate, patch);
+}
+
+fn clause_name_case_package(base: &Value, case: &Value) -> Value {
+    let mut package = base.clone();
+    for patch in case["patch"].as_array().expect("patch") {
+        apply_clause_name_patch(&mut package, &resolve_clause_name_placeholders(patch, base));
+    }
+    package
+}
+
+fn is_temporal_clause(node: &Value) -> bool {
+    node["node_tag"] == "temporal" && node["semantic_form"] == "temporal_clause"
+}
+
+/// Per-row join, repeated-key and order checks shared by `temporal_clause_names` and
+/// `temporal_bindings`, in reader order: for each row in array order the declaration join,
+/// the occurrence join, the repeated key, then the canonical order; coverage is the caller's.
+fn decide_occurrence_rows(
+    nodes: &[Value],
+    rows: &[Value],
+    root: &str,
+    declaration_ok: &dyn Fn(&Value) -> bool,
+    occurrence_role: &dyn Fn(&Value) -> &'static str,
+    join_cause: &'static str,
+    order_at_declaration: bool,
+) -> Result<(), CarrierRefusal> {
+    let mut previous: Option<(&Value, u64)> = None;
+    for (i, row) in rows.iter().enumerate() {
+        let node = nodes
+            .iter()
+            .find(|node| node["node_id"] == row["declaration"])
+            .filter(|node| declaration_ok(node));
+        let Some(node) = node else {
+            return Err(("invalid_package", Some(join_cause), format!("{root}/{i}/declaration")));
+        };
+        let role = occurrence_role(node);
+        let owned = node["occurrences"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|o| o["role"] == role && o["ordinal"] == row["occurrence"]);
+        if !owned {
+            return Err(("invalid_package", Some(join_cause), format!("{root}/{i}/occurrence")));
+        }
+        let key = (&row["declaration"], row["occurrence"].as_u64().unwrap());
+        if rows[..i].iter().any(|e| (&e["declaration"], e["occurrence"].as_u64().unwrap()) == key) {
+            return Err(("invalid_package", Some("conflicting-definition"), format!("{root}/{i}")));
+        }
+        if let Some((declaration, occurrence)) = previous {
+            let order = node_id_order(declaration, key.0).then(occurrence.cmp(&key.1));
+            if order.is_gt() {
+                let same = declaration == key.0;
+                let locus = if order_at_declaration && !same {
+                    format!("{root}/{i}/declaration")
+                } else if order_at_declaration {
+                    format!("{root}/{i}/occurrence")
+                } else {
+                    format!("{root}/{i}")
+                };
+                return Err(("invalid_package", Some(join_cause), locus));
+            }
+        }
+        previous = Some(key);
+    }
+    Ok(())
+}
+
+/// Test-local decider for the per-occurrence carriers of a temporal clause: first the graph
+/// shape (no node `declaration`), then `temporal_bindings` rows, then `temporal_clause_names`
+/// rows. Every temporal clause of the published fixtures selects the event-position profile,
+/// so each is clock-configured.
+fn decide_temporal_clause_carriers(package: &Value) -> Result<(), CarrierRefusal> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    for (n, node) in nodes.iter().enumerate() {
+        if is_temporal_clause(node) && node.get("declaration").is_some() {
+            return Err(("invalid_semantic_graph", None, format!("/semantic_graph/nodes/{n}/declaration")));
+        }
+    }
+    let bindings = package["temporal_bindings"].as_array().cloned().unwrap_or_default();
+    let binding_role = |node: &Value| if is_temporal_clause(node) { "claim" } else { "declaration" };
+    decide_occurrence_rows(
+        nodes,
+        &bindings,
+        "/temporal_bindings",
+        &|node| {
+            is_temporal_clause(node)
+                || (node["node_tag"] == "protocol" && node["semantic_form"] == "compensation")
+        },
+        &binding_role,
+        "timed-node-reference",
+        true,
+    )?;
+    for (n, node) in nodes.iter().enumerate().filter(|(_, node)| is_temporal_clause(node)) {
+        for occurrence in node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim") {
+            if !bindings
+                .iter()
+                .any(|r| r["declaration"] == node["node_id"] && r["occurrence"] == occurrence["ordinal"])
+            {
+                return Err((
+                    "invalid_package",
+                    Some("timed-node-reference"),
+                    format!("/semantic_graph/nodes/{n}/body"),
+                ));
+            }
+        }
+    }
+    for (i, row) in bindings.iter().enumerate() {
+        let node = nodes.iter().find(|node| node["node_id"] == row["declaration"]).unwrap();
+        if !is_temporal_clause(node) {
+            continue;
+        }
+        if node["body"]["arguments"][1]["value"] != row["clock_name"] {
+            return Err(("invalid_package", Some("timed-node-reference"), format!("/temporal_bindings/{i}/clock_name")));
+        }
+        let profile = node["body"]["operation"]["laws"][0]["definition"]["identity"].as_str().unwrap();
+        if temporal_clock_kind(profile) != row["clock"]["kind"].as_str() {
+            return Err(("invalid_package", Some("timed-node-reference"), format!("/temporal_bindings/{i}/clock/kind")));
+        }
+    }
+    let names = package["temporal_clause_names"].as_array().cloned().unwrap_or_default();
+    decide_occurrence_rows(
+        nodes,
+        &names,
+        "/temporal_clause_names",
+        &|node| is_temporal_clause(node),
+        &|_| "claim",
+        "invalid-value",
+        false,
+    )?;
+    for node in nodes.iter().filter(|node| is_temporal_clause(node)) {
+        for occurrence in node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim") {
+            if !names.iter().any(|r| r["declaration"] == node["node_id"] && r["occurrence"] == occurrence["ordinal"]) {
+                return Err(("invalid_package", Some("invalid-value"), "/temporal_clause_names".to_owned()));
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Replay one vector file of patch cases: admitted, schema-invalid and schema-valid refusals.
+fn replay_carrier_cases(
+    vectors: &Value,
+    schema: &Value,
+    row_def: &str,
+    member: &str,
+    seen: &mut BTreeSet<String>,
+) -> (usize, usize, usize) {
+    let package_validator = jsonschema::validator_for(schema).expect("checked package schema");
+    let row_validator = schema_for_def(schema, row_def);
+    let base = parsed_fixture(&std::fs::read_to_string(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("proposals/checked-package-v2")
+            .join(vectors["base"].as_str().unwrap()),
+    ).expect("base fixture"));
+    let expected_of = |case: &Value| {
+        let e = &case["expected"];
+        (e["code"].as_str().unwrap().to_owned(), e["cause"].as_str().map(str::to_owned), e["locus"].as_str().unwrap().to_owned())
+    };
+    let decided = |package: &Value| {
+        decide_temporal_clause_carriers(package)
+            .map(|()| None)
+            .unwrap_or_else(|(code, cause, locus)| Some((code.to_owned(), cause.map(str::to_owned), locus)))
+    };
+    let (mut admitted, mut schema_refused, mut refused) = (0, 0, 0);
+    assert_eq!(decided(&base), None, "the base package is admitted");
+    for case in vectors["positive"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(
+            package_validator.is_valid(&package),
+            "{id}: {:?}",
+            package_validator.iter_errors(&package).map(|e| e.to_string()).collect::<Vec<_>>()
+        );
+        assert_eq!(decided(&package), None, "{id}");
+        assert_eq!(
+            package["temporal_bindings"].as_array().unwrap().len() as u64,
+            case["bindings"].as_u64().unwrap(),
+            "{id}: one binding row per claim occurrence"
+        );
+        admitted += 1;
+    }
+    for case in vectors["schema_refusals"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(!package_validator.is_valid(&package), "{id}: the closed schema refuses the package");
+        assert_eq!(case["expected"]["code"], "malformed_wire", "{id}");
+        // A missing or extra member is refused at the row; a mistyped member at that member.
+        let row = &package[member][0];
+        let error = row_validator
+            .iter_errors(row)
+            .next()
+            .unwrap_or_else(|| panic!("{id}: the row definition refuses the row"));
+        assert_eq!(
+            format!("/{member}/0{}", error.instance_path()),
+            case["expected"]["locus"].as_str().unwrap(),
+            "{id}"
+        );
+        schema_refused += 1;
+    }
+    for case in vectors["shape_refusals"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(!package_validator.is_valid(&package), "{id}: the schema also refuses the package");
+        assert_eq!(decided(&package), Some(expected_of(case)), "{id}");
+        refused += 1;
+    }
+    for case in vectors["semantic_refusals"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(
+            package_validator.is_valid(&package),
+            "{id}: schema-valid reader case: {:?}",
+            package_validator.iter_errors(&package).map(|e| format!("{e} at {}", e.instance_path())).collect::<Vec<_>>()
+        );
+        assert_eq!(decided(&package), Some(expected_of(case)), "{id}");
+        refused += 1;
+    }
+    (admitted, schema_refused, refused)
+}
+
+/// FR-322-AC-342..AC-358 (TC-233): the clause-name carrier is closed, per claim occurrence and
+/// identity-free, and the vectors decide it.
+#[trace("TC-233", "TC-303", "FR-322-AC-342", "FR-322-AC-343", "FR-322-AC-344", "FR-322-AC-345", "FR-322-AC-346", "FR-322-AC-347", "FR-322-AC-348", "FR-322-AC-349", "FR-322-AC-350", "FR-322-AC-351", "FR-322-AC-352", "FR-322-AC-353", "FR-322-AC-354", "FR-322-AC-355", "FR-322-AC-356", "FR-322-AC-357", "FR-322-AC-358", "FR-370-AC-16")]
+#[test]
+fn temporal_clause_name_carrier_is_closed_per_occurrence_and_identity_free() {
+    let vectors = parsed_fixture(TEMPORAL_CLAUSE_NAME_VECTORS);
+    let schema = parsed_fixture(SCHEMA);
+    assert_eq!(schema["properties"]["temporal_clause_names"]["items"]["$ref"], "#/$defs/TemporalClauseNameRow");
+    assert!(
+        !schema["required"].as_array().unwrap().contains(&json!("temporal_clause_names")),
+        "a package with no temporal clause omits the member"
+    );
+    let row_schema = &schema["$defs"]["TemporalClauseNameRow"];
+    assert_eq!(row_schema["additionalProperties"], json!(false), "the row is closed");
+    assert_eq!(row_schema["properties"]["name"]["$ref"], "#/$defs/Identifier");
+    assert_eq!(
+        row_schema["properties"].as_object().unwrap().keys().cloned().collect::<BTreeSet<_>>(),
+        ["declaration", "name", "occurrence"].iter().map(|s| s.to_string()).collect()
+    );
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-timed-clause-nodes.json"
+    ));
+    let nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+    let clause = &nodes[vectors["clause_graph_index"].as_u64().unwrap() as usize];
+    assert!(is_temporal_clause(clause));
+    assert!(clause.get("declaration").is_none(), "AC-342: no declaration member on the node");
+    assert!(!clause["node_id"].to_string().contains("Clause0"), "AC-343: the name is outside the node id");
+
+    let mut seen = BTreeSet::new();
+    let counts = replay_carrier_cases(&vectors, &schema, "TemporalClauseNameRow", "temporal_clause_names", &mut seen);
+    assert_eq!(counts, (3, 8, 12), "positives, schema refusals, reader and shape refusals");
+
+    for case in vectors["positive"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let package = clause_name_case_package(&base, case);
+        let rows = package["temporal_clause_names"].as_array().unwrap();
+        let names: Vec<&str> = rows.iter().map(|row| row["name"].as_str().unwrap()).collect();
+        assert_eq!(names, string_list(&case["names"], "names"), "{id}");
+        let occurrences = package["semantic_graph"]["nodes"][8]["occurrences"].as_array().unwrap().len();
+        assert_eq!(names.len(), occurrences, "{id}: one name per claim occurrence");
+        if case["identity_unchanged"] == true {
+            for patch in case["patch"].as_array().unwrap() {
+                assert!(
+                    patch["path"].as_str().unwrap().starts_with("/temporal_clause_names"),
+                    "{id}: a rename touches only the name row"
+                );
+            }
+            assert_eq!(package["semantic_graph"], base["semantic_graph"], "{id}: AC-343");
+        } else if names.len() == 2 {
+            assert_eq!(rows[0]["declaration"], rows[1]["declaration"], "{id}: AC-344 one shared node");
+            assert_ne!(rows[0]["name"], rows[1]["name"], "{id}: AC-344 a name per occurrence");
+            assert_ne!(rows[0]["occurrence"], rows[1]["occurrence"], "{id}");
+        }
+    }
+}
+
+/// FR-322-AC-359..AC-370 (TC-233): the clock configuration is per claim occurrence, so twins
+/// may select different configurations, and its rows are checked like the name rows.
+#[trace("TC-233", "FR-322-AC-294", "FR-322-AC-359", "FR-322-AC-360", "FR-322-AC-361", "FR-322-AC-362", "FR-322-AC-363", "FR-322-AC-364", "FR-322-AC-365", "FR-322-AC-366", "FR-322-AC-367", "FR-322-AC-368", "FR-322-AC-369", "FR-322-AC-370")]
+#[test]
+fn temporal_clock_bindings_are_keyed_per_claim_occurrence() {
+    let vectors = parsed_fixture(TEMPORAL_CLOCK_OCCURRENCE_VECTORS);
+    let schema = parsed_fixture(SCHEMA);
+    let required: Vec<&str> = string_list(&schema["$defs"]["TemporalBinding"]["required"], "required");
+    assert!(required.contains(&"occurrence"), "AC-359: the row names its occurrence");
+    assert_eq!(schema["$defs"]["TemporalBinding"]["additionalProperties"], json!(false));
+    let mut seen = BTreeSet::new();
+    let counts = replay_carrier_cases(&vectors, &schema, "TemporalBinding", "temporal_bindings", &mut seen);
+    assert_eq!(counts, (2, 3, 9));
+    // AC-361: twins of one node select different configurations.
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-timed-clause-nodes.json"
+    ));
+    let twins = clause_name_case_package(&base, &vectors["positive"][0]);
+    let rows = twins["temporal_bindings"].as_array().unwrap();
+    assert_eq!(rows[0]["declaration"], rows[1]["declaration"]);
+    assert_ne!(rows[0]["clock"], rows[1]["clock"], "different configurations, one node");
+    assert_eq!(rows[0]["clock_name"], rows[1]["clock_name"], "the body's clock name is per node");
+}
+
+/// Every published positive package that has a temporal clause names each claim occurrence of
+/// each clause and binds each one.
+#[trace("TC-233", "FR-322-AC-345", "FR-322-AC-361")]
+#[test]
+fn every_positive_fixture_names_and_binds_each_claim_occurrence_of_each_temporal_clause() {
+    let mut with_clauses = 0;
+    for (name, package) in published_positive_packages() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+        let expected: usize = nodes
+            .iter()
+            .filter(|n| is_temporal_clause(n))
+            .map(|n| n["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim").count())
+            .sum();
+        for member in ["temporal_clause_names", "temporal_bindings"] {
+            match package[member].as_array() {
+                None => assert_eq!(expected, 0, "{name}: a clause needs its {member} rows"),
+                Some(rows) => assert_eq!(rows.len(), expected, "{name}: {member}"),
+            }
+        }
+        if expected > 0 {
+            with_clauses += 1;
+        }
+        assert_eq!(decide_temporal_clause_carriers(&package), Ok(()), "{name}");
+    }
+    assert!(with_clauses >= 6, "the published clause fixtures all carry rows: {with_clauses}");
 }

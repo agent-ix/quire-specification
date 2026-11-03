@@ -78,6 +78,11 @@ not hold, with the first refusal in the reader order below.
   role `expression`, and FR-322's application-node dependencies.
 - **dependencies** — FR-322's application-node rule: the unique
   node-id-ascending `reference` targets and member declarations of the body.
+- **declared name** — none. The clause's declared name is no argument of the
+  body and no `declaration` of the node, so it is not an input of the node's
+  structural identity, and two structurally equal clauses share one node. The
+  name of each `claim` occurrence is the `name` of its `temporal_clause_names`
+  row ([FR-322](FR-322-checked-package-artifact.md) "Temporal clause names").
 
 ## Operation catalog entries
 
@@ -334,6 +339,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-13 | A `temporal` clause written with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the token standing where `over` is required, and produces no node; a `quire.op.temporal.clause` application whose argument 1 is absent, `null` or a non-reference term (such as the clause's clock text literal) fails the published schema. | Test (TC-180, TC-303) |
 | FR-370-AC-14 | A fairness member's `target` discriminant and identity fields match exactly one target variant: operation, protocol root, attempt node, parallel branch, compensation template or hybrid transition. The vectors admit one member of every variant and reject an absent or unknown discriminant, a missing operation declaration, a branch label without its parallel identity, an extra target identity field and a negative node ordinal. | Test (TC-303) |
 | FR-370-AC-15 | A protocol-root target resolves to the clause's exact protocol node, an attempt and a compensation target resolve to exact nodes owned by that clause, and a parallel-branch target resolves only when its exact parallel control and branch label both belong to that clause. An absent or foreign-package identity, or an existing same-package target owned by another protocol clause, refuses `missing_declaration`/`missing-name` at `/target/node` or `/target/parallel`; a local target with the wrong protocol family or control operator refuses `invalid_model_binding`/`malformed-declaration` at the same target field; and an absent label on a local parallel refuses `missing_declaration`/`missing-name` at `/target/branch`. The reader checks package identity, clause ownership, target kind and branch-label membership in that order. | Test (TC-303) |
+| FR-370-AC-16 | A `temporal_clause` node's body and `node_id` hold no declared name: two clauses that differ only in declared name encode to one node with two `claim` occurrences, and each occurrence's name is the `name` of its `temporal_clause_names` row and its clock configuration the `clock` of its `temporal_bindings` row (FR-322-AC-343, FR-322-AC-344, FR-322-AC-361). | Test (TC-303; TC-233) |
 
 ## Published artifacts and the operation catalog
 

@@ -13201,11 +13201,6 @@
   ],
   "temporal_bindings": [
     {
-      "clock": {
-        "kind": "event_position",
-        "sequence_authority": "order-events"
-      },
-      "clock_name": "refund-clock",
       "declaration": {
         "ordinal": 0,
         "package": "example",
@@ -13215,14 +13210,15 @@
           "compensate",
           "Refund"
         ]
-      }
-    },
-    {
+      },
+      "occurrence": 0,
       "clock": {
         "kind": "event_position",
         "sequence_authority": "order-events"
       },
-      "clock_name": "model-steps",
+      "clock_name": "refund-clock"
+    },
+    {
       "declaration": {
         "ordinal": 0,
         "package": "example",
@@ -13248,7 +13244,45 @@
             "node": 0
           }
         ]
-      }
+      },
+      "occurrence": 0,
+      "clock": {
+        "kind": "event_position",
+        "sequence_authority": "order-events"
+      },
+      "clock_name": "model-steps"
+    }
+  ],
+  "temporal_clause_names": [
+    {
+      "declaration": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "temporal",
+          "temporal_clause",
+          {
+            "node": 19
+          },
+          {
+            "node": 2
+          },
+          "model-steps",
+          "kind",
+          "origin",
+          {
+            "node": 57
+          },
+          "quire.op.temporal.clause",
+          "quire.temporal.event-position.false-extension/v1",
+          "temporal",
+          {
+            "node": 0
+          }
+        ]
+      },
+      "name": "Clause0",
+      "occurrence": 0
     }
   ]
 }
