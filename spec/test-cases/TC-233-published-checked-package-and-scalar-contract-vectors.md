@@ -85,6 +85,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-272-AC-26
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-27
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
@@ -278,7 +280,7 @@ rows to list exactly FR-272-AC-17's cause and payload keys. Parse the
 `runtime_invariant` rows of both and require FR-272-AC-18's cause and
 population-identity payload keys. Parse the `invalid_result` rows of both and
 the first cells of FR-331's "Result entries" table, and require FR-272-AC-23's
-causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, and require the `resource_exhausted` rows and
+causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, parse the `invalid_capability` rows of both and require FR-272-AC-27's `inapplicable-kind` and `invalid-state-graph-forms` causes, the `request_index`, `capability` and `family` payload keys of `inapplicable-kind` and the backend identity of `invalid-state-graph-forms`, and `request_index` and `family` in FR-272's canonical payload-name list, and require the `resource_exhausted` rows and
 `value-accounting.md` to state FR-272-AC-19's `stage` rule. Parse
 the rows of FR-272-AC-11's twelve codes in both documents and require each to
 list exactly that criterion's causes and payload keys, and require FR-272's
@@ -752,7 +754,7 @@ diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
 native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
 the `resource_exhausted` and `cancelled` rows of both each list exactly
 FR-272-AC-16's causes and payload keys; the `conflicting_declaration` rows each list
-exactly FR-272-AC-17's cause and payload keys; the `runtime_invariant` rows each
+exactly FR-272-AC-17's cause and payload keys; the `invalid_capability` rows each list FR-272-AC-27's two causes and payload keys; the `runtime_invariant` rows each
 list FR-272-AC-18's cause and keys and the `stage` rule matches FR-272-AC-19; the rows of FR-272-AC-11's twelve codes each list exactly that criterion's
 causes and payload keys, every one of them a canonical FR-272 payload name;
 FR-270's Revision cell quotes the header's revision; FR-271 has one row
