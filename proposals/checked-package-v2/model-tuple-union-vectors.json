@@ -1033,9 +1033,7 @@
           "value": [
             {
               "node": "ix://acme/shapes/Ratio",
-              "native": "ix://quire/native/Rational",
-              "lower": "0",
-              "upper": "9"
+              "native": "ix://quire/native/Rational"
             }
           ]
         },
@@ -1095,9 +1093,7 @@
           "value": [
             {
               "node": "ix://acme/shapes/Ratio",
-              "native": "ix://quire/native/Rational",
-              "lower": "0",
-              "upper": "9"
+              "native": "ix://quire/native/Rational"
             }
           ]
         },
@@ -1463,6 +1459,39 @@
           "op": "replace",
           "path": "/tuple_types/0/positions/0/typeRef",
           "value": "ix://acme/shapes/Outer"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TK-36",
+      "criterion": "FR-322-AC-380",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/value_types",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Ratio",
+              "native": "ix://quire/native/Rational",
+              "numerator_min": "-3",
+              "numerator_max": "7",
+              "denominator_min": "1",
+              "denominator_max": "12"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://acme/shapes/Ratio"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://acme/shapes/Ratio"
         }
       ],
       "expected": {

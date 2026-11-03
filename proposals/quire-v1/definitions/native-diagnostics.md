@@ -108,7 +108,7 @@ context, but that context cannot replace a required cause field or variant.
 | `modulo_out_of_domain` | `outside-domain`; retain `expected`: the bounded consumer's integer domain the Euclidean `mod` remainder fails. No remainder is retained. |
 | `text_length_out_of_domain` | `outside-domain`; retain `expected`: the declared `Text[min, max; profile]` bounds and profile whose length the result fails. No text is retained. |
 | `integer_out_of_domain` | `outside-domain`; retain `expected`: the target `Int[lo, hi]` domain an exact conversion or arithmetic result fails. No integer is retained. |
-| `rational_out_of_domain` | `outside-domain`; retain `expected`: the `Rational[lo, hi; dmin, dmax]` result domain an exact rational arithmetic result fails. No numerator or denominator is retained. |
+| `rational_out_of_domain` | `outside-domain`; retain `expected`: the target `Rational[lo, hi; dmin, dmax]` domain an exact rational arithmetic result or conversion value fails (a carried-quantity conversion names its `Rational[..]` carrier). No numerator or denominator is retained. |
 | `ieee_not_exact` | `rounding-required`; retain `expected`: the target IEEE width (`binary32` or `binary64`); and `flags`: the would-be flag set, the flags of `invalid`, `divide_by_zero`, `overflow`, `underflow` and `inexact` the same operation would return under `nearest-even` (FR-148). Strict `exact` met an inexact, overflowing or tiny-and-inexact result; no rounded bits are retained. |
 | `ieee_nan_payload_not_representable` | `payload-exceeds-target`; retain `expected`: the explicit width conversion's target IEEE width; and `actual`: its source IEEE width. The NaN's payload is not smaller than the target width's quiet bit; no payload bits are retained. |
 | `ieee_rational_out_of_domain` | `outside-domain`; retain `expected`: the grammar-named `Rational[lo, hi; dmin, dmax]` target of an explicit IEEE-to-exact conversion that the reduced rational fails. No numerator or denominator is retained. |
@@ -197,7 +197,7 @@ Eleven codes cover the evaluator's value refusals, one per refusal: `inexact_dec
 and `modulo_out_of_domain` (FR-147), `text_length_out_of_domain` (FR-141),
 `integer_out_of_domain` for an integer-target unit conversion (FR-142) and a
 bounded integer arithmetic result (FR-044), `rational_out_of_domain` for a
-`Rational[..]` arithmetic result (FR-044), `ieee_not_exact` for strict IEEE `exact`,
+`Rational[..]` arithmetic result (FR-044) or a conversion into a `Rational[..]` domain, a carried-quantity `Rational[..]` carrier included (FR-142, FR-149, FR-478), `ieee_not_exact` for strict IEEE `exact`,
 `ieee_nan_payload_not_representable` for an explicit NaN width conversion, and
 `ieee_rational_out_of_domain` for an explicit IEEE-to-`Rational` conversion
 (FR-148). Each is category refusal: the operation is defined, and the

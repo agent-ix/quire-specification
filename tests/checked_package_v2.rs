@@ -13323,8 +13323,10 @@ fn shapes_members(document: &Value, name: &str) -> Vec<(String, Option<Value>)> 
     members
 }
 
+/// A position, union-value and equality refusal of the tuple/union vectors is
+/// decided by the package reader, so it carries `stage` `reader` (FR-322-AC-371).
 fn shapes_refusal(code: &str, cause: &str) -> Value {
-    json!({"refused": {"code": code, "cause": cause}})
+    json!({"refused": {"code": code, "cause": cause, "stage": "reader"}})
 }
 
 /// Step 3 and 4 for a `position` member of a tuple value type.
@@ -13416,14 +13418,19 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
     };
     // FR-322 "Admitted payload and position types": the four declared types
     // with no step 4 row are refused at intake (FR-322-AC-181, -182).
-    // A package value type is refused when its native is `Rational` or `Decimal`, or `Text` without
-    // the flat `lower`, `upper` and `profile` members (FR-154's value type
+    // A package value type is refused when its native is `Decimal`, `Rational` without the flat
+    // `numerator_min`, `numerator_max`, `denominator_min` and `denominator_max` members (the
+    // unbounded Rational value type of FR-154 "Rational value types"; a bounded one has a step 4
+    // row), or `Text` without the flat `lower`, `upper` and `profile` members (FR-154's value type
     // shape, as `model-member-type-vectors.json` publishes it).
     let unmapped = |reference: &str| match read_through(reference).strip_prefix("ix://quire/native/") {
         Some(native) => matches!(native, "Rational" | "Decimal" | "Text"),
         None => value_type(&read_through(reference)).is_some_and(|found| {
             match found["native"].as_str().and_then(|native| native.strip_prefix("ix://quire/native/")) {
-                Some("Rational" | "Decimal") => true,
+                Some("Decimal") => true,
+                Some("Rational") => ["numerator_min", "numerator_max", "denominator_min", "denominator_max"]
+                    .iter()
+                    .any(|member| found.get(member).is_none()),
                 Some("Text") => ["lower", "upper", "profile"].iter().any(|member| found.get(member).is_none()),
                 _ => false,
             }
@@ -21103,8 +21110,8 @@ fn carried_rounding_is_exact(node: &Value) -> bool {
 const QUANTITY_CARRIER_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/quantity-carrier-vectors.json");
 
-/// FR-322-AC-301, FR-322-AC-302, FR-142-AC-28..FR-142-AC-30 (TC-280 `MU-31`..
-/// `MU-34`, TC-187 `U41`..`U44`): shape and consistency check of the published
+/// FR-322-AC-301, FR-322-AC-302, FR-322-AC-382, FR-142-AC-28..FR-142-AC-31
+/// (TC-280 `MU-31`..`MU-34`, TC-187 `U41`..`U44`, TC-981 `RV-08` and `RV-10`): shape and consistency check of the published
 /// carried-quantity vectors. QSpec holds no reader or evaluator for them (the
 /// readers are quire-contract-ir's and quire-verification's), so this test
 /// recomputes only what follows from exact arithmetic: that each carried node's
@@ -21114,6 +21121,7 @@ const QUANTITY_CARRIER_VECTORS: &str =
 /// value and the carrier decide.
 #[trace("TC-280", "FR-322-AC-301", "FR-322-AC-302")]
 #[trace("TC-187", "FR-142-AC-28", "FR-142-AC-29", "FR-142-AC-30")]
+#[trace("TC-981", "FR-322-AC-382", "FR-142-AC-31")]
 #[test]
 fn tc_280_quantity_carrier_vectors_are_consistent() {
     let root = parsed_fixture(SCHEMA);
@@ -21185,7 +21193,7 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
     }
     // Wire cases: ids, referenced nodes and mode pairs.
     let wire_ids: Vec<&str> = vectors["wire"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected_wire: Vec<String> = (1..=15).map(|n| format!("CQ-W{n:02}")).collect();
+    let expected_wire: Vec<String> = (1..=19).map(|n| format!("CQ-W{n:02}")).collect();
     assert_eq!(wire_ids, expected_wire.iter().map(String::as_str).collect::<Vec<_>>());
     for case in vectors["wire"].as_array().unwrap() {
         let id = case["id"].as_str().unwrap();
@@ -21195,8 +21203,9 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
             let carrier = &nodes[carried["carrier"].as_str().unwrap()];
             let well_formed = carried["form"] == "carried_quantity"
                 && nodes[carried["unit"].as_str().unwrap()]["form"] == "unit"
-                && matches!(carrier["form"].as_str().unwrap(), "integer_range" | "decimal_range")
-                && (carrier["form"] != "decimal_range" || carrier["rounding"] == carried["rounding"]);
+                && matches!(carrier["form"].as_str().unwrap(), "integer_range" | "decimal_range" | "rational_range")
+                && (carrier["form"] != "decimal_range" || carrier["rounding"] == carried["rounding"])
+                && (carrier["form"] != "rational_range" || carried_rounding_is_exact(carried));
             assert_eq!(well_formed, case["expected"] == "admitted", "{id}: the shape decides admission");
         }
         if let Some(app) = case.get("application") {
@@ -21222,7 +21231,7 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
     }
     // Evaluation cases: exact arithmetic decides completed and refused outcomes.
     let eval_ids: Vec<&str> = vectors["evaluation"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected_eval: Vec<String> = (1..=20).map(|n| format!("CQ-E{n:02}")).collect();
+    let expected_eval: Vec<String> = (1..=26).map(|n| format!("CQ-E{n:02}")).collect();
     assert_eq!(eval_ids, expected_eval.iter().map(String::as_str).collect::<Vec<_>>());
     let fraction = |text: &str| -> (BigInt, BigInt) {
         let (n, d) = text.split_once('/').unwrap_or((text, "1"));
@@ -21239,6 +21248,35 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
         let (un, ud) = fraction(vectors["units"][case["source"]["unit"].as_str().unwrap()].as_str().unwrap());
         // value = mag * unit_scale as num/den; scale 10^t for a decimal carrier.
         let (num, den) = (mn * un, md * ud);
+        if carrier["form"] == "rational_range" {
+            // FR-142 "Carried quantity": a `Rational[..]` carrier has no grid, so the
+            // reduced value is checked against its numerator and denominator bounds and
+            // never refuses `inexact_conversion`.
+            let bound = |member: &str| BigInt::from(carrier[member].as_i64().unwrap());
+            let divisor = num.gcd(&den);
+            let (p, q) = (&num / &divisor, &den / &divisor);
+            let inside = bound("numerator_min") <= p
+                && p <= bound("numerator_max")
+                && bound("denominator_min") <= q
+                && q <= bound("denominator_max");
+            match expected["disposition"].as_str().unwrap() {
+                "refused" => {
+                    assert!(!inside, "{id}: outside the carrier");
+                    assert_eq!(expected["code"], "rational_out_of_domain", "{id}");
+                }
+                "completed" => {
+                    assert!(inside, "{id}: inside the carrier");
+                    assert_eq!(expected["numerator"], json!(p.to_string()), "{id}");
+                    assert_eq!(expected["denominator"], json!(q.to_string()), "{id}");
+                }
+                "incomplete" => {
+                    assert!(case["limits"].is_array(), "{id}");
+                    assert_eq!(expected["charge_point"], "unit.target-domain", "{id}");
+                }
+                other => panic!("{id}: unknown disposition {other}"),
+            }
+            continue;
+        }
         let (t, lo, hi): (u32, BigInt, BigInt) = if carrier["form"] == "decimal_range" {
             if carrier["scale_max"].as_u64().unwrap() > 1000 {
                 assert_eq!(expected["disposition"], "incomplete", "{id}: the wide carrier is never materialized");

@@ -53,6 +53,20 @@ expected-type rule for an arithmetic operand in
 [Arithmetic operand against a bounded integer](#arithmetic-operand-against-a-bounded-integer)
 retypes that operand and creates no common type.
 
+**Bounded rationals.** In `Rational[n1, n2; d1, d2]`, `n1` and `n2` are the
+inclusive bounds of the numerator and `d1` and `d2` the inclusive bounds of the
+denominator of a value written in lowest terms with a positive denominator. The
+type is well formed only when `n1 <= n2` and `1 <= d1 <= d2`; the checker SHALL
+refuse any other declaration with `refused { code: ill_typed }` at the type, as
+FR-140 refuses a malformed `Decimal[..]`, wherever the type is written,
+including as the carrier of a carried quantity (FR-142 "Carried quantity"). A
+value `v` is a member exactly when its reduced numerator `p` and denominator
+`q` satisfy `n1 <= p <= n2` and `d1 <= q <= d2`; `0` is `0/1`. Membership is a
+function of the mathematical value only, and a value outside the type is
+`rational_out_of_domain` with cause `outside-domain` wherever a value is
+decided against it (an arithmetic result, a narrowing conversion, a
+carried-quantity conversion).
+
 ## Equality matrix
 
 | Value kind | Equality relation |
@@ -406,6 +420,7 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-24 | Bytes versus JsonObject, Bytes versus `String`, `Text` or `Integer`, JsonObject versus `String`, `Text` or `Boolean`, and UUID versus Bytes refuse `ill_typed`/`type-mismatch` before an equality charge and produce no Boolean. The four ordering operators on Bytes or JsonObject, and `+` on either, refuse `ill_typed`/`operator-ineligible` before any charge; a Bytes key and a JsonObject key create no ordering or arithmetic capability. Same-kind keys compare canonical payload content unsigned bytewise with a proper prefix first: Bytes with payload `10` order before `2000`, `00` before `0000`, and the empty payload before `00`; JsonObject `[]` orders before `{}`; and equal payloads have equal keys. | Test (TC-280) |
 | FR-149-AC-25 | In FR-149-AC-25 and FR-149-AC-26, `+0`, `-0`, `one`, `qnan` and `qnan2` are the float values of bits `0x0000000000000000`, `0x8000000000000000`, `0x3ff0000000000000`, `0x7ff8000000000000` and `0x7ff8000000000001`, supplied as parameters. `=` and `!=` over two `Float64` parameters follow `numericEqual`: `+0` and `-0` are equal, `qnan = qnan` is false and `qnan != qnan` is true. Over `record F { x: Float64; y: Integer; }`, `Option<Float64>`, a tuple holding a `Float32`, `union U { V(Float64), N }` and `Sequence<Float64>[0,2]` the float leaf compares by `numericEqual`: `F { x: +0, y: 1 } = F { x: -0, y: 1 }` is true, `F { x: qnan, y: 1 } = F { x: qnan, y: 1 }` is false and `!=` of it true, `F { x: +0, y: 1 } = F { x: +0, y: 2 }` is false, `U::V(+0) = U::V(-0)` is true, `U::V(+0) = U::N` is false, the present `qnan` against itself is false, `none = none` is true, and `sequence[+0, one] = sequence[-0, one]` is true. A float read out of the structure (`r.x`) compares as a bare float. | Test (TC-194) |
 | FR-149-AC-26 | Over `Set<Float64>[0,2]` parameters, `set[qnan] = set[qnan]` is true (one NaN member, identical bits), `set[+0] = set[-0]` is false and `set[+0] != set[-0]` is true, `set[+0, -0] = set[-0, +0]` is true, `set[qnan] = set[qnan2]` for two NaNs of different payload is false, and `bag[+0, +0] = bag[+0]` is false; `contains(set[+0], -0)` is false while `+0 = -0` is true; `F` of `record F { x: Float32; }` in `Set<F>[0,2]` compares its members by bit identity under `=`. A `Sequence<Float64>[0,1]` of `qnan` compares unequal to itself under `=`, because a sequence is not a set. | Test (TC-194) |
+| FR-149-AC-27 | `Rational[-3, 7; 1, 12]` is well formed and admits `1/4`, `-3` (`-3/1`), `0` and `7/12` and no `8`, `-4`, `1/13` or `127/5000`; `Rational[8, 7; 1, 12]`, `Rational[0, 1; 0, 12]`, `Rational[0, 1; -1, 12]` and `Rational[0, 1; 13, 12]` each refuse `ill_typed` at the type, and so does each as the carrier `C` of `Quantity<m, C>`. | Test (TC-981) |
 
 ## Dependencies
 
