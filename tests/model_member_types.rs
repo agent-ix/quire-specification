@@ -236,7 +236,9 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
         .iter()
         .find(|value_type| text(value_type, "node") == type_ref)
     {
-        let bound = |member: &str| text(value_type, member).parse::<i128>().ok();
+        // An unbounded value type (the Rational value type with no constraints of
+        // FR-154 "Rational value types") carries no bound members and has no row.
+        let bound = |member: &str| value_type[member].as_str()?.parse::<i128>().ok();
         let ordered = bound("lower")? <= bound("upper")?;
         return match text(value_type, "native") {
             "ix://quire/native/Integer" => ordered.then(

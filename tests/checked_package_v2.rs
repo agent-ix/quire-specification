@@ -13323,8 +13323,10 @@ fn shapes_members(document: &Value, name: &str) -> Vec<(String, Option<Value>)> 
     members
 }
 
+/// A position, union-value and equality refusal of the tuple/union vectors is
+/// decided by the package reader, so it carries `stage` `reader` (FR-322-AC-371).
 fn shapes_refusal(code: &str, cause: &str) -> Value {
-    json!({"refused": {"code": code, "cause": cause}})
+    json!({"refused": {"code": code, "cause": cause, "stage": "reader"}})
 }
 
 /// Step 3 and 4 for a `position` member of a tuple value type.
