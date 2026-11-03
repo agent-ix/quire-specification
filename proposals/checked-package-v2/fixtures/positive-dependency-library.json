@@ -30,8 +30,7 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "predicates",
-        "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+        "identity": "predicates"
       }
     ]
   },
@@ -1432,8 +1431,7 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 0
         }
@@ -1455,8 +1453,7 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 1
         }
@@ -1478,8 +1475,7 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 2
         }
@@ -1508,8 +1504,7 @@
           "end": 4,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 3
         }
@@ -1544,8 +1539,7 @@
           "end": 5,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 4
         }
@@ -1567,8 +1561,7 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 5
         }
@@ -1590,8 +1583,7 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 6
         }
@@ -1613,8 +1605,7 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 7
         }
@@ -1639,8 +1630,7 @@
           "end": 9,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 8
         }
@@ -1675,8 +1665,7 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 9
         }
@@ -1698,8 +1687,7 @@
           "end": 11,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 10
         }
@@ -1727,8 +1715,7 @@
           "end": 12,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 11
         }
@@ -1763,8 +1750,7 @@
           "end": 13,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 12
         }
@@ -1786,8 +1772,7 @@
           "end": 14,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 13
         }
@@ -1810,8 +1795,7 @@
           "end": 15,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 14
         }
@@ -1836,8 +1820,7 @@
           "end": 16,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 15
         }
@@ -1872,8 +1855,7 @@
           "end": 17,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 16
         }
@@ -1895,8 +1877,7 @@
           "end": 18,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 17
         }
@@ -1918,8 +1899,7 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "predicates",
-            "source_integrity": "b7c62f312058919ef006c98affa43e79c4d00f9e9dce40a2fae9c32a3a05eff5"
+            "identity": "predicates"
           },
           "start": 0
         }

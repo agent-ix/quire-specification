@@ -35,8 +35,7 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example",
-        "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+        "identity": "example"
       }
     ]
   },
@@ -424,8 +423,7 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 0
         }
@@ -447,8 +445,7 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 1
         }
@@ -477,8 +474,7 @@
           "end": 50,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 49
         }
@@ -504,8 +500,7 @@
           "end": 36,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 29
         }
@@ -534,8 +529,7 @@
           "end": 46,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 44
         }
@@ -556,8 +550,7 @@
           "end": 48,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 2
         }

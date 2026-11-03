@@ -34,8 +34,7 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example",
-        "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+        "identity": "example"
       }
     ]
   },
@@ -295,8 +294,7 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 0
         }
@@ -318,8 +316,7 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 1
         }
@@ -348,8 +345,7 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 2
         }
@@ -371,8 +367,7 @@
           "end": 4,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+            "identity": "example"
           },
           "start": 3
         }
