@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-322
     type: references
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: references
 ---
 
 # FR-142: Evaluate dimensions, quantities and exact unit conversions
@@ -298,17 +300,22 @@ A `Rational[n1, n2; d1, d2]` carrier has no grid. A conversion into
 `Quantity<u, Rational[n1, n2; d1, d2]>` composes the exact value as above and
 reduces it to lowest terms with a positive denominator; it never rounds and
 never refuses `inexact_conversion`. The value is then checked against the
-carrier as FR-149's rational narrowing checks it: a reduced numerator outside
+carrier as FR-149 "Bounded rationals" decides membership: a reduced numerator outside
 `[n1, n2]` or a denominator outside `[d1, d2]` refuses
 `refused { code: rational_out_of_domain, cause: outside-domain }` at the
 `convert` node after `unit.target-domain` and before `unit.result-retain`,
 atomically, retaining the carrier as `expected` and no value. Into
 `Rational[-3, 7; 1, 12]` over `m`, `25 cm` converts to `1/4 m`, while `1 in`
 (`127/5000 m`, denominator above `12`) and `8 m` (numerator above `7`) refuse
-`rational_out_of_domain`. Arithmetic on a carried rational quantity follows the
-rule for every carried quantity: it is converted back with
-`convert<Quantity<u''>>(e)`, operated on as a `Quantity<u''>`, and converted
-into a carried type again.
+`rational_out_of_domain`; so does `-4 m` (numerator below `-3`). Arithmetic,
+equality and ordering on a carried rational quantity follow the rule for every
+carried quantity: a carried rational quantity is not an operand of `=`, `!=`,
+`<` or any other quantity operation, so two such values, including two members
+of one unit-bearing Rational value type (FR-154 "Rational value types"), are
+compared or combined by converting each with `convert<Quantity<u''>>(e)`, which
+is exact, and operating on the `Quantity<u''>` values; a result is stored back
+by converting into a carried type again. `x.r = y.r` over such members is
+written `convert<Quantity<m>>(x.r) = convert<Quantity<m>>(y.r)`.
 
 Multiplication, division and integer power first convert every non-affine
 operand to its dimension's canonical root, perform exact value arithmetic and
@@ -580,7 +587,8 @@ the element of `Option` and of the collection types, and the target of
   `C` is not a bounded `Int[..]`, `Decimal[..]` or `Rational[..]` type (a
   carrier with `lo > hi` or `smin > smax` is refused as FR-140 refuses its
   `Decimal[..]`, and a `Rational[..]` carrier with `n1 > n2` or outside
-  `1 <= d1 <= d2` as FR-149 refuses its `Rational[..]`). It SHALL lower
+  `1 <= d1 <= d2` with `ill_typed` as FR-149 "Bounded rationals" refuses a malformed
+  `Rational[..]`). It SHALL lower
   `Quantity<u, C>` to the anonymous `scalar_type`/`carried_quantity` node of
   FR-322 "Derived type forms and forwarding", and `convert<Quantity<u, C>>(e)`
   to `quire.op.quantity.convert` whose `result_type` is that node and whose
@@ -625,7 +633,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-28 | Converting into a `Quantity<u, C>` under mode `exact` admits exactly the values the carrier holds and refuses every other exact value `refused { code: inexact_conversion, cause: inexact-conversion }` at the `convert` node, retaining the carrier as `expected`, before `unit.target-domain` and with no value: U07 (`1 in` into `Decimal[-100, 100; 2, 2]` at scale two refuses, `25 cm` converts to `(25, 2) m`), U16 (the same refusal after one read, one edge and two rational events, four work units, under work limit six and under work limit four, where it is still refused and not incomplete) and U29 (`1 in` into `Int[-2, 2]` refuses likewise, `2 m` converts). The vectors are `quantity-carrier-vectors.json` `CQ-E01`, `CQ-E02`, `CQ-E07`, `CQ-E08`, `CQ-E12` and `CQ-E13`, with `CQ-E20` for a carrier whose `smin` is below `smax` (TC-187 U42). | Test (TC-187) |
 | FR-142-AC-29 | A conversion whose exact value is on the carrier's grid but outside its bounds, after rounding under a non-`exact` mode, refuses `decimal_out_of_domain` (a `Decimal` carrier) or `integer_out_of_domain` (an `Int` carrier) with `outside-domain` after `unit.target-domain` and before `unit.result-retain`, publishing no value (or returns `incomplete` where the charge is denied, as TC-187 U43 lists): U08 (`-2 m` and `2 m` into `Decimal[-2, 2; 0, 0]` succeed, `-3 m` and `3 m` refuse), U17 (`3 m` refuses by membership under work limit two and is `incomplete` at `unit.target-domain` under work limit one), U18 (`1 m` into `Decimal[0, 1; 0, 4294967295]` is `incomplete` at `unit.target-domain` for `decimal_digits` with the retained coefficient never materialized) and U29 (`3 m` into `Int[-2, 2]`). An inexact value that is also out of bounds refuses `inexact_conversion` first (TC-187 U43). | Test (TC-187) |
 | FR-142-AC-30 | The rounding mode of a carried quantity is the mode of its carrier and no operation supplies another: a `Decimal` carrier's mode is its own, an `Int` carrier's is as written (`exact` when omitted), a non-`exact` mode rounds under FR-140 with a `DecimalLoss` record and a conversion never rounds under a mode its target type does not name. The nearest-even outcomes of U07, U16 and U29 are unchanged by this requirement (TC-187 U44); `CQ-E17` to `CQ-E19` (rounding precedes the bounds check) give their carried forms. A record or collection holding a carried quantity compares it by exact value in its identical type like any quantity leaf (FR-149), and `quire.op.collection.sum.quantity` is defined over `Quantity<u>` only. | Test (TC-187) |
-| FR-142-AC-31 | `Quantity<m, Rational[-3, 7; 1, 12]>` is a carried quantity type whose mode is `exact`, distinct from `Quantity<m>`, from `Quantity<m, Rational[-3, 7; 1, 13]>` and from `Quantity<cm, Rational[-3, 7; 1, 12]>`, and refused as an operand of quantity arithmetic, equality and ordering as FR-142-AC-27 states; `Quantity<m, Rational>` and `Quantity<m, Rational[8, 7; 1, 12]>` refuse at the carrier. Converting into it, `25 cm` gives `1/4 m` and `-3 m` gives `-3 m`; `1 in` and `8 m` refuse `rational_out_of_domain`/`outside-domain` after `unit.target-domain` and before `unit.result-retain`, with no value; no conversion into it refuses `inexact_conversion`; `convert<Quantity<cm>>` of the `1/4 m` value gives `25 cm`. | Test (TC-981) |
+| FR-142-AC-31 | `Quantity<m, Rational[-3, 7; 1, 12]>` is a carried quantity type whose mode is `exact`, distinct from `Quantity<m>`, from `Quantity<m, Rational[-3, 7; 1, 13]>` and from `Quantity<cm, Rational[-3, 7; 1, 12]>`, and refused as an operand of quantity arithmetic, equality and ordering as FR-142-AC-27 states, while `convert<Quantity<m>>` of two of its values compares them by `=` and `<`; `Quantity<m, Rational>` refuses `ill_typed`/`type-mismatch` at the carrier, and `Quantity<m, Rational[8, 7; 1, 12]>` and `Quantity<m, Rational[0, 7; 0, 12]>` refuse `ill_typed` at the carrier (FR-149 "Bounded rationals"). Converting into it, `25 cm` gives `1/4 m` and `-3 m` gives `-3 m`; `1 in`, `8 m` and `-4 m` refuse `rational_out_of_domain`/`outside-domain` after `unit.target-domain` and before `unit.result-retain`, with no value, and `8 m` under work limit one is `incomplete` at `unit.target-domain`; no conversion into it refuses `inexact_conversion`; `convert<Quantity<cm>>` of the `1/4 m` value gives `25 cm` (`CQ-W16` to `CQ-W19`, `CQ-E21` to `CQ-E26`). | Test (TC-981) |
 
 ## Dependencies
 

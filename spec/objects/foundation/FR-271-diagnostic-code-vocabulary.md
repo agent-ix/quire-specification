@@ -95,7 +95,7 @@ catalog).
 | `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain. |
 | `text_length_out_of_domain` | A text value whose profile length is outside its declared `Text[..]` bounds. |
 | `integer_out_of_domain` | An exact conversion or arithmetic result outside its target integer domain. |
-| `rational_out_of_domain` | An exact rational arithmetic result outside its `Rational[..]` result domain. |
+| `rational_out_of_domain` | An exact rational arithmetic result, or the value of a conversion into a `Rational[..]` domain (FR-149 rational narrowing, FR-478 text conversion, FR-142 carried-quantity conversion into a `Rational[..]` carrier), outside its target `Rational[..]` domain. |
 | `ieee_not_exact` | Strict IEEE `exact` met an inexact, overflowing or tiny-and-inexact result. Only the would-be flags are reported. |
 | `ieee_nan_payload_not_representable` | An explicit IEEE width conversion of a NaN whose payload does not fit below the target width's quiet bit. |
 | `ieee_rational_out_of_domain` | An explicit IEEE-to-`Rational` conversion whose reduced rational is outside the target `Rational[..]` domain. |

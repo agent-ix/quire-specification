@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-142-AC-27 to FR-142-AC-30, FR-322-AC-301 and FR-322-AC-302 (TC-187 U41 to U44, TC-280 MU-31 to MU-34): the carried quantity type `Quantity<u, C>` (`scalar_type`/`carried_quantity`) and its conversion. `nodes` lists the nodes of one importing package `example` by key; a path segment `{\"node\": key}` is the structural id of the node `key` (the path of FR-322 \"Derived type forms and forwarding\"). `wire` holds CQ-W01 to CQ-W14: the shape and conversion-application cases, each `admitted`, `distinct` (two nodes with different paths) or a refusal with `code`, `cause` and the node `at`. `evaluation` holds CQ-E01 to CQ-E20, the exact halves of TC-187 U07, U08, U16, U17, U18 and U29 and the precedence case U43: each names the `source` value, its `unit`, the `target` carrier node, the mode (`exact` except CQ-E17 to CQ-E19, the carried forms of the unchanged nearest-even halves of U07 and U29 and rounding before bounds), the optional `limits` tuple `L(i,d,e,o,w,r)` of TC-187 as a list `[integer_bits, decimal_digits, unit_edges, value_occurrences, work_units, result_units]`, and the `expected` disposition. The reader and evaluator that decide these outcomes are quire-contract-ir's and quire-verification's; the vectors are authoritative for them and QSpec's test checks only their shape and that each `completed` or `refused` outcome follows from the exact value and the carrier.",
+  "note": "FR-142-AC-27 to FR-142-AC-31, FR-322-AC-301, FR-322-AC-302 and FR-322-AC-382 (TC-187 U41 to U44, TC-280 MU-31 to MU-34): the carried quantity type `Quantity<u, C>` (`scalar_type`/`carried_quantity`) and its conversion. `nodes` lists the nodes of one importing package `example` by key; a path segment `{\"node\": key}` is the structural id of the node `key` (the path of FR-322 \"Derived type forms and forwarding\"). `wire` holds CQ-W01 to CQ-W19 (CQ-W16 to CQ-W19 the `Rational[..]` carrier, `exact` only): the shape and conversion-application cases, each `admitted`, `distinct` (two nodes with different paths) or a refusal with `code`, `cause` and the node `at`. `evaluation` holds CQ-E01 to CQ-E26 (CQ-E21 to CQ-E26 the `Rational[..]` carrier: no grid, a reduced value outside its bounds refuses `rational_out_of_domain`, a completed value is its reduced `numerator` and `denominator`), the exact halves of TC-187 U07, U08, U16, U17, U18 and U29 and the precedence case U43: each names the `source` value, its `unit`, the `target` carrier node, the mode (`exact` except CQ-E17 to CQ-E19, the carried forms of the unchanged nearest-even halves of U07 and U29 and rounding before bounds), the optional `limits` tuple `L(i,d,e,o,w,r)` of TC-187 as a list `[integer_bits, decimal_digits, unit_edges, value_occurrences, work_units, result_units]`, and the `expected` disposition. The reader and evaluator that decide these outcomes are quire-contract-ir's and quire-verification's; the vectors are authoritative for them and QSpec's test checks only their shape and that each `completed` or `refused` outcome follows from the exact value and the carrier.",
   "units": {
     "m": "1",
     "cm": "1/100",
@@ -1380,6 +1380,200 @@
       "unit": "unit_m",
       "carrier": "dec_cents",
       "rounding": "nearest-even"
+    },
+    "rat_r": {
+      "tag": "bounded_domain",
+      "form": "rational_range",
+      "path": [
+        "bounded_domain",
+        "rational_range",
+        "numerator_min",
+        {
+          "node": "integer"
+        },
+        "-3",
+        "numerator_max",
+        "7",
+        "denominator_min",
+        "1",
+        "denominator_max",
+        "12"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "numerator_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "-3",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "numerator_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "7",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "denominator_min",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "1",
+              "value_kind": "integer"
+            }
+          },
+          {
+            "term": "binding",
+            "name": "denominator_max",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "integer"
+              },
+              "value": "12",
+              "value_kind": "integer"
+            }
+          }
+        ]
+      },
+      "numerator_min": -3,
+      "numerator_max": 7,
+      "denominator_min": 1,
+      "denominator_max": 12
+    },
+    "q_rat": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "rat_r"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "exact"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "rat_r"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "exact",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "rat_r",
+      "rounding": "exact"
+    },
+    "bad_mode_rational": {
+      "tag": "scalar_type",
+      "form": "carried_quantity",
+      "path": [
+        "scalar_type",
+        "carried_quantity",
+        {
+          "node": "unit_m"
+        },
+        {
+          "node": "rat_r"
+        },
+        "rounding",
+        {
+          "node": "text"
+        },
+        "nearest-even"
+      ],
+      "body": {
+        "term": "aggregate",
+        "members": [
+          {
+            "term": "binding",
+            "name": "unit",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "unit_m"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "carrier",
+            "value": {
+              "term": "reference",
+              "target": {
+                "node": "rat_r"
+              }
+            }
+          },
+          {
+            "term": "binding",
+            "name": "rounding",
+            "value": {
+              "term": "literal",
+              "type": {
+                "node": "text"
+              },
+              "value": "nearest-even",
+              "value_kind": "text"
+            }
+          }
+        ]
+      },
+      "unit": "unit_m",
+      "carrier": "rat_r",
+      "rounding": "nearest-even"
     }
   },
   "wire": [
@@ -1559,6 +1753,55 @@
           "value": "exact"
         }
       }
+    },
+    {
+      "id": "CQ-W16",
+      "description": "Quantity<m, Rational[-3, 7; 1, 12]> (mode exact)",
+      "expected": "admitted",
+      "node": "q_rat",
+      "family": "quantity"
+    },
+    {
+      "id": "CQ-W17",
+      "description": "rational carrier, node rounding nearest-even",
+      "expected": "invalid_package/invalid-derived-shape",
+      "node": "bad_mode_rational",
+      "code": "invalid_package",
+      "cause": "invalid-derived-shape"
+    },
+    {
+      "id": "CQ-W18",
+      "description": "convert 25 cm into q_rat, mode exact",
+      "expected": "admitted",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_cm"
+        ],
+        "result_type": "q_rat",
+        "mode": {
+          "kind": "rounding",
+          "value": "exact"
+        }
+      }
+    },
+    {
+      "id": "CQ-W19",
+      "description": "convert into q_rat, mode nearest-even",
+      "expected": "invalid_package/operation-mode-type-mismatch",
+      "application": {
+        "operation": "quire.op.quantity.convert",
+        "operand_types": [
+          "unit_cm"
+        ],
+        "result_type": "q_rat",
+        "mode": {
+          "kind": "rounding",
+          "value": "nearest-even"
+        }
+      },
+      "code": "invalid_package",
+      "cause": "operation-mode-type-mismatch"
     }
   ],
   "evaluation": [
@@ -2016,6 +2259,123 @@
         "cause": "inexact-conversion",
         "at": "convert",
         "expected": "Decimal[-100, 100; 0, 2]"
+      }
+    },
+    {
+      "id": "CQ-E21",
+      "row": "FR-142-AC-31: 25 cm into Rational[-3, 7; 1, 12] is 1/4 m",
+      "source": {
+        "magnitude": "25",
+        "unit": "cm"
+      },
+      "target": "q_rat",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "numerator": "1",
+        "denominator": "4",
+        "loss": null
+      }
+    },
+    {
+      "id": "CQ-E22",
+      "row": "FR-142-AC-31: -3 m (the numerator minimum)",
+      "source": {
+        "magnitude": "-3",
+        "unit": "m"
+      },
+      "target": "q_rat",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "completed",
+        "numerator": "-3",
+        "denominator": "1",
+        "loss": null
+      }
+    },
+    {
+      "id": "CQ-E23",
+      "row": "FR-142-AC-31: 1 in = 127/5000 m, denominator above 12, refuses by membership, never inexact_conversion",
+      "source": {
+        "magnitude": "1",
+        "unit": "in"
+      },
+      "target": "q_rat",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "rational_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Rational[-3, 7; 1, 12]"
+      }
+    },
+    {
+      "id": "CQ-E24",
+      "row": "FR-142-AC-31: 8 m, numerator above 7",
+      "source": {
+        "magnitude": "8",
+        "unit": "m"
+      },
+      "target": "q_rat",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "rational_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Rational[-3, 7; 1, 12]"
+      }
+    },
+    {
+      "id": "CQ-E25",
+      "row": "FR-142-AC-31: -4 m, numerator below -3",
+      "source": {
+        "magnitude": "-4",
+        "unit": "m"
+      },
+      "target": "q_rat",
+      "mode": "exact",
+      "limits": null,
+      "expected": {
+        "disposition": "refused",
+        "code": "rational_out_of_domain",
+        "cause": "outside-domain",
+        "after": "unit.target-domain",
+        "before": "unit.result-retain",
+        "expected": "Rational[-3, 7; 1, 12]"
+      }
+    },
+    {
+      "id": "CQ-E26",
+      "row": "FR-142-AC-31: 8 m under L(5,0,0,1,1,0) is incomplete at the membership charge",
+      "source": {
+        "magnitude": "8",
+        "unit": "m"
+      },
+      "target": "q_rat",
+      "mode": "exact",
+      "limits": [
+        5,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "expected": {
+        "disposition": "incomplete",
+        "limit_kind": "work_units",
+        "limit": 1,
+        "consumed": 1,
+        "next_charge": 1,
+        "charge_point": "unit.target-domain"
       }
     }
   ]
