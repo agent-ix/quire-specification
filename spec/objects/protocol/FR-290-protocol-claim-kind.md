@@ -38,6 +38,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-485
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-507
+    type: references
 ---
 # FR-290: Capability kind vocabulary
 
@@ -168,6 +170,36 @@ Unbounded quantification (FR-346), induction (FR-347), compositional discharge
 and the hyperproperty and step-relation forms (FR-396) are obligation forms
 inside a claim that has one kind from this table. The selected backend's negotiation arm
 settles the obligation forms it discharges.
+
+## Declaration-family applicability
+
+A claim is held by one declaration. The claim's *declaration family* is the
+family of that declaration, written as one label of the Families table above.
+The producer that compiles the claim into a request item reads it from the
+checked declaration, never from the item's kind.
+
+If a request item's kind does not apply to its claim's declaration family,
+then the producer SHALL settle the item `invalid-request` with
+`invalid_capability`/`inapplicable-kind`, retaining the request item index,
+the item's kind and the claim's declaration family, each as its exact label.
+No negotiation arm and no engine runs the item, and no other kind is
+substituted for its kind.
+
+- **Order.** The check reads an admitted kind: an item with an absent or
+  unknown kind settles `absent-kind` or `unknown-kind` and is not checked. It
+  runs before `negotiate_*` reads the item, so an inapplicable item settles
+  `inapplicable-kind` whatever its extent, its candidates or the backend it
+  names, and never settles `absent-extent` or a candidate-table cause.
+- **Assigned kinds apply.** An item whose kind is the kind the claim-form
+  assignment table assigns to its claim's form applies, and is never refused
+  `inapplicable-kind`.
+- **Scope.** The refusal settles only its own item. The item keeps its request
+  index and its one terminal record; the declaration and the request's other
+  items are unaffected.
+- **Owner of the pairs.** The producer that owns the declaration families
+  fixes which kinds apply to each, within the bound above; for
+  `quire-spec-language` that is QSL FR-507. This requirement fixes the cause,
+  its payload, its place before negotiation and that bound.
 
 ## Check arm
 
@@ -341,7 +373,9 @@ Capability negotiation happens at one point, `quire-contract-codegen`'s
 `negotiate_*` ([AD-016](../../assurance/AD-016-semantic-family-extension-path.md)).
 `negotiate_*` SHALL evaluate each item's rules in this order, and the first
 that matches settles the item: an absent kind or an unknown kind; an absent
-extent classification; then the candidate table below, top row first.
+extent classification; then the candidate table below, top row first. An item
+that "Declaration-family applicability" settles `inapplicable-kind` does not
+reach these rules.
 
 A state-graph item is a `temporal-satisfaction` item with one FR-390 form.
 A registered backend matches that item only when its FR-331
@@ -367,7 +401,7 @@ and state-graph items additionally match on exact `state_graph_forms`
 membership. A bounded-only and an unbounded-only registrant of one kind are
 both candidates, and the mode is compared only at the single candidate's arm.
 
-The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
+The item-level causes (`absent-kind`, `unknown-kind`, `inapplicable-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
@@ -432,6 +466,7 @@ backend identity.
 | FR-290-AC-14 | A per-step simulation obligation whose extent is `unbounded` with one boundable `population` domain, on a single candidate that advertises `operation-contract` only in `bounded` mode with `domains` holding `population`, settles `requires-bound` when `finite_bound_available` is true and `unsupported`, `unsupported_projection`/`unbounded-extent` when it is false; on a bounded-only candidate whose `domains` lack `population` it settles `unsupported`, `unsupported_projection`/`unsupported-requested-capability` naming `population`, whatever `finite_bound_available` says; on a candidate that advertises `unbounded` it takes the negotiation arm's own disposition; the same obligation with that population bounded is `bounded` and takes the arm's own disposition on either mode. | Test (TC-950) |
 | FR-290-AC-15 | With `qsl-model-check` advertising `temporal-satisfaction` with no `dynamics` and `dreal` advertising it with `dynamics` `["hybrid"]`, a `temporal-satisfaction` item carrying `"requirements": ["hybrid-dynamics"]` and naming no backend has the candidate set `[dreal]`, and one carrying no `requirements` `[qsl-model-check]`; naming `qsl-model-check`, the hybrid item's set is empty and it settles `unsupported`, `unsupported-requested-capability`; a hybrid item whose `candidates` is `[dreal, qsl-model-check]` settles `invalid-request`, `inconsistent-candidates`, naming `qsl-model-check`; and with `dreal`'s `dynamics` `["discrete", "hybrid"]` the item carrying no `requirements` has the set `[dreal, qsl-model-check]` and settles `ambiguous-backend`. | Test (TC-373) |
 | FR-290-AC-16 | For each FR-390 form, an EN-1 registration whose FR-331 `state_graph_forms` contains that form is a candidate and a temporal backend whose member omits it is not; an omitted member matches no state-graph form. Naming the backend that omits the form gives an empty candidate set and settles `unsupported`, `unsupported-requested-capability`, naming the state-graph form. An empty, duplicate or unknown form list, or a form list on a registration that does not advertise `temporal-satisfaction`, is refused `invalid_capability`/`invalid-state-graph-forms`, keyed by backend identity. Membership filtering is exact and does not change candidate sets for temporal formulas, hyperproperty items or step-relation items. | Test (TC-968) |
+| FR-290-AC-17 | An item whose admitted kind does not apply to its claim's declaration family settles `invalid-request` with `invalid_capability`/`inapplicable-kind`, retaining its request index, its kind and the declaration family, each as its exact label; no negotiation arm or engine runs it, whatever its extent, candidates or named backend, so it never settles `absent-extent` or a candidate-table cause; an item with an absent or unknown kind settles `absent-kind` or `unknown-kind` instead; an item whose kind is its claim form's assigned kind is never refused this way; and the request's other items settle independently. | Test (TC-271) |
 
 ## Dependencies
 

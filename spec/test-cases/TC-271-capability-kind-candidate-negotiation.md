@@ -64,6 +64,10 @@ Repeat every registry vector with the descriptors registered in reversed order.
 | NG-18 | Unbounded extent with a `population` domain and a finite bound available; the one candidate advertises (`value-validity`, `bounded`) only, with `domains` [`integer`]; separately, the same extent with a `quantity` domain added, so no finite bound is available | Both settle `unsupported` warned, `unsupported-requested-capability` naming `population`, neither `requires-bound` nor `unbounded-extent` (FR-290-AC-13) |
 | NG-19 | NG-18 with the candidate also advertising (`value-validity`, `unbounded`) | The domain kinds are not compared; the advertised-mode table settles the item through the candidate's arm (FR-290-AC-13) |
 | NG-20 | Register a descriptor advertising a `bounded` mode with no `domains`; others advertising a `bounded` mode with `domains` [], [`quantity`], [`size`], [`integer`, `integer`]; others advertising only `unbounded` modes with `domains` [], [`quantity`], [`size`], [`integer`, `integer`]; and one advertising only `unbounded` modes with no `domains` | Every registration but the last refuses as `invalid_capability`/`invalid-domains`, keyed by backend identity; the unbounded-only registration with no `domains` is admitted and is a candidate for its kind; other registrations stand (FR-290-AC-13) |
+| NG-21 | A request of two items on one operation-precondition claim held by a `state-model` declaration: item 0 `operation-contract`, item 1 `finite-replay`, under a producer whose applicability (QSL FR-507) admits only `operation-contract` for `state-model`. One registrant advertises each kind, both modes. Repeat item 1 with a bounded extent, with no extent classification, with `candidates` naming the `finite-replay` registrant, and with an inconsistent `candidates` | Item 1 settles `invalid-request` as `invalid_capability`/`inapplicable-kind`, retaining request index 1, `finite-replay` and `state-model`, in every repetition, never `absent-extent` or a candidate-table cause; no negotiation arm runs it and no artifact is emitted; item 0 settles through its candidate's arm and keeps request index 0; the declaration's clause is checked as without item 1 (FR-290-AC-17, FR-272-AC-27) |
+| NG-22 | NG-21's item 1 with kind `FiniteReplay`, and separately with no kind | `invalid_capability`/`unknown-kind` and `absent-kind` respectively, never `inapplicable-kind` (FR-290-AC-17) |
+| NG-23 | For each CK-05 claim form, request the kind CK-05 derives for it on its claim | No item settles `inapplicable-kind` (FR-290-AC-17) |
+| NG-24 | Two `inapplicable-kind` refusals of `finite-replay` at one request index, one naming `state-model` and one naming `value` | The two causes compare unequal (FR-272-AC-2, FR-272-AC-27) |
 | TA-01 | Registry of two registrants of `value-validity`; name one, settle the item `supported` and route it; remove its tool from `PATH` | FR-331 result `unsupported` naming the kind and backend; `unsupported_projection`/`tool-unavailable`; disposition stays `supported`; one terminal accounting record; artifacts emitted before the probe are retained with no verdict; the other registrant never runs |
 | TA-03 | TA-01 with the probe erroring, and separately exceeding its limit | As TA-01 |
 | TA-04 | The routed backend advertises both modes for the kind; remove its tool | As TA-01; no run under the other mode |
@@ -73,7 +77,7 @@ Repeat every registry vector with the descriptors registered in reversed order.
 ## Expected Results
 
 Every positive result matches FR-290 and FR-331. Each refused label, mode,
-vocabulary, registration or backend returns its exact `invalid_capability`
+inapplicable kind, vocabulary, registration or backend returns its exact `invalid_capability`
 cause and is never mapped to an FR-290 member. Every item has exactly one
 disposition and one terminal accounting record. Registration order never
 changes a candidate set, a disposition or request bytes. No `unsupported`,
