@@ -25,3 +25,22 @@ Tickets: STD-550, IR-1297, STD-450, QSL-1463 (FR-487 call closure). `quire valid
 ## Verdict
 
 Mergeable after FND-001 and FND-003 are addressed (small, same files); neither is a soundness defect. FR-322-AC-74 (consumer projection AdmittedUnbounded, stage 3 owner) and FR-322-AC-309 (declared helper keeps its declaration path) are consistent with the reader order and with QSL FR-251/FR-514. Rebase on 606 resolves the one textual conflict.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | All 68 refusals in the vectors file now carry a stage (reader 51, graph 11, schema 6); FR-322-AC-371 names all six sections. |
+| FND-002 | fixed | AC-371 no longer cites TW-05 and lists schema TW-01..04, TW-10, TW-26 and graph TW-06..09, TW-21, TW-22, TW-27, TW-28; each matches the file. |
+| FND-003 | fixed | FR-487-AC-13 is a producer rule verified by inspection with the QSL test as owner; the summary-cell claim moved to AC-14. The owner citation is wrong, see FND-005. |
+| FND-004 | fixed | The key text says the segment names the body root by graph position and the structural node_id is what distinguishes keys. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-005 | medium | FR-487-AC-13 and TC-978 cite quire-spec-language FR-251-AC-26 (TC-1081) as the verifier, but after the QSL fix round FR-251-AC-26 is the overflow criterion (TC-706); the call-closure verifier is FR-251-AC-38 (and AC-37, AC-39). AC-14 and FR-487 text also say "with no interval" while QSL covers [a, *]. | FR-487-AC-13; TC-978 | wrong-requirement |
+
+## Verdict (disposition pass 1)
+
+Original four findings fixed; `quire validate` clean except FR-322 (same two errors as origin/main). A trial merge of open PR 606 conflicts only at the tail of the FR-322 AC table (order AC-342..370 then AC-371); no id collision. Not yet mergeable: FND-005 (fix the cross-reference).
