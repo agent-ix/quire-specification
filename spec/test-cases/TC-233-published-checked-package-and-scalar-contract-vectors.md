@@ -822,14 +822,19 @@ source-map agreement check and SI-R16 that it precedes the closed-schema checks
 (FR-322-AC-333..341). The cause is catalogued and paired in FR-272
 (FR-272-AC-26).
 
-Temporal clause names (FR-322 "Temporal clause names", IR-1278, QSL FR-515 `name()`,
-FR-518 row 8): `temporal-clause-name-vectors.json` over
-`positive-timed-clause-nodes.json` admits CN-P1 (one named clause), CN-P2 (a shared
-node, two occurrences, two names, one binding row) and CN-P3 (rename, identity
-unchanged); refuses CN-S1..CN-S9 in the closed schema (`malformed_wire`; CN-S9 is
-the unchanged `invalid_semantic_graph` of a node `declaration`); and refuses
-CN-R1..CN-R9 with `invalid_package` and the exact cause and locus: coverage,
-absent and wrong-kind declaration, unowned occurrence, repeated key, order, the
-check order, and the second `temporal_bindings` row of a shared node
-(FR-322-AC-342..354, FR-370-AC-16). Every published positive package with a
-temporal clause carries its name rows.
+Temporal clause names and per-occurrence clock bindings (FR-322 "Temporal clause names"
+and "Temporal clock bindings", IR-1278, QSL FR-515 `name()` and `clock()`, FR-518 row 8):
+`temporal-clause-name-vectors.json` over `positive-timed-clause-nodes.json` admits CN-P1
+(one named clause), CN-P2 (a shared node, two occurrences, two names, two binding rows)
+and CN-P3 (rename, identity unchanged); refuses CN-S1..CN-S8 in the closed schema
+(`malformed_wire`), CN-G1 (a node `declaration`, `invalid_semantic_graph`) and
+CN-R1..CN-R11 with `invalid_package` and the exact cause and locus: coverage, absent
+and wrong-kind declaration, unowned and non-claim occurrence, repeated key, order, and
+the per-row order of join, repeated key, order and coverage (FR-322-AC-342..358,
+FR-370-AC-16). `temporal-clock-occurrence-vectors.json` admits twins with different
+(BO-P1) and equal (BO-P2) clock configurations and refuses BO-S1..BO-S3 in the closed
+schema and BO-R1..BO-R9 in the reader with the same checks over `temporal_bindings`,
+plus the clock name and kind of a second occurrence (FR-322-AC-359..370). A repeated
+(`declaration`, `occurrence`) key is `conflicting-definition` in `temporal_bindings`
+too (TCB-10, CB-04). Every published positive package with a temporal clause carries
+its name and binding rows.

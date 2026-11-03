@@ -13201,11 +13201,6 @@
   ],
   "temporal_bindings": [
     {
-      "clock": {
-        "kind": "event_position",
-        "sequence_authority": "order-events"
-      },
-      "clock_name": "refund-clock",
       "declaration": {
         "ordinal": 0,
         "package": "example",
@@ -13215,14 +13210,15 @@
           "compensate",
           "Refund"
         ]
-      }
-    },
-    {
+      },
+      "occurrence": 0,
       "clock": {
         "kind": "event_position",
         "sequence_authority": "order-events"
       },
-      "clock_name": "model-steps",
+      "clock_name": "refund-clock"
+    },
+    {
       "declaration": {
         "ordinal": 0,
         "package": "example",
@@ -13248,7 +13244,13 @@
             "node": 0
           }
         ]
-      }
+      },
+      "occurrence": 0,
+      "clock": {
+        "kind": "event_position",
+        "sequence_authority": "order-events"
+      },
+      "clock_name": "model-steps"
     }
   ],
   "temporal_clause_names": [

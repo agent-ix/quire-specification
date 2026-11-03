@@ -63,9 +63,10 @@ whose rules below do not hold, with the first refusal in the reader order below.
   binding("on_gap", …),
   binding("activation_capacity", …)]}`, in this order:
   - `clause` — a `reference` to the `temporal`/`temporal_clause` node (FR-370)
-    the program monitors. Its `temporal_bindings` row (FR-322 "Temporal clock
-    bindings") is the plan's clock binding: the plan repeats no clock name,
-    kind or profile;
+    the program monitors. Its `temporal_bindings` rows (FR-322 "Temporal clock
+    bindings", one per `claim` occurrence of the clause) are the plan's clock
+    binding: the plan repeats no clock name, kind or profile, and a consumer
+    selects the row of the occurrence it monitors;
   - `state` — a `reference` to the `composite_type`/`record` node of the
     monitor state;
   - `inputs` — a `reference` to the `composite_type`/`record` node of the
@@ -93,7 +94,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
     stay ordinary `composite_type`/`sequence` nodes;
   - `counter` — a `text` literal, non-empty: the counter's name, the first
     component of the plan's tick clock binding key (QSL FR-251
-    `ClockBindingKey`; the clause's `temporal_bindings` row keeps the clause's
+    `ClockBindingKey`; the clause's `temporal_bindings` rows keep the clause's
     own clock name and kind, and the plan's counter is a separate premise);
   - `tick_unit` — a `reference` to the `scalar_type`/`unit` node whose `dimension_node_id` equals, by identity, the
     exact base `Time` dimension node (the test of FR-322-AC-127; this reader's

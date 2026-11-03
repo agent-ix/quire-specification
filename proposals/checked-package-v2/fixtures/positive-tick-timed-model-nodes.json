@@ -5834,6 +5834,7 @@
           }
         ]
       },
+      "occurrence": 0,
       "clock": {
         "kind": "event_position",
         "sequence_authority": "order-events"

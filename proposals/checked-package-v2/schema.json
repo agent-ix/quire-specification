@@ -234,12 +234,17 @@
       "type": "object",
       "required": [
         "declaration",
+        "occurrence",
         "clock",
         "clock_name"
       ],
       "properties": {
         "declaration": {
           "$ref": "#/$defs/NodeRef"
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 0
         },
         "clock": {
           "$ref": "#/$defs/ClockConfiguration"

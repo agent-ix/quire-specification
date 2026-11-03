@@ -1,7 +1,7 @@
 {
   "base": "fixtures/positive-timed-clause-nodes.json",
   "clause_graph_index": 8,
-  "note": "IR-1278. A temporal_clause node carries no declaration: structurally equal clauses share one node, so the declared name is carried per claim occurrence in the temporal_clause_names row (FR-322 \"Temporal clause names\", FR-322-AC-342..354). Each case is an RFC 6902 patch on `base`. The token \"<clause>\" in a patch value stands for the NodeRef of the base package's one temporal_clause node (graph index 8) and \"<node 9>\" for the NodeRef of graph node 9, a node that is not a temporal clause. `schema` is `valid` or `invalid`; `expected` is admitted or the refusal code, optional cause and RFC 6901 locus.",
+  "note": "IR-1278. A temporal_clause node carries no declaration: structurally equal clauses share one node, so the declared name is carried per claim occurrence in the temporal_clause_names row (FR-322 \"Temporal clause names\"). Each case is an RFC 6902 patch on `base`. The token \"<clause>\" in a patch value stands for the NodeRef of the base package's one temporal_clause node (graph index 8) and \"<node 9>\" for the NodeRef of graph node 9, a node that is not a temporal clause. A package with a second occurrence also carries that occurrence's temporal_bindings row (the binding is per occurrence). `schema` is `valid` or `invalid`; `expected` is admitted or the refusal code, optional cause and RFC 6901 locus. The row checks run per row in array order (declaration, occurrence, repeated key, order) and coverage last.",
   "positive": [
     {
       "bindings": 1,
@@ -16,7 +16,7 @@
       "patch": []
     },
     {
-      "bindings": 1,
+      "bindings": 2,
       "expected": {
         "admitted": true
       },
@@ -25,7 +25,7 @@
         "Clause0",
         "Clause1"
       ],
-      "note": "two source clauses that are structurally equal share the one node; each claim occurrence has its own row and name, and the clause keeps its one temporal_bindings row",
+      "note": "two source clauses that are structurally equal share the one node; each claim occurrence has its own name row and its own binding row, with distinct names and distinct clock configurations",
       "patch": [
         {
           "op": "add",
@@ -63,6 +63,19 @@
             "name": "Clause1",
             "occurrence": 1
           }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
         }
       ]
     },
@@ -76,7 +89,7 @@
       "names": [
         "Renamed"
       ],
-      "note": "a different declared name changes no node id and no node: the name is outside the structural identity",
+      "note": "a different declared name changes no node and no node id: the name is outside the structural identity",
       "patch": [
         {
           "op": "replace",
@@ -211,26 +224,6 @@
         }
       ],
       "schema": "invalid"
-    },
-    {
-      "expected": {
-        "code": "invalid_semantic_graph",
-        "locus": "/semantic_graph/nodes/8/declaration"
-      },
-      "id": "CN-S9-node-declaration-member",
-      "note": "a `declaration` member on the temporal_clause node: the name is not carried there, and the refusal of QSL PR #2156 stands",
-      "patch": [
-        {
-          "op": "add",
-          "path": "/semantic_graph/nodes/8/declaration",
-          "value": {
-            "qualified_name": [
-              "Clause0"
-            ]
-          }
-        }
-      ],
-      "schema": "invalid"
     }
   ],
   "semantic_refusals": [
@@ -257,7 +250,7 @@
         "locus": "/temporal_clause_names"
       },
       "id": "CN-R2-occurrence-uncovered",
-      "note": "the shared node has two claim occurrences and one row",
+      "note": "the shared node has two claim occurrences, both bound, and one name row",
       "patch": [
         {
           "op": "add",
@@ -285,6 +278,19 @@
               }
             ],
             "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
           }
         }
       ],
@@ -339,12 +345,12 @@
         "locus": "/temporal_clause_names/0/occurrence"
       },
       "id": "CN-R5-unowned-occurrence",
-      "note": "a row naming claim occurrence 1 of a node that has only occurrence 0",
+      "note": "a row naming ordinal 5, which the node has under no role",
       "patch": [
         {
           "op": "replace",
           "path": "/temporal_clause_names/0/occurrence",
-          "value": 1
+          "value": 5
         }
       ],
       "schema": "valid"
@@ -392,6 +398,19 @@
           "value": {
             "declaration": "<clause>",
             "name": "Clause1",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
             "occurrence": 1
           }
         },
@@ -454,6 +473,19 @@
           }
         },
         {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
           "from": "/temporal_clause_names/1",
           "op": "move",
           "path": "/temporal_clause_names/0"
@@ -468,7 +500,7 @@
         "locus": "/temporal_clause_names/0/declaration"
       },
       "id": "CN-R8-join-before-coverage",
-      "note": "an absent declaration in the row and an uncovered occurrence: the row join is reported first",
+      "note": "an absent declaration in a row and an uncovered occurrence: the row join is reported first",
       "patch": [
         {
           "op": "add",
@@ -499,6 +531,19 @@
           }
         },
         {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
           "op": "replace",
           "path": "/temporal_clause_names/0/declaration",
           "value": {
@@ -516,12 +561,55 @@
     },
     {
       "expected": {
-        "cause": "timed-node-reference",
+        "cause": "conflicting-definition",
         "code": "invalid_package",
-        "locus": "/temporal_bindings/1"
+        "locus": "/temporal_clause_names/1"
       },
-      "id": "CN-R9-binding-row-per-occurrence",
-      "note": "the shared node of CN-P2 with a second temporal_bindings row for its second occurrence: one row covers every occurrence of a node, so the second row repeats a declaration",
+      "id": "CN-R9-row-order-is-per-row",
+      "note": "a repeated key at row 1 and an absent declaration at row 2: each row is checked in full before the next, so the repeated key is reported",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/1",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Again",
+            "occurrence": 0
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/2",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Other",
+            "occurrence": 0
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/temporal_clause_names/2/declaration",
+          "value": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "temporal",
+              "temporal_clause",
+              "absent-declaration"
+            ]
+          }
+        }
+      ],
+      "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "conflicting-definition",
+        "code": "invalid_package",
+        "locus": "/temporal_clause_names/2"
+      },
+      "id": "CN-R10-repeated-key-before-order",
+      "note": "rows (clause, 0), (clause, 1), (clause, 0): the third repeats a key and also descends; the repeated key is reported",
       "patch": [
         {
           "op": "add",
@@ -563,10 +651,159 @@
         {
           "op": "add",
           "path": "/temporal_bindings/1",
-          "value": "<binding row 0>"
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_clause_names/2",
+          "value": {
+            "declaration": "<clause>",
+            "name": "Again",
+            "occurrence": 0
+          }
         }
       ],
       "schema": "valid"
+    },
+    {
+      "expected": {
+        "cause": "invalid-value",
+        "code": "invalid_package",
+        "locus": "/temporal_clause_names/1"
+      },
+      "id": "CN-R11-order-before-coverage",
+      "note": "three claim occurrences with rows (clause, 1), (clause, 0) and none for 2: the descent at row 1 is reported, not the missing row",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/1",
+          "value": {
+            "ordinal": 1,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/49",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 1,
+            "regions": [
+              {
+                "end": 12,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 11
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/occurrences/2",
+          "value": {
+            "ordinal": 2,
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/50",
+          "value": {
+            "node_id": "<clause>",
+            "ordinal": 2,
+            "regions": [
+              {
+                "end": 14,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                },
+                "start": 13
+              }
+            ],
+            "role": "claim"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/1",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/temporal_bindings/2",
+          "value": {
+            "clock": {
+              "kind": "event_position",
+              "sequence_authority": "other-events"
+            },
+            "clock_name": "model-steps",
+            "declaration": "<clause>",
+            "occurrence": 2
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/temporal_clause_names",
+          "value": [
+            {
+              "declaration": "<clause>",
+              "name": "B",
+              "occurrence": 1
+            },
+            {
+              "declaration": "<clause>",
+              "name": "A",
+              "occurrence": 0
+            }
+          ]
+        }
+      ],
+      "schema": "valid"
+    }
+  ],
+  "shape_refusals": [
+    {
+      "expected": {
+        "code": "invalid_semantic_graph",
+        "locus": "/semantic_graph/nodes/8/declaration"
+      },
+      "id": "CN-G1-node-declaration-member",
+      "note": "a `declaration` member on the temporal_clause node: the name is not carried there; the graph-shape step refuses it before any row check, and the schema also refuses it",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/8/declaration",
+          "value": {
+            "qualified_name": [
+              "Clause0"
+            ]
+          }
+        }
+      ],
+      "schema": "invalid"
     }
   ]
 }
