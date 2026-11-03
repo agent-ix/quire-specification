@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
+  - target: ix://agent-ix/quire-specification/FR-465
+    type: references
 ---
 # FR-216: Channel premise
 
@@ -23,7 +25,7 @@ When a conformance result is derived, the result SHALL identify the exact premis
 | Receiver | FR-054 | The exact authored receiving role of the channel. Missing or conflicting refuses admission. |
 | Message type | FR-054 | The one exact admitted message type carried by the channel. Missing or conflicting refuses admission. |
 | Ordering policy | FR-054 | Exactly `unordered`, or `fifo` with its admitted declaration-local binder and typed key-expression definition. |
-| Delivery policy | FR-054 | Exactly one of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise`. |
+| Delivery policy | FR-054 | Exactly one of the four policy words `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise`, or one delivery count interval `[lo,hi]` with natural `lo <= hi` ([FR-465](../interfaces/FR-465-checked-package-protocol-declaration-bodies.md)). An interval and a policy word are never equal, and two intervals are equal only when both bounds are. |
 
 Synchronized clocks are likewise never inferred (FR-054).
 
