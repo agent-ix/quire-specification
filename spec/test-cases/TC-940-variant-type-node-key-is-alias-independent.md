@@ -17,7 +17,7 @@ member derives, and the identity of the node and of its cases (steps 1 to 5,
 independent of the alias), then the `model`/`tuple_value_type` node, the
 payload-bearing variant type read as a union, the application nodes over them
 and a cyclic pair of model types (steps 6 to 12). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
-FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12).
+FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-371 (step 11).
 
 ## Test Procedure
 
