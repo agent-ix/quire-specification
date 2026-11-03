@@ -226,3 +226,111 @@ fn replay_request_carries_the_proved_checked_package() {
     not_a_package["package"] = json!({"name": "example"});
     assert!(!request.is_valid(&not_a_package), "AC-7: package is a closed checked package");
 }
+
+/// Every NodeId a replay request names, found by shape (`package`, `path`,
+/// `ordinal`), outside its embedded `package` member.
+fn request_node_ids(value: &Value, found: &mut Vec<Value>) {
+    match value {
+        Value::Object(members) => {
+            if members.len() == 3
+                && ["package", "path", "ordinal"].iter().all(|key| members.contains_key(*key))
+            {
+                found.push(value.clone());
+            } else {
+                members.values().for_each(|member| request_node_ids(member, found));
+            }
+        }
+        Value::Array(items) => items.iter().for_each(|item| request_node_ids(item, found)),
+        _ => {}
+    }
+}
+
+/// FR-336-AC-7: the request's node ids are ids of the embedded package's
+/// graph, and its dependency entries are the lock's selected dependencies.
+#[test]
+#[trace("TC-970", "FR-336-AC-7")]
+fn replay_request_node_ids_resolve_in_its_embedded_package() {
+    let fixture = parsed(REPLAY_REQUEST);
+    let mut ids = Vec::new();
+    for (member, value) in fixture.as_object().expect("request is an object") {
+        if member != "package" {
+            request_node_ids(value, &mut ids);
+        }
+    }
+    assert_eq!(ids.len(), 3, "target, obligation and declared domain name a node each: {ids:?}");
+    let graph_ids: Vec<&Value> = fixture["package"]["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package graph has nodes")
+        .iter()
+        .map(|node| &node["node_id"])
+        .collect();
+    for id in &ids {
+        assert!(graph_ids.contains(&id), "AC-7: {id} resolves in the embedded package");
+    }
+    let selected: Vec<&Value> = fixture["package"]["lock"]["dependency_selections"]
+        .as_array()
+        .expect("lock selections")
+        .iter()
+        .map(|selection| &selection["identity"])
+        .collect();
+    let entries: Vec<&Value> = fixture["dependencies"]
+        .as_array()
+        .expect("dependencies array")
+        .iter()
+        .map(|entry| &entry["identity"])
+        .collect();
+    assert_eq!(entries, selected, "AC-7: one dependency entry per selected dependency");
+}
+
+/// FR-336-AC-7: unknown members, unknown tags and noncanonical decimals are
+/// refused by the closed schema. Stage-limit setting names are FR-255's and
+/// the schema admits any non-empty name, so that refusal belongs to the
+/// consumer decoder (TC-1325); the schema must not refuse it.
+#[test]
+#[trace("TC-970", "FR-336-AC-7")]
+fn replay_request_mutations_are_refused_one_at_a_time() {
+    let schema = parsed(SCHEMA);
+    let request = definition_validator(&schema, "ReplayRequest");
+    let fixture = parsed(REPLAY_REQUEST);
+    assert!(request.is_valid(&fixture));
+    let parameter = fixture["obligation_identity"]["node_id"].clone();
+
+    let mut unknown_member = fixture.clone();
+    unknown_member["invented"] = json!(true);
+    assert!(!request.is_valid(&unknown_member), "top-level unknown member");
+    let mut unknown_nested = fixture.clone();
+    unknown_nested["accounting_limits"]["invented"] = json!("0");
+    assert!(!request.is_valid(&unknown_nested), "structural-object unknown member");
+
+    let mut witness = fixture.clone();
+    witness["source"]["assignments"] =
+        json!([{"parameter": parameter, "value": {"kind": "integer", "decimal": "7"}}]);
+    assert!(request.is_valid(&witness), "an integer assignment is admitted");
+    let mut unknown_witness_tag = witness.clone();
+    unknown_witness_tag["source"]["assignments"][0]["value"]["kind"] = json!("text-ish");
+    assert!(!request.is_valid(&unknown_witness_tag), "unknown WitnessValue tag");
+    let mut json_number = witness.clone();
+    json_number["source"]["assignments"][0]["value"]["decimal"] = json!(7);
+    assert!(!request.is_valid(&json_number), "JSON number in place of a decimal string");
+    let mut noncanonical = witness;
+    noncanonical["source"]["assignments"][0]["value"]["decimal"] = json!("07");
+    assert!(!request.is_valid(&noncanonical), "noncanonical integer decimal");
+
+    let mut unknown_domain_tag = fixture.clone();
+    unknown_domain_tag["declared_domains"][0]["domain"]["kind"] = json!("elsewhere");
+    assert!(!request.is_valid(&unknown_domain_tag), "unknown DomainKey tag");
+
+    let mut leading_zero_limit = fixture.clone();
+    leading_zero_limit["accounting_limits"]["work_units"] = json!("00");
+    assert!(!request.is_valid(&leading_zero_limit), "noncanonical limit decimal");
+    let mut number_limit = fixture.clone();
+    number_limit["stage_limits"] = json!({"format.output_bytes": 5});
+    assert!(!request.is_valid(&number_limit), "stage limit is a decimal string");
+
+    let mut outside_setting = fixture;
+    outside_setting["stage_limits"] = json!({"not.a.setting": "5"});
+    assert!(
+        request.is_valid(&outside_setting),
+        "an FR-255 setting name is the consumer decoder's refusal, not the schema's"
+    );
+}
