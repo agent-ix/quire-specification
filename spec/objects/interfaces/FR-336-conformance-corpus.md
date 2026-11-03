@@ -141,7 +141,7 @@ order; object maps retain their string keys.
 | --- | --- |
 | `profile_selections` | `ReplayRequestWire.profile_selections`: ordered `ProfileSelection` objects `{profile, value}`. |
 | `package` | `ReplayRequestWire.package`: FR-323 `package.checked_package`, the proved checked-package value. |
-| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, checked_package, sources}`; package and source values use FR-323 package/source shapes, so each `sources` entry is the FR-322 `SourceRef` `{authority, identity, source_integrity}`. |
+| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, checked_package, sources}`; package and source values use FR-323 package/source shapes. |
 | `replay_target` | `ReplayRequestWire.replay_target`: FR-323 target members under `members`, plus request fields `arguments`, `occurrence_key` and `over`. |
 | `source` | `ReplayRequestWire.source`: the FR-323 `ReplaySource`, one `witness` or `input` arm. |
 | `obligation_identity` | `ReplayRequestWire.obligation_identity`: the structural obligation identity `{node_id, model, ordinal}` (FR-479). |
@@ -150,7 +150,7 @@ order; object maps retain their string keys.
 | `accounting_limits` | `ReplayRequestWire.accounting_limits`: complete FR-255 `ScalarLimitsV1`; every numeric member is an unsigned decimal string. |
 | `stage_limits` | `ReplayRequestWire.stage_limits`: string-keyed map of FR-255 setting names to unsigned decimal strings. |
 | `supplied_limits` | `ReplayRequestWire.supplied_limits`: `null` or complete FR-323 `limits.supplied` object `{admission_work_units, conversion_work_units, numeric_magnitude_bits}`. |
-| `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity is the closed `$defs.ObjectEnvironmentIdentity` `{authority, identity}`, which names an object environment, not a source document, and carries no `source_integrity`. |
+| `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity is the closed two-member `{authority, identity}`, the FR-001 labels. |
 | `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
 | `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; the adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
 
@@ -249,8 +249,8 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `authority`, `identity` and `bytes_path` and refuses extra members. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
 | FR-336-AC-7 | A `replay-request` file matches the closed `$defs.ReplayRequest`; all 15 top-level fields map to their `ReplayRequestWire` fields, each nested value follows its FR-323 or structural type mapping, integers use canonical decimal strings, unknown object members and tags are refused, and setting names outside FR-255 are refused by the consumer decoder. The Witness/Input source arms, FR-323 replay target members and one-result envelope retain their stated shapes. | Test (TC-970) |
 | FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies it under the row's `{authority, identity}`. | Test (TC-970) |
-| FR-336-AC-9 | The published schema requires `source_integrity`, 64 lowercase hexadecimal characters, on every `$defs.ReplayRequest` `dependencies[*].sources[*]` entry and refuses an entry without it. | Test (TC-969) |
-| FR-336-AC-10 | The published schema keeps `object_environment.identity` the closed two-member `{authority, identity}` and refuses a `source_integrity` member on it. | Test (TC-969) |
+| FR-336-AC-9 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `$defs.ReplayRequest` `dependencies[*].sources[*]` entry is `{authority, identity}`. | Test (TC-969), retired |
+| FR-336-AC-10 | The published schema keeps `object_environment.identity` the closed two-member `{authority, identity}` and refuses any other member. | Test (TC-969) |
 
 ## Dependencies
 

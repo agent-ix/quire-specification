@@ -480,8 +480,7 @@
                 "end": 3021,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3020
               }
@@ -889,8 +888,7 @@
                 "end": 3021,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3020
               }
@@ -2056,8 +2054,7 @@
                 "end": 9101,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 9100
               }
@@ -2086,8 +2083,7 @@
                 "end": 9102,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 9101
               }
@@ -2126,8 +2122,7 @@
                 "end": 9103,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 9102
               }
@@ -3929,8 +3924,7 @@
                 "end": 3005,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3004
               }
@@ -4472,8 +4466,7 @@
                 "end": 3005,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3004
               }
@@ -5008,8 +5001,7 @@
                 "end": 3011,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3010
               }
@@ -5509,8 +5501,7 @@
                 "end": 3011,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3010
               }
@@ -6024,8 +6015,7 @@
                 "end": 3011,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3010
               }
@@ -6535,8 +6525,7 @@
                 "end": 3011,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3010
               }
@@ -7163,8 +7152,7 @@
                 "end": 1013,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 1012
               }
@@ -7201,8 +7189,7 @@
                 "end": 1013,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 1012
               }
@@ -7832,8 +7819,7 @@
                 "end": 1013,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 1012
               }
@@ -7870,8 +7856,7 @@
                 "end": 1013,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 1012
               }
@@ -8077,8 +8062,7 @@
             "end": 2,
             "source": {
               "authority": "agent-ix",
-              "identity": "example",
-              "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+              "identity": "example"
             },
             "start": 1
           }
@@ -8575,8 +8559,7 @@
                 "end": 3011,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3010
               }
@@ -9076,8 +9059,7 @@
                 "end": 3011,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3010
               }
@@ -9665,8 +9647,7 @@
                 "end": 3013,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3012
               }
@@ -10253,8 +10234,7 @@
                 "end": 3013,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3012
               }
@@ -10601,8 +10581,7 @@
                 "end": 3016,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3015
               }
@@ -10926,8 +10905,7 @@
                 "end": 3016,
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "source_integrity": "517e90a76ac1c2be3e2308838dcf8b112ec52c822d59b44a649602e4c0757e5a"
+                  "identity": "example"
                 },
                 "start": 3015
               }

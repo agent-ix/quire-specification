@@ -5,20 +5,6 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-323
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-29
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-30
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-31
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-32
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-33
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-34
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-323-AC-35
-    type: verifies
 ---
 
 # TC-277: Replay byte provision
@@ -27,11 +13,8 @@ relationships:
 
 Show that an FR-323 replay request's `byte_provision` supplies every source and
 definition input the replay recompiles, located by
-`{authority, identity}`, and every domain-package document, an entry of the ordered provision located by the identity it declares, with no version compared and no digest compared except the `source_integrity` of a `sources` entry, and that a second document under one key is refused as a duplicate definition, per
+`{authority, identity}`, and every domain-package document, an entry of the ordered provision located by the identity it declares, with no version or digest compared, and that a second document under one key is refused as a duplicate definition, per
 QSL ADR-013 O-26 and QC-1.
-
-
-Scope: FR-323-AC-5, FR-323-AC-7, FR-323-AC-25..27 and FR-323-AC-29..35.
 
 ## Preconditions
 
@@ -68,10 +51,10 @@ recompilation outcome.
 | BP-17 | A `byte_provision` with two domain-package entries declaring one identity and stating equal `package.version` members | Refused `invalid_package`/`conflicting-definition` naming both entries at decode, before recompilation; not `duplicate_selection` | FR-323-AC-25 |
 | BP-19 | BP-17 with the two documents stating different `package.version` members | The same refusal: the two documents are not told apart by version, which is a member of the document and is never compared | FR-323-AC-25 |
 | BP-18 | BP-01 plus one domain-package entry of an identity no recompiled source selects | Recompilation proceeds; the entry is not read, no refusal is reported | FR-323-AC-26 |
-| BP-60 | A replay request whose `package.sources` entry claims a digest other than the SHA-256 of its `byte_provision` bytes (RP-R1); a dependency entry likewise (RP-R2) | Refused `invalid_package`/`source-integrity` at `/package/sources/0`, respectively `/package/dependencies/0/sources/0`, before any recompile | FR-323-AC-29, FR-323-AC-30 |
-| BP-61 | A `sources` entry with no `source_integrity` (RP-R3); every claim holding (RP-P1) | Refused `invalid_package`/`source-integrity` at the entry; the second admitted | FR-323-AC-31, FR-323-AC-33 |
-| BP-62 | A `sources` entry whose pair `byte_provision` does not carry (RP-R4) | Refused `missing_import`/`missing-selection` naming the pair, not `source-integrity` | FR-323-AC-32 |
-| BP-63 | A malformed claim on a later dependency entry behind an entry without bytes (RP-R7); a digest mismatch at `/package/sources/0` ahead of absent dependency bytes (RP-R5); absent bytes at `/package/sources/0` ahead of a dependency mismatch (RP-R6) | `source-integrity` at the dependency entry; `source-integrity` at `/package/sources/0`; `missing_import`/`missing-selection` | FR-323-AC-34, FR-323-AC-35 |
+| BP-60 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
+| BP-61 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
+| BP-62 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
+| BP-63 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
 
 ## Expected Results
 
