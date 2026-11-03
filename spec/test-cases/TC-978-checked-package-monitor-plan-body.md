@@ -39,3 +39,5 @@ MP-23 to MP-28, MP-30, MP-31, MP-35, MP-37, MP-39 to MP-42, MP-48, MP-49, MP-60 
 `invalid_semantic_graph`; MP-10 to MP-17, MP-29 and MP-50 to MP-52 refuse
 `ill_typed`/`type-mismatch`; MP-18 to MP-22, MP-34, MP-36, MP-38, MP-46, MP-47 and MP-59 refuse
 `invalid_package`/`invalid-value`. MP-32 is admitted with no catalog change.
+
+Call closure (FR-487-AC-13): two plans that differ only in the body of a declared helper called by an entry, an atom body or the guard, or called only through another helper, have different root keys while the helper's and the entries' own `node_id`s stay equal; equal helper bodies give an equal root key. The vectors for this check are authored with the producer (QSL-1463) and the strict reader (IR-721); the key is the producer's duty and the reader recomputes none of it.
