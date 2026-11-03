@@ -47,3 +47,15 @@ vectors.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | The FR-426 `duplicate`/`lose` row now says an interval "admits neither". FR-426-AC-3 still says only "`duplicate` and `lose` are enabled exactly under the delivery policies that admit them", and TC-378 has no interval-channel vector. No AC or test asserts that an interval channel offers no `duplicate`/`lose` step. Add the interval case to FR-426-AC-3 and one TC-378 vector, for example a `[1,1]` channel where no execution loses or duplicates, mirroring FR-509-AC-5's last clause. If FND-001 of the spec review is fixed, the same vector covers the d-entry send. | spec/functional/protocol/FR-426-apply-protocol-steps.md:99,221; spec/test-cases/TC-378-channels-under-delivery-policies.md |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | FR-425-AC-1 now says states that differ in "pending send counts" have distinct keys, and it is verified by TC-375. TC-375 has no pending-send vector; only TC-378 CH-15 shows the `send-pending` entry. Add one TC-375 vector: two behaviours that differ only in a pending count (or payload, per spec-review FND-004) give distinct keys. | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:277; spec/test-cases/TC-375-protocol-state-key-and-coalescing.md |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in 1f9257a0. FR-426-AC-19 states that an interval channel has no `duplicate` or `lose` step and one `send` step per `d`. TC-378 CH-13 to CH-17 and CH-15r test it, including a `[1,1]` channel with neither step (CH-16). Each vector names exact counts, entries and wait causes, so each can fail. |

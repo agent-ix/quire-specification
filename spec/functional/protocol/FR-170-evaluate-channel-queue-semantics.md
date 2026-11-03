@@ -59,8 +59,9 @@ that finds the queue full is rejected and the later ones are still
 processed, and under `loss` the selector applies to each occurrence that finds
 the queue full. Under `block` the occurrences are appended while the queue has
 room; when it is full with `r` occurrences still unprocessed, the send is
-pending with `r` occurrences, and the sender appends them, again while the
-queue has room, once a removal frees a place. `d = 0` appends nothing, so it is the interval's only transport
+pending with `r` occurrences of its payload, and the sender appends them,
+again while the queue has room, once a removal frees a place. The `d = 0`
+alternative places nothing, so a full queue never holds it back. `d = 0` appends nothing, so it is the interval's only transport
 loss, and `d > 1` its only duplication: an interval channel has no separate
 `duplicate` or `lose` transition. Its send record has `count` and `entries`
 and `pending` in place of `outcome` and `displaced`: `count` is the number of
