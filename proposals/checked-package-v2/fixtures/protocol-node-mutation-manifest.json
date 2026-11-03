@@ -1,6 +1,6 @@
 {
   "version": "quire.protocol-node-mutation-manifest/v1",
-  "note": "STD-609 PR 1. Executable form of the machine-derivable vectors of protocol-node-vectors.json. Each row edits fixtures/protocol-node-base.json with RFC 6902 operations and states the typed outcome. 'later' lists vectors a following pull request carries; 'pending' lists vectors whose outcome the spec text leaves open. Reproducibility: protocol-node-base.json and this manifest are the source of truth and are edited by patch only; there is no generator. The test recomputes every edited protocol node's dependencies from its body references, so a hand edit cannot be masked by a graph-stage refusal. A row states the first defect in reader order only (FR-464 'Reader order'); later defects are masked by design. The 26 Q-LAYOUT vectors stay pending: schema.json defines ProtocolControlApplication but references it nowhere, and referencing it from the ProtocolNode body rule makes the base package itself fail at the parallel, choice and protocol-clause nodes, so no first schema error path exists for them until the schema is fixed in its own pull request.",
+  "note": "STD-609 PR 1. Executable form of the machine-derivable vectors of protocol-node-vectors.json. Each row edits fixtures/protocol-node-base.json with RFC 6902 operations and states the typed outcome. 'later' lists vectors a following pull request carries; 'pending' lists vectors whose outcome the spec text leaves open. Reproducibility: protocol-node-base.json and this manifest are the source of truth and are edited by patch only; there is no generator. The test recomputes every edited protocol node's dependencies from its body references, so a hand edit cannot be masked by a graph-stage refusal. A row states the first defect in reader order only (FR-464 'Reader order'); later defects are masked by design. The Q-LAYOUT vectors stay pending: schema.json defines ProtocolControlApplication but references it nowhere, and referencing it from the ProtocolNode body rule makes the base package itself fail at the parallel, choice and protocol-clause nodes, so no first schema error path exists for them until the schema is fixed in its own pull request.",
   "base": {
     "fixture": "protocol-node-base.json",
     "domain_document": "../domain-package-acme-orders.json",
@@ -7683,6 +7683,18 @@
       "reason": "needs_new_nodes"
     },
     {
+      "id": "CH13a",
+      "test_case": "TC-947",
+      "class": "admit",
+      "reason": "needs_new_nodes"
+    },
+    {
+      "id": "CH13b",
+      "test_case": "TC-947",
+      "class": "property",
+      "reason": "needs_property_assertions"
+    },
+    {
       "id": "CH17",
       "test_case": "TC-947",
       "class": "property",
@@ -8829,6 +8841,12 @@
     },
     {
       "id": "CH14",
+      "test_case": "TC-947",
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
+      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+    },
+    {
+      "id": "CH14a",
       "test_case": "TC-947",
       "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
       "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"

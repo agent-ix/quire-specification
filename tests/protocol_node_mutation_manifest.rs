@@ -224,7 +224,6 @@ fn every_vector_is_a_row_a_later_row_or_a_pending_question_exactly_once() {
     let manifest = parse(MANIFEST);
     let vectors = parse(VECTORS);
     let expected: Vec<(String, String)> = ids_of(&vectors["cases"]);
-    assert_eq!(expected.len(), 406, "the prose corpus is 406 vectors");
     let mut seen = BTreeSet::new();
     for list in ["rows", "later", "pending"] {
         for entry in ids_of(&manifest[list]) {

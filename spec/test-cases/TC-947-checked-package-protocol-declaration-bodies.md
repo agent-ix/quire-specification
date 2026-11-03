@@ -15,7 +15,7 @@ relationships:
 
 Schema and reader vectors for the `protocol`/`role`, `channel`, `queue` and
 `obligation` (`finish`, `terminal`) node bodies. Scope: FR-465-AC-1 to
-FR-465-AC-9.
+FR-465-AC-10.
 
 ## Test Procedure
 
@@ -83,7 +83,10 @@ FR-465-AC-9.
 | CH11 | `carries` names a `model`/`record_value_type`, a `model`/`event_type`, a `model`/`variant_type`, a `composite_type` and a `scalar_type` node, one each | admitted |
 | CH12 | `carries` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH13 | `delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise` | admitted: four distinct node ids |
+| CH13a | `delivery` is each of `[0,3]`, `[0,0]`, `[2,2]` and `[0,18446744073709551615]` | admitted: four distinct node ids, each distinct from CH13's |
+| CH13b | `delivery` is `[0,3]`, then `[0,4]`; `delivery` is `[1,1]`, then `exactly-once-premise` | admitted; each pair gives two different channel bodies |
 | CH14 | `delivery` is `exactly-once` | refuses `malformed_wire` |
+| CH14a | `delivery` is each of `[4,3]`, `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` | refuses `malformed_wire` at the `delivery` term |
 | CH15 | `delivery` removed | refuses `malformed_wire` |
 | CH16 | `ordering` removed | refuses `malformed_wire` |
 | CH17 | changing `delivery` from `at-least-once` to `unknown` | the channel's body, the clause's and the checked package change |
@@ -144,21 +147,21 @@ FR-465-AC-9.
 
 ## Expected Results
 
-1. RL1, RL2, RL8, RL14, CH1, CH2, CH7, CH7d, CH11, CH13, QU1 to QU3, QU11, FN1, FN3, FN3b, TM1, TM11,
+1. RL1, RL2, RL8, RL14, CH1, CH2, CH7, CH7d, CH11, CH13, CH13a, QU1 to QU3, QU11, FN1, FN3, FN3b, TM1, TM11,
    TM2, TM9, TM13, RT1 and RT4 are admitted with the stated keys (FR-465-AC-1 to
-   FR-465-AC-8).
+   FR-465-AC-8, FR-465-AC-10).
 2. RL3 to RL7a, RL13, CH8 to CH10a, CH12, QU8, QU9a, FN5, FN6 and TM8 refuse
    `invalid_model_binding`/`malformed-declaration`, `missing_declaration`/
    `missing-name` at the target, or (RL7, CH10, QU9) `invalid_semantic_graph`
    at the node's `/dependencies` at the graph stage, as listed (FR-465-AC-1, FR-465-AC-3,
    FR-465-AC-5, FR-465-AC-6, FR-465-AC-7).
-3. RL9, RL10, RL17 to RL19, CH3, CH4, CH14 to CH16, QU4 to QU6b, QU10, TM3, TM4
+3. RL9, RL10, RL17 to RL19, CH3, CH4, CH14, CH14a, CH15, CH16, QU4 to QU6b, QU10, TM3, TM4
    and RT2 refuse `malformed_wire` (FR-465-AC-2, FR-465-AC-4,
-   FR-465-AC-5, FR-465-AC-7, FR-465-AC-8).
+   FR-465-AC-5, FR-465-AC-7, FR-465-AC-8, FR-465-AC-10).
 4. QU7 refuses `invalid_package`/`invalid-value`; RL11, RL12, RL15, RL16, CH5, CH6, CH7a to CH7c, CH7e, FN2, FN4, TM6, TM7, TM10, TM12 and FN7 refuse as
    listed (FR-465-AC-2, FR-465-AC-3, FR-465-AC-6, FR-465-AC-7).
-5. CH17 changes the bodies stated and no declared node id; TM5 refuses `ambiguous-name` (FR-465-AC-4,
-   FR-465-AC-7).
+5. CH13b and CH17 change the bodies stated and no declared node id; TM5 refuses `ambiguous-name` (FR-465-AC-4,
+   FR-465-AC-7, FR-465-AC-10).
 6. RT3 holds (FR-465-AC-8).
 7. RL20 and RL21 are admitted with distinct keys, each distinct from RL1's;
    RL22 and RL25 refuse `missing_declaration`/`missing-selection`, RL23
