@@ -83,7 +83,7 @@ FR-465-AC-10.
 | CH11 | `carries` names a `model`/`record_value_type`, a `model`/`event_type`, a `model`/`variant_type`, a `composite_type` and a `scalar_type` node, one each | admitted |
 | CH12 | `carries` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH13 | `delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise` | admitted: four distinct node ids |
-| CH13a | `delivery` is each of `[0,3]`, `[0,0]`, `[2,2]` and `[0,18446744073709551615]` | admitted: four distinct node ids, each distinct from CH13's |
+| CH13a | `delivery` is each of `[0,3]`, `[0,0]`, `[2,2]` and `[0,18446744073709551615]` | admitted: four distinct channel bodies, each distinct from CH13's; the channel's node id, its declaration path, is unchanged |
 | CH13b | `delivery` is `[0,3]`, then `[0,4]`; `delivery` is `[1,1]`, then `exactly-once-premise` | admitted; each pair gives two different channel bodies |
 | CH14 | `delivery` is `exactly-once` | refuses `malformed_wire` |
 | CH14a | `delivery` is each of `[4,3]`, `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` | refuses `malformed_wire` at the `delivery` term |

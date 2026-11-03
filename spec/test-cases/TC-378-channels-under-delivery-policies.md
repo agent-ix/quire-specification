@@ -14,7 +14,8 @@ relationships:
 ## Description
 
 Check the `send`, `receive`, `duplicate` and `lose` steps of FR-426 for a
-`fifo` and an `unordered` channel under every delivery policy, the three
+`fifo` and an `unordered` channel under every delivery policy and a delivery
+count interval, the three
 overflow policies at capacity, and the untimed `timeout` of an `await`.
 
 ## Test Procedure
@@ -42,6 +43,12 @@ contents and the enabled channel steps.
 | CH-10 | `fifo`, capacity 2, each overflow policy, with `m1`, `m2` queued and a third send `m3` | `reject`: outcome `rejected`, queue `[m1, m2]`; `loss new`: outcome `lost`, queue `[m1, m2]`; `loss head`: outcome `accepted`, `displaced` the entry of `m1`, queue `[m2, m3]`; `loss tail`: outcome `accepted`, `displaced` the entry of `m2`, queue `[m1, m3]`; on an empty queue the outcome is `accepted` and `displaced` none. Every record holds the channel's qualified name, and the send's binder holds the payload |
 | CH-11 | Two protocols of one package each declaring `channel Pay` | The two channels have different queue keys, transition identities and wait causes; no key of one names the other's channel |
 | CH-12 | Capacity 1, `block`, `exactly-once-premise`: `sequence { send P via ch; send Q via ch }` with no receiver | The sender at `Q` has no enabled step, waits, and the deadlock reports cause `full-queue` naming the channel |
+| CH-13 | `fifo`, `[2,2]`, capacity 2, overflow `block`; the sender sends only `m1` and the receiver receives three times from that send node | The `send` has one step, `count` `"2"`, queuing two entries of `m1` with send record `entries` two `accepted` and `pending` `"0"`; the first two receives complete on every behaviour and the third waits `empty-queue`; no `duplicate` or `lose` step exists |
+| CH-14 | as CH-13 with `[0,1]` | The `send` has two steps, `count` `"0"` (no entry, `entries` `[]`) and `count` `"1"`; after `count` `"0"` the first receive waits `empty-queue`, after `count` `"1"` it completes; `d = 0` is the only behaviour that loses `m1` |
+| CH-15 | as CH-13 with `[1,3]` and no receiver | The `send` has three steps: `count` `"1"` and `"2"` queue one and two entries and settle past the send; `count` `"3"` appends two entries, records `pending` `"1"`, leaves the thread at the send with a `send-pending` count 1 in the state key, and the thread waits with cause `full-queue` naming the channel |
+| CH-15r | CH-15's `count` `"3"` behaviour with the receiver receiving once | After the receive, the pending send has one step, `count` `"1"` with record `m1`, appending the last entry with `pending` `"0"`; the thread settles past the send |
+| CH-16 | as CH-13 with `[1,1]`, and separately with `exactly-once-premise` | `[1,1]` queues exactly one entry per send and enables no `duplicate` or `lose` step; the two channels have different channel premises, and the policy-word channel's send record holds `outcome` and `displaced` where the interval's holds `count`, `entries` and `pending` |
+| CH-17 | `fifo`, `[2,2]`, capacity 2, overflow `reject`, with `m0` already queued | The `send` processes two entries: `entries` `accepted` then `rejected`, `pending` `"0"`, queue `[m0, m1]` |
 | CH-09 | `await W after S within [0, 5] match receive R … then … timeout …` with no sender | `timeout(W)` is enabled at every state where `W` waits; no clock value appears in any state key |
 
 ## Expected Results

@@ -223,7 +223,7 @@ removed once its join has settled and every branch thread has left
 
 A **protocol state** is (model state, protocol instances, rest points and
 dispositions, parallel instances, compensation registrations, binders,
-iteration counters, queues, role instances, memory component). Its key is the
+iteration counters, pending send counts, queues, role instances, memory component). Its key is the
 FR-181 simulator state key with these member contents:
 
 | Member | Entry key | Entry value |
@@ -238,6 +238,7 @@ FR-181 simulator state key with these member contents:
 | `observations` | `{"type":"binder","node":"<node>","thread":<thread path>}` | the binder's record, one entry for each (binder node, thread whose environment holds it), each environment pruned by the reach rule |
 | `bounds` | `{"type":"repeat-counter","node":"<node>","thread":<thread path>}` | the counter, an integer |
 | `bounds` | `{"type":"attempt-count","thread":<thread path>}` | a compensation thread's attempt count, an integer |
+| `bounds` | `{"type":"send-pending","thread":<thread path>}` | the number of entries still pending of the thread's `block` send on a delivery count interval channel ([FR-426](FR-426-apply-protocol-steps.md) "Interval sends"), an integer above 0, present exactly while the thread rests at that send with entries pending |
 | `queues` | `{"type":"queue","instance":"<decimal>","channel":"<qualified-name>","fifo_key":<encoded>\|null}` | `sequence` (`fifo`) or `bag` (`unordered`) of `{"type":"queue-entry","send":"<node>","thread":<thread path>,"payload":<encoded>}` |
 | `roles` | `{"type":"role","instance":"<decimal>","role":"<ident>"}` | a static role's binding: for a role on a whole model `{"type":"model-binding","selection":"<identity>"}`, the `model_root` node identity it names; or a replicated role's instance map (FR-428) |
 | `memory` | the members its memory model names | empty under `sc` (FR-434) |
@@ -273,7 +274,7 @@ state holds the model state and no instance.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-425-AC-1 | Two behaviours that reach the same model state, rest points, dispositions, binders, counters, queues and role instances by different interleavings produce byte-identical state keys and are coalesced into one state; states that differ in any one of those members have distinct keys. | Test (TC-375) |
+| FR-425-AC-1 | Two behaviours that reach the same model state, rest points, dispositions, binders, counters, pending send counts, queues and role instances by different interleavings produce byte-identical state keys and are coalesced into one state; states that differ in any one of those members have distinct keys. | Test (TC-375) |
 | FR-425-AC-2 | A `parallel` nested three deep inside a `repeat` with `outstanding continue` gives a second live parallel instance ordinal 1 while ordinal 0 still runs, and reuses ordinal 0 after the first instance is removed, so the loop's reachable state set is finite. | Test (TC-375) |
 | FR-425-AC-3 | A binder no reachable node reads is absent from `observations` in the post-state of the step that binds it; a branch binder read after an `all` join stays present, under the branch's path until the join and under the joiner's after it, until the reading node's step. | Test (TC-375) |
 | FR-425-AC-4 | The protocol clause outside its `memory` clauses, its bindings, its `terminal` and `scheduling` members and the resolved memory models each change the obligation identity when changed, a source `memory` clause changes it only through the resolved model, and the `on origin` subject has exactly one instance per initial model state. | Test (TC-375) |

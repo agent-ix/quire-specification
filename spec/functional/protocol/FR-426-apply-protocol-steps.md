@@ -94,7 +94,7 @@ in [FR-427](FR-427-check-protocol-compensation.md) and
 | --- | --- | --- | --- |
 | `attempt` | thread at attempt node `n` | for one FR-181 application of `n`'s operation (receiver and argument vector from the finite domains), the effective precondition over the contract clauses `n` selects is true over the thread's observation; some post-state within the frame satisfies the selected postconditions; the binder record (receiver, arguments, result) satisfies `n`'s constraint; the gate holds | the post-state delta is written through the memory model, in place under `sc`; the binder is bound. One step per (application, post-state, result) |
 | `event` | thread at an `effect`, domain `event` or `commit` node `n` | some record of `n`'s record type satisfies `n`'s constraint; for an `effect`, its attempt's binder is bound in the thread's binder environment (after the join of an `all`-joined `parallel` whose branch holds the attempt, the binder condition holds, because the join added the binder) | the binder is bound; the model state is unchanged. One step per satisfying record |
-| `send` | thread at send node `n` | some payload satisfies `n`'s constraint; the channel's capacity and overflow policy admit the send ([FR-170](FR-170-evaluate-channel-queue-semantics.md): under `block`, not while the queue is at capacity); the gate holds | per FR-170: append the entry, or under `reject` at capacity leave the queue unchanged, or under `loss` apply the loss selector (`head` removes the oldest queued entry and appends the arriving one, `tail` removes the newest and appends the arriving one, `new` drops the arriving one and leaves the queue unchanged); the binder is bound to the payload and the **send record** described below is recorded |
+| `send` | thread at send node `n` | some payload satisfies `n`'s constraint, or the thread's send at `n` is pending (below); the channel's capacity and overflow policy admit the send ([FR-170](FR-170-evaluate-channel-queue-semantics.md): under `block`, not while the queue is at capacity); the gate holds | per FR-170: append the entry, or under `reject` at capacity leave the queue unchanged, or under `loss` apply the loss selector (`head` removes the oldest queued entry and appends the arriving one, `tail` removes the newest and appends the arriving one, `new` drops the arriving one and leaves the queue unchanged); the binder is bound to the payload and the **send record** described below is recorded. On a delivery count interval channel, the step instead processes `d` entries as stated under "Interval sends" below |
 | `receive` | thread at receive node `n` | the queue holds a deliverable entry from the send node `n` names (`fifo`: the head of its key; `unordered`: any entry) whose payload satisfies `n`'s constraint; the gate holds | the entry is removed and the binder bound. One step per distinct deliverable entry |
 | `duplicate`, `lose` | channel `h` | the delivery policy admits duplication (`unknown`, `at-least-once`) or loss (`unknown`, `at-most-once`); a delivery count interval ([FR-465](../../objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md)) admits neither; and entry `e` is queued; the channel's protocol instance is not finished; for `duplicate`, capacity admits one more entry | add a copy of `e`, or remove `e` |
 | `fork` | thread at `parallel` `p` | the gate holds | creates the parallel instance and one `running` branch thread per branch, each settled from its branch start; the owner rests at `p`'s join; the memory model splits its component |
@@ -126,10 +126,34 @@ which replay recomputes and compares; it is in neither the state key nor the
 transition identity. The state key holds the binder's payload and the queue the
 outcome left.
 
+**Interval sends.** On a channel whose delivery is a count interval `[lo,hi]`
+([FR-465](../../objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md),
+[FR-170](FR-170-evaluate-channel-queue-semantics.md)), a thread at send node
+`n` with no pending send has one `send` step per (payload, `d`) with
+`lo <= d <= hi`, its identity's `count` being `d`. The step binds the binder
+and processes `d` entries of that payload one after another, each by the
+single-entry effect of the `send` row: under `reject` or `loss` all `d` are
+processed in the step, an entry that finds the queue full being rejected,
+dropped or displacing as its overflow policy states. Under `block` the step is
+enabled only while the queue is below capacity, as for any `block` send; it
+appends entries while the queue has room, and if the queue is full with `r > 0`
+entries unprocessed the thread's send at `n` is **pending** with `r`: the
+thread rests at `n` without settling past it, and the state key holds `r`
+([FR-425](FR-425-define-protocol-subjects-and-state-keys.md)). A pending send is
+a waiting `block` send while the queue is full; once the queue is below
+capacity it has one `send` step, with `count` `r` and the bound payload as
+`record`, that appends the next entries the same way. A step that leaves no
+entry pending settles the thread past `n`. `d = 0` processes no entry and
+settles past `n`. No `duplicate` or `lose` step exists for the channel. The
+step's send record holds `count`, `entries` and `pending` in place of
+`outcome` and `displaced`: `{"type":"send-record","channel":"<qualified-name>","payload":<encoded>,"count":"<decimal>","entries":[{"outcome":"accepted"|"rejected"|"lost","displaced":<queue-entry>|null},...],"pending":"<decimal>"}`,
+with one `entries` member per entry the step processed, in processing order
+(`[]` for `d = 0`), and `pending` the entries left pending, `"0"` when none.
+
 **Waiting.** A thread at an attempt with no enabled application, at an event,
 send or finish no record or payload of which satisfies its constraint, at a
 receive with no deliverable entry, at a `block` send whose channel is at
-capacity, at a `fence` whose memory model's fence rule is false, at an
+capacity (a pending send included), at a `fence` whose memory model's fence rule is false, at an
 unsatisfied join, at `finish` while another thread of its instance is
 `running`, at a node owned by a replicated role with no live instance, at a
 compensation attempt that a commit step has closed, or at a false `check` has
@@ -199,6 +223,7 @@ members not listed for a kind being absent:
 | `arguments` | `attempt`, `cattempt` | the argument vector, in parameter order |
 | `record` | `event`, `send`, `receive`, `finish`, `activate`, `cattempt` | the bound record or payload; for `cattempt`, its attempt record ([FR-427](FR-427-check-protocol-compensation.md)) |
 | `actor` | a step taken by an instance of a replicated role, `send` and `receive` it owns included | the acting instance's object reference |
+| `count` | `send` on a delivery count interval channel | the number of entries the step processes, a decimal text: the chosen `d`, or for a pending send its pending count |
 | `channel` | `duplicate`, `lose` | the channel's qualified name and instance ordinal |
 | `entry` | `duplicate`, `lose` | the queue entry |
 | `template`, `registration` | `cattempt`, `cend` | the template's qualified name and the registration key |
@@ -234,6 +259,7 @@ JCS bytes of the identity, as FR-181 states for model transition identities.
 | FR-426-AC-16 | `run sequence Main { parallel P { branch left attempt A as (a); branch right attempt B } join all; effect E of Main::P::left::A as (e) { true } }`, with `A` and `B` always enabled: at the state after `join(P)`, `event(E)` is enabled and the root thread's environment holds `A`'s binder, added by the join. | Test (TC-376) |
 | FR-426-AC-17 | A `parallel J` of branches `a`, `b` and `c`, each one always-enabled `event`, joined `predicate(g)` over `[a, b, c]` with `outstanding cancel`, where `g(p, q, r)` is `true` exactly when `q` is `true` and `r` is `false`: `join(J)` is enabled at exactly the states whose completed branch set is `{b}` or `{a, b}`, and at no state whose completed set is `{}`, `{a}`, `{c}`, `{a, c}`, `{b, c}` or `{a, b, c}`; a join at `{b}` makes `a` and `c` `cancelled` in that step. | Test (TC-377) |
 | FR-426-AC-18 | An `attempt` whose operation guard reads a model clock is evaluated at the current clock valuation, and no protocol step changes that valuation. | Test (TC-370) |
+| FR-426-AC-19 | On a delivery count interval channel `[lo,hi]` a thread at a send has one `send` step per `d` from `lo` to `hi`, with `count` `d` in its identity, and no `duplicate` or `lose` step exists: on a `fifo` channel of capacity 2 under `block`, `[2,2]` queues two entries so two receives complete and a third waits `empty-queue`; `[0,1]` has a `d = 0` step queuing nothing (send record `entries` empty) and a `d = 1` step; `[1,3]` has `d = 1` and `d = 2` steps that queue and settle past the send and a `d = 3` step that appends two entries and leaves the send pending with 1, the thread then waiting `full-queue`; after a receive the pending send's one step, with `count` 1, appends the last entry and settles. | Test (TC-378) |
 
 ## Dependencies
 

@@ -144,14 +144,20 @@ order:
   digits `0` to `9` with no sign and no leading zero (`0` itself is a
   numeral), and `lo <= hi`; so one interval has one text. The interval is a
   per-send cardinality: one send produces a number of deliveries `d` with
-  `lo <= d <= hi`. It is not elapsed time and reads no clock. It is an
+  `lo <= d <= hi`, each a queue entry
+  ([FR-170](../../functional/protocol/FR-170-evaluate-channel-queue-semantics.md),
+  [FR-426](../../functional/protocol/FR-426-apply-protocol-steps.md)). It is not elapsed time and reads no clock. It is an
   authored premise, as a policy word is: no policy word is derived from an
   interval and no interval from a policy word, so `[1,1]` and
   `exactly-once-premise` are two different channel bodies, and two intervals
   that differ in `lo` or `hi` are two different channel bodies. An interval
   admits no transport duplication or loss beyond its counts, so it enables
-  neither the `duplicate` nor the `lose` step
-  ([FR-426](../../functional/protocol/FR-426-apply-protocol-steps.md)).
+  neither the `duplicate` nor the `lose` step. The interval is carried as
+  this one text, not as FR-464's structured **interval** Group of `lower`
+  and `upper`, because the delivery binding is a single text whose value is
+  either a policy word or an interval, and the producer emits the interval
+  as the delivery text `[lo,hi]`; a Group would give the one binding two
+  term shapes.
 - **Delivery spellings.** The delivery text is an enumerated text value
   (FR-464 "Term shapes"): a text that is neither a policy word nor an interval
   text as stated above (a space inside the brackets, a leading zero, a sign,
@@ -308,7 +314,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-1 | A static role is admitted with an empty `replication` Group and a `model` target that is an object type, process, state machine, systems interface or persistence interface; a role on a `record_value_type`, `event_type`, `variant_type` or non-`model` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a target that names no node `missing_declaration`/`missing-name`; a target absent from `dependencies` refuses `invalid_semantic_graph` at the role's `/dependencies` (graph stage, FR-322-AC-96). | Test (TC-947) |
 | FR-465-AC-2 | A replicated role is admitted with `population`, `max` of at least 1, a `binder` of type `Reference<model>` and each lifetime; `until` is present exactly with `lifetime: until`; `max: 0` refuses `ill_typed`/`type-mismatch`, a binder of another type `ill_typed`/`type-mismatch`, a non-Boolean `until` `ill_typed`/`non-boolean-root`, and an `until` term reading a run-tree binder `missing_declaration`/`missing-name`. | Test (TC-947) |
 | FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery policy words or a delivery count interval; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries` (`ill_typed`/`type-mismatch`), a key that reads a capture (`missing_declaration`/`missing-name`), `over` or model state (`ill_typed`/`operator-ineligible`), a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
-| FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and another delivery spelling refuses `malformed_wire`. | Test (TC-947) |
+| FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and a delivery text that is neither one of the four policy words nor an FR-465-AC-10 interval text refuses `malformed_wire`. | Test (TC-947) |
 | FR-465-AC-5 | A queue is admitted with a `literal` capacity and a `symbolic` capacity and each overflow policy (with each loss selector), carries occurrences of role `generated` and no `declaration`, and depends only on its channel; a `literal` capacity with `name`, a `symbolic` capacity with `value`, an unknown overflow spelling, a `loss` selector absent for overflow `loss`, present for `reject` or `block`, or spelled other than `head`, `tail` or `new`, refuse `malformed_wire`, and a negative capacity `invalid_package`/`invalid-value`; a `channel` target that is not a channel of the clause refuses as the reader order states. | Test (TC-947) |
 | FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |

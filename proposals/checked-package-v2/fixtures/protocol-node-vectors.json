@@ -2442,7 +2442,7 @@
       "section": "Channel vectors",
       "id": "CH13a",
       "Edit": "`delivery` is each of `[0,3]`, `[0,0]`, `[2,2]` and `[0,18446744073709551615]`",
-      "Expected": "admitted: four distinct node keys, each distinct from CH13's"
+      "Expected": "admitted: four distinct channel bodies, each distinct from CH13's; the channel's node id, its declaration path, is unchanged"
     },
     {
       "test_case": "TC-947",
