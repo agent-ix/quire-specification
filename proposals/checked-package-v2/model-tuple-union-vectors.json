@@ -560,7 +560,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0"
+          "at": "/tuple_types/0",
+          "stage": "reader"
         }
       }
     },
@@ -578,7 +579,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -595,7 +597,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -613,7 +616,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0"
+          "at": "/tuple_types/0",
+          "stage": "reader"
         }
       }
     },
@@ -631,7 +635,8 @@
         "refused": {
           "code": "missing_declaration",
           "cause": "missing-name",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -649,7 +654,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "conflicting-binding",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -667,7 +673,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -685,7 +692,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -703,7 +711,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/0"
+          "at": "/tuple_types/0/positions/0",
+          "stage": "reader"
         }
       }
     },
@@ -729,7 +738,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -747,7 +757,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -765,7 +776,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -800,7 +812,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -818,7 +831,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/0"
+          "at": "/tuple_types/0/positions/0",
+          "stage": "reader"
         }
       }
     },
@@ -836,7 +850,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -854,7 +869,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -889,7 +905,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -912,7 +929,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -988,7 +1006,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -1018,7 +1037,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -1048,7 +1068,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -1078,7 +1099,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/0"
+          "at": "/tuple_types/0/positions/0",
+          "stage": "reader"
         }
       }
     },
@@ -1174,7 +1196,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -1202,7 +1225,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -1230,7 +1254,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -1258,7 +1283,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/0"
+          "at": "/tuple_types/0/positions/0",
+          "stage": "reader"
         }
       }
     },
@@ -1286,7 +1312,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -1314,7 +1341,8 @@
         "refused": {
           "code": "invalid_model_binding",
           "cause": "malformed-declaration",
-          "at": "/tuple_types/0/positions/1"
+          "at": "/tuple_types/0/positions/1",
+          "stage": "reader"
         }
       }
     },
@@ -1358,7 +1386,8 @@
         "refused": {
           "code": "unsupported_construct",
           "cause": "declaration-form",
-          "at": "/variant_types/0/cases/0/payloadType"
+          "at": "/variant_types/0/cases/0/payloadType",
+          "stage": "reader"
         }
       }
     },
@@ -1515,7 +1544,8 @@
       ],
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
-      "locus": "/semantic_graph/nodes/0"
+      "locus": "/semantic_graph/nodes/0",
+      "stage": "schema"
     },
     {
       "id": "TW-02",
@@ -1533,7 +1563,8 @@
       ],
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
-      "locus": "/semantic_graph/nodes/0/owner"
+      "locus": "/semantic_graph/nodes/0/owner",
+      "stage": "schema"
     },
     {
       "id": "TW-03",
@@ -1551,7 +1582,8 @@
       ],
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
-      "locus": "/semantic_graph/nodes/0/owner"
+      "locus": "/semantic_graph/nodes/0/owner",
+      "stage": "schema"
     },
     {
       "id": "TW-04",
@@ -1565,7 +1597,8 @@
       ],
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
-      "locus": "/semantic_graph/nodes/0/owner"
+      "locus": "/semantic_graph/nodes/0/owner",
+      "stage": "schema"
     },
     {
       "id": "TW-06",
@@ -1580,7 +1613,8 @@
       "schema": "valid",
       "outcome": "refused:missing_declaration",
       "locus": "/semantic_graph/nodes/0/owner",
-      "cause": "missing-selection"
+      "cause": "missing-selection",
+      "stage": "graph"
     },
     {
       "id": "TW-07",
@@ -1595,7 +1629,8 @@
       "schema": "valid",
       "outcome": "refused:missing_declaration",
       "locus": "/semantic_graph/nodes/0/owner",
-      "cause": "missing-selection"
+      "cause": "missing-selection",
+      "stage": "graph"
     },
     {
       "id": "TW-08",
@@ -1610,7 +1645,8 @@
       "schema": "valid",
       "outcome": "refused:missing_declaration",
       "locus": "/semantic_graph/nodes/0/owner",
-      "cause": "missing-selection"
+      "cause": "missing-selection",
+      "stage": "graph"
     },
     {
       "id": "TW-09",
@@ -1625,7 +1661,8 @@
       "schema": "valid",
       "outcome": "refused:missing_declaration",
       "locus": "/semantic_graph/nodes/3/owner",
-      "cause": "missing-selection"
+      "cause": "missing-selection",
+      "stage": "graph"
     },
     {
       "id": "TW-10",
@@ -1638,7 +1675,8 @@
       ],
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
-      "locus": "/semantic_graph/nodes/3"
+      "locus": "/semantic_graph/nodes/3",
+      "stage": "schema"
     },
     {
       "id": "TW-11",
@@ -1749,7 +1787,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/26",
-      "cause": "type-mismatch"
+      "cause": "type-mismatch",
+      "stage": "reader"
     },
     {
       "id": "TW-12",
@@ -1825,7 +1864,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/26",
-      "cause": "type-mismatch"
+      "cause": "type-mismatch",
+      "stage": "reader"
     },
     {
       "id": "TW-13",
@@ -1934,7 +1974,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/25",
-      "cause": "type-mismatch"
+      "cause": "type-mismatch",
+      "stage": "reader"
     },
     {
       "id": "TW-14",
@@ -2010,7 +2051,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/25",
-      "cause": "type-mismatch"
+      "cause": "type-mismatch",
+      "stage": "reader"
     },
     {
       "id": "TW-15",
@@ -2086,7 +2128,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/25",
-      "cause": "type-mismatch"
+      "cause": "type-mismatch",
+      "stage": "reader"
     },
     {
       "id": "TW-16",
@@ -2371,7 +2414,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/33",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-17",
@@ -2756,7 +2800,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/33",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-18",
@@ -2920,7 +2965,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/31",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-19",
@@ -3084,7 +3130,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/31",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-20",
@@ -3248,7 +3295,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/31",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-21",
@@ -3334,7 +3382,8 @@
       ],
       "schema": "valid",
       "outcome": "refused:invalid_semantic_graph",
-      "locus": "/semantic_graph/nodes/30"
+      "locus": "/semantic_graph/nodes/30",
+      "stage": "graph"
     },
     {
       "id": "TW-22",
@@ -3420,7 +3469,8 @@
       ],
       "schema": "valid",
       "outcome": "refused:invalid_semantic_graph",
-      "locus": "/semantic_graph/nodes/30"
+      "locus": "/semantic_graph/nodes/30",
+      "stage": "graph"
     },
     {
       "id": "TW-23",
@@ -3608,7 +3658,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/34",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-24",
@@ -3796,7 +3847,8 @@
       "schema": "valid",
       "outcome": "refused:ill_typed",
       "locus": "/semantic_graph/nodes/36",
-      "cause": "operator-ineligible"
+      "cause": "operator-ineligible",
+      "stage": "reader"
     },
     {
       "id": "TW-25",
@@ -3992,7 +4044,8 @@
       "schema": "valid",
       "outcome": "refused:invalid_package",
       "locus": "/semantic_graph/nodes/35",
-      "cause": "operation-law-mismatch"
+      "cause": "operation-law-mismatch",
+      "stage": "reader"
     },
     {
       "id": "TW-26",
@@ -4006,7 +4059,8 @@
       ],
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
-      "locus": "/semantic_graph/nodes/31"
+      "locus": "/semantic_graph/nodes/31",
+      "stage": "schema"
     },
     {
       "id": "TW-27",
@@ -4033,7 +4087,8 @@
       "schema": "valid",
       "outcome": "refused:invalid_package",
       "locus": "/semantic_graph/nodes/0/node_id",
-      "cause": "invalid-derived-shape"
+      "cause": "invalid-derived-shape",
+      "stage": "graph"
     },
     {
       "id": "TW-28",
@@ -4061,7 +4116,8 @@
       "schema": "valid",
       "outcome": "refused:missing_declaration",
       "locus": "/semantic_graph/nodes/0/owner",
-      "cause": "missing-selection"
+      "cause": "missing-selection",
+      "stage": "graph"
     }
   ]
 }

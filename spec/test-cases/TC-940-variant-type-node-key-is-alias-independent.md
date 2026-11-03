@@ -120,6 +120,9 @@ Expected results:
     `malformed_wire` or `invalid_semantic_graph` case states none, FR-322-AC-153),
     `TW-18` to `TW-20` refuse at the
     application node `/semantic_graph/nodes/31` (FR-322-AC-152).
+    Every refused wire and intake case also carries the `stage` (`schema`, `graph` or
+    `reader`) that raises it, and a replay compares it with the code, cause and locus
+    (FR-322-AC-371).
 12. The cycle is admitted; neither node has a `recursion_group`; the walk and
     the empty leaf list are those of FR-322-AC-147.
 13. The tuple construct shape is `tuple` and each tuple position carries an
