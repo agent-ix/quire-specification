@@ -198,3 +198,31 @@ fn object_environment_identity_is_the_closed_two_member_pair() {
     let extra = json!({"identity": {"authority": "agent-ix", "identity": "env", "other": "x"}});
     assert!(!environment.is_valid(&extra), "AC-10: no other member on an environment identity");
 }
+
+const REPLAY_REQUEST: &str =
+    include_str!("../proposals/conformance-corpus-v1/fixtures/replay-request.json");
+
+/// FR-336-AC-7: a replay request carries the proved checked package as its
+/// closed top-level `package` member, so its node ids have a graph to resolve
+/// against; a request without it, or with a package that is not a checked
+/// package, is refused.
+#[test]
+#[trace("TC-970", "FR-336-AC-7")]
+fn replay_request_carries_the_proved_checked_package() {
+    let schema = parsed(SCHEMA);
+    let request = definition_validator(&schema, "ReplayRequest");
+    let fixture = parsed(REPLAY_REQUEST);
+    assert!(request.is_valid(&fixture), "AC-7: the published request validates");
+    assert_eq!(fixture.as_object().expect("request is an object").len(), 14);
+
+    let mut without_package = fixture.clone();
+    without_package
+        .as_object_mut()
+        .expect("request is an object")
+        .remove("package");
+    assert!(!request.is_valid(&without_package), "AC-7: package is required");
+
+    let mut not_a_package = fixture;
+    not_a_package["package"] = json!({"name": "example"});
+    assert!(!request.is_valid(&not_a_package), "AC-7: package is a closed checked package");
+}

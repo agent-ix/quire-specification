@@ -21,7 +21,7 @@ Scope: FR-336-AC-7, FR-336-AC-8.
 
 Validate `proposals/conformance-corpus-v1/schema.json` as Draft 2020-12 and
 validate `fixtures/replay-request.json` against `$defs.ReplayRequest`. Confirm
-that the request has exactly the 15 `ReplayRequestWire` members and that each
+that the request has exactly the 14 `ReplayRequestWire` members, `package` among them and that each
 nested object and tagged variant is closed. Mutate one request at a time to
 add an unknown member to a structural object, replace a `WitnessValue` or
 `DomainKey` tag with an unknown `kind`, replace an integer decimal with a JSON

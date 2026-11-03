@@ -24,7 +24,7 @@ The corpus has four top-level members:
   the consuming API's object-context document; QSL binds it to FR-106's
   `quire.state.snapshot/v1` document and resolves Population names only after
   admission. A `replay-request` adapter uses `$defs.ReplayRequest`, a closed
-  request adapter whose 15 members map one-to-one to `ReplayRequestWire`.
+  request adapter whose 14 members map one-to-one to `ReplayRequestWire`.
   FR-323 source, target and result members are reused; other nested types have
   closed structural encodings with `snake_case` Rust fields, tagged variants,
   decimal-string integers and no unknown members.
