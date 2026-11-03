@@ -21,6 +21,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-142
     type: references
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: references
   - target: ix://agent-ix/quire-specification/FR-415
     type: references
 ---
@@ -441,9 +443,10 @@ member where the member is used.
 
 Intake admits a `typeRef` naming `Rational`, `Decimal` or `Text` as it admits
 any other native name: the name is a type that exists, and a `typeRef` carries
-no parameters. The bounds of a `Text`, `Integer` range and the like come from a
-value type of the package that the field names (FR-322 "Model-owned members"),
-not from the reference. Whether a member typed by an unparameterized
+no parameters. The bounds of a `Text`, `Integer` range, `Rational` range and
+the like come from a value type of the package that the field names (FR-322
+"Model-owned members", and "Rational value types" below), not from the
+reference. Whether a member typed by an unparameterized
 `Rational`, `Decimal` or `Text` can be used is decided where it is used, at
 member resolution: a bare `Text` field refuses there
 `ill_typed`/`operator-ineligible` (FR-322-AC-31), and intake raises nothing.
@@ -451,6 +454,87 @@ A field typed by a native value type declares no type node of its own. A
 refusal of a `typeRef` names the field node and `Field.typeRef`, the operation
 node and `Operation.params[i].typeRef`, or the operation node and
 `Operation.returns.typeRef`.
+
+**Rational value types.** A value type (FR-208
+`quire.meaning.model.value-type/v1`) whose `scalar` is `rational` is a
+**Rational value type**. Intake SHALL read its bounds from its own
+`constraints` only, by the four keywords `minNumerator`, `maxNumerator`,
+`minDenominator` and `maxDenominator`, each given once in any order, each with
+`appliesTo` the value type itself and an `operands.value` that is a JSON
+integer. With numerator bounds `n1`, `n2` and denominator bounds `d1`, `d2` it
+denotes `Rational[n1, n2; d1, d2]`: the rationals that, in lowest terms with a
+positive denominator, have a numerator in `[n1, n2]` and a denominator in
+`[d1, d2]` (FR-149's `Rational[..]`). A Rational value type with no
+`constraints` is the unbounded `Rational`: intake admits it, and a member of it
+has no type, as a member of the native `ix://quire/native/Rational` has none
+(FR-322-AC-183). Otherwise intake SHALL refuse the first defect of the value
+type in this order, at the value type node:
+
+1. a constraint whose keyword is none of the four:
+   `unsupported_construct`/`declaration-form` at `Constraint.keyword`, naming
+   the keyword;
+2. a keyword given a second time, the later constraint in `constraints` order:
+   `invalid_model_binding`/`malformed-declaration` at `Constraint.keyword`,
+   naming the keyword;
+3. a missing keyword, checked in the order `minNumerator`, `maxNumerator`,
+   `minDenominator`, `maxDenominator`:
+   `invalid_model_binding`/`malformed-declaration` at
+   `TypeDefinition.constraints`, naming the keyword;
+4. an `operands.value` that is not a JSON integer in the signed 64-bit range
+   (a fraction such as `1.5` or `0.5`, an exponent spelling such as `1e2`, a
+   string such as `"3/4"`, or `9223372036854775808`), checked in the keyword
+   order of row 3: `invalid_model_binding`/`malformed-declaration` at that
+   constraint's `Constraint.operands`, naming the keyword; no operand is
+   rounded, widened or repaired;
+5. bounds outside `n1 <= n2` and `1 <= d1 <= d2`:
+   `unsupported_construct`/`declaration-form` at `TypeDefinition.constraints`,
+   naming the four bounds.
+
+A denominator bound therefore lies in `1 ..= i64::MAX`: a zero or negative
+`minDenominator` is a JSON integer in range and is refused by row 5, not row 4.
+
+A Rational value type MAY carry a `unit` member, a unit reference of the form
+`ix://quire/unit/<name>` that a unit `typeRef` takes. Intake admits it without
+resolving it, as it admits a unit `typeRef`; FR-322 "Model-owned members"
+resolves it, and one that names no unit of the checked package refuses
+`missing_declaration`/`missing-name` at the value type node and
+`TypeDefinition.unit`. An absent `unit` makes the type dimensionless. A `unit`
+member that is not a string of that form, and a `unit` member on a value type
+whose `scalar` is not `rational`, refuse
+`invalid_model_binding`/`malformed-declaration` at `TypeDefinition.unit`. A
+bounded Rational value type with a `unit` `u` has the carried quantity type
+`Quantity<u, Rational[n1, n2; d1, d2]>` (FR-142 "Carried quantity"); two
+Rational value types with equal bounds and different units are two types, and
+two with equal bounds and equal units, or equal bounds and no unit, are one
+type (FR-322 "Model-owned members" step 4).
+
+A Rational value type is named by `ix://<package identity>/<artifact id>` and
+is admitted at every position that takes a package type: a field, parameter
+or result `typeRef`, an alias `target`, a sequence `items`, a map `values`, an
+option `inner`, a tuple position `typeRef` and a variant case `payloadType`.
+Every member typed by one Rational value type, directly or through an alias
+chain, has exactly its bounds and unit; no member restates or narrows them. A
+field or parameter typed by a Rational value type, directly or through an
+alias, that carries its own non-empty `constraints` refuses
+`invalid_model_binding`/`malformed-declaration` at `Field.constraints` (a
+parameter's path is `Operation.params[i].constraints`), and an alias whose
+`target` chain reaches a Rational value type and that carries a non-empty
+`constraints` refuses the same at the alias node and
+`TypeDefinition.constraints`. An alias carrying no constraint admits and
+denotes the type of its target. Each refusal of this paragraph keeps the IR
+node identity and `origin` and reports in node order as every other intake
+refusal does; adding a Rational value type to a package changes no other
+node's declaration key or order.
+
+A value supplied to execution at a member of a bounded Rational value type (an
+initial state or population, an operation argument, an environment choice or
+a replayed recorded value) SHALL be a rational in lowest terms with a positive
+denominator whose numerator and denominator lie in the type's bounds. A value
+not in lowest terms (`2/4`), a numerator or denominator outside the bounds
+(`8/1` or `1/13` against `Rational[-3, 7; 1, 12]`) or a float (`0.5`) refuses
+`invalid_runtime_input`/`invalid-value` naming the member path, and no value is
+reduced, rounded or converted. A unit-bearing member's value is the magnitude
+in `u`, read by the same rule.
 
 A field `typeRef`, an operation parameter or an operation result that names a
 variant type is admitted and raises no refusal of its own (FR-208), including
@@ -695,6 +779,9 @@ Admission checks are decided before the first charge.
 | FR-154-AC-39 | An option value type `OptInt` (`kind` `option`, `inner` `ix://quire/native/Integer`) is admitted as one type definition node and one original declaration keyed `(acme/optionals, ix://acme/optionals/OptInt)`, with no declaration for the native `inner` and no declaration key naming `quire/native`; it is admitted as a field `typeRef`, an operation parameter `typeRef`, an operation result `typeRef`, an alias `target`, a sequence `items`, a map `values`, a tuple position `typeRef` and a variant case `payloadType`, and the same shape is admitted over `ix://quire/unit/ms` (`Option<Quantity<ms>>`, left unresolved by intake) and over a record value type. A field typed `OptInt` with presence `required` and multiplicity `{1, 1, false, true}` and a field typed `ix://quire/native/Integer` with presence `optional` and the same multiplicity are both admitted and are the same type `Option<Integer>`; a field typed `OptInt` with multiplicity `{0, 3, true, false}` is `Sequence<Option<Integer>>[0, 3]` and one typed `ix://quire/native/Integer` with presence `optional` and that multiplicity is `Option<Sequence<Integer>[0, 3]>`, both admitted. | Test (TC-234) |
 | FR-154-AC-40 | An option value type whose `inner` is an option value type, whose `inner` is an alias of one, and whose `inner` is itself, each refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.inner` and are not flattened; a field typed by an option value type, or by an alias of one, with presence `optional` and multiplicity `{1, 1, false, true}` or `{1, 1, true, false}` refuses `invalid_model_binding`/`malformed-declaration` at `Field.presence`, and the same field with presence `required`, or with presence `optional` and multiplicity `{0, 3, true, false}`, is admitted; an option value type whose `inner` is `ix://quire/native/Clock` or an alias of it, or names a namespace, refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.inner`, and an option over `ix://quire/native/Integer`, a unit and a package value type is admitted; a `reference` whose `target` is an option value type refuses at `TypeDefinition.target`; a field typed `ix://quire/native/Option`, `ix://quire/native/Option<Integer>` or `ix://quire/native/option` refuses `invalid_model_binding`/`malformed-declaration` at `Field.typeRef`. | Test (TC-234) |
 | FR-154-AC-41 | An option value type with no `inner`, a `null`, empty, numeric or object `inner`, an `inner` array of one element and an `inner` array of two elements each refuse `invalid_model_binding`/`malformed-declaration` once at `TypeDefinition.inner`; an `inner` that is `Integer` with no URI or `ix://quire/native/Int` refuses the same at `TypeDefinition.inner`; an `inner` that is a well-formed package identity naming no node refuses `missing_declaration`/`missing-name` at `TypeDefinition.inner`; an option value type that declares a field, an operation, a supertype, a position or an `items` member, or a non-empty `constraints`, and a constraint whose `appliesTo` is an option value type, each refuse `invalid_model_binding`/`malformed-declaration` at that member's path, `TypeDefinition.constraints` or `Constraint.appliesTo`; a refused option value type raises no refusal at the fields that name it, and its refusals report in the order shape members, `constraints`, `inner` form, `inner` resolution, `inner` kind. | Test (TC-234) |
+| FR-154-AC-42 | A package with the Rational value type `Ratio` (`scalar` `rational`; constraints `maxDenominator` 12, `minNumerator` -3, `minDenominator` 1 and `maxNumerator` 7, in that order) and a field, an operation parameter and an operation result typed `Ratio` is admitted with one original declaration for `Ratio`; a plain alias of `Ratio` is admitted; `Ratio` with no `constraints` is admitted as the unbounded `Rational`. | Test (TC-981) |
+| FR-154-AC-43 | Over `Ratio`, each single defect refuses at the `Ratio` node: a `minLength` constraint `unsupported_construct`/`declaration-form` at `Constraint.keyword` naming `minLength`; `maxNumerator` given twice `invalid_model_binding`/`malformed-declaration` at the second `Constraint.keyword`; `minDenominator` removed `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.constraints` naming `minDenominator`; `maxNumerator` operands `1.5`, `1e2`, `"3/4"` and `9223372036854775808`, and `maxDenominator` `0.5`, `invalid_model_binding`/`malformed-declaration` at that `Constraint.operands`; `minNumerator` 8, `minDenominator` 0 and `minDenominator` 13 each `unsupported_construct`/`declaration-form` at `TypeDefinition.constraints` naming the bounds. A `minLength` constraint together with `minDenominator` removed reports only the `minLength` refusal, and `maxNumerator` given twice together with `minDenominator` removed reports only the repeated keyword. | Test (TC-981) |
+| FR-154-AC-44 | A field typed `Ratio` with its own `maxDenominator` constraint refuses `invalid_model_binding`/`malformed-declaration` at `Field.constraints`, and an alias of `Ratio` carrying a constraint refuses the same at the alias node and `TypeDefinition.constraints`; `Ratio` with `unit` `ix://quire/unit/m` over a package declaring `m` is admitted, with `unit` `ix://quire/unit/nosuch` refuses `missing_declaration`/`missing-name` at `TypeDefinition.unit` when FR-322 resolves it, and a `unit` on a value type of `scalar` `string` refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.unit`. Supplied values `7/12`, `-3/1` and `0/1` to a `Ratio` field are admitted, and `8/1`, `1/13`, `2/4`, `-4/1` and the float `0.5` each refuse `invalid_runtime_input`/`invalid-value` naming the member path, with no value reduced or rounded. | Test (TC-981) |
 
 ## Dependencies
 
@@ -706,6 +793,12 @@ Admission checks are decided before the first charge.
   set. Intake reads `Operation.redefines` from the IR `operation` member of
   that name, so a producer's contract has to carry it for a document to
   declare an operation redefinition.
+- The filament-core-data Semantic IR contract likewise owns the
+  `TypeDefinition` `scalar` values, the constraint keywords that apply to each
+  and the `TypeDefinition` member set. A producer's contract has to carry
+  `scalar` `rational`, the keywords `minNumerator`, `maxNumerator`,
+  `minDenominator` and `maxDenominator` on it, and `TypeDefinition.unit` for a
+  document to declare a Rational value type ("Rational value types").
 - [Complete model definition](../../../proposals/quire-v1/definitions/model-complete.md)
   owns the intake and feature rules.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns the
