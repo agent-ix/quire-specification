@@ -19903,7 +19903,12 @@ type AggregateRefusal = (&'static str, &'static str, String);
 /// Independent reader oracle for one window aggregate argument, FR-370
 /// "Window aggregate atom" steps 1 to 5. Pointers are relative to the
 /// application body.
-fn aggregate_argument_refusal(profile: &str, argument: &Value, references: &[Value]) -> Result<(), AggregateRefusal> {
+fn aggregate_argument_refusal(
+    profile: &str,
+    argument: &Value,
+    references: &[Value],
+    clock_unit: &Value,
+) -> Result<(), AggregateRefusal> {
     let refuse = |code, cause, pointer: String| Err((code, cause, pointer));
     let whole = "/arguments/0".to_owned();
     let member = |at: usize| format!("/arguments/0/members/{at}");
@@ -20010,14 +20015,14 @@ fn aggregate_argument_refusal(profile: &str, argument: &Value, references: &[Val
                 let Some(spelled) = aggregate_literal(term, value_kind) else {
                     return refuse("invalid_package", "wrong-value-kind", pointer);
                 };
+                if value_kind == "quantity" && term["type"] != *clock_unit {
+                    return refuse("ill_typed", "unit-mismatch", pointer);
+                }
                 if spelled.starts_with('-') {
                     return refuse("invalid_package", "invalid-value", pointer);
                 }
                 if name == "upper" {
                     let lower = term_of("lower");
-                    if value_kind == "quantity" && lower["type"] != term["type"] {
-                        return refuse("ill_typed", "unit-mismatch", pointer);
-                    }
                     let (low_n, low_d) = aggregate_magnitude(lower["value"].as_str().expect("a checked bound"));
                     let (up_n, up_d) = aggregate_magnitude(spelled);
                     if low_n * &up_d > up_n * &low_d {
@@ -20054,6 +20059,25 @@ fn aggregate_argument_refusal(profile: &str, argument: &Value, references: &[Val
     Ok(())
 }
 
+/// Whether `case` is `base` with exactly one member replaced, added, removed
+/// or moved: some member of each, once removed, leaves equal sequences.
+fn single_member_mutation(base: &[Value], case: &[Value]) -> bool {
+    fn without(members: &[Value], at: usize) -> Vec<&Value> {
+        members.iter().enumerate().filter(|(index, _)| *index != at).map(|(_, member)| member).collect()
+    }
+    fn whole(members: &[Value]) -> Vec<&Value> {
+        members.iter().collect()
+    }
+    match case.len().cmp(&base.len()) {
+        std::cmp::Ordering::Greater => (0..case.len()).any(|at| without(case, at) == whole(base)),
+        std::cmp::Ordering::Less => (0..base.len()).any(|at| without(base, at) == whole(case)),
+        std::cmp::Ordering::Equal => {
+            base != case
+                && (0..base.len()).any(|from| (0..case.len()).any(|to| without(base, from) == without(case, to)))
+        }
+    }
+}
+
 /// FR-370-AC-17 and FR-370-AC-18 (TC-303 step 15): the aggregate atom is
 /// catalogued and enumerated, every published positive argument is admitted
 /// and every reader case refuses at its first defect.
@@ -20081,13 +20105,14 @@ fn tc_303_window_aggregate_arguments_admit_each_kind_and_refuse_at_the_first_def
 
     let vectors = parsed_fixture(TEMPORAL_AGGREGATE_VECTORS);
     let references = vectors["references"].as_array().expect("references");
+    let clock_unit = &vectors["clock_unit"];
     let mut kinds = BTreeSet::new();
     for row in vectors["positive"].as_array().expect("positive cases") {
         let id = row["id"].as_str().expect("an id");
         let argument = &row["argument"];
         assert!(argument_shape.is_valid(argument), "{id} meets the argument shape");
         let profile = row["profile"].as_str().expect("a profile");
-        assert_eq!(aggregate_argument_refusal(profile, argument, references), Ok(()), "{id}");
+        assert_eq!(aggregate_argument_refusal(profile, argument, references, clock_unit), Ok(()), "{id}");
         kinds.insert(argument["members"][0]["value"]["value"].as_str().expect("a kind").to_owned());
     }
     assert_eq!(
@@ -20095,14 +20120,26 @@ fn tc_303_window_aggregate_arguments_admit_each_kind_and_refuse_at_the_first_def
         ["count", "sum", "min", "max", "fraction", "quantile"].map(str::to_owned).into_iter().collect(),
         "a positive for every kind"
     );
+    let positives = vectors["positive"].as_array().expect("positive cases");
     for row in vectors["reader"].as_array().expect("reader cases") {
         let id = row["id"].as_str().expect("an id");
         let argument = &row["argument"];
         assert!(argument_shape.is_valid(argument), "{id} meets the argument shape");
+        let base = positives
+            .iter()
+            .find(|positive| positive["id"] == row["base"])
+            .unwrap_or_else(|| panic!("{id} names a published base positive"));
+        let members = argument["members"].as_array().expect("case members");
+        let base_members = base["argument"]["members"].as_array().expect("base members");
+        if row["profile"] == base["profile"] {
+            assert!(single_member_mutation(base_members, members), "{id} mutates exactly one member of its base");
+        } else {
+            assert_eq!(members, base_members, "{id} changes only the profile of its base");
+        }
         let expected = &row["expected"];
         let profile = row["profile"].as_str().expect("a profile");
         assert_eq!(
-            aggregate_argument_refusal(profile, argument, references),
+            aggregate_argument_refusal(profile, argument, references, clock_unit),
             Err((
                 expected["code"].as_str().expect("a code"),
                 expected["cause"].as_str().expect("a cause"),
