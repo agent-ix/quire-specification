@@ -21,7 +21,7 @@ When a package imports a domain package for native linking, the checker SHALL us
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | identity | String | 1..1 |  |
-| declarations | JsonObject | 0..* |  |
+| declarations | JsonObject | 1..1 |  |
 | effective_view | String | 1..1 |  |
 
 ## Field sources
@@ -31,7 +31,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | identity | domain package identity string, e.g. `acme/orders` |
-| declarations | collection of declaration records keyed by (identity, IR node identity) |
+| declarations | collection of declaration records keyed by (identity, IR node identity); multiplicity not stated in source |
 | effective_view | exactly one `quire.model.effective-view/v2` identity |
 
 

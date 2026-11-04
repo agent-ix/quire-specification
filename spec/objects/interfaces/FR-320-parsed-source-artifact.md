@@ -27,7 +27,7 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 | trivia | JsonObject | 0..* |  |
 | nodes | JsonObject | 0..* |  |
 | diagnostics | DiagnosticCatalog | 1..1 |  |
-| recoveries | JsonObject | 0..* |  |
+| recoveries | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -41,7 +41,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | trivia | ordered list of byte-region records |
 | nodes | ordered list of CST node records: kind, byte region, child indices, recovery state |
 | diagnostics | multiplicity not stated in source; see Field sources |
-| recoveries | list of recovery records with source loci; absent for an unrecovered artifact (AC-1, AC-2) |
+| recoveries | list of recovery records with source loci; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.parsed-source/v1`.

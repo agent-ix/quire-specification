@@ -22,7 +22,7 @@ When an authored verification plan completes linking, the producer SHALL use the
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | plan_id | String | 1..1 |  |
-| obligations | JsonObject | 0..* |  |
+| obligations | JsonObject | 1..1 |  |
 | methods | JsonObject | 0..* |  |
 | domains | JsonObject | 1..1 |  |
 | assumptions | JsonObject | 1..1 |  |
@@ -37,7 +37,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | contract_version | exactly `quire.verification-plan/v1` |
-| obligations | list of obligation records: clause or claim plus expected evidence class |
+| obligations | list of obligation records: clause or claim plus expected evidence class; multiplicity not stated in source |
 | methods | ordered list of method selections |
 | domains | record: model, input, trace, time, candidate domains; multiplicity not stated in source |
 | assumptions | record: authored premises with authorities; multiplicity not stated in source |

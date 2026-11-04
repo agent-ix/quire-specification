@@ -22,7 +22,7 @@ When a tool or plugin is registered, the producer SHALL use the immutable ToolPl
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | tool_id | String | 1..1 |  |
-| capabilities | JsonObject | 0..* |  |
+| capabilities | JsonObject | 1..1 |  |
 | effects | String | 0..* |  |
 | rights | JsonObject | 1..1 |  |
 | platform | JsonObject | 1..1 |  |
@@ -36,7 +36,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | contract_version | exactly `quire.tool-plugin-manifest/v1` |
 | tool_id | type not stated in source; multiplicity not stated in source; see Field sources |
-| capabilities | list of operation/profile/format tuples |
+| capabilities | list of operation/profile/format tuples; multiplicity not stated in source |
 | effects | type not stated in source; see Field sources |
 | rights | record: required grants and scope constraints |
 | platform | record: target and ABI or process-wire requirements; multiplicity not stated in source |

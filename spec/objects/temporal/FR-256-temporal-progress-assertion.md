@@ -50,7 +50,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | assertion_identity_and_revision | type not stated in source; multiplicity not stated in source; see Field sources |
 | named_clock | type not stated in source; see Field sources |
 | named_subjects | type not stated in source; see Field sources |
-| named_surrounding_execution | FR-258 scope with `scope_role` surrounding execution; exactly one (FR-094 Description) |
+| named_surrounding_execution | FR-258 scope whose `scope_role` is the surrounding execution ("either the decision scope or the surrounding execution", FR-258); "A second, independent axis (FR-258)" (this doc); exactly one |
 | progress_point | type not stated in source; see Field sources |
 | completeness_coverage | type not stated in source; see Field sources |
 

@@ -100,10 +100,10 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | capability_vocabulary | ProtocolClaimKind | 1..1 |  |
-| manifest | JsonObject | 0..* |  |
+| manifest | JsonObject | 1..* |  |
 | request | JsonObject | 1..1 |  |
 | temporal | JsonObject | 1..1 |  |
-| candidates | JsonObject | 0..* |  |
+| candidates | JsonObject | 1..1 |  |
 | dispositions | JsonObject | 1..* |  |
 | artifacts | JsonObject | 0..* |  |
 | results | JsonObject | 0..* |  |
@@ -117,7 +117,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | contract_version | exactly `quire.backend-provider/v1` |
-| manifest | array of backend descriptors; `proposals/backend-provider-v1/schema.json` `Manifest` |
+| manifest | array of backend descriptors, minItems 1; `proposals/backend-provider-v1/schema.json` `Manifest` |
 | request | JSON object; `proposals/backend-provider-v1/schema.json` `Request` |
 | temporal | JSON object; `proposals/backend-provider-v1/schema.json` `Temporal` |
 | candidates | JSON object tagged `set` or `unknown-backend`; `proposals/backend-provider-v1/schema.json` `Candidates` |
