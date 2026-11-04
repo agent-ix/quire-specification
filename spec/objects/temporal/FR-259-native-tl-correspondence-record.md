@@ -37,7 +37,7 @@ generated TL artifact is internal derived output and never editable source."
 | clock_observation_binding | TemporalClockBinding | 1..1 |  |
 | interval | BoundedTemporalInterval | 1..1 |  |
 | closure_history_premises | String | 1..1 |  |
-| tl_formula_profile_proposition_identities | TlTargetProfile | 1..1 |  |
+| tl_formula_profile_proposition_identities | String | 1..1 |  |
 | bridge_definition | String | 1..1 |  |
 
 ## Field sources
@@ -55,7 +55,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | clock_observation_binding | multiplicity not stated in source; see Field sources |
 | interval | multiplicity not stated in source; see Field sources |
 | closure_history_premises | closure and history premises of FR-257 and FR-258; type not stated in source; see Field sources |
-| tl_formula_profile_proposition_identities | multiplicity not stated in source; see Field sources |
+| tl_formula_profile_proposition_identities | type not stated in source; see Field sources |
 | bridge_definition | type not stated in source; see Field sources |
 
 
