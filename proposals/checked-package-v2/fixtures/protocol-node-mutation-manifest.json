@@ -7589,6 +7589,42 @@
       "reason": "needs_new_nodes"
     },
     {
+      "id": "RL26",
+      "test_case": "TC-947",
+      "class": "admit",
+      "reason": "needs_base_extension"
+    },
+    {
+      "id": "RL27",
+      "test_case": "TC-947",
+      "class": "admit",
+      "reason": "needs_base_extension"
+    },
+    {
+      "id": "RL28",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "reason": "needs_base_extension"
+    },
+    {
+      "id": "RL29",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "reason": "needs_base_extension"
+    },
+    {
+      "id": "RL30",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "reason": "needs_base_extension"
+    },
+    {
+      "id": "RL31",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "reason": "needs_base_extension"
+    },
+    {
       "id": "CH2",
       "test_case": "TC-947",
       "class": "admit",

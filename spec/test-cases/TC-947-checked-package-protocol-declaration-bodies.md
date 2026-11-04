@@ -63,7 +63,8 @@ FR-465-AC-12.
 | RL27 | the role `Operator` on `M::Sys` and a role on the whole model `M` | admitted with no third argument; the bytes equal those of the same package without the member (FR-465-AC-11) |
 | RL28 | RL26 with `package` naming another package; with `node` naming a component of `M`; with `node` naming no declaration | each `invalid_model_binding`/`malformed-declaration` at the role node, retaining `package` and `node` (FR-465-AC-12) |
 | RL29 | RL26 with an empty `package` text; with an empty `node` text; with a third binding in the Group; with an empty Group | each `malformed_wire` (FR-465-AC-12) |
-| RL30 | a `model_member` on a role whose `model` is a `model_root` text | `invalid_model_binding`/`malformed-declaration` at the role node (FR-465-AC-12) |
+| RL30 | a `model_member` on a role whose `model` is the text of an existing `model_root` node | `invalid_model_binding`/`malformed-declaration` at the role node (FR-465-AC-12) |
+| RL31 | a `model_member` on a role whose `model` is a text naming no `model_root` node | `missing_declaration`/`missing-selection` at the role node: the selection check precedes the member check (FR-465-AC-12) |
 
 ## Channel vectors
 

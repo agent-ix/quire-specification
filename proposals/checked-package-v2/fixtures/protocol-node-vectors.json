@@ -2308,6 +2308,48 @@
     },
     {
       "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL26",
+      "Edit": "the architecture fixture's role `Outlet` on the Port `M::pump_out` and `Inlet` on `M::tank_in`",
+      "Expected": "admitted: each carries `model_member` `{package, node}` of its own Port, the `model` reference targets `Sys`, and the two roles have different node ids"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL27",
+      "Edit": "the role `Operator` on `M::Sys` and a role on the whole model `M`",
+      "Expected": "admitted with no third argument; the bytes equal those of the same package without the member"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL28",
+      "Edit": "RL26 with `package` naming another package; with `node` naming a component of `M`; with `node` naming no declaration",
+      "Expected": "each `invalid_model_binding`/`malformed-declaration` at the role node, retaining `package` and `node`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL29",
+      "Edit": "RL26 with an empty `package` text; with an empty `node` text; with a third binding in the Group; with an empty Group",
+      "Expected": "each refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL30",
+      "Edit": "a `model_member` on a role whose `model` is the text of an existing `model_root` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the role node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL31",
+      "Edit": "a `model_member` on a role whose `model` is a text naming no `model_root` node",
+      "Expected": "`missing_declaration`/`missing-selection` at the role node: the selection check precedes the member check"
+    },
+    {
+      "test_case": "TC-947",
       "section": "Channel vectors",
       "id": "CH1",
       "Edit": "none: `fifo` by `message.order`, `at-least-once`",

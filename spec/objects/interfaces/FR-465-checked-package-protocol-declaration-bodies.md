@@ -25,8 +25,6 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-047
     type: references
-  - target: ix://agent-ix/quire-specification/FR-100
-    type: references
 ---
 
 # FR-465: Checked-package protocol role, channel, queue and obligation bodies
@@ -58,7 +56,7 @@ and a third that only a role on a model member carries:
 node: a Port is not a semantic model node, and the role record carries it
 directly. `package` is the identity of the domain package that declares the
 Port and `node` is the Port's declaration identity within that package, the
-two members of the `DeclarationKey` shape `{package, node}` (FR-100). A role
+two members of the `DeclarationKey` shape `{package, node}` that QSL ADR-013 O-03 defines. A role
 on a model type or a whole model has no third argument, so a role layout
 without it stays valid and its bytes are unchanged. The `model` argument of a
 role on a Port keeps its form: the reference to the model node that owns the
@@ -125,13 +123,18 @@ The reader checks, for one role, in this order:
    `ill_typed`/`non-boolean-root` at the role node. Its reads are a slot
    check (FR-464 step 6, stage `role-lifetime`).
 
-5. **Member.** A third argument is present only on a role whose `model` is a
-   reference, else `invalid_model_binding`/`malformed-declaration` at the role
-   node. Its Group holds exactly the text bindings `package` and `node`, each
+5. **Member.** The schema admits an optional third argument on every role and
+   decides only its count and binding name; that it appears only on a role on a
+   Port is this reader step's rule. A `model` text that names no `model_root`
+   node is refused by step 1 (`missing_declaration`/`missing-selection`) before
+   the member is read. A third argument is present only on a role whose
+   `model` is a reference, else `invalid_model_binding`/`malformed-declaration`
+   at the role node. Its Group holds exactly the text bindings `package` and `node`, each
    non-empty, else `malformed_wire`. `package` equals the package identity
    the `model` target belongs to, else `invalid_model_binding`/
    `malformed-declaration` at the role node; `node` names a declaration of the
-   kind Port in that package, and a declaration of any other kind (a part,
+   kind Port in that package, read from the declaration kinds of the model
+   package that the reader sees (Contract IR IR-1310), and a declaration of any other kind (a part,
    a component, a field, a connection) or none refuses `invalid_model_binding`/
    `malformed-declaration` at the role node, retaining the `package` and
    `node` texts.
@@ -349,7 +352,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-9 | A static role whose `model` is the text `identity` of a `model_root` node is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node ids. A text naming no `model_root` node refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
 | FR-465-AC-10 | A channel whose `delivery` is `[0,3]`, `[0,0]`, `[2,2]` or `[0,18446744073709551615]` is admitted; `[0,3]` and `[0,4]` give different channel bodies, and `[1,1]` and `exactly-once-premise`, otherwise equal, give different channel bodies; `[4,3]` (`lo > hi`), `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` each refuse `malformed_wire` at the channel node pointer `/semantic_graph/nodes/{i}`: the V2 schema refuses a spelling that is not an interval shape (a space, a leading zero, a sign, a fraction, a missing bound, an unclosed or unopened bracket) at the channel node pointer `/semantic_graph/nodes/{i}`, and the reader's strict wire layout check refuses `lo > hi` and a numeral above 18446744073709551615 at the same pointer, because no JSON Schema keyword expresses either. | Test (TC-947) |
 | FR-465-AC-11 | Over the architecture fixture whose component `Sys` owns the Port `pump_out` and the Port `tank_in`, the role `Outlet` on `M::pump_out` carries the `model_member` Group `{package: P, node: N}` with `P` the package identity of `M` and `N` the declaration identity of `pump_out`, and its `model` reference targets `Sys`; the role `Inlet` on `M::tank_in` carries the same `package` and the `node` of `tank_in`, and the two roles have different node ids. The role `Operator` on the type `M::Sys` and a role on the whole model `M` carry no third argument, and a package with only such roles has the bytes it had before the argument existed. | Test (TC-947) |
-| FR-465-AC-12 | Of a role on a Port: a `model_member` whose `package` names a package other than the one the `model` target belongs to, one whose `node` names a declaration that is a part, a component or a connection, and one whose `node` names no declaration each refuse `invalid_model_binding`/`malformed-declaration` at the role node, retaining `package` and `node`; an empty `package` or `node` text, a `model_member` that holds a third binding, and a `model_member` Group that is empty each refuse `malformed_wire`; a `model_member` on a role whose `model` is a `model_root` text refuses `invalid_model_binding`/`malformed-declaration`. | Test (TC-947) |
+| FR-465-AC-12 | Of a role on a Port: a `model_member` whose `package` names a package other than the one the `model` target belongs to, one whose `node` names a declaration that is a part, a component or a connection, and one whose `node` names no declaration each refuse `invalid_model_binding`/`malformed-declaration` at the role node, retaining `package` and `node`; an empty `package` or `node` text, a `model_member` that holds a third binding, and a `model_member` Group that is empty each refuse `malformed_wire`; a `model_member` on a role whose `model` is the text of an existing `model_root` node refuses `invalid_model_binding`/`malformed-declaration`, and on a role whose `model` text names no `model_root` node it refuses `missing_declaration`/`missing-selection`, the selection check coming first. | Test (TC-947) |
 
 ## Dependencies
 
@@ -366,6 +369,11 @@ runtime dimension of the control's key and are not a member of any node.
 - [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
   requires each refusal to carry a stable catalogued cause and an exact
   locus.
+- Contract IR IR-1310: the reader sees the declaration kinds of the selected
+  model package, which step 5 needs to refuse a `model_member` that names no Port.
+  Until it provides them, the kind and existence refusals of FR-465-AC-12 have no
+  reader that can raise them, and TC-947 RL28 to RL31 stay in the manifest's
+  `later` list.
 
 ## Status
 
