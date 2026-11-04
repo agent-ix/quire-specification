@@ -14,6 +14,8 @@ relationships:
 Settle an implementation-guarantee item over the compare-and-set counter
 implementation, and show which premise each defect defeats.
 
+Scope: FR-488-AC-1 to FR-488-AC-12.
+
 ## Test Procedure
 
 Premises: the abstract counter's TC-317 case 1 claim `always eventually

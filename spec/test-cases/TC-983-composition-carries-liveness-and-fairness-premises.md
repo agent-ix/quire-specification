@@ -13,6 +13,8 @@ relationships:
 
 Compose two components and settle each premise, mismatch and cycle separately.
 
+Scope: FR-489-AC-1 to FR-489-AC-11.
+
 ## Test Procedure
 
 Components `Producer` and `Consumer` are checked packages. `Consumer`'s

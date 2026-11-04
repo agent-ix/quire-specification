@@ -116,6 +116,13 @@ guarantee to `proved`. Missing backend, missing premise identity, missing bindin
 exhausted work stay distinct outcomes, each with its own extent; a result that
 only references another result is not evidence of its validity (FR-354).
 
+**Environment premises.** An environment premise is required when the model
+claim's proof record lists it as an assumption the claim was proved under, or
+when a constraint of `F_P` needs a scheduling premise (FR-380 "Fairness
+implication"). The item lists the environment premises it supplies; a required
+premise it does not list is unmet, and a listed premise is a typed record whose
+identity must name a settled record.
+
 **Conclusion record.** A `proved` item carries one source-bound record naming
 the implementation/model relation (the FR-353 relation revision and the
 implementation sources it binds), the temporal claim `P` with `F_P`, the result
@@ -134,10 +141,13 @@ invalidates the record.
 | FR-488-AC-3 | A liveness item whose implementation has only the FR-350 per-step contracts proved and no progress item settles `inconclusive`, cause `premise-unproved`, naming the first progress item. | Test (TC-982) |
 | FR-488-AC-4 | An implementation with an infinite run of allowed-stutter steps, one whose stutter steps decrease no declared measure, and one whose fairness premise is stronger than the environment's each settle `inconclusive`, cause `premise-unproved`, naming the progress item. | Test (TC-982) |
 | FR-488-AC-5 | A safety item settles `proved` from the model claim, initialization, transition simulation, frame and environment premises with no progress item. | Test (TC-982) |
-| FR-488-AC-6 | A required environment premise the item does not list settles `inconclusive`, cause `premise-unproved`, naming it, and an environment premise whose identity names no settled record is refused `invalid_runtime_input`/`invalid-value`; a model claim not `proved` settles `inconclusive`, cause `premise-unproved`, naming the model claim; a premise identity naming no settled result is refused `invalid_runtime_input`/`invalid-value`. | Test (TC-982) |
-| FR-488-AC-7 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles `incomplete`; the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
-| FR-488-AC-8 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
-| FR-488-AC-9 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
+| FR-488-AC-6 | A required environment premise (see "Environment premises") that the item does not list settles `inconclusive`, cause `premise-unproved`, naming the premise. | Test (TC-982) |
+| FR-488-AC-7 | An environment premise the item lists whose identity names no settled record is refused `invalid_runtime_input`/`invalid-value`, naming the member. | Test (TC-982) |
+| FR-488-AC-8 | A model claim not `proved` settles `inconclusive`, cause `premise-unproved`, naming the model claim and its result. | Test (TC-982) |
+| FR-488-AC-9 | A premise identity (model claim, correspondence or progress item) that names no settled result is refused `invalid_runtime_input`/`invalid-value`, naming the member. | Test (TC-982) |
+| FR-488-AC-10 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles `incomplete`; the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
+| FR-488-AC-11 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
+| FR-488-AC-12 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
 
 ## Dependencies
 

@@ -75,3 +75,18 @@ FR-488 and FR-489 add typed premise lists, settlement tables and ACs that can fa
 | FND-006 | fixed | Literal disposition, FR-140-AC-8, D28 added (see FND-010 for the code stage) |
 | FND-007 | fixed | The per-rule row is removed (see FND-009 for the replacement) |
 | FND-008 | fixed | D24 states the conversion once; paragraph rewrapped |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-013 | low | FR-488-AC-6 and FR-489-AC-6 each bundle four independent outcomes in one row | spec/functional/ir-proof/FR-488-attach-a-temporal-guarantee-to-implementation-rust.md:137 |
+
+## Dispositions (round 2)
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-009 | fixed | Trusted only through an accepted plugin result; assumption-only is premise-unproved (AC-8) |
+| FND-010 | fixed | ill_typed/type-mismatch, listed in FR-272, matches FR-375 precedent |
+| FND-011 | fixed | Environment premise row, AC-6 and TC-982 case 6 added |
+| FND-012 | fixed | Punctuation corrected |
