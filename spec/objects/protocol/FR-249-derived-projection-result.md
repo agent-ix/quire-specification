@@ -19,6 +19,19 @@ When a canonical protocol result is projected to portable verification, the proj
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| resultId | String | 1..1 |  |
+| sourceResultRef | String | 1..1 |  |
+| targetContractVersion | String | 1..1 |  |
+| targetBinding | String | 1..1 |  |
+| adapter | String | 1..1 |  |
+| nativeArtifacts | String | 1..1 |  |
+| provenance | String | 1..1 |  |
+
+## Field sources
+
 | Property | Description |
 | --- | --- |
 | `resultId` | The closed object `{sourceResultKey, adapter}` stated by FR-062: the FR-286 `resultKey` of the source and the adapter identity and version. It nests at most three levels, carries no hash and does not repeat the target binding. |

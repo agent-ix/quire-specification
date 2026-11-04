@@ -29,6 +29,20 @@ their temporal interpretation."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| assertion_identity_and_revision | String | 1..1 |  |
+| named_clock | TemporalClockBinding | 1..1 |  |
+| named_subjects | String | 1..1 |  |
+| named_decision_scope | TemporalDecisionScopeAndClosure | 1..1 |  |
+| named_surrounding_execution | String | 1..1 |  |
+| named_interval | BoundedTemporalInterval | 1..1 |  |
+| named_history_boundary | HistoryBoundary | 1..1 |  |
+| progress_point | String | 1..1 |  |
+| completeness_coverage | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Assertion identity and revision | FR-094 Behavior, FR-094-AC-8 | A "same-binding progress regression or conflicting assertion revision" is a typed contradiction or refusal. |

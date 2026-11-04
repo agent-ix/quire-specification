@@ -21,6 +21,16 @@ When a truth result settles, the result producer SHALL retain for every decision
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| oracle_identity | String | 1..1 |  |
+| observation_identity | String | 1..1 |  |
+| dependence_relation | DecisionSupportDependenceRelationVocabulary | 1..1 |  |
+| predecessor | String | 1..1 |  |
+| dependence_group | String | 1..1 |  |
+
+## Field sources
+
 | Property | Description |
 | --- | --- |
 | oracle identity | The exact oracle the record identifies (FR-061). FR-062 derives every E02 oracle contribution for a `satisfied` or `violated` projection from these exact identities. |

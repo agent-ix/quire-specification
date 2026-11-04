@@ -18,6 +18,19 @@ When domain results are composed for a workflow request, the producer SHALL use 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| request | String | 1..1 |  |
+| shared_prerequisites | String | 1..1 |  |
+| state_results | String | 1..1 |  |
+| temporal_results | String | 1..1 |  |
+| protocol_results | String | 1..1 |  |
+| analysis_results | String | 1..1 |  |
+| bundle_disposition | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.execution-bundle/v1`.
 - `request` — package, workflow, selected claims, observations, domains and limits.
 - `shared_prerequisites` — exact model, package, clock and population selections.

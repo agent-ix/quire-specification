@@ -23,9 +23,9 @@ identity and one state from `met`, `not-met`, `unknown` or `not-assessed`."
 | Value | Description |
 | --- | --- |
 | `met` | The assumption was assessed and holds (FR-061). |
-| `not-met` | The assumption was assessed and does not hold (FR-061). |
+| not_met | Wire spelling `not-met`. The assumption was assessed and does not hold (FR-061). |
 | `unknown` | The assumption was assessed but its outcome could not be established (FR-061). |
-| `not-assessed` | The assumption was not assessed at all. It is distinct from `unknown`, which records an attempted assessment (FR-061). |
+| not_assessed | Wire spelling `not-assessed`. The assumption was not assessed at all. It is distinct from `unknown`, which records an attempted assessment (FR-061). |
 
 ## Identity and comparison
 

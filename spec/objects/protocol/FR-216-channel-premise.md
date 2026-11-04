@@ -19,6 +19,16 @@ When a conformance result is derived, the result SHALL identify the exact premis
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| sender | String | 1..1 |  |
+| receiver | String | 1..1 |  |
+| message_type | String | 1..1 |  |
+| ordering_policy | String | 1..1 |  |
+| delivery_policy | CheckedPackageProtocolRoleChannelQueueAndObligationBodies | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Sender | FR-054 | The exact authored sending role of the channel. Missing or conflicting refuses admission. |

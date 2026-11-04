@@ -27,6 +27,16 @@ receive, delivery, attempt and effect as distinct typed subjects".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| attempt_identity | String | 1..1 |  |
+| owning_registration | CompensationRegistration | 1..1 |  |
+| related_effect_identity | String | 1..1 |  |
+| attempt_outcome | PartitionCompensationAttemptAndAggregateRecoveryOutcomes | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Attempt identity | FR-058 Description, FR-051 | Preserved per attempt and held distinct from the effect identity. |

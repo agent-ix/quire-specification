@@ -17,6 +17,15 @@ When a clause location is exchanged, the producer SHALL bind it to one authored 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| document_identity | BindClauseLocationsToExactSourceBytes | 1..1 | identity |
+| bytes | PreserveOriginalSourceLocationsThroughLexicalRecognition | 1..1 |  |
+| segment_map | String | 0..1 |  |
+| extracted_body | String | 0..1 |  |
+
+## Field sources
+
 - **document_identity** (identity) — the original document identity carried with
   every exchanged clause location
   ([FR-003](../../functional/foundation/FR-003-bind-source-correspondence.md) Inputs).

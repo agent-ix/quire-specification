@@ -20,6 +20,16 @@ identified assessment input".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| selected_binding_contract_definition_identity | String | 1..1 |  |
+| declared_binding_identity | String | 1..1 |  |
+| field_units | String | 1..1 |  |
+| concrete_mapping | String | 1..1 |  |
+| admitted_record_set | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Selected binding-contract definition identity | FR-110 Description | Retained exactly. |

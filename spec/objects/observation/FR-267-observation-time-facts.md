@@ -24,6 +24,15 @@ selects from.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| event_time | SelectedEventTimeWindow | 1..1 |  |
+| ingestion_time | String | 1..1 |  |
+| causal_relation | DeclaredInstanceRelationship | 1..1 |  |
+| clock_uncertainty | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Event time | FR-113 Description, FR-113-AC-2 | The instant the observed event carries. Retained as a separate fact from ingestion time, and the axis the half-open window bounds of [FR-266](FR-266-event-time-window.md) are compared against (FR-113 Behavior). |

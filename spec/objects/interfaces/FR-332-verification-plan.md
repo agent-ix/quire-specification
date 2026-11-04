@@ -18,6 +18,20 @@ When an authored verification plan completes linking, the producer SHALL use the
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| plan_id | String | 1..1 |  |
+| obligations | String | 1..1 |  |
+| methods | String | 1..1 |  |
+| domains | String | 1..1 |  |
+| assumptions | String | 1..1 |  |
+| dependencies | String | 1..1 |  |
+| bounds | String | 1..1 |  |
+| providers | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.verification-plan/v1`.
 - `plan_id` — the identity assigned to the plan, compared as an exact string. It is not computed from the other members.
 - `obligations` — exact clauses/claims and expected evidence class.

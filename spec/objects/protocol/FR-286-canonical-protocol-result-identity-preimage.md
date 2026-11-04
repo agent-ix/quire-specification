@@ -20,6 +20,14 @@ computed.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| producer | String | 1..1 |  |
+| request | String | 1..1 |  |
+| ordinal | String | 1..1 |  |
+
+## Field sources
+
 `resultKey` is the closed object `{producer, request, ordinal}`:
 
 - `producer` — the protocol producer's identity and version (`{identity, version}`).

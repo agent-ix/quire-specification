@@ -18,6 +18,19 @@ When temporal meaning crosses the native temporal boundary, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| artifact | String | 1..1 |  |
+| clock_binding | String | 1..1 |  |
+| history_boundary | String | 1..1 |  |
+| valuation | String | 1..1 |  |
+| progress | String | 1..1 |  |
+| result | String | 1..1 |  |
+| supersession | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.native-temporal/v1`.
 - `artifact` — formula graph, typed atoms, interval bounds and semantic-profile identity.
 - `clock_binding` — clock authority, epoch, unit, resolution and ordering contract.

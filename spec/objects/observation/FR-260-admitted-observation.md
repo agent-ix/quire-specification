@@ -22,6 +22,19 @@ to retaining it.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| observation_identity | String | 1..1 |  |
+| source_schema_identity | String | 1..1 |  |
+| declared_binding_identity | ObservationBinding | 1..1 |  |
+| field_units | String | 1..1 |  |
+| selected_subject_identity | String | 1..1 |  |
+| visibility | String | 1..1 |  |
+| valuation_presence | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Observation identity | FR-110 Description | "the exact observation identity". |

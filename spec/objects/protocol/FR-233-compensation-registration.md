@@ -27,6 +27,19 @@ FR-056 states that the evaluator "does not invoke the compensating operation".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| source_compensation_definition | String | 1..1 |  |
+| forward_effect_identity | String | 1..1 |  |
+| role | String | 1..1 |  |
+| eligibility_conditions | String | 1..1 |  |
+| retry_policy | CompensationRetryPolicy | 1..1 |  |
+| commit_boundary | CommitBoundary | 1..1 |  |
+| recovery_relation | AuthoredRecoveryRelation | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Source compensation definition | FR-056 Behavior | "Each registration SHALL retain the source definition and effect that created it." |

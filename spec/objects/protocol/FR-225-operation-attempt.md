@@ -23,6 +23,16 @@ When a communication or business observation is bound to a protocol instance, th
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| occurrence | ProtocolNodeOccurrence | 1..1 |  |
+| role | String | 1..1 |  |
+| operation | String | 1..1 |  |
+| outcome | String | 1..1 |  |
+
+## Field sources
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — an attempt is
   an authored protocol node. The
   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)

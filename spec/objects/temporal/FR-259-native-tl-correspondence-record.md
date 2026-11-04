@@ -26,6 +26,22 @@ generated TL artifact is internal derived output and never editable source."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| native_source_identity_and_exact_clause_expression_span | SourceRegion | 1..1 |  |
+| clause_requirement_identity | String | 1..1 |  |
+| language_and_temporal_profile_definition | TemporalSemanticProfileIdentity | 1..1 |  |
+| model_type_predicate_bindings | String | 1..1 |  |
+| evaluation_anchor | TemporalEvaluationAnchor | 1..1 |  |
+| immutable_capture_environment | ImmutableActivationCapture | 1..1 |  |
+| clock_observation_binding | TemporalClockBinding | 1..1 |  |
+| interval | BoundedTemporalInterval | 1..1 |  |
+| closure_history_premises | HistoryBoundary | 1..1 |  |
+| tl_formula_profile_proposition_identities | TLTargetEvaluatorProfile | 1..1 |  |
+| bridge_definition | String | 1..1 |  |
+
+## Field sources
+
 FR-095 enumerates the preserved axes verbatim. For a supported mapping, the
 bridge preserves:
 

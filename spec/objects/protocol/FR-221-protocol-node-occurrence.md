@@ -23,6 +23,19 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| subject_kind | ProtocolSubjectVocabulary | 1..1 |  |
+| static_declaration_path | String | 1..1 |  |
+| workflow_instance_identity | String | 1..1 |  |
+| iteration_identity | String | 1..1 |  |
+| role_ownership | String | 1..1 |  |
+| declaration_span | SourceRegion | 1..1 |  |
+| bound_typed_record | String | 1..1 |  |
+
+## Field sources
+
 - **subject kind** ([FR-210](FR-210-protocol-subject-vocabulary.md))
   — which distinct typed subject this node observes. FR-049-AC-2 states that
   "Send, receive, delivery, operation attempt, effect and compensation

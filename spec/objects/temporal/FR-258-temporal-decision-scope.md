@@ -37,6 +37,17 @@ the surrounding execution as closed."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| scope_role | String | 1..1 |  |
+| scope_identity | String | 1..1 |  |
+| progress_state | TemporalProgressAssertion | 1..1 |  |
+| closure_state | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
+| input_completeness | String | 1..1 |  |
+| exact_decision_support_set | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Scope role | FR-094 Inputs, FR-094 Behavior | Either the decision scope or the surrounding execution. The two are never merged. |

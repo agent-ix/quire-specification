@@ -42,6 +42,17 @@ states the same bound form for the past direction.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| lower_bound_a | String | 1..1 |  |
+| upper_bound_b | String | 1..1 |  |
+| lower_end_openness | String | 1..1 |  |
+| upper_end_openness | String | 1..1 |  |
+| selected_profile_identity | TemporalSemanticProfileIdentity | 1..1 |  |
+| clock_binding | TemporalClockBinding | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Lower bound `a` | FR-091 Behavior, FR-092 Inputs | Integer, `0 <= a`; under the timed profile an exact rational time quantity. |

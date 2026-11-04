@@ -20,6 +20,17 @@ between a selected snapshot and a selected event-time window."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| snapshot_identity | String | 1..1 |  |
+| distinctness_from_a_window | String | 1..1 |  |
+| subject_participation | String | 1..1 |  |
+| declaration_and_membership_selection | String | 1..1 |  |
+| capture_assertion | String | 1..1 |  |
+| admitted_observations | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Snapshot identity | FR-112 Description | Retained among "population and snapshot/window identities". |

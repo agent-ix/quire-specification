@@ -30,6 +30,16 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| authored_commit_ordering | String | 1..1 |  |
+| forbidding_selection | String | 1..1 |  |
+| commit_observation | String | 1..1 |  |
+| owning_registration | CompensationRegistration | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored commit ordering | FR-057 Description | The evaluator checks it; it is authored, not inferred. |

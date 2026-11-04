@@ -19,6 +19,14 @@ without deriving identity from its relationships or presentation.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| authority_identity | String | 1..1 |  |
+| subject_kind | String | 1..1 |  |
+| authority_local_object_identity | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authority identity | FR-035 | Exact identity of the selected binding authority. |

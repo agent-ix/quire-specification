@@ -25,6 +25,15 @@ derive, not copy, a target status.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| requiredRoleInstanceRefs | String | 0..1 |  |
+| participatingRoleInstanceRefs | String | 0..1 |  |
+| missingDependencyRefs | String | 0..1 |  |
+| reasons | String | 0..1 |  |
+
+## Field sources
+
 | Variant | Required properties | Meaning |
 | --- | --- | --- |
 | `known` | `requiredRoleInstanceRefs`, `participatingRoleInstanceRefs` | The complete required-role-instance set is known. Both collections are finite, duplicate-free and in the canonical order supplied by the applicable FR-212 role-instance identity rule. Every participating reference is a member of the required set. |

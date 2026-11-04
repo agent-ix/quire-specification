@@ -28,6 +28,14 @@ declared capture is evaluated exactly once.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| anchor_identity | String | 1..1 |  |
+| clock_binding | TemporalClockBinding | 1..1 |  |
+| position_sample_index_or_instant | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Anchor identity | FR-090 Outputs, FR-093 Inputs | FR-093 Inputs require "exact source, model, observation and anchor identities". |

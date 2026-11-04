@@ -25,6 +25,18 @@ exact rationals with no provider present, before the item settles `proved`.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| identity | String | 1..1 |  |
+| objective | String | 1..1 |  |
+| kind | String | 1..1 |  |
+| values | String | 1..1 |  |
+| ranking | String | 1..1 |  |
+| policy | String | 1..1 |  |
+| components | String | 1..1 |  |
+
+## Field sources
+
 `ProbabilityCertificate{identity, objective, kind, values, ranking, policy,
 components}`:
 

@@ -23,6 +23,15 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| related_send | SendOccurrence | 1..1 |  |
+| channel | ProtocolChannel | 1..1 |  |
+| transport_record | String | 1..1 |  |
+
+## Field sources
+
 The prose distinguishes the delivery identity from the relationships it must
 satisfy and from the receipt records that provide observation provenance.
 

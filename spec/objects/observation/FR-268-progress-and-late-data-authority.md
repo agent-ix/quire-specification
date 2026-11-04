@@ -27,6 +27,18 @@ that "A quiet eligible deadline settles only with declared progress authority."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| selected_progress_assertion_definition_identity | String | 1..1 |  |
+| declared_clock_interpretation | DistinguishableObservationTimeFacts | 1..1 |  |
+| progress_authority | String | 1..1 |  |
+| captured_trigger_identity | String | 1..1 |  |
+| late_data_cutoff | String | 1..1 |  |
+| restoration_basis | String | 1..1 |  |
+| window_applicability | SelectedEventTimeWindow | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Selected progress/assertion definition identity | FR-113 Description | Retained exactly before a settled disposition is produced. |

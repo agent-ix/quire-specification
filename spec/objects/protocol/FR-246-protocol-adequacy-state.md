@@ -20,7 +20,7 @@ When a result states whether the exact declared obligation and case set was exer
 | Value | Description |
 | --- | --- |
 | `demonstrated` | Every assessment execution and required input for the declared case set is complete and the exact required case set is present. Subject closure is required only when the declared adequacy claim depends on it. An obligation-path demonstration additionally requires `triggered` activation, and observation adequacy remains independently `adequate` (FR-061). |
-| `not-demonstrated` | The exact declared obligation and case set was not demonstrated (FR-061). An untriggered compensator, absent external observation, unsupported obligation or missing trigger telemetry cannot become demonstrated success (FR-115). |
+| not_demonstrated | Wire spelling `not-demonstrated`. The exact declared obligation and case set was not demonstrated (FR-061). An untriggered compensator, absent external observation, unsupported obligation or missing trigger telemetry cannot become demonstrated success (FR-115). |
 | `inapplicable` | The declared obligation and case set does not apply (FR-061). |
 | `unknown` | Whether the declared obligation and case set was exercised is not known (FR-061). |
 

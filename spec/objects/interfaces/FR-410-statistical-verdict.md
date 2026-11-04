@@ -27,6 +27,18 @@ no provider present.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| decision | MeasuredDecisionVocabulary | 1..1 |  |
+| estimate | String | 1..1 |  |
+| interval | String | 1..1 |  |
+| basis | InterpretAndSampleStochasticTimedModels | 1..1 |  |
+| provenance | String | 1..1 |  |
+| tests | String | 1..1 |  |
+| witnesses | String | 1..1 |  |
+
+## Field sources
+
 The value has two parts: the `StatisticalVerdict` record and the sampled
 witnesses it holds, each with its replay rule below.
 

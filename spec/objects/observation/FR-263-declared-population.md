@@ -21,6 +21,20 @@ membership and closure provenance."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| population_key | String | 1..1 |  |
+| declared_finite_membership_rule | DeclaredMembershipRule | 1..1 |  |
+| bounds | SelectedEventTimeWindow | 1..1 |  |
+| domain_package_identity_version_and_population_declaration_key | String | 1..1 |  |
+| observation_sources | String | 1..1 |  |
+| configuration_identity_and_version | String | 1..1 |  |
+| closure_identity_and_version | String | 1..1 |  |
+| completeness_and_progress_dependencies | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Population key | FR-112 Description | The componentwise key below, retained with the snapshot/window key. |

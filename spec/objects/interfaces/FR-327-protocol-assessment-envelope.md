@@ -18,6 +18,19 @@ When a protocol claim is submitted to an analyzer, the producer SHALL use the im
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| request_id | String | 1..1 |  |
+| claim | String | 1..1 |  |
+| subject | String | 1..1 |  |
+| premises | String | 1..1 |  |
+| provider | String | 1..1 |  |
+| result | String | 1..1 |  |
+| witness | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.protocol.assessment/v1`.
 - `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `claim` — conformance, projection, realizability, composition or refinement with exact strength.

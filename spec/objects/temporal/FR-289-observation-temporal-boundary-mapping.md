@@ -26,6 +26,18 @@ upper bound without treating the half-open end as an included instant.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| clock_binding | String | 1..1 |  |
+| native_interval | String | 1..1 |  |
+| observation_carrier | String | 1..1 |  |
+| membership_mapping | String | 1..1 |  |
+| progress_mapping | String | 1..1 |  |
+| discrete_successor | String | 1..1 |  |
+| non_discrete_end | String | 1..1 |  |
+
+## Field sources
+
 - **clock binding** — exact clock identity shared by both domains.
 - **native interval** — inclusive lower and upper bounds `[a,b]`, with `a <= b`.
 - **observation carrier** — selected half-open bounds `[a,e)` in the same clock

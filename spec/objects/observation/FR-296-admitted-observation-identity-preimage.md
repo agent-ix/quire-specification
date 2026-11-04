@@ -20,6 +20,14 @@ identifiers. No hash of the observation is computed.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| source_schema_identity_and_version | String | 1..1 |  |
+| selected_subject_identity | String | 1..1 |  |
+| source_ordinal | String | 1..1 |  |
+
+## Field sources
+
 The observation key is the tuple `(source schema identity and version, declared
 binding identity and version, selected subject identity, source ordinal)`:
 

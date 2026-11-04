@@ -19,6 +19,14 @@ set actually admitted for that claim.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| definition_identity | String | 1..1 |  |
+| claim_kinds | String | 1..1 |  |
+| construct_profile_set | String | 1..1 |  |
+
+## Field sources
+
 - **definition identity** — nonempty owner-qualified fragment identity.
 - **claim kinds** — sorted distinct nonempty set of FR-290 protocol-family members supported by the fragment; the fragment selects the FR-290 vocabulary `quire.capability-kind/v1`.
 - **construct/profile set** — closed sorted identities of the syntax,

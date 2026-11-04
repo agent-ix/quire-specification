@@ -21,6 +21,17 @@ When a protocol reference names a role instance, the protocol linker SHALL keep 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| typed_declaration_and_configuration_identity | String | 1..1 |  |
+| static_definition | ProtocolRole | 1..1 |  |
+| instance_binding | String | 1..1 |  |
+| distinct_subject | String | 1..1 |  |
+| role_mapping | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Typed declaration and configuration identity | FR-050 | "the protocol linker SHALL bind every role, role instance, workflow instance, message and channel reference to its exact typed declaration and configuration identity before conformance evaluation." |

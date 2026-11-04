@@ -143,12 +143,15 @@ contributor agreement administration.
 cargo test --locked
 cargo fmt --all -- --check
 cargo clippy --locked --all-targets --all-features -- -D warnings
-quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --summary
+quire validate --scope . 'spec/**/*.md' 'plan/*/plan.md' 'plan/*/index.md' 'plan/*/tasks/*.md' 'reviews/2026-*.md' --summary
 ```
 
 The first Cargo run fetches the git dependencies; later runs can add
 `--offline`. The dated review glob selects the typed review artifacts. The older review note
 has no type frontmatter, and an unrestricted glob reports that structural error.
+The plan globs name the Plan, index and Task files and leave out each
+`plan/*/log.md`: those are execution logs with frontmatter `type: log`, which no
+installed module registers, and `quire validate` has no exclude option.
 
 To regenerate the figures, run the docs-figures skill from
 [dev-tools](https://github.com/agent-ix/dev-tools) on `docs/images/figures.py`.

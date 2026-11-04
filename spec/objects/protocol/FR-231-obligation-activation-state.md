@@ -29,7 +29,30 @@ FR-093 states that "Activation, temporal truth and participation shall remain
 separate dimensions", and FR-055 states that the evaluator "SHALL keep
 activation independent from truth".
 
-## States & Transitions
+## States
+
+| State | Description |
+|---|---|
+| triggered | An admitted trigger established the instance (FR-061 requires that a satisfied or violated truth has "activation is triggered"). |
+| inactive | The trigger scope is authoritatively closed and complete without an admitted trigger (FR-093). |
+| activation_unknown | An open trigger scope or missing or refused trigger evidence prevents activation from being known. |
+| no_instance | An admitted activation guard is false, so the evaluator creates no instance and no refusal (FR-093); this is not a fourth activation value. |
+
+## Operations
+
+### assess_trigger_scope
+
+Assess a trigger scope and report the obligation's activation (FR-055, FR-093, FR-061).
+
+## Transitions
+
+| From | To | Trigger | Guard | Emits |
+|---|---|---|---|---|
+| triggered | triggered | assess_trigger_scope | | |
+
+The initial pseudostate of the diagram below is the assessment of a trigger scope and is not a state, so its four entries into `triggered`, `inactive`, `activation_unknown` and `no_instance` are drawn in the diagram only. No requirement states a transition out of `inactive` or `activation_unknown` once reported.
+
+## State diagram
 
 ```mermaid
 stateDiagram-v2

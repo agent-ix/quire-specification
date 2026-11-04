@@ -26,6 +26,24 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| request_id | String | 1..1 |  |
+| package | String | 1..1 |  |
+| byte_provision | String | 1..1 |  |
+| selection | String | 1..1 |  |
+| state_environment | String | 1..1 |  |
+| limits | String | 1..1 |  |
+| stage_limits | String | 1..1 |  |
+| results | String | 1..1 |  |
+| replay | String | 1..1 |  |
+| function | String | 1..1 |  |
+| frame_operation | CheckedPackageFrameBody | 1..1 |  |
+| state_clause | CheckedPackageStateClauseBody | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.native-runtime/v1`.
 - `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `package` — exact FR-322 checked-package reference; a non-replay request

@@ -27,6 +27,15 @@ configuration".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| relationship_type | String | 1..1 |  |
+| domain_package_identity | String | 1..1 |  |
+| relationship_declaration_key | String | 1..1 |  |
+| related_instance_endpoints | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Relationship type | FR-111 Description | "an explicit typed relationship". |

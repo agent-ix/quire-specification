@@ -33,6 +33,13 @@ Inputs names "bounded retry policy" as an input to the evaluation.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| authored_finite_retry_bound | String | 1..1 |  |
+| owning_registration | CompensationRegistration | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored finite retry bound | FR-058 Behavior | "It SHALL refuse attempts beyond the authored finite retry bound." FR-049-AC-6 states what it counts from: "Retry bounds count the initial attempt." |

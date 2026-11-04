@@ -26,6 +26,17 @@ reproduce it with no provider present before the item settles `refuted`.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| initial_state | String | 1..1 |  |
+| binding | String | 1..1 |  |
+| bound | String | 1..1 |  |
+| scheduler | String | 1..1 |  |
+| evidence | String | 1..1 |  |
+| quantile_q_of_m_c | String | 1..1 |  |
+
+## Field sources
+
 The value has two parts: the `WitnessScheduler` and the
 `ProbabilisticCounterexample` that carries it with its evidence.
 

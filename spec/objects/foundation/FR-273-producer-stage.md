@@ -37,6 +37,15 @@ it never chooses another list by label or rewrites the pair.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| producer_interface_reference | String | 1..1 |  |
+| stage_label | String | 1..1 |  |
+| originating_stage_retention | String | 1..1 |  |
+| selected_producer_interface | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Producer-interface reference | FR-047 and native catalog | Exact identity of the interface that owns stage membership. |

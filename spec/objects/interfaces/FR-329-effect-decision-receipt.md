@@ -18,6 +18,19 @@ When a formal decision requests an external workflow effect, the producer SHALL 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| decision | String | 1..1 |  |
+| authority_grant | String | 1..1 |  |
+| idempotency_key | String | 1..1 |  |
+| effect_request | String | 1..1 |  |
+| transport_receipt | String | 1..1 |  |
+| effect_observation | String | 1..1 |  |
+| lineage | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.effect-decision/v1`.
 - `decision` — exact semantic result and recommended action identity.
 - `authority_grant` — actor, action, subject, scope, expiry and rights.

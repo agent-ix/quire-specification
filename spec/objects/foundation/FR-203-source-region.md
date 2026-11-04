@@ -19,6 +19,15 @@ When a producer reports a location in authored source, the producer SHALL expres
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| document | String | 1..1 |  |
+| start | BindClauseLocationsToExactSourceBytes | 1..1 |  |
+| end | PreserveOriginalSourceLocationsThroughLexicalRecognition | 1..1 |  |
+| column | String | 1..1 |  |
+
+## Field sources
+
 - **document** (`FR-202` reference) — the authored source document the region
   indexes into. A region is meaningless without it.
 - **start** (`byte offset`) — zero-based

@@ -20,6 +20,14 @@ the exact backend interface identity plus the admitted fragment and claim capabi
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| interface_identity | String | 1..1 |  |
+| admitted_fragment | String | 1..1 |  |
+| claim_capabilities | String | 1..1 |  |
+
+## Field sources
+
 - **interface identity** — nonempty owner-qualified backend contract identity.
 - **admitted fragment** — exact FR-291 key.
 - **claim capabilities** — sorted distinct nonempty set of FR-290 protocol-family members; the interface selects the FR-290 vocabulary `quire.capability-kind/v1`.

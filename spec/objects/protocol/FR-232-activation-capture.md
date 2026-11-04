@@ -23,6 +23,16 @@ for that obligation."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| declared_expression | String | 1..1 |  |
+| declared_type | String | 1..1 |  |
+| value | String | 1..1 |  |
+| source_model_binding | String | 1..1 |  |
+| activation_anchor | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Declared expression | FR-093 Behavior | Retained with the capture. |

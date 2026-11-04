@@ -32,9 +32,9 @@ catalog is proposed, not adopted.
 
 | Value | Description |
 | --- | --- |
-| authored source span | A span over authored source. Typed by [FR-203](FR-203-source-region.md), which this artifact references rather than redefining: a half-open byte region over one identified source document. |
-| JSON field/index path | A path through a JSON document's fields and indices. Required as the retained payload of the `invalid_package` and `invalid_runtime_input` families — "the actual field/index path", "the actual input path" (proposed catalog). |
-| runtime object/value path | A root and an ordered sequence of typed traversal steps through a runtime object or value. Typed by [FR-207](FR-207-runtime-value-path.md), which this artifact references rather than redefining. Held distinct from a JSON field/index path by [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) and by the same sentence of the proposed catalog. |
+| authored_source_span | Wire spelling `authored source span`. A span over authored source. Typed by [FR-203](FR-203-source-region.md), which this artifact references rather than redefining: a half-open byte region over one identified source document. |
+| JSON_field_index_path | Wire spelling `JSON field/index path`. A path through a JSON document's fields and indices. Required as the retained payload of the `invalid_package` and `invalid_runtime_input` families — "the actual field/index path", "the actual input path" (proposed catalog). |
+| runtime_object_value_path | Wire spelling `runtime object/value path`. A root and an ordered sequence of typed traversal steps through a runtime object or value. Typed by [FR-207](FR-207-runtime-value-path.md), which this artifact references rather than redefining. Held distinct from a JSON field/index path by [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) and by the same sentence of the proposed catalog. |
 
 The complete-V1 wire discriminators are `source_span`, `json_path` and
 `runtime_value`. FR-203 types the authored source span, FR-207 types the runtime

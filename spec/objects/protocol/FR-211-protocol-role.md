@@ -19,6 +19,18 @@ When a protocol declaration names a role, the protocol linker SHALL bind that ro
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| typed_declaration | String | 1..1 |  |
+| declaration_kind | String | 1..1 |  |
+| authority | String | 1..1 |  |
+| internality | RoleInternalityVocabulary | 1..1 |  |
+| choice_ownership | String | 1..1 |  |
+| declaration_span | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Typed declaration | FR-050 | "the protocol linker SHALL bind every role, role instance, workflow instance, message and channel reference to its exact typed declaration and configuration identity before conformance evaluation." |

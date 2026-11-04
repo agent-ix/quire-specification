@@ -55,6 +55,31 @@ When a protocol assessment result is emitted or read, the strict reader SHALL re
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contractVersion | String | 1..1 |  |
+| kind | String | 1..1 |  |
+| resultKey | CanonicalProtocolResultKey | 1..1 | identity |
+| assessment_execution | AssessmentExecutionDispositionVocabulary | 1..1 |  |
+| decision_scope_progress | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
+| decision_scope_closure | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
+| surrounding_execution_progress | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
+| surrounding_execution_closure | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
+| complete_global_conformance_closure | CompleteGlobalConformanceClosureStateVocabulary | 1..1 |  |
+| truth | TruthDispositionVocabulary | 1..1 |  |
+| settlement_basis | SettlementBasisVocabulary | 1..1 |  |
+| activation | ActivationStateVocabulary | 1..1 |  |
+| participation | ParticipationFact | 1..1 |  |
+| assumptions | AssumptionStateVocabulary | 1..1 |  |
+| completeness | String | 1..1 |  |
+| observation_adequacy | ObservationAdequacyStateVocabulary | 1..1 |  |
+| protocol_adequacy | ProtocolAdequacyStateVocabulary | 1..1 |  |
+| claim | String | 1..1 |  |
+| decision_support | DecisionSupportRecord | 1..1 |  |
+| provenance | String | 1..1 |  |
+
+## Field sources
+
 Every property below is stated by [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md)
 or [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md). This
 artifact adds none.

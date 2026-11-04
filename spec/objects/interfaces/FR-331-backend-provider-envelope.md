@@ -96,6 +96,22 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| capability_vocabulary | String | 1..1 |  |
+| manifest | RequestAndNegotiateTemporalItemsOverAModelSubject | 1..1 |  |
+| request | SettleProbabilisticClaimsWithStatisticalEvidence | 1..1 |  |
+| temporal | RequestAndNegotiateTemporalItemsOverAModelSubject | 1..1 |  |
+| candidates | String | 1..1 |  |
+| dispositions | String | 1..1 |  |
+| artifacts | String | 1..1 |  |
+| results | MeasuredDecisionVocabulary | 1..1 |  |
+| counterexamples | CarryAndReplayATemporalCounterexample | 1..1 |  |
+| accounting | SettleATemporalClaimOverEveryBehaviourOfAModel | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.backend-provider/v1`.
 - `capability_vocabulary` — exactly `quire.capability-kind/v1`; it selects the FR-290 vocabulary for every kind in `manifest`, `request` and `results`.
 - `manifest` — one backend descriptor per registered backend in the registry snapshot: backend identity, advertised (FR-290 kind, mode) pairs, domains, options, bounds, where the backend declares one its obligation-form set (FR-349), the state-space reductions it applies, a subset of `symmetry`, `partial-order` and `constraint` (FR-382), the state-graph claim forms it decides (`state_graph_forms`, below), and, for `probabilistic-satisfaction`, its advertised evidence kinds (FR-290). A backend that advertises `temporal-satisfaction` also carries its `fairness_kinds` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). A backend that advertises `temporal-satisfaction` may also carry `state_graph_forms`, a nonempty, duplicate-free subset of `possible`, `always-possible` and `unique-path` (FR-390). Its absence means it decides no state-graph claim form. A descriptor that does not advertise `temporal-satisfaction` carries no `state_graph_forms`. A backend that advertises `temporal-satisfaction` may also carry `memory_models`, the memory models it decides for items over a subject with a weak `parallel`, a nonempty set drawn from `sc`, `tso` and `ra` by the names of the `memory` clause ([FR-439](../../functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md) routes by it). A descriptor with no `memory_models` advertises `sc` only, so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`; a descriptor that does not advertise `temporal-satisfaction` carries none. A backend that advertises `temporal-satisfaction` may also carry `dynamics`, the dynamics it decides, a nonempty set drawn from `discrete` and `hybrid`; a descriptor with no `dynamics` decides `discrete` only, a descriptor whose `dynamics` holds `hybrid` carries both hybrid solver budgets in `bounds`, and negotiation routes by it ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md) "Routing a hybrid item"). Every descriptor carries `tool` ("Backend tool" below). Backend identities are unique.

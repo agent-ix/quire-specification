@@ -23,6 +23,16 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| occurrence | ProtocolNodeOccurrence | 1..1 |  |
+| related_send_occurrence | SendOccurrence | 1..1 |  |
+| channel | ProtocolChannel | 1..1 |  |
+| typed_payload_record | String | 1..1 |  |
+
+## Field sources
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — a receive is
   an authored protocol node and carries the node occurrence identity.
 - **related send occurrence** ([FR-222](FR-222-send-occurrence.md)) — the exact

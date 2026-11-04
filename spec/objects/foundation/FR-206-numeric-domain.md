@@ -17,6 +17,14 @@ When a numeric operand or result is checked, the checker SHALL require its named
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| named_type | EstablishExactNumericDefinednessInTheSelectedDomain | 1..1 |  |
+| unit | String | 1..1 |  |
+| bounds | String | 1..1 |  |
+
+## Field sources
+
 - **named_type** (identity component) — the declared numeric type. Ordinary
   operands and results share their named numeric type
   ([FR-044](../../functional/foundation/FR-044-check-composed-numeric-definedness.md)),

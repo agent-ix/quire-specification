@@ -60,9 +60,9 @@ catalog).
 | `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
 | `invalid_projection_correspondence` | A loss of correspondence between exact source and derived identities. |
-| `extraction-requires-run` | An extraction refused because of the requested command mode. |
-| `extraction-package-conflict` | An extraction refused because of conflicting compilation inputs. |
-| `extraction-clause-count` | An extraction refused on binding cardinality. These three extraction refusals "cannot share only an English distinction". |
+| extraction_requires_run | Wire spelling `extraction-requires-run`. An extraction refused because of the requested command mode. |
+| extraction_package_conflict | Wire spelling `extraction-package-conflict`. An extraction refused because of conflicting compilation inputs. |
+| extraction_clause_count | Wire spelling `extraction-clause-count`. An extraction refused on binding cardinality. These three extraction refusals "cannot share only an English distinction". |
 | `runtime_invariant` | A named established evaluator or input invariant broken. "It is a failed evaluation, not a false predicate." |
 | `io_error` | An explicitly authorized tool or adapter I/O operation failed; evaluators never emit it for a semantic value. |
 | `malformed_command` | A CLI command or option set failed structural validation. |

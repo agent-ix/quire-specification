@@ -21,6 +21,14 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| universe | CompareObjectsByDeclaredIdentity | 1..1 |  |
+| type | EnforceAuthoredOperationFrames | 1..1 |  |
+| object_identity | String | 1..1 |  |
+
+## Field sources
+
 - **universe** (identity component) — the declared universe the object belongs
   to. Under `quire.model.complete/v1` it is the `quire.model.object-universe/v2`
   identity of the object type's generalization component, not a population. Identity comparison across pre and post states is permitted only within

@@ -23,6 +23,15 @@ When a business observation is bound to a protocol instance, the protocol binder
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| occurrence | ProtocolNodeOccurrence | 1..1 |  |
+| establishing_attempt | OperationAttempt | 1..1 |  |
+| captures | String | 1..1 |  |
+
+## Field sources
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — an effect is
   an authored protocol node.
 - **establishing attempt** ([FR-225](FR-225-operation-attempt.md)) — the

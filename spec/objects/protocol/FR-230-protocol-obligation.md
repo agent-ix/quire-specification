@@ -25,6 +25,21 @@ created.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| workflow_identity | String | 1..1 |  |
+| role_identity | String | 1..1 |  |
+| effect_identity | String | 1..1 |  |
+| predicate_identity | String | 1..1 |  |
+| capture_set | ImmutableActivationCapture | 1..1 |  |
+| evaluation_anchor_identity | String | 1..1 |  |
+| clause_subject | String | 1..1 |  |
+| semantic_trigger_event_identity | String | 1..1 |  |
+| activation_state | ObligationActivationState | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Workflow identity | FR-055 Description | Exact, part of the obligation's dependency set. |

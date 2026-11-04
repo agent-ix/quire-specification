@@ -29,6 +29,14 @@ material here, not an adopted selection.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| interpretation_identity | String | 1..1 | identity |
+| code_vocabulary | DiagnosticCodeVocabulary | 1..1 |  |
+| closed_cause_sets | TypedDiagnosticCause | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Interpretation identity | Proposed catalog, header | "Interpretation identity: `quire.native.diagnostics/v1`". |

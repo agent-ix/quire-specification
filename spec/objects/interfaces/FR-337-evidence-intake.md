@@ -18,6 +18,19 @@ When a producer result enters the assurance evidence store, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| evidence_id | String | 1..1 |  |
+| subjects | String | 1..1 |  |
+| results | String | 1..1 |  |
+| artifacts | String | 1..1 |  |
+| traceability | String | 1..1 |  |
+| rights | String | 1..1 |  |
+| limitations | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.evidence-intake/v1`.
 - `evidence_id` — the evidence's identifier, assigned at intake and compared as an exact string.
 - `subjects` — exact requirement, semantic, implementation and run identities.

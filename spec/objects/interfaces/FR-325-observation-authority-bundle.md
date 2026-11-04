@@ -18,6 +18,19 @@ When observation facts are supplied to a semantic consumer, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| authority | String | 1..1 |  |
+| revision | String | 1..1 |  |
+| records | String | 1..1 |  |
+| populations | String | 1..1 |  |
+| positions | String | 1..1 |  |
+| progress | String | 1..1 |  |
+| conflicts | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.observation-authority/v1`.
 - `authority` — producer, scope and contract identity.
 - `revision` — immutable revision and explicit predecessor/supersession relation.

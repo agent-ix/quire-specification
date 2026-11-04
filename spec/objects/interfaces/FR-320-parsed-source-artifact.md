@@ -18,6 +18,19 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| source | String | 1..1 |  |
+| edition | String | 1..1 |  |
+| tokens | String | 1..1 |  |
+| trivia | String | 1..1 |  |
+| nodes | String | 1..1 |  |
+| diagnostics | String | 1..1 |  |
+| recoveries | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.parsed-source/v1`.
 - `source` — exact FR-202 source-document identity.
 - `edition` — the selected language edition identity.

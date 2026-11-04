@@ -19,6 +19,18 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| typed_declaration | String | 1..1 |  |
+| declaration_kind | String | 1..1 |  |
+| authored_obligation | String | 1..1 |  |
+| distinct_from_its_events | String | 1..1 |  |
+| cardinality_independence | String | 1..1 |  |
+| message_type_in_a_channel | ProtocolChannel | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Typed declaration | FR-050 | Bound "to its exact typed declaration and configuration identity before conformance evaluation." |

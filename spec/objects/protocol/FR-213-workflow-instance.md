@@ -21,6 +21,18 @@ When a request names a workflow instance, the binder SHALL treat it as an author
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| authored_identity | String | 1..1 |  |
+| typed_declaration_and_configuration_identity | String | 1..1 |  |
+| explicit_binding | String | 1..1 |  |
+| distinctness_from_its_definition | String | 1..1 |  |
+| distinct_assessment_subject | String | 1..1 |  |
+| declared_relationships_to_related_instances | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored identity | FR-051-AC-4 | "A transport trace ID substituted for an authored workflow, attempt or effect identity refuses before conformance evaluation." |

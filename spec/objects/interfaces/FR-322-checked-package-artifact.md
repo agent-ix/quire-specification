@@ -109,6 +109,33 @@ boundary.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| name | String | 1..1 |  |
+| lock | String | 1..1 |  |
+| dependency_selections | PackageReusableSemanticAndDomainLibraries | 1..1 |  |
+| refinement_internals | MapEveryConcreteProtocolStepClassByAnExplicitRefinementRow | 1..1 |  |
+| semantic_graph | CheckedPackageExtensionFormNodes | 1..1 |  |
+| operation | CheckedPackageProtocolNodeFamilyOperationKeysClauseBodyBindersAndReaderOrder | 1..1 |  |
+| one_total_order_of_the_join_stages | String | 1..1 |  |
+| dependencies | CheckedPackageFrameBody | 1..1 |  |
+| dependency_reference | String | 1..1 |  |
+| model_member | String | 1..1 |  |
+| model_root | String | 1..1 |  |
+| declaration | String | 1..1 |  |
+| owner | String | 1..1 |  |
+| source_map | DeclareARefinementBetweenTwoStateModels | 1..1 |  |
+| refinement_step_rows | String | 1..1 |  |
+| checked_term_data | String | 1..1 |  |
+| temporal_clause_names | String | 1..1 |  |
+| schedulability_claims | String | 1..1 |  |
+| operation_effects | String | 1..1 |  |
+| capability_report | String | 1..1 |  |
+| diagnostics | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.checked-package/v2`, the document-type
   tag that tells a checked package apart from every other document.
 - `name` — the package identity: a non-empty string, the library identity an

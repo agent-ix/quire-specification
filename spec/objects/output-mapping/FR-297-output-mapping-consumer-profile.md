@@ -17,6 +17,16 @@ identity rather than by a display name or installed tool.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| target_family | String | 1..1 |  |
+| target_standard_refs | String | 1..1 |  |
+| mapping_profile_id | String | 1..1 |  |
+| required_capabilities | String | 1..1 |  |
+| observer_selection | String | 1..1 |  |
+
+## Field sources
+
 | Property | Description |
 | --- | --- |
 | `target_family` | Exactly one of `ocl`, `sysml-kerml` or `fretish`. |

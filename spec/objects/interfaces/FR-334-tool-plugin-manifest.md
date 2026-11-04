@@ -18,6 +18,18 @@ When a tool or plugin is registered, the producer SHALL use the immutable ToolPl
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| tool_id | String | 1..1 |  |
+| capabilities | String | 1..1 |  |
+| effects | String | 1..1 |  |
+| rights | String | 1..1 |  |
+| platform | String | 1..1 |  |
+| limits | String | 1..1 |  |
+
+## Field sources
+
 - `contract_version` — exactly `quire.tool-plugin-manifest/v1`.
 - `tool_id` — authority-qualified provider identity.
 - `capabilities` — exact operation/profile/format tuples.

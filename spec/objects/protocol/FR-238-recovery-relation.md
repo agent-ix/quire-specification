@@ -25,6 +25,18 @@ compensation-operation success".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| authored_recovery_predicate | String | 1..1 |  |
+| declared_type | String | 1..1 |  |
+| target_state | String | 1..1 |  |
+| achieved_state | String | 1..1 |  |
+| selected_state_and_temporal_profiles | String | 1..1 |  |
+| declared_population_scope_membership_and_completeness_authorities | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored recovery predicate | FR-057 Inputs | Evaluated under the selected state and temporal profiles. |

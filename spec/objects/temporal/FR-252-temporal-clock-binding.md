@@ -45,6 +45,21 @@ refuses with `invalid_timed_model`/`model-time-on-untimed-model`.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| selected_profile_identity | TemporalSemanticProfileIdentity | 1..1 |  |
+| clock_identity | String | 1..1 |  |
+| unit | String | 1..1 |  |
+| epoch | String | 1..1 |  |
+| period | ExactRationalValue | 1..1 |  |
+| sequence_authority | String | 1..1 |  |
+| admitted_order | BoundedTemporalOperatorVocabulary | 1..1 |  |
+| completeness_premise | String | 1..1 |  |
+| time_source | String | 1..1 |  |
+| binding_kind | String | 1..1 |  |
+
+## Field sources
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Selected profile identity | FR-090 Behavior | The clock interpretation is meaningful only under one selected profile ([FR-250](FR-250-temporal-semantic-profile.md)). |

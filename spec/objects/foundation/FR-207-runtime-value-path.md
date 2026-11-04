@@ -25,6 +25,14 @@ When a producer locates a value inside a validated runtime subject, the producer
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| root_observation | SelectedSnapshot | 1..1 |  |
+| root_subject | DeclaredObjectIdentity | 1..1 |  |
+| steps | String | 1..1 |  |
+
+## Field sources
+
 - **root.observation** (`selected observation identity`) — the observation the
   value is read under, typed for a snapshot by
   [FR-265](../observation/FR-265-selected-snapshot.md). It is part of the root

@@ -18,6 +18,18 @@ When a protocol declaration completes static checking, the producer SHALL use th
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| definition | String | 1..1 |  |
+| roles | String | 1..1 |  |
+| messages_channels | String | 1..1 |  |
+| control_graph | String | 1..1 |  |
+| guards_obligations | String | 1..1 |  |
+| compensations | String | 1..1 |  |
+| bounds | String | 1..1 |  |
+
+## Field sources
+
 - `definition` — package-qualified protocol declaration identity.
 - `roles` — definitions and runtime-binding requirements.
 - `messages_channels` — typed messages, channel/queue policies and cardinality premises.

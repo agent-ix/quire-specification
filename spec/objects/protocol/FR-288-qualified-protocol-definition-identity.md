@@ -19,6 +19,15 @@ When a linked protocol definition is used as an identity qualifier, the linker S
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| authored_source_document_key | String | 1..1 |  |
+| admitted_declaration_handle | String | 1..1 |  |
+| formal_owner_and_clause | String | 1..1 |  |
+| semantic_selection_closure | String | 1..1 |  |
+
+## Field sources
+
 - **authored source document key** — the exact FR-202 document identity
   of the source owning the declaration.
 - **admitted declaration handle** — the source-inventory-qualified handle of

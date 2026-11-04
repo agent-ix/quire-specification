@@ -45,6 +45,17 @@ operation agree.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| semantic_type | CheckedPackageOperationAnchorBody | 1..1 |  |
+| occurrences | String | 1..1 |  |
+| modifies | ImmutableCheckedPackageArtifact | 1..1 |  |
+| creates | String | 1..1 |  |
+| deletes | String | 1..1 |  |
+| deletes_scoped | EnforceAuthoredOperationFrames | 1..1 |  |
+
+## Field sources
+
 - **semantic_type** (`NodeRef`) — the `model`/`object_type`, `model`/`process`
   or `model`/`state_machine` node declaring the operations that share this
   frame: the `context` of every `state`/`operation_anchor` node that binds the

@@ -21,6 +21,16 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| occurrence | ProtocolNodeOccurrence | 1..1 |  |
+| channel | ProtocolChannel | 1..1 |  |
+| message | String | 1..1 |  |
+| typed_payload_record | String | 1..1 |  |
+
+## Field sources
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — a send is an
   authored protocol node, so it carries the node occurrence identity. FR-049-AC-2
   keeps send references distinct from receive, delivery, operation attempt,
