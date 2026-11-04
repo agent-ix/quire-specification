@@ -25,7 +25,7 @@ When a communication or business observation is bound to a protocol instance, th
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
 | occurrence | ProtocolNodeOccurrence | 1..1 |  |
 | role | String | 1..1 |  |
 | operation | String | 1..1 |  |
@@ -37,10 +37,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
+| key | exactly one FR-287 value of kind `operation-attempt` (Identity and comparison) |
 | role | type not stated in source; see Field sources |
 | operation | type not stated in source; see Field sources |
-| outcome | type not stated in source; see Field sources |
+| outcome | one of failed, timed out, pending or successful (FR-058, FR-058-AC-2) |
 
 
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — an attempt is

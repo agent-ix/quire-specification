@@ -22,12 +22,12 @@ When a protocol claim is submitted to an analyzer, the producer SHALL use the im
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | request_id | String | 1..1 |  |
-| claim | String | 1..1 |  |
-| subject | String | 1..1 |  |
-| premises | String | 1..1 |  |
-| provider | String | 1..1 |  |
+| claim | JsonObject | 1..1 |  |
+| subject | JsonObject | 1..1 |  |
+| premises | JsonObject | 1..1 |  |
+| provider | JsonObject | 1..1 |  |
 | result | CanonicalProtocolResult | 1..1 |  |
-| witness | String | 1..1 |  |
+| witness | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -35,13 +35,13 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| claim | type not stated in source; see Field sources |
-| subject | type not stated in source; multiplicity not stated in source; see Field sources |
-| premises | type not stated in source; multiplicity not stated in source; see Field sources |
-| provider | type not stated in source; multiplicity not stated in source; see Field sources |
+| contract_version | exactly `quire.protocol.assessment/v1` |
+| claim | record: claim kind and exact strength |
+| subject | record: checked protocol plus observations or finite model; multiplicity not stated in source |
+| premises | record: closure, fairness, channel, population, environment assumptions; multiplicity not stated in source |
+| provider | record: selected capability, profile, options; multiplicity not stated in source |
 | result | multiplicity not stated in source; see Field sources |
-| witness | type not stated in source; multiplicity not stated in source; see Field sources |
+| witness | record: one of strategy, trace set, counterexample, incompatibility core; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.protocol.assessment/v1`.

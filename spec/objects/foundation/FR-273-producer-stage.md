@@ -51,7 +51,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | producer_interface_reference | type not stated in source; see Field sources |
-| stage_label | type not stated in source; see Field sources |
+| stage_label | exact string label of the interface's closed stage vocabulary; lexicographic label order (Key order) |
 | originating_stage_retention | type not stated in source; see Field sources |
 | selected_producer_interface | type not stated in source; see Field sources |
 

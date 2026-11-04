@@ -21,13 +21,13 @@ When observation facts are supplied to a semantic consumer, the producer SHALL u
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
-| authority | String | 1..1 |  |
+| authority | JsonObject | 1..1 |  |
 | revision | String | 1..1 |  |
-| records | String | 1..1 |  |
-| populations | String | 1..1 |  |
-| positions | String | 1..1 |  |
-| progress | String | 1..1 |  |
-| conflicts | String | 1..1 |  |
+| records | JsonObject | 0..* |  |
+| populations | JsonObject | 0..* |  |
+| positions | JsonObject | 0..* |  |
+| progress | JsonObject | 0..* |  |
+| conflicts | JsonObject | 0..* |  |
 
 ## Field sources
 
@@ -35,14 +35,14 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| authority | type not stated in source; multiplicity not stated in source; see Field sources |
+| contract_version | exactly `quire.observation-authority/v1` |
+| authority | record: producer, scope, contract identity; quire-observation `schemas/observation-authority-v1.schema.json` `authority` (object); multiplicity not stated in source |
 | revision | type not stated in source; multiplicity not stated in source; see Field sources |
-| records | type not stated in source; multiplicity not stated in source; see Field sources |
-| populations | type not stated in source; multiplicity not stated in source; see Field sources |
-| positions | type not stated in source; multiplicity not stated in source; see Field sources |
-| progress | type not stated in source; multiplicity not stated in source; see Field sources |
-| conflicts | type not stated in source; multiplicity not stated in source; see Field sources |
+| records | list of fact records; quire-observation `observation-authority-v1.schema.json` `payload.records` (array) |
+| populations | list of population records; same schema `payload.populations` (array) |
+| positions | list of position records; same schema `payload.positions` (array) |
+| progress | list of progress records; same schema `payload.progress` (array) |
+| conflicts | list of conflict records; same schema `payload.conflicts` (array) |
 
 
 - `contract_version` — exactly `quire.observation-authority/v1`.

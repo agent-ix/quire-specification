@@ -35,7 +35,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | key | type not stated in source; see Field sources |
-| owning_role | type not stated in source; see Field sources |
+| owning_role | type not stated in source; exactly one (FR-053) |
 | labeled_branches | type not stated in source; multiplicity not stated in source; see Field sources |
 | visibility_premises | type not stated in source; see Field sources |
 | distinguishing_fact | type not stated in source; see Field sources |

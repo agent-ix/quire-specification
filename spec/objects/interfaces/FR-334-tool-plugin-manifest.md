@@ -22,11 +22,11 @@ When a tool or plugin is registered, the producer SHALL use the immutable ToolPl
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | tool_id | String | 1..1 |  |
-| capabilities | String | 1..1 |  |
+| capabilities | JsonObject | 0..* |  |
 | effects | String | 0..* |  |
-| rights | String | 1..1 |  |
-| platform | String | 1..1 |  |
-| limits | String | 1..1 |  |
+| rights | JsonObject | 1..1 |  |
+| platform | JsonObject | 1..1 |  |
+| limits | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -34,13 +34,13 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
+| contract_version | exactly `quire.tool-plugin-manifest/v1` |
 | tool_id | type not stated in source; multiplicity not stated in source; see Field sources |
-| capabilities | type not stated in source; see Field sources |
+| capabilities | list of operation/profile/format tuples |
 | effects | type not stated in source; see Field sources |
-| rights | type not stated in source; see Field sources |
-| platform | type not stated in source; multiplicity not stated in source; see Field sources |
-| limits | type not stated in source; multiplicity not stated in source; see Field sources |
+| rights | record: required grants and scope constraints |
+| platform | record: target and ABI or process-wire requirements; multiplicity not stated in source |
+| limits | record: input, output, memory, time, concurrency ceilings; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.tool-plugin-manifest/v1`.

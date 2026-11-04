@@ -29,7 +29,7 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 | subject_kind | ProtocolSubjectVocabulary | 1..1 |  |
 | static_declaration_path | String | 1..1 |  |
 | workflow_instance_identity | String | 1..1 |  |
-| iteration_identity | String | 1..1 |  |
+| iteration_identity | Integer | 0..* |  |
 | role_ownership | String | 1..1 |  |
 | declaration_span | SourceRegion | 1..1 |  |
 | bound_typed_record | String | 1..1 |  |
@@ -41,12 +41,12 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | key | type not stated in source; see Field sources |
-| subject_kind | multiplicity not stated in source; see Field sources |
+| subject_kind | exactly one distinct typed subject (FR-210) |
 | static_declaration_path | type not stated in source; see Field sources |
 | workflow_instance_identity | type not stated in source; see Field sources |
-| iteration_identity | type not stated in source; see Field sources |
+| iteration_identity | ordinal of each enclosing bounded iteration, outer to inner; zero-length outside iterations (Absence) |
 | role_ownership | type not stated in source; see Field sources |
-| declaration_span | multiplicity not stated in source; see Field sources |
+| declaration_span | retained by every lowered node (FR-049-AC-11) |
 | bound_typed_record | type not stated in source; see Field sources |
 
 

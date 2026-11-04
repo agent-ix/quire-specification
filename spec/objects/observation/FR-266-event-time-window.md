@@ -41,9 +41,9 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| window_identity | type not stated in source; multiplicity not stated in source; see Field sources |
-| start | type not stated in source; multiplicity not stated in source; see Field sources |
-| end | type not stated in source; multiplicity not stated in source; see Field sources |
+| window_identity | type not stated in source; required key component (FR-266 Absence); see Field sources |
+| start | type not stated in source; required key component (FR-266 Absence); see Field sources |
+| end | type not stated in source; required key component (FR-266 Absence); see Field sources |
 | bounds | type not stated in source; see Field sources |
 | distinctness_from_a_snapshot | type not stated in source; see Field sources |
 | progress_and_closure_applicability | type not stated in source; multiplicity not stated in source; see Field sources |

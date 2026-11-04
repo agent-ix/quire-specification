@@ -35,7 +35,7 @@ their temporal interpretation."
 | named_clock | String | 1..1 |  |
 | named_subjects | String | 1..1 |  |
 | named_decision_scope | TemporalDecisionScope | 1..1 |  |
-| named_surrounding_execution | String | 1..1 |  |
+| named_surrounding_execution | TemporalDecisionScope | 1..1 |  |
 | named_interval | BoundedTemporalInterval | 1..1 |  |
 | named_history_boundary | HistoryBoundary | 1..1 |  |
 | progress_point | String | 1..1 |  |
@@ -50,7 +50,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | assertion_identity_and_revision | type not stated in source; multiplicity not stated in source; see Field sources |
 | named_clock | type not stated in source; see Field sources |
 | named_subjects | type not stated in source; see Field sources |
-| named_surrounding_execution | type not stated in source; see Field sources |
+| named_surrounding_execution | FR-258 scope with `scope_role` surrounding execution; exactly one (FR-094 Description) |
 | progress_point | type not stated in source; see Field sources |
 | completeness_coverage | type not stated in source; see Field sources |
 

@@ -22,7 +22,7 @@ computed.
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| producer | String | 1..1 |  |
+| producer | JsonObject | 1..1 |  |
 | request | String | 1..1 |  |
 | ordinal | Integer | 1..1 |  |
 
@@ -32,7 +32,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| producer | type not stated in source; see Field sources |
+| producer | JSON object `{identity, version}` |
 | request | type not stated in source; see Field sources |
 
 

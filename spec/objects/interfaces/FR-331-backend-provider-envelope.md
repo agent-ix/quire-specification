@@ -100,15 +100,15 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | capability_vocabulary | ProtocolClaimKind | 1..1 |  |
-| manifest | String | 0..* |  |
-| request | String | 1..1 |  |
-| temporal | String | 1..1 |  |
-| candidates | String | 0..* |  |
-| dispositions | String | 1..1 |  |
-| artifacts | String | 1..1 |  |
-| results | String | 1..1 |  |
-| counterexamples | String | 1..1 |  |
-| accounting | String | 0..* |  |
+| manifest | JsonObject | 0..* |  |
+| request | JsonObject | 1..1 |  |
+| temporal | JsonObject | 1..1 |  |
+| candidates | JsonObject | 0..* |  |
+| dispositions | JsonObject | 1..* |  |
+| artifacts | JsonObject | 0..* |  |
+| results | JsonObject | 0..* |  |
+| counterexamples | JsonObject | 0..* |  |
+| accounting | JsonObject | 0..* |  |
 
 ## Field sources
 
@@ -116,16 +116,16 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| manifest | type not stated in source; see Field sources |
-| request | type not stated in source; see Field sources |
-| temporal | type not stated in source; see Field sources |
-| candidates | type not stated in source; see Field sources |
-| dispositions | type not stated in source; multiplicity not stated in source; see Field sources |
-| artifacts | type not stated in source; multiplicity not stated in source; see Field sources |
-| results | type not stated in source; see Field sources |
-| counterexamples | type not stated in source; multiplicity not stated in source; see Field sources |
-| accounting | type not stated in source; see Field sources |
+| contract_version | exactly `quire.backend-provider/v1` |
+| manifest | array of backend descriptors; `proposals/backend-provider-v1/schema.json` `Manifest` |
+| request | JSON object; `proposals/backend-provider-v1/schema.json` `Request` |
+| temporal | JSON object; `proposals/backend-provider-v1/schema.json` `Temporal` |
+| candidates | JSON object tagged `set` or `unknown-backend`; `proposals/backend-provider-v1/schema.json` `Candidates` |
+| dispositions | array of objects, minItems 1; `proposals/backend-provider-v1/schema.json` `OutcomeStage.dispositions` |
+| artifacts | array of objects; `proposals/backend-provider-v1/schema.json` `OutcomeStage.artifacts` |
+| results | array of objects; `proposals/backend-provider-v1/schema.json` `OutcomeStage.results` |
+| counterexamples | array of objects; `proposals/backend-provider-v1/schema.json` `OutcomeStage.counterexamples` |
+| accounting | array of objects; `proposals/backend-provider-v1/schema.json` `OutcomeStage.accounting` |
 
 
 - `contract_version` — exactly `quire.backend-provider/v1`.

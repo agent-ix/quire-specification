@@ -24,12 +24,12 @@ to retaining it.
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AdmittedObservationIdentityPreimage | 1..1 | identity |
 | observation_identity | String | 1..1 |  |
 | source_schema_identity | String | 1..1 |  |
 | declared_binding_identity | String | 1..1 |  |
 | field_units | String | 1..1 |  |
-| selected_subject_identity | String | 1..1 |  |
+| selected_subject_identity | AuthorityQualifiedRuntimeSubjectReference | 1..1 |  |
 | visibility | String | 1..1 |  |
 | valuation_presence | String | 1..1 |  |
 
@@ -39,12 +39,12 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
+| key | the FR-296 observation key and nothing else (FR-260 Identity) |
 | observation_identity | type not stated in source; see Field sources |
 | source_schema_identity | type not stated in source; see Field sources |
 | declared_binding_identity | type not stated in source; see Field sources |
 | field_units | type not stated in source; multiplicity not stated in source; see Field sources |
-| selected_subject_identity | type not stated in source; see Field sources |
+| selected_subject_identity | the FR-287 key of the linked subject (FR-296 Key) |
 | visibility | type not stated in source; see Field sources |
 | valuation_presence | type not stated in source; see Field sources |
 

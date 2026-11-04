@@ -23,7 +23,7 @@ without deriving identity from its relationships or presentation.
 |---|---|---|---|
 | authority_identity | String | 1..1 |  |
 | subject_kind | String | 1..1 |  |
-| authority_local_object_identity | String | 1..1 |  |
+| authority_local_object_identity | Bytes | 1..1 |  |
 
 ## Field sources
 
@@ -33,7 +33,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | authority_identity | type not stated in source; see Field sources |
 | subject_kind | type not stated in source; see Field sources |
-| authority_local_object_identity | type not stated in source; see Field sources |
+| authority_local_object_identity | exact non-empty bytes retained without parsing (FR-035) |
 
 
 | Property | Source | Note |

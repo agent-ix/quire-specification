@@ -29,10 +29,10 @@ reproduce it with no provider present before the item settles `refuted`.
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | initial_state | Integer | 1..1 |  |
-| binding | String | 1..1 |  |
-| bound | String | 1..1 |  |
+| binding | JsonObject | 1..1 |  |
+| bound | JsonObject | 1..1 |  |
 | scheduler | WitnessScheduler | 0..1 |  |
-| evidence | String | 1..1 |  |
+| evidence | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -41,10 +41,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | initial_state | index of the initial state in the subject |
-| binding | the `over` binding; type not stated in source; see Field sources |
-| bound | the claim bound with its threshold; type not stated in source; see Field sources |
+| binding | the `over` binding; JSON object or null; `proposals/backend-provider-v1/schema.json` `ProbabilisticCounterexample.binding` |
+| bound | the claim bound with its threshold; JSON object; `proposals/backend-provider-v1/schema.json` `ProbabilisticCounterexample.bound` |
 | scheduler | WitnessScheduler{entries} as defined in this document; present under every scheduler and under a workload over a timed subject with free delays; absent under a workload that leaves no choice |
-| evidence | exactly one of: path set, subsystem certificate, undefined path; type not stated in source; see Field sources |
+| evidence | exactly one of: path set, subsystem certificate, undefined path; JSON object tagged by `type`; `proposals/backend-provider-v1/schema.json` `ProbabilisticCounterexample.evidence` |
 
 
 The value has two parts: the `WitnessScheduler` and the

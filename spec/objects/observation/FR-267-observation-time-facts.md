@@ -28,7 +28,7 @@ selects from.
 |---|---|---|---|
 | event_time | Timestamp | 1..1 |  |
 | ingestion_time | Timestamp | 1..1 |  |
-| causal_relation | String | 1..1 |  |
+| causal_relation | DeclaredInstanceRelationship | 1..1 |  |
 | clock_uncertainty | String | 1..1 |  |
 
 ## Field sources
@@ -37,7 +37,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| causal_relation | type not stated in source; see Field sources |
+| causal_relation | the declared relationship structure of FR-262 (FR-267 Identity, Causal order) |
 | clock_uncertainty | type not stated in source; see Field sources |
 
 

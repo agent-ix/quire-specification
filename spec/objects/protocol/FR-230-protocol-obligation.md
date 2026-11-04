@@ -35,7 +35,7 @@ created.
 | capture_set | ImmutableActivationCapture | 1..1 |  |
 | evaluation_anchor_identity | String | 1..1 |  |
 | clause_subject | String | 1..1 |  |
-| semantic_trigger_event_identity | String | 1..1 |  |
+| semantic_trigger_event_identity | String | 0..1 |  |
 | activation_state | ObligationActivationState | 1..1 |  |
 
 ## Field sources
@@ -50,9 +50,9 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | effect_identity | type not stated in source; see Field sources |
 | predicate_identity | type not stated in source; see Field sources |
 | evaluation_anchor_identity | type not stated in source; see Field sources |
-| clause_subject | type not stated in source; multiplicity not stated in source; see Field sources |
-| semantic_trigger_event_identity | type not stated in source; multiplicity not stated in source; see Field sources |
-| activation_state | multiplicity not stated in source; see Field sources |
+| clause_subject | type not stated in source; required key component (Identity and comparison) |
+| semantic_trigger_event_identity | type not stated in source; present only for `trigger_event` origin (Identity and comparison) |
+| activation_state | one of triggered, inactive or activation-unknown (FR-231) |
 
 
 | Property | Source | Note |

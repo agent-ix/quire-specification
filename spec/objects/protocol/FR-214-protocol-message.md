@@ -21,7 +21,7 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
 | typed_declaration | String | 1..1 |  |
 | declaration_kind | String | 1..1 |  |
 | authored_obligation | String | 1..1 |  |
@@ -35,7 +35,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
+| key | exactly one FR-287 value of kind `message` (Identity and comparison) |
 | typed_declaration | type not stated in source; see Field sources |
 | declaration_kind | type not stated in source; multiplicity not stated in source; see Field sources |
 | authored_obligation | type not stated in source; see Field sources |

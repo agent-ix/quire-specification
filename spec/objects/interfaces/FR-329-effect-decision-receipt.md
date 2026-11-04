@@ -21,13 +21,13 @@ When a formal decision requests an external workflow effect, the producer SHALL 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
-| decision | String | 1..1 |  |
-| authority_grant | String | 1..1 |  |
+| decision | JsonObject | 1..1 |  |
+| authority_grant | JsonObject | 1..1 |  |
 | idempotency_key | String | 1..1 |  |
-| effect_request | String | 1..1 |  |
-| transport_receipt | String | 1..1 |  |
-| effect_observation | String | 0..1 |  |
-| lineage | String | 1..1 |  |
+| effect_request | JsonObject | 1..1 |  |
+| transport_receipt | JsonObject | 1..1 |  |
+| effect_observation | JsonObject | 0..1 |  |
+| lineage | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -35,14 +35,14 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| decision | type not stated in source; see Field sources |
-| authority_grant | type not stated in source; multiplicity not stated in source; see Field sources |
-| idempotency_key | type not stated in source; see Field sources |
-| effect_request | type not stated in source; multiplicity not stated in source; see Field sources |
-| transport_receipt | type not stated in source; multiplicity not stated in source; see Field sources |
-| effect_observation | type not stated in source; see Field sources |
-| lineage | type not stated in source; multiplicity not stated in source; see Field sources |
+| contract_version | exactly `quire.effect-decision/v1` |
+| decision | record: semantic result and recommended action identity |
+| authority_grant | record: actor, action, subject, scope, expiry, rights; multiplicity not stated in source |
+| idempotency_key | caller-owned key string |
+| effect_request | record: adapter, operation, typed arguments, request identity; multiplicity not stated in source |
+| transport_receipt | record: delivery or acceptance fact; multiplicity not stated in source |
+| effect_observation | record; bullet says optional |
+| lineage | record: retry, duplicate, supersession, refusal relations; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.effect-decision/v1`.

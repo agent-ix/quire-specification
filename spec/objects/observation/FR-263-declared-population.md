@@ -41,7 +41,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | key | type not stated in source; see Field sources |
 | population_key | type not stated in source; see Field sources |
-| declared_finite_membership_rule | multiplicity not stated in source; see Field sources |
+| declared_finite_membership_rule | exactly one declared rule; an absent rule is refused (FR-264 Absence) |
 | bounds | for a window, the half-open bounds |
 | domain_package_identity_version_and_population_declaration_key | type not stated in source; see Field sources |
 | observation_sources | type not stated in source; see Field sources |

@@ -22,10 +22,10 @@ When a canonical protocol result is projected to portable verification, the proj
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | key | String | 1..1 | identity |
-| resultId | String | 1..1 |  |
-| sourceResultRef | String | 1..1 |  |
+| resultId | JsonObject | 1..1 |  |
+| sourceResultRef | CanonicalProtocolResultIdentityPreimage | 1..1 |  |
 | targetContractVersion | String | 1..1 |  |
-| targetBinding | String | 1..1 |  |
+| targetBinding | JsonObject | 1..1 |  |
 | adapter | String | 1..1 |  |
 | nativeArtifacts | String | 1..1 |  |
 | provenance | String | 1..1 |  |
@@ -37,10 +37,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | key | type not stated in source; see Field sources |
-| resultId | type not stated in source; see Field sources |
-| sourceResultRef | type not stated in source; see Field sources |
-| targetContractVersion | type not stated in source; multiplicity not stated in source; see Field sources |
-| targetBinding | type not stated in source; see Field sources |
+| resultId | closed JSON object `{sourceResultKey, adapter}` (FR-062) |
+| sourceResultRef | the FR-286 `resultKey` of the source, equal to `resultId.sourceResultKey` (FR-062) |
+| targetContractVersion | exactly `quire-verification/e02-draft-2` (FR-062) |
+| targetBinding | JSON object with members `propertyRef`, `planId`, `taskId`, `runRef`, `profile`, `bindingRefs`, `executionScope` (FR-062) |
 | adapter | type not stated in source; see Field sources |
 | nativeArtifacts | type not stated in source; see Field sources |
 | provenance | type not stated in source; see Field sources |

@@ -44,7 +44,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| strength | type not stated in source; see Field sources |
+| strength | one Engineering Assurance FR-022 wire spelling, compared as an exact string |
 | source_binding | type not stated in source; see Field sources |
 
 

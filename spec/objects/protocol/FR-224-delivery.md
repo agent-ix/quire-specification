@@ -25,7 +25,7 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
 | related_send | SendOccurrence | 1..1 |  |
 | channel | ProtocolChannel | 1..1 |  |
 | transport_record | String | 1..1 |  |
@@ -36,7 +36,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
+| key | exactly one FR-287 value of kind `delivery` (Identity and comparison) |
 | transport_record | type not stated in source; see Field sources |
 
 
