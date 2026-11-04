@@ -66,15 +66,36 @@ Type and Multiplicity in Properties were derived from this text. The text names 
 - **Absence** — a missing property or record prevents package construction. No
   partial package or identity is exposed after refusal, cancellation or exhaustion.
 
-## Aggregate invariants
+## Invariants
 
-- Every requested obligation appears exactly once and no unrequested obligation
-  appears.
-- Every output region is within `target_bytes`, is UTF-8 boundary-safe where the
-  profile requires UTF-8, and belongs to the record that claims it.
-- Unrepresented/refused records claim no output region.
-- Reassembling the same admitted request with the same profile/generator yields
-  byte-identical output, record identities and package identity.
+The clauses the package enforces over its own properties. Each clause owns one
+`quire` fence under its own `### <clauseId>` heading.
+
+The remaining package rules relate the package to things that are not its own
+properties, so they stay prose: every requested obligation appears and no
+unrequested one does (the request is not a package property); every output
+region is within `target_bytes`, is UTF-8 boundary-safe where the profile
+requires UTF-8, and belongs to the record that claims it (FR-298 does not yet
+type `output_regions` as byte regions); and reassembling the same admitted
+request with the same profile/generator yields byte-identical output, record
+identities and package identity (a property of assembly, FR-125, not of one
+package).
+
+### EachSourceObligationAppearsOnce
+
+Every obligation in the package appears exactly once.
+
+```quire
+forall(r in self.records: size(filter(s in self.records: s.source_obligation = r.source_obligation)) = 1)
+```
+
+### UnrepresentedOrRefusedRecordClaimsNoRegion
+
+Unrepresented and refused records claim no output region.
+
+```quire
+forall(r in self.records: (r.disposition = ConsumerMappingLoss::unrepresented or r.disposition = ConsumerMappingLoss::refused) implies size(r.output_regions) = 0)
+```
 
 ## Acceptance Criteria
 
