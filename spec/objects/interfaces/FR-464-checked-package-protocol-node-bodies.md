@@ -189,7 +189,8 @@ refuses `malformed_wire` at the schema stage, and the recorded locus is the node
 
 **Canonical order.** A set or a sorted-records list that is not in its
 canonical order, or that repeats an entry, refuses `invalid_semantic_graph`
-at the node, as FR-322-AC-10 refuses every noncanonical order. An ordered
+at the node, as FR-322-AC-10 refuses every noncanonical order (a repeated
+declaration node is the Single listing case, at that node). An ordered
 list is in the order its layout states, and reordering it changes the node
 key. So the sets of one protocol (roles, relationships, channels, queues,
 requirements, compensations, `visible`, `contracts`, `related`, cases, branches)
@@ -305,8 +306,9 @@ Every protocol member node belongs to exactly one clause.
   `event`'s compensation, a compensation's forward effect and commit) does
   not hold it.
 - **Single listing.** A role, channel, queue, compensation or obligation
-  node named by two arguments of one clause, or by two clauses, refuses
-  `invalid_semantic_graph` at the node. This rule is about declarations: a
+  node listed twice in one set argument, named by two arguments of one
+  clause, or named by two clauses, refuses `invalid_semantic_graph` at the
+  listed node (the member), not at the clause that lists it. This rule is about declarations: a
   node several nodes share by key (a `visible` entry, a contract, a model
   relationship, a binder) may be named by many.
 - **Channels and queues.** Each channel is named by exactly one queue's
@@ -698,7 +700,7 @@ alternate cycle encoding.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-464-AC-1 | Every protocol node's body is a `quire.op.protocol.control` application with operator class `protocol_control`, one `protocol_profile` law equal to the lock's row, a `profile_operator` member naming an operator of the catalog, `null` mode, empty leaves, `result_type` the Boolean node and `semantic_type` the same node; a body that applies another identity, carries two laws, another member kind or a `null` member, or whose arguments are not the operator's bindings in order, refuses `malformed_wire` or `operation-member-mismatch`. | Test (TC-946) |
-| FR-464-AC-2 | Each operator belongs to the one `semantic_form` the catalog names; an application at the body root of a node of another form or tag refuses `ill_typed`/`operator-ineligible` at that node, and the same application nested in a body or term refuses `malformed_wire` at the nested application. | Test (TC-946) |
+| FR-464-AC-2 | Each operator belongs to the one `semantic_form` the catalog names; an application at the body root of a node of another form or tag refuses `ill_typed`/`operator-ineligible` at that node, and the same application nested in a body or term refuses `malformed_wire` at the nested application. A `quire.op.protocol.control` application whose member operator belongs to another protocol form (an operator the `Orders` role node cannot carry, or a `control` node carrying the `role` operator) or names no operator of the catalog fails the published schema first and refuses `malformed_wire` at the node pointer `/semantic_graph/nodes/{i}`; the `ill_typed`/`operator-ineligible` and `invalid_package`/`operation-member-mismatch` causes remain for the shapes the schema admits (an application of another operation identity at a protocol node's root, a `null` or mismatched member, missing or mismatched laws), and are what the operation step alone returns on the schema-failing documents (FR-464-AC-19). | Test (TC-946) |
 | FR-464-AC-3 | A producer writes no `recursion_group` on an acyclic protocol node (a label there is admitted and means nothing): reformatting the source, a comment, a second reference to the protocol and declaring the roles in another source order leave every node id unchanged; renaming a role, reordering two `children`, changing one literal, retargeting one reference or changing a clause's `owner_model` yields a structurally unequal affected node, and changes a node id only for a rename (a declared node's id is its declaration path and producer-assigned ordinal) or for a node whose id embeds the changed operand ids; a set out of ascending node-id order or repeating an entry refuses `invalid_semantic_graph`. | Test (TC-946) |
 | FR-464-AC-4 | A role, a channel, a template and a control named `X` in one protocol have four distinct declarations; two controls on one path, or two roles of one name, refuse `ambiguous_declaration`/`ambiguous-name` naming both keys; a control whose declaration is not its holder's declaration followed by its name, a control held twice and a control held by nothing refuse `invalid_semantic_graph` at the control. | Test (TC-946) |
 | FR-464-AC-5 | The clause body is thirteen bindings in the order the "Clause body" table lists; `activation` is `origin` with no trigger or `each` with a trigger and an optional guard; a protocol with no relationship, requirement, compensation, `terminal` member or `scheduling` has empty sets and absent optionals and is admitted; a body with arguments reordered, missing or of another term shape refuses `malformed_wire`. | Test (TC-946) |

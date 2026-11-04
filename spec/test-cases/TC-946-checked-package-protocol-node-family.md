@@ -82,11 +82,11 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | --- | --- | --- |
 | V1 | none | admitted; every body is a `quire.op.protocol.control` application with one `protocol_profile` law equal to the lock's row, a `profile_operator` member, the Boolean `result_type` and `semantic_type` |
 | V2 | `Requested`'s body applies `quire.op.state.clause` | `ill_typed`/`operator-ineligible` at the node (a state clause application at a protocol node's root) |
-| V3 | the `Orders` role node's operator is `channel` | `ill_typed`/`operator-ineligible` at the node (operator of another form) |
-| V4 | the `Orders` node's `semantic_form` is `control` with the `role` operator | `ill_typed`/`operator-ineligible` at the node |
+| V3 | the `Orders` role node's operator is `channel` | `malformed_wire` at the node (the schema refuses the operator of another form first; the protocol step alone gives `ill_typed`/`operator-ineligible`) |
+| V4 | the `Orders` node's `semantic_form` is `control` with the `role` operator | `malformed_wire` at the node (schema first; the protocol step alone gives `ill_typed`/`operator-ineligible`) |
 | V5 | a `quire.op.protocol.control` application nested as an argument of `Main` | `malformed_wire` at the nested application (strict wire validation) |
 | V6 | a `protocol_reference` carrier's body is a `quire.op.protocol.control` application | refuses `malformed_wire` (`malformed_wire`) |
-| V7 | `Requested`'s member operator is `jump` | `invalid_package`/`operation-member-mismatch` at the application |
+| V7 | `Requested`'s member operator is `jump` | `malformed_wire` at the node (schema first; the operation step alone gives `invalid_package`/`operation-member-mismatch`) |
 | V8 | `Requested`'s member is `null` | `invalid_package`/`operation-member-mismatch` |
 | V9 | `Requested`'s `laws` is empty | `invalid_package`/`operation-law-missing` |
 | V10 | `Requested`'s law names the package's `temporal_profile` definition | `invalid_package`/`operation-law-mismatch` |
@@ -163,7 +163,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
-| M1 | `Orders` listed in `roles` twice | `invalid_semantic_graph` at the clause node |
+| M1 | `Orders` listed in `roles` twice | `invalid_semantic_graph` at the listed member node (`Orders`) |
 | M2 | an extra `role` node `Auditor` that no clause lists | `invalid_semantic_graph` at the node (unattached) |
 | M3 | an extra `queue` for `Charges` | `invalid_semantic_graph` (a channel with two queues) |
 | M4 | the `queue` removed | `invalid_semantic_graph` (a channel with no queue) |
@@ -256,7 +256,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 1. V1 is admitted, as are K1, K6, B1, B22, B23, B25, B8, B10, B12, B17, B18, R1, R3, R6 and
    R10 to R12; their keys and identities are as stated (FR-464-AC-1,
    FR-464-AC-3, FR-464-AC-5, FR-464-AC-9, FR-464-AC-10).
-2. V2 to V6, V15 and the placement vectors refuse as listed; V7 to V13 refuse
+2. V2 to V6, V15 and the placement vectors refuse as listed; V7 is refused by the schema first, and V8 to V13 refuse
    with the operation causes FR-322-AC-22 states (FR-464-AC-1, FR-464-AC-2,
    FR-464-AC-11).
 3. K2 to K4 change exactly the keys stated; K7 to K12 refuse as listed;

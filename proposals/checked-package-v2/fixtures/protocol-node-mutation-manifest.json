@@ -6179,9 +6179,9 @@
         "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
-        "locus": "/semantic_graph/nodes/82"
+        "locus": "/semantic_graph/nodes/59"
       },
-      "note": "the repeat is inside one set argument, so it is the canonical-order rule 'repeats an entry refuses invalid_semantic_graph at the node' (the clause node), not Single listing (a node named by two arguments or two clauses)"
+      "note": "a node listed twice in one set argument is the Single listing rule (FR-464), so the refusal is at the listed member node, /semantic_graph/nodes/59 (Example::OrderFlow::role::Orders), not at the clause that lists it"
     },
     {
       "id": "M8",

@@ -715,3 +715,53 @@ fn property_rows_hold_on_the_base_they_describe() {
     }
     assert!(defects.is_empty(), "{defects:?}");
 }
+
+/// FR-464-AC-2, FR-466-AC-1: V3, V4, V7 and L19 are refused by the schema
+/// first, as `malformed_wire` at the first schema error path, which is the
+/// edited node's pointer; the reader cause the prose names is what the step
+/// returns alone on the same edit (`step_alone`). M1 (FR-464 "Single listing")
+/// refuses at the listed member node, `Orders`, not at the clause.
+#[trace("TC-946", "TC-948", "FR-464-AC-2", "FR-466-AC-1")]
+#[test]
+fn schema_first_placement_rows_and_the_single_listing_row_pin_their_loci() {
+    let manifest = parse(MANIFEST);
+    let base = parse(BASE);
+    let validator = jsonschema::validator_for(&parse(PACKAGE_SCHEMA)).expect("schema is valid");
+    let mut defects = Vec::new();
+    for (id, node, step_code) in [
+        ("V3", "Example::OrderFlow::role::Orders", "operator-ineligible"),
+        ("V4", "Example::OrderFlow::role::Orders", "operator-ineligible"),
+        ("V7", "Example::OrderFlow::run::Main::Requested", "operation-member-mismatch"),
+        ("L19", "Example::OrderFlow::run::Main::Requested", "operation-member-mismatch"),
+    ] {
+        let row = rows(&manifest).iter().find(|r| r["id"] == id).expect("row");
+        let expect = &row["expect"];
+        let edited = apply(&base, &edit_of(row));
+        let first = validator
+            .iter_errors(&edited)
+            .next()
+            .map(|e| e.instance_path().to_string());
+        let index = nodes_of(&base)
+            .iter()
+            .position(|n| declaration_name(n) == node)
+            .expect("node");
+        let pointer = format!("/semantic_graph/nodes/{index}");
+        if expect["stage"] != "schema"
+            || expect["code"] != "malformed_wire"
+            || expect["locus"] != pointer.as_str()
+            || first.as_deref() != Some(pointer.as_str())
+            || expect["step_alone"]["cause"] != step_code
+        {
+            defects.push(format!("{id}: schema first error {first:?}, recorded {expect}"));
+        }
+    }
+    let m1 = rows(&manifest).iter().find(|r| r["id"] == "M1").expect("M1");
+    let orders = nodes_of(&base)
+        .iter()
+        .position(|n| declaration_name(n) == "Example::OrderFlow::role::Orders")
+        .expect("Orders");
+    if m1["expect"]["locus"] != format!("/semantic_graph/nodes/{orders}").as_str() {
+        defects.push(format!("M1: locus {}", m1["expect"]["locus"]));
+    }
+    assert!(defects.is_empty(), "{defects:#?}");
+}
