@@ -48,8 +48,8 @@ states the same bound form for the past direction.
 | upper_bound_b | String | 1..1 |  |
 | lower_end_openness | String | 1..1 |  |
 | upper_end_openness | String | 1..1 |  |
-| selected_profile_identity | String | 1..1 |  |
-| clock_binding | String | 1..1 |  |
+| selected_profile_identity | TemporalSemanticProfile | 1..1 |  |
+| clock_binding | TemporalClockBinding | 1..1 |  |
 
 ## Field sources
 
@@ -61,8 +61,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | upper_bound_b | type not stated in source; see Field sources |
 | lower_end_openness | type not stated in source; see Field sources |
 | upper_end_openness | type not stated in source; see Field sources |
-| selected_profile_identity | type not stated in source; see Field sources |
-| clock_binding | type not stated in source; multiplicity not stated in source; see Field sources |
+| clock_binding | multiplicity not stated in source; see Field sources |
 
 
 | Property | Source | Note |

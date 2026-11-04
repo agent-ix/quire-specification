@@ -59,7 +59,7 @@ When a protocol assessment result is emitted or read, the strict reader SHALL re
 |---|---|---|---|
 | contractVersion | String | 1..1 |  |
 | kind | String | 1..1 |  |
-| resultKey | String | 1..1 | identity |
+| resultKey | CanonicalProtocolResultIdentityPreimage | 1..1 | identity |
 | assessment_execution | AssessmentExecutionDisposition | 1..1 |  |
 | decision_scope_progress | String | 1..1 |  |
 | decision_scope_closure | String | 1..1 |  |
@@ -86,7 +86,6 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | contractVersion | type not stated in source; see Field sources |
 | kind | type not stated in source; see Field sources |
-| resultKey | type not stated in source; see Field sources |
 | decision_scope_progress | type not stated in source; see Field sources |
 | decision_scope_closure | type not stated in source; see Field sources |
 | surrounding_execution_progress | type not stated in source; see Field sources |

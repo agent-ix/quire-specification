@@ -43,7 +43,7 @@ the surrounding execution as closed."
 | scope_identity | String | 1..1 |  |
 | progress_state | String | 1..1 |  |
 | closure_state | String | 1..1 |  |
-| input_completeness | String | 1..1 |  |
+| input_completeness | InputCompletenessState | 1..1 |  |
 | exact_decision_support_set | String | 1..1 |  |
 
 ## Field sources
@@ -56,7 +56,6 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | scope_identity | type not stated in source; see Field sources |
 | progress_state | type not stated in source; see Field sources |
 | closure_state | type not stated in source; see Field sources |
-| input_completeness | type not stated in source; see Field sources |
 | exact_decision_support_set | type not stated in source; see Field sources |
 
 

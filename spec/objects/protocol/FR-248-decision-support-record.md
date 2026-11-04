@@ -25,7 +25,7 @@ When a truth result settles, the result producer SHALL retain for every decision
 |---|---|---|---|
 | oracle_identity | String | 1..1 |  |
 | observation_identity | String | 1..1 |  |
-| dependence_relation | String | 1..1 |  |
+| dependence_relation | DependenceRelation | 1..1 |  |
 | predecessor | String | 0..1 |  |
 | dependence_group | String | 0..1 |  |
 
@@ -37,7 +37,6 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | oracle_identity | type not stated in source; see Field sources |
 | observation_identity | type not stated in source; see Field sources |
-| dependence_relation | type not stated in source; see Field sources |
 | predecessor | type not stated in source; see Field sources |
 | dependence_group | type not stated in source; see Field sources |
 

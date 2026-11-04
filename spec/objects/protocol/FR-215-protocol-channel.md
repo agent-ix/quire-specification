@@ -26,7 +26,7 @@ When the protocol linker admits a protocol channel, the linker SHALL bind its se
 | key | String | 1..1 | identity |
 | sender | String | 1..1 |  |
 | receiver | String | 1..1 |  |
-| message_types | String | 1..1 |  |
+| message_types | ProtocolMessage | 0..* |  |
 | ordering_policy | String | 1..1 |  |
 | delivery_policy | String | 1..1 |  |
 | typed_declaration | String | 1..1 |  |
@@ -41,7 +41,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | key | type not stated in source; see Field sources |
 | sender | type not stated in source; multiplicity not stated in source; see Field sources |
 | receiver | type not stated in source; multiplicity not stated in source; see Field sources |
-| message_types | type not stated in source; multiplicity not stated in source; see Field sources |
+| message_types | a bound premise: message types of the channel |
 | ordering_policy | type not stated in source; multiplicity not stated in source; see Field sources |
 | delivery_policy | type not stated in source; see Field sources |
 | typed_declaration | type not stated in source; see Field sources |

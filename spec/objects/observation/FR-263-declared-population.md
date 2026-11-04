@@ -25,8 +25,8 @@ membership and closure provenance."
 |---|---|---|---|
 | key | String | 1..1 | identity |
 | population_key | String | 1..1 |  |
-| declared_finite_membership_rule | String | 1..1 |  |
-| bounds | String | 1..1 |  |
+| declared_finite_membership_rule | MembershipRule | 1..1 |  |
+| bounds | EventTimeWindow | 1..1 |  |
 | domain_package_identity_version_and_population_declaration_key | String | 1..1 |  |
 | observation_sources | String | 1..1 |  |
 | configuration_identity_and_version | String | 1..1 |  |
@@ -41,8 +41,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | key | type not stated in source; see Field sources |
 | population_key | type not stated in source; see Field sources |
-| declared_finite_membership_rule | type not stated in source; multiplicity not stated in source; see Field sources |
-| bounds | type not stated in source; see Field sources |
+| declared_finite_membership_rule | multiplicity not stated in source; see Field sources |
 | domain_package_identity_version_and_population_declaration_key | type not stated in source; see Field sources |
 | observation_sources | type not stated in source; see Field sources |
 | configuration_identity_and_version | type not stated in source; multiplicity not stated in source; see Field sources |

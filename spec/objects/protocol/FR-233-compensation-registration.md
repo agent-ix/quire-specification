@@ -34,9 +34,9 @@ FR-056 states that the evaluator "does not invoke the compensating operation".
 | forward_effect_identity | String | 1..1 |  |
 | role | String | 1..1 |  |
 | eligibility_conditions | String | 1..1 |  |
-| retry_policy | String | 1..1 |  |
-| commit_boundary | String | 1..1 |  |
-| recovery_relation | String | 1..1 |  |
+| retry_policy | CompensationRetryPolicy | 1..1 |  |
+| commit_boundary | CommitBoundary | 1..1 |  |
+| recovery_relation | RecoveryRelation | 1..1 |  |
 
 ## Field sources
 
@@ -49,9 +49,9 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | forward_effect_identity | type not stated in source; see Field sources |
 | role | type not stated in source; multiplicity not stated in source; see Field sources |
 | eligibility_conditions | type not stated in source; multiplicity not stated in source; see Field sources |
-| retry_policy | type not stated in source; multiplicity not stated in source; see Field sources |
-| commit_boundary | type not stated in source; multiplicity not stated in source; see Field sources |
-| recovery_relation | type not stated in source; multiplicity not stated in source; see Field sources |
+| retry_policy | multiplicity not stated in source; see Field sources |
+| commit_boundary | multiplicity not stated in source; see Field sources |
+| recovery_relation | multiplicity not stated in source; see Field sources |
 
 
 | Property | Source | Note |

@@ -27,7 +27,7 @@ between a selected snapshot and a selected event-time window."
 | subject_participation | String | 1..1 |  |
 | declaration_and_membership_selection | String | 1..1 |  |
 | capture_assertion | String | 1..1 |  |
-| admitted_observations | String | 1..1 |  |
+| admitted_observations | AdmittedObservationIdentityPreimage | 0..* |  |
 
 ## Field sources
 
@@ -40,7 +40,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | subject_participation | type not stated in source; see Field sources |
 | declaration_and_membership_selection | type not stated in source; see Field sources |
 | capture_assertion | type not stated in source; see Field sources |
-| admitted_observations | type not stated in source; multiplicity not stated in source; see Field sources |
+| admitted_observations | sorted distinct bounded observation keys |
 
 
 | Property | Source | Note |

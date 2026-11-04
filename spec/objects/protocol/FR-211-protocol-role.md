@@ -25,7 +25,7 @@ When a protocol declaration names a role, the protocol linker SHALL bind that ro
 | typed_declaration | String | 1..1 |  |
 | declaration_kind | String | 1..1 |  |
 | authority | String | 1..1 |  |
-| internality | String | 1..1 |  |
+| internality | RoleInternality | 1..1 |  |
 | choice_ownership | String | 1..1 |  |
 | declaration_span | String | 1..1 |  |
 
@@ -39,7 +39,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | typed_declaration | type not stated in source; see Field sources |
 | declaration_kind | type not stated in source; see Field sources |
 | authority | type not stated in source; see Field sources |
-| internality | type not stated in source; multiplicity not stated in source; see Field sources |
+| internality | multiplicity not stated in source; see Field sources |
 | choice_ownership | type not stated in source; multiplicity not stated in source; see Field sources |
 | declaration_span | type not stated in source; see Field sources |
 

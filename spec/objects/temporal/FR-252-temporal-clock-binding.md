@@ -47,7 +47,7 @@ refuses with `invalid_timed_model`/`model-time-on-untimed-model`.
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| selected_profile_identity | String | 1..1 |  |
+| selected_profile_identity | TemporalSemanticProfile | 1..1 |  |
 | clock_identity | String | 1..1 |  |
 | unit | String | 1..1 |  |
 | epoch | String | 1..1 |  |
@@ -64,7 +64,6 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| selected_profile_identity | type not stated in source; see Field sources |
 | clock_identity | type not stated in source; see Field sources |
 | unit | type not stated in source; see Field sources |
 | epoch | type not stated in source; see Field sources |

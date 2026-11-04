@@ -36,7 +36,7 @@ created.
 | evaluation_anchor_identity | String | 1..1 |  |
 | clause_subject | String | 1..1 |  |
 | semantic_trigger_event_identity | String | 1..1 |  |
-| activation_state | String | 1..1 |  |
+| activation_state | ObligationActivationState | 1..1 |  |
 
 ## Field sources
 
@@ -52,7 +52,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | evaluation_anchor_identity | type not stated in source; see Field sources |
 | clause_subject | type not stated in source; multiplicity not stated in source; see Field sources |
 | semantic_trigger_event_identity | type not stated in source; multiplicity not stated in source; see Field sources |
-| activation_state | type not stated in source; multiplicity not stated in source; see Field sources |
+| activation_state | multiplicity not stated in source; see Field sources |
 
 
 | Property | Source | Note |
