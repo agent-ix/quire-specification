@@ -34,7 +34,7 @@ fn authored(tc: TestCase) -> String {
 }
 
 /// Authored vector rows per test case, in `TestCase::ALL` order.
-const ROWS: [usize; 5] = [25, 18, 70, 18, 36];
+const ROWS: [usize; 5] = [28, 18, 70, 18, 36];
 
 #[test]
 #[trace("TC-185", "TC-186", "TC-187", "TC-192", "TC-193")]
@@ -80,6 +80,6 @@ fn api_exports_every_authored_vector_row_exactly_once() {
         }
         total += got.len();
     }
-    assert_eq!(total, 167);
-    assert_eq!(QUALIFICATION_VECTORS.len(), 167);
+    assert_eq!(total, 170);
+    assert_eq!(QUALIFICATION_VECTORS.len(), 170);
 }
