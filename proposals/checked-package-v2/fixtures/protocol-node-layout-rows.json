@@ -715,6 +715,190 @@
       }
     },
     {
+      "id": "CH14a-1",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[0, 3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[0, 3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-2",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[00,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[00,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-3",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[+0,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[+0,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-4",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[-1,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[-1,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-5",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[0.5,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[0.5,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-6",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-7",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[0,3`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[0,3",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-8",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `0,3`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "0,3",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
       "id": "CH15",
       "test_case": "TC-947",
       "class": "refuse",

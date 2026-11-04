@@ -5,7 +5,7 @@
 //! application. A protocol node's body is `ProtocolControlApplication`, so a
 //! layout or enumeration violation of FR-464/FR-465/FR-466 is refused at the
 //! schema stage as `malformed_wire`, and the first error path of the strict
-//! validator is the locus. The 26 layout vectors STD-609 held back are the rows
+//! validator is the locus. The 26 layout vectors STD-609 held back, and the eight schema-decidable delivery interval spellings of CH14a, are the rows
 //! of `protocol-node-layout-rows.json`; each edits the STD-609 base.
 
 use ix_trace_rs::trace;
@@ -63,7 +63,7 @@ fn apply(base: &Value, edit: &[Value]) -> Value {
 
 /// FR-464-AC-1, FR-464-AC-5, FR-464-AC-24, FR-466-AC-1, FR-466-AC-3,
 /// FR-466-AC-5: the base is schema-valid with the application rule wired, and
-/// each of the 26 layout vectors is refused by the schema at the recorded first
+/// each of the 34 layout rows is refused by the schema at the recorded first
 /// error path. The rows cover an enumerated value outside its set (AC-1), a
 /// `choice` with one case (AC-3) and a `repeat` with `exhausted` but no
 /// `maximum` (AC-5).
@@ -74,6 +74,7 @@ fn apply(base: &Value, edit: &[Value]) -> Value {
     "FR-464-AC-1",
     "FR-464-AC-5",
     "FR-464-AC-24",
+    "FR-465-AC-10",
     "FR-466-AC-1",
     "FR-466-AC-3",
     "FR-466-AC-5"
@@ -85,7 +86,7 @@ fn layout_vectors_are_refused_by_the_schema_at_their_first_error_path() {
     let validator = jsonschema::validator_for(&parse(SCHEMA)).expect("schema is valid");
     assert!(validator.is_valid(&base), "the base is schema-valid");
     let rows = rows["rows"].as_array().expect("rows");
-    assert_eq!(rows.len(), 26);
+    assert_eq!(rows.len(), 34);
     let mut defects = Vec::new();
     for row in rows {
         let id = row["id"].as_str().unwrap();
@@ -132,11 +133,14 @@ fn text(value: &str) -> Value {
     })
 }
 
-/// FR-464-AC-24, FR-466-AC-1: every spelling an enumeration admits stays
-/// schema-valid, so tightening the rule past the enumerations fails here. Each
+/// FR-464-AC-24, FR-465-AC-10, FR-466-AC-1: every spelling an enumeration admits stays
+/// schema-valid, and so do the delivery spellings `[4,3]` and
+/// `[0,18446744073709551616]`: their interval shape is schema-valid and the
+/// reader's wire layout check refuses them (`lo > hi`, a numeral above u64),
+/// because no JSON Schema keyword expresses either, so tightening the rule past the enumerations fails here. Each
 /// case edits the base at one path: a scalar `replace` or the members of a
 /// list of spellings.
-#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-24", "FR-466-AC-1")]
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-24", "FR-465-AC-10", "FR-466-AC-1")]
 #[test]
 fn every_admitted_enumerated_spelling_is_schema_valid() {
     let base = parse(BASE);
@@ -144,7 +148,7 @@ fn every_admitted_enumerated_spelling_is_schema_valid() {
     let node = "/semantic_graph/nodes";
     // (path, spellings, true when the path holds a list of spelling literals)
     let cases: [(String, &[&str], bool); 8] = [
-        (format!("{node}/62/body/arguments/4/value/value"), &["unknown", "at-most-once", "at-least-once", "exactly-once-premise"], false),
+        (format!("{node}/62/body/arguments/4/value/value"), &["unknown", "at-most-once", "at-least-once", "exactly-once-premise", "[0,3]", "[0,0]", "[2,2]", "[0,18446744073709551615]", "[4,3]", "[0,18446744073709551616]"], false),
         (format!("{node}/63/body/arguments/2/value/value"), &["reject", "block"], false),
         (format!("{node}/66/body/arguments/2/value/members"), &["relaxed", "acquire", "release", "acq_rel", "seq_cst"], true),
         (format!("{node}/70/body/arguments/0/value/members"), &["sc", "tso", "ra"], true),

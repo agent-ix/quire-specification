@@ -8848,7 +8848,7 @@
     {
       "id": "CH14a",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path). Not yet a row: the vector lists ten malformed delivery spellings at the delivery term and the layout rows carry one edit each; STD-650 wired the schema rule, so each spelling now has a first schema error path to record in protocol-node-layout-rows.json."
+      "question": "Q-LAYOUT (answered: malformed_wire at the channel node pointer). Eight of the ten malformed delivery spellings are schema-decided and are rows CH14a-1 to CH14a-8 of protocol-node-layout-rows.json (the schema's delivery value is the four policy words or an interval shape). The other two, `[4,3]` (lo > hi) and `[0,18446744073709551616]` (a numeral above u64), are schema-valid by shape and are refused by the reader's wire layout check at the same pointer; they stay pending here until a reader-level row form exists (promotion: a reader refusal vector replayed against the IR reader, not a schema row)."
     },
     {
       "id": "CH4",

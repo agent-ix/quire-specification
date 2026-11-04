@@ -10706,11 +10706,19 @@
                             "const": "text"
                           },
                           "value": {
-                            "enum": [
-                              "unknown",
-                              "at-most-once",
-                              "at-least-once",
-                              "exactly-once-premise"
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "unknown",
+                                  "at-most-once",
+                                  "at-least-once",
+                                  "exactly-once-premise"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^\\[(0|[1-9][0-9]{0,19}),(0|[1-9][0-9]{0,19})\\]$"
+                              }
                             ]
                           }
                         },

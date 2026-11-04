@@ -162,10 +162,8 @@ order:
   (FR-464 "Term shapes"): a text that is neither a policy word nor an interval
   text as stated above (a space inside the brackets, a leading zero, a sign,
   a fraction, a numeral above 18446744073709551615, a missing bound, or
-  `lo > hi`) refuses `malformed_wire` at the schema stage of strict wire
-  validation, and the recorded locus is the channel node pointer
-  `/semantic_graph/nodes/{i}` (the first error path of the strict validator,
-  FR-464-AC-24), not the delivery term.
+  `lo > hi`) refuses `malformed_wire` in strict wire validation at the channel node
+  pointer `/semantic_graph/nodes/{i}`, not at the delivery term: the V2 schema refuses a spelling that is not an interval shape (a space, a leading zero, a sign, a fraction, a missing bound, an unclosed or unopened bracket) at the channel node pointer `/semantic_graph/nodes/{i}`, and the reader's strict wire layout check refuses `lo > hi` and a numeral above 18446744073709551615 at the same pointer, because no JSON Schema keyword expresses either.
 
 The reader checks, for one channel, in this order:
 
@@ -322,7 +320,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
 | FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
 | FR-465-AC-9 | A static role whose `model` is the text `identity` of a `model_root` node is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node ids. A text naming no `model_root` node refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
-| FR-465-AC-10 | A channel whose `delivery` is `[0,3]`, `[0,0]`, `[2,2]` or `[0,18446744073709551615]` is admitted; `[0,3]` and `[0,4]` give different channel bodies, and `[1,1]` and `exactly-once-premise`, otherwise equal, give different channel bodies; `[4,3]` (`lo > hi`), `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` each refuse `malformed_wire` at the schema stage, with the channel node pointer `/semantic_graph/nodes/{i}` as the locus. | Test (TC-947) |
+| FR-465-AC-10 | A channel whose `delivery` is `[0,3]`, `[0,0]`, `[2,2]` or `[0,18446744073709551615]` is admitted; `[0,3]` and `[0,4]` give different channel bodies, and `[1,1]` and `exactly-once-premise`, otherwise equal, give different channel bodies; `[4,3]` (`lo > hi`), `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` each refuse `malformed_wire` at the channel node pointer `/semantic_graph/nodes/{i}`: the V2 schema refuses a spelling that is not an interval shape (a space, a leading zero, a sign, a fraction, a missing bound, an unclosed or unopened bracket) at the channel node pointer `/semantic_graph/nodes/{i}`, and the reader's strict wire layout check refuses `lo > hi` and a numeral above 18446744073709551615 at the same pointer, because no JSON Schema keyword expresses either. | Test (TC-947) |
 
 ## Dependencies
 

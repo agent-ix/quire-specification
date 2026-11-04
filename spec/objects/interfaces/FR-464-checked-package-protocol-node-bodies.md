@@ -185,7 +185,7 @@ names a node of the stated tag and form by node id.
 
 An enumerated text value (`origin`, `each`, `adversarial` and the values
 FR-465 and FR-466 list) has the spellings its layout lists: another spelling
-refuses `malformed_wire` at the schema stage, and the recorded locus is the node pointer `/semantic_graph/nodes/{i}` (FR-464-AC-24).
+refuses `malformed_wire` at the schema stage, and the recorded locus is the node pointer `/semantic_graph/nodes/{i}` (FR-464-AC-24); a delivery interval's `lo > hi` and u64 range, which no schema keyword expresses, are refused at the same pointer by the reader's wire layout check (FR-465).
 
 **Canonical order.** A set or a sorted-records list that is not in its
 canonical order, or that repeats an entry, refuses `invalid_semantic_graph`
