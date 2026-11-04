@@ -24,7 +24,7 @@ When a result states whether the exact observations required to interpret the re
 | `adequate` | The exact observations required to interpret the requested result are present (FR-061). A demonstrated protocol adequacy additionally requires observation adequacy to remain independently `adequate` (FR-061). |
 | `inadequate` | The required observations are not present (FR-061). A missing required role, provider observation, population member or negative case cannot change this to `adequate` (FR-061-AC-2). |
 | `unknown` | Whether the required observations suffice is not known (FR-061). |
-| `not-assessed` | Observation adequacy was not assessed (FR-061). |
+| not_assessed | Wire spelling `not-assessed`. Observation adequacy was not assessed (FR-061). |
 
 Each state projects to the same E02 `adequacy.status`, "with exact
 missing-observation identities when known" (FR-062).

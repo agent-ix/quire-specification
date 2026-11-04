@@ -28,7 +28,7 @@ arrival order, effect identity, or recovery result (FR-058).
 | Value | Description |
 | --- | --- |
 | `failed` | Admitted for a per-attempt outcome and for a recovery-relation aggregate fact. The attempt did not succeed; the aggregate relation evaluated false with its required inputs. |
-| `timed-out` | Admitted for a per-attempt outcome and for a recovery-relation aggregate fact. The attempt timed out; the aggregate relation reached its declared timeout without a recovery result. |
+| timed_out | Wire spelling `timed-out`. Admitted for a per-attempt outcome and for a recovery-relation aggregate fact. The attempt timed out; the aggregate relation reached its declared timeout without a recovery result. |
 | `pending` | Admitted for a per-attempt outcome and for a recovery-relation aggregate fact. It is explicit incomplete evidence, never an absence encoding, and cannot establish recovery success. |
 | `successful` | Admitted for a per-attempt outcome and for a recovery-relation aggregate fact. A successful attempt alone does not establish the aggregate fact. |
 | `duplicate` | Forbidden for a per-attempt outcome and admitted only for a duplicate-business-effect aggregate fact. It is not an attempt outcome, retry identity, or recovery-relation result. |

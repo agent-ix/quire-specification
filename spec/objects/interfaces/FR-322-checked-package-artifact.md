@@ -109,6 +109,45 @@ boundary.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| name | String | 1..1 |  |
+| lock | JsonObject | 1..1 |  |
+| lock_dependency_selections | JsonObject | 0..* |  |
+| lock_refinement_internals | JsonObject | 0..1 |  |
+| semantic_graph | JsonObject | 1..1 |  |
+| source_map | JsonObject | 1..1 |  |
+| refinement_step_rows | JsonObject | 0..1 |  |
+| checked_term_data | JsonObject | 0..1 |  |
+| temporal_clause_names | JsonObject | 0..1 |  |
+| schedulability_claims | JsonObject | 0..1 |  |
+| operation_effects | JsonObject | 0..1 |  |
+| capability_report | JsonObject | 1..1 |  |
+| diagnostics | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.checked-package/v2` |
+| name | non-empty package identity; equal only when UTF-8 bytes are equal |
+| lock | source-document, edition, ordered profile, dependency and required-feature identities; entries are `{authority, identity}` |
+| lock_dependency_selections | lock member `/lock/dependency_selections`; one `{identity}` per directly imported library, strictly ascending UTF-8 byte order; multiplicity when none not stated in source; see Field sources |
+| lock_refinement_internals | lock member only; present only when some refinement list is non-empty, absent otherwise (absent is the empty list, never null or []) |
+| semantic_graph | one `quire.checked-semantic-graph/v2` closed tagged-node union; tags scalar_type, composite_type, bounded_domain, value, expression, function, model, relation, state, temporal, protocol, claim, correspondence, extension, hybrid |
+| source_map | total semantic-occurrence to source-region mapping keyed (node_id, role, ordinal) |
+| refinement_step_rows | absent exactly when no relation/refinement node has a steps entry; else a nonempty array |
+| checked_term_data | optional closed carrier; absent means its four arrays are empty |
+| temporal_clause_names | absent exactly when the graph has no temporal/temporal_clause node; see Field sources |
+| schedulability_claims | optional; when present a non-empty array of {declaration, occurrence} |
+| operation_effects | optional; absent means effects are unavailable, not empty |
+| capability_report | one closed disposition for every required feature and selected model capability; multiplicity not stated in source; see Field sources |
+| diagnostics | catalog-qualified, stage-qualified typed causes with exact loci; type and multiplicity not stated in source; see Field sources |
+
+
 - `contract_version` — exactly `quire.checked-package/v2`, the document-type
   tag that tells a checked package apart from every other document.
 - `name` — the package identity: a non-empty string, the library identity an

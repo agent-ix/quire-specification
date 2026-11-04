@@ -33,6 +33,21 @@ distinct source-bound value."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| strength | String | 1..1 |  |
+| source_binding | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| strength | type not stated in source; see Field sources |
+| source_binding | type not stated in source; see Field sources |
+
+
 | Property | Meaning |
 | --- | --- |
 | `strength` | Exactly one Engineering Assurance FR-022 wire spelling, carried unchanged. The members, their spellings and their meaning are those of FR-022; a Quire result adds no member, alias, spelling or rendering of its own. |

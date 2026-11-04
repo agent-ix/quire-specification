@@ -21,6 +21,31 @@ When a request names a workflow instance, the binder SHALL treat it as an author
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| authored_identity | String | 1..1 |  |
+| typed_declaration_and_configuration_identity | String | 1..1 |  |
+| explicit_binding | String | 1..1 |  |
+| distinctness_from_its_definition | String | 1..1 |  |
+| distinct_assessment_subject | String | 1..1 |  |
+| declared_relationships_to_related_instances | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| authored_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| typed_declaration_and_configuration_identity | type not stated in source; see Field sources |
+| explicit_binding | type not stated in source; multiplicity not stated in source; see Field sources |
+| distinctness_from_its_definition | type not stated in source; see Field sources |
+| distinct_assessment_subject | type not stated in source; multiplicity not stated in source; see Field sources |
+| declared_relationships_to_related_instances | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored identity | FR-051-AC-4 | "A transport trace ID substituted for an authored workflow, attempt or effect identity refuses before conformance evaluation." |

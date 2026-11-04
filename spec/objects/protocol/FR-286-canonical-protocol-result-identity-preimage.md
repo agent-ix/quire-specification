@@ -20,6 +20,22 @@ computed.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| producer | String | 1..1 |  |
+| request | String | 1..1 |  |
+| ordinal | Integer | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| producer | type not stated in source; see Field sources |
+| request | type not stated in source; see Field sources |
+
+
 `resultKey` is the closed object `{producer, request, ordinal}`:
 
 - `producer` — the protocol producer's identity and version (`{identity, version}`).

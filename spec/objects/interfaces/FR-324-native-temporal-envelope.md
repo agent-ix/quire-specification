@@ -18,6 +18,33 @@ When temporal meaning crosses the native temporal boundary, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| artifact | String | 1..1 |  |
+| clock_binding | String | 1..1 |  |
+| history_boundary | String | 1..1 |  |
+| valuation | String | 1..1 |  |
+| progress | String | 1..1 |  |
+| result | String | 1..1 |  |
+| supersession | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| artifact | type not stated in source; multiplicity not stated in source; see Field sources |
+| clock_binding | type not stated in source; multiplicity not stated in source; see Field sources |
+| history_boundary | type not stated in source; multiplicity not stated in source; see Field sources |
+| valuation | type not stated in source; multiplicity not stated in source; see Field sources |
+| progress | type not stated in source; multiplicity not stated in source; see Field sources |
+| result | type not stated in source; multiplicity not stated in source; see Field sources |
+| supersession | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 - `contract_version` — exactly `quire.native-temporal/v1`.
 - `artifact` — formula graph, typed atoms, interval bounds and semantic-profile identity.
 - `clock_binding` — clock authority, epoch, unit, resolution and ordering contract.

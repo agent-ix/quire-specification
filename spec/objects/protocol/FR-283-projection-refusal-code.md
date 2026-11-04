@@ -21,12 +21,12 @@ values in that catalog, not aliases for native producer codes in another catalog
 
 | Value | Description |
 | --- | --- |
-| `invalid-source-result` | The canonical protocol result did not validate before mapping was attempted (FR-062). |
-| `unsupported-source-version` | The source result's contract version is not one this adapter maps from (FR-062). |
-| `unsupported-target-version` | The requested target contract version is not one this adapter maps to (FR-062). |
-| `identity-mismatch` | A supplied target context is missing or conflicting (FR-062). It does not classify invalid canonical source bytes. |
-| `unrepresented-source-state` | A source state has no mapping in the selected table. It cannot be reclassified as a malformed source (FR-062). |
-| `finding-loss` | The output would lose an applicable FR-007 finding (FR-062). |
+| invalid_source_result | Wire spelling `invalid-source-result`. The canonical protocol result did not validate before mapping was attempted (FR-062). |
+| unsupported_source_version | Wire spelling `unsupported-source-version`. The source result's contract version is not one this adapter maps from (FR-062). |
+| unsupported_target_version | Wire spelling `unsupported-target-version`. The requested target contract version is not one this adapter maps to (FR-062). |
+| identity_mismatch | Wire spelling `identity-mismatch`. A supplied target context is missing or conflicting (FR-062). It does not classify invalid canonical source bytes. |
+| unrepresented_source_state | Wire spelling `unrepresented-source-state`. A source state has no mapping in the selected table. It cannot be reclassified as a malformed source (FR-062). |
+| finding_loss | Wire spelling `finding-loss`. The output would lose an applicable FR-007 finding (FR-062). |
 
 These are kebab-case spellings, distinct from the snake_case native producer
 codes of [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md). The

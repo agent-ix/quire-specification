@@ -19,6 +19,24 @@ When a producer reports a location in authored source, the producer SHALL expres
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| document | AuthoredSourceDocument | 1..1 |  |
+| start | Integer | 1..1 |  |
+| end | Integer | 1..1 |  |
+| column | Integer | 0..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| start | zero-based byte offset |
+| end | zero-based exclusive byte offset; regions are half-open |
+| column | one-based scalar column, where reported |
+
+
 - **document** (`FR-202` reference) — the authored source document the region
   indexes into. A region is meaningless without it.
 - **start** (`byte offset`) — zero-based

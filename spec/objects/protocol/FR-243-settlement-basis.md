@@ -21,9 +21,9 @@ When a truth result is retained, the result producer SHALL carry exactly one set
 
 | Value | Description |
 | --- | --- |
-| `closed-scope` | The decision scope is complete and closed, authorizing the selected closed-boundary rule (FR-094). Valid with truth `satisfied` or `violated`; closure of the decision scope does not imply closure of the surrounding execution (FR-061, FR-091). |
-| `decisive-witness` | An open decision scope settled `satisfied` because the selected profile proves the retained witness preserves that truth under every admitted continuation (FR-061, FR-091, FR-094). |
-| `decisive-counterexample` | An open decision scope settled `violated` because the selected profile proves the retained counterexample preserves that truth under every admitted continuation (FR-061, FR-091, FR-094). |
+| closed_scope | Wire spelling `closed-scope`. The decision scope is complete and closed, authorizing the selected closed-boundary rule (FR-094). Valid with truth `satisfied` or `violated`; closure of the decision scope does not imply closure of the surrounding execution (FR-061, FR-091). |
+| decisive_witness | Wire spelling `decisive-witness`. An open decision scope settled `satisfied` because the selected profile proves the retained witness preserves that truth under every admitted continuation (FR-061, FR-091, FR-094). |
+| decisive_counterexample | Wire spelling `decisive-counterexample`. An open decision scope settled `violated` because the selected profile proves the retained counterexample preserves that truth under every admitted continuation (FR-061, FR-091, FR-094). |
 | `unsettled` | Assessment execution is `completed`, decision-scope progress is open and admitted continuations do not yet preserve one Boolean truth; the truth is `pending` (FR-061, FR-094). |
 | `unavailable` | The basis is unavailable: assessment execution is `refused`, `unsupported`, `resource-incomplete` or `failed`, or a required decision-support fact is missing (FR-061, FR-094-AC-7, FR-115). |
 

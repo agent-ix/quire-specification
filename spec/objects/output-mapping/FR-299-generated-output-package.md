@@ -17,7 +17,30 @@ When all requested obligations have valid mapping records, the package assembler
 produce one immutable generated-output package binding exact target bytes
 to the complete ordered record set and source/profile/generator selections.
 
+## Properties
+
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| source_package_ref | String | 1..1 | |
+| target_profile | OutputMappingConsumerProfile | 1..1 | |
+| generator | String | 1..1 | |
+| target_bytes | Bytes | 1..1 | |
+| records | PerObligationOutputMappingRecord | 0..* | |
+| limits | String | 1..1 | |
+
 ## Members
+
+| Member | Multiplicity |
+|---|---|
+| PerObligationOutputMappingRecord | 0..* |
+
+The package holds its records inside its consistency boundary, in requested
+source-obligation order ([FR-298](FR-298-per-obligation-output-mapping-record.md)).
+
+## Property descriptions
+
+Type and Multiplicity in Properties were derived from this text. The text names no type for `source_package_ref`, `generator` or `limits`, so those are String; `key` is the synthetic identity row for the Key stated under Identity and comparison.
 
 | Property | Description |
 | --- | --- |
