@@ -70,6 +70,7 @@ Encode as V2 packages:
 13. The vector file's schema-valid reader cases for absent, foreign and wrong-kind parallel identities, an absent branch label, wrong-kind protocol-root, attempt and compensation targets, and same-package targets owned by a different protocol clause: root, attempt, parallel branch and compensation template.
 
 14. `temporal-clause-name-vectors.json`: a clause renamed with the graph unchanged, and two structurally equal clauses declared under two names.
+15. `temporal-aggregate-vectors.json`: one positive window aggregate argument per kind under event-position false-extension, a `duration` `quantile` under timestamped-event finite-window with its bounds in the clause's clock unit `ms` (`clock_unit`), and `min_count 0` on `count` and `sum`; and the reader cases of FR-370-AC-18, each its `base` positive with one member replaced, added, removed or moved, or with only the profile changed.
 
 ## Expected Results
 
@@ -131,3 +132,4 @@ Encode as V2 packages:
 12. Every positive member satisfies the `OperationMember` schema, including each protocol target and the preserved hybrid-transition target; all missing/unknown discriminants, missing or extra identity fields and invalid structural node ids fail the schema (FR-322-AC-293, FR-370-AC-14).
 13. Each reader case's target identity and target context are admitted by the schema. Expected refusals point exactly to `/target/node`, `/target/parallel` or `/target/branch` as applicable; wrong-kind root, attempt, parallel and compensation targets and same-package nodes in another protocol clause are refused with the FR-370-AC-15 code and cause.
 14. The rename changes no node and no `node_id`; the two clauses are one node with two `claim` occurrences and two `temporal_clause_names` rows, one name each (FR-370-AC-16, FR-322-AC-343, FR-322-AC-344).
+15. The catalog and the schema enumerate `quire.op.temporal.aggregate` with one `aggregate` operand; each argument satisfies the schema's application argument shape; each reader case differs from its `base` positive by exactly one member, or by its profile alone; every positive is admitted and every reader case refuses with its listed code, cause and pointer (FR-370-AC-17, FR-370-AC-18).

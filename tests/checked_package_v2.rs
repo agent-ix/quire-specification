@@ -19805,6 +19805,350 @@ const CHECKED_TERM_DATA_VECTORS: &str =
 const TEMPORAL_FAIRNESS_TARGET_VECTORS: &str = include_str!(
     "../proposals/checked-package-v2/temporal-fairness-target-vectors.json"
 );
+const TEMPORAL_AGGREGATE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-aggregate-vectors.json");
+
+/// FR-370 "Window aggregate atom": the closed bindings, in table order.
+const AGGREGATE_BINDINGS: [&str; 11] = [
+    "kind",
+    "q",
+    "predicate",
+    "value",
+    "filter",
+    "window_kind",
+    "lower",
+    "upper",
+    "min_count",
+    "comparison",
+    "threshold",
+];
+
+#[derive(Debug, PartialEq)]
+enum AggregatePresence {
+    Required,
+    Optional,
+    Excluded,
+}
+
+/// The presence column of FR-370's window aggregate table for one kind.
+fn aggregate_presence(kind: &str, binding: &str) -> AggregatePresence {
+    let required_when = |holds: bool| {
+        if holds {
+            AggregatePresence::Required
+        } else {
+            AggregatePresence::Excluded
+        }
+    };
+    match binding {
+        "q" => required_when(kind == "quantile"),
+        "predicate" => required_when(kind == "fraction"),
+        "value" => required_when(matches!(kind, "sum" | "min" | "max" | "quantile")),
+        "filter" => AggregatePresence::Optional,
+        _ => AggregatePresence::Required,
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum AggregateFamily<'a> {
+    Boolean,
+    Integer,
+    Rational,
+    Quantity(&'a Value),
+    Other,
+}
+
+/// The family of a binding term: a literal's `value_kind`, or the vector's
+/// declared family of the expression node a reference targets.
+fn aggregate_term_family<'a>(term: &'a Value, references: &'a [Value]) -> AggregateFamily<'a> {
+    let (family, unit) = match term["term"].as_str() {
+        Some("literal") => (term["value_kind"].as_str(), &term["type"]),
+        Some("reference") => {
+            let row = references
+                .iter()
+                .find(|row| row["target"] == term["target"])
+                .expect("every referenced expression node has a declared family");
+            (row["family"].as_str(), &row["unit"])
+        }
+        _ => (None, &Value::Null),
+    };
+    match family {
+        Some("boolean") => AggregateFamily::Boolean,
+        Some("integer") => AggregateFamily::Integer,
+        Some("rational") => AggregateFamily::Rational,
+        Some("quantity") => AggregateFamily::Quantity(unit),
+        _ => AggregateFamily::Other,
+    }
+}
+
+/// The literal's `value` when `term` is a literal of `value_kind`.
+fn aggregate_literal<'a>(term: &'a Value, value_kind: &str) -> Option<&'a str> {
+    if term["term"] == "literal" && term["value_kind"] == value_kind {
+        term["value"].as_str()
+    } else {
+        None
+    }
+}
+
+/// An exact magnitude spelled `n` or `n/d` (FR-322 "Scalar literal values").
+fn aggregate_magnitude(spelled: &str) -> (BigInt, BigInt) {
+    let (numerator, denominator) = spelled.split_once('/').unwrap_or((spelled, "1"));
+    (
+        numerator.parse().expect("an integer numerator"),
+        denominator.parse().expect("an integer denominator"),
+    )
+}
+
+type AggregateRefusal = (&'static str, &'static str, String);
+
+/// Independent reader oracle for one window aggregate argument, FR-370
+/// "Window aggregate atom" steps 1 to 5. Pointers are relative to the
+/// application body.
+fn aggregate_argument_refusal(
+    profile: &str,
+    argument: &Value,
+    references: &[Value],
+    clock_unit: &Value,
+) -> Result<(), AggregateRefusal> {
+    let refuse = |code, cause, pointer: String| Err((code, cause, pointer));
+    let whole = "/arguments/0".to_owned();
+    let member = |at: usize| format!("/arguments/0/members/{at}");
+    let profile_window = match profile {
+        "quire.temporal.event-position.false-extension/v1" => "positions",
+        "quire.temporal.timestamped-event.finite-window/v1" => "duration",
+        _ => return refuse("invalid_package", "invalid-value", String::new()),
+    };
+    let members = argument["members"].as_array().expect("an aggregate argument");
+
+    let mut held: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut last_rank = None;
+    for (at, candidate) in members.iter().enumerate() {
+        let rank = (candidate["term"] == "binding")
+            .then(|| candidate["name"].as_str())
+            .flatten()
+            .and_then(|name| AGGREGATE_BINDINGS.iter().position(|binding| *binding == name));
+        let Some(rank) = rank else {
+            return refuse("invalid_package", "unknown-member", member(at));
+        };
+        let name = AGGREGATE_BINDINGS[rank];
+        if held.contains_key(name) {
+            return refuse("invalid_package", "duplicate-member", member(at));
+        }
+        if last_rank.is_some_and(|last| rank < last) {
+            return refuse("invalid_package", "invalid-value", member(at));
+        }
+        held.insert(name, at);
+        last_rank = Some(rank);
+    }
+
+    let Some(&kind_at) = held.get("kind") else {
+        return refuse("invalid_package", "missing-member", whole);
+    };
+    let Some(kind) = aggregate_literal(&members[kind_at]["value"], "text") else {
+        return refuse("invalid_package", "wrong-value-kind", format!("{}/value", member(kind_at)));
+    };
+    if !["count", "sum", "min", "max", "fraction", "quantile"].contains(&kind) {
+        return refuse("invalid_package", "invalid-value", format!("{}/value", member(kind_at)));
+    }
+
+    for (at, candidate) in members.iter().enumerate() {
+        let name = candidate["name"].as_str().expect("a checked binding name");
+        if aggregate_presence(kind, name) == AggregatePresence::Excluded {
+            return refuse("invalid_package", "unknown-member", member(at));
+        }
+    }
+    if AGGREGATE_BINDINGS
+        .iter()
+        .any(|name| aggregate_presence(kind, name) == AggregatePresence::Required && !held.contains_key(name))
+    {
+        return refuse("invalid_package", "missing-member", whole);
+    }
+
+    let term_of = |name: &str| &members[held[name]]["value"];
+    let value_family = held.get("value").map(|_| aggregate_term_family(term_of("value"), references));
+    let mut window = "";
+    for name in AGGREGATE_BINDINGS {
+        let Some(&at) = held.get(name) else { continue };
+        let term = term_of(name);
+        let pointer = format!("{}/value", member(at));
+        match name {
+            "q" => {
+                let Some(spelled) = aggregate_literal(term, "rational") else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                let (numerator, denominator) = aggregate_magnitude(spelled);
+                if numerator <= BigInt::from(0) || numerator >= denominator {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+            }
+            "predicate" | "filter" if aggregate_term_family(term, references) != AggregateFamily::Boolean => {
+                return refuse("ill_typed", "type-mismatch", pointer);
+            }
+            "value"
+                if !matches!(
+                    aggregate_term_family(term, references),
+                    AggregateFamily::Integer | AggregateFamily::Rational | AggregateFamily::Quantity(_)
+                ) =>
+            {
+                return refuse("ill_typed", "type-mismatch", pointer);
+            }
+            "window_kind" | "comparison" => {
+                let Some(spelled) = aggregate_literal(term, "text") else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                let admitted: &[&str] = if name == "window_kind" {
+                    &["positions", "duration"]
+                } else {
+                    &["<", "<=", "=", ">=", ">"]
+                };
+                if !admitted.contains(&spelled) {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+                if name == "window_kind" {
+                    if spelled != profile_window {
+                        return refuse("ill_typed", "unit-mismatch", pointer);
+                    }
+                    window = spelled;
+                }
+            }
+            "lower" | "upper" => {
+                let value_kind = if window == "positions" { "integer" } else { "quantity" };
+                let Some(spelled) = aggregate_literal(term, value_kind) else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                if value_kind == "quantity" && term["type"] != *clock_unit {
+                    return refuse("ill_typed", "unit-mismatch", pointer);
+                }
+                if spelled.starts_with('-') {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+                if name == "upper" {
+                    let lower = term_of("lower");
+                    let (low_n, low_d) = aggregate_magnitude(lower["value"].as_str().expect("a checked bound"));
+                    let (up_n, up_d) = aggregate_magnitude(spelled);
+                    if low_n * &up_d > up_n * &low_d {
+                        return refuse("invalid_package", "invalid-value", whole);
+                    }
+                }
+            }
+            "min_count" => {
+                let Some(spelled) = aggregate_literal(term, "integer") else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                if spelled.starts_with('-') || (spelled == "0" && !matches!(kind, "count" | "sum")) {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+            }
+            "threshold" => {
+                let expected = match kind {
+                    "count" => AggregateFamily::Integer,
+                    "fraction" => AggregateFamily::Rational,
+                    _ => value_family.expect("a checked value binding"),
+                };
+                let actual = aggregate_term_family(term, references);
+                if let (AggregateFamily::Quantity(_), AggregateFamily::Quantity(_)) = (&expected, &actual) {
+                    if expected != actual {
+                        return refuse("ill_typed", "unit-mismatch", pointer);
+                    }
+                } else if expected != actual {
+                    return refuse("ill_typed", "type-mismatch", pointer);
+                }
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+/// Whether `case` is `base` with exactly one member replaced, added, removed
+/// or moved: some member of each, once removed, leaves equal sequences.
+fn single_member_mutation(base: &[Value], case: &[Value]) -> bool {
+    fn without(members: &[Value], at: usize) -> Vec<&Value> {
+        members.iter().enumerate().filter(|(index, _)| *index != at).map(|(_, member)| member).collect()
+    }
+    fn whole(members: &[Value]) -> Vec<&Value> {
+        members.iter().collect()
+    }
+    match case.len().cmp(&base.len()) {
+        std::cmp::Ordering::Greater => (0..case.len()).any(|at| without(case, at) == whole(base)),
+        std::cmp::Ordering::Less => (0..base.len()).any(|at| without(base, at) == whole(case)),
+        std::cmp::Ordering::Equal => {
+            base != case
+                && (0..base.len()).any(|from| (0..case.len()).any(|to| without(base, from) == without(case, to)))
+        }
+    }
+}
+
+/// FR-370-AC-17 and FR-370-AC-18 (TC-303 step 15): the aggregate atom is
+/// catalogued and enumerated, every published positive argument is admitted
+/// and every reader case refuses at its first defect.
+#[trace("TC-303", "FR-370-AC-17", "FR-370-AC-18")]
+#[test]
+fn tc_303_window_aggregate_arguments_admit_each_kind_and_refuse_at_the_first_defect() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let entry = catalog["operations"]
+        .as_array()
+        .expect("catalog operations are an array")
+        .iter()
+        .find(|entry| entry["identity"] == "quire.op.temporal.aggregate")
+        .expect("quire.op.temporal.aggregate is catalogued");
+    assert_eq!(entry["operator"], "temporal_formula");
+    assert_eq!(entry["operands"], json!(["aggregate"]));
+    assert_eq!(entry["result"], "temporal");
+    assert_eq!(entry["member"], Value::Null);
+    assert_eq!(entry["laws"], json!([]));
+    let schema = parsed_fixture(SCHEMA);
+    assert!(
+        string_set(&schema["$defs"]["OperationIdentity"]["enum"], "identities").contains("quire.op.temporal.aggregate"),
+        "the schema enumerates the aggregate identity"
+    );
+    let argument_shape = schema_for_def(&schema, "MemberTerm");
+
+    let vectors = parsed_fixture(TEMPORAL_AGGREGATE_VECTORS);
+    let references = vectors["references"].as_array().expect("references");
+    let clock_unit = &vectors["clock_unit"];
+    let mut kinds = BTreeSet::new();
+    for row in vectors["positive"].as_array().expect("positive cases") {
+        let id = row["id"].as_str().expect("an id");
+        let argument = &row["argument"];
+        assert!(argument_shape.is_valid(argument), "{id} meets the argument shape");
+        let profile = row["profile"].as_str().expect("a profile");
+        assert_eq!(aggregate_argument_refusal(profile, argument, references, clock_unit), Ok(()), "{id}");
+        kinds.insert(argument["members"][0]["value"]["value"].as_str().expect("a kind").to_owned());
+    }
+    assert_eq!(
+        kinds,
+        ["count", "sum", "min", "max", "fraction", "quantile"].map(str::to_owned).into_iter().collect(),
+        "a positive for every kind"
+    );
+    let positives = vectors["positive"].as_array().expect("positive cases");
+    for row in vectors["reader"].as_array().expect("reader cases") {
+        let id = row["id"].as_str().expect("an id");
+        let argument = &row["argument"];
+        assert!(argument_shape.is_valid(argument), "{id} meets the argument shape");
+        let base = positives
+            .iter()
+            .find(|positive| positive["id"] == row["base"])
+            .unwrap_or_else(|| panic!("{id} names a published base positive"));
+        let members = argument["members"].as_array().expect("case members");
+        let base_members = base["argument"]["members"].as_array().expect("base members");
+        if row["profile"] == base["profile"] {
+            assert!(single_member_mutation(base_members, members), "{id} mutates exactly one member of its base");
+        } else {
+            assert_eq!(members, base_members, "{id} changes only the profile of its base");
+        }
+        let expected = &row["expected"];
+        let profile = row["profile"].as_str().expect("a profile");
+        assert_eq!(
+            aggregate_argument_refusal(profile, argument, references, clock_unit),
+            Err((
+                expected["code"].as_str().expect("a code"),
+                expected["cause"].as_str().expect("a cause"),
+                expected["pointer"].as_str().expect("a pointer").to_owned(),
+            )),
+            "{id}"
+        );
+    }
+}
 
 /// Every published JSON file under `proposals/checked-package-v2`, recursively.
 fn published_checked_package_files() -> Vec<(String, Value)> {
