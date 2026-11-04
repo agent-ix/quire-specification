@@ -81,5 +81,5 @@ fn api_exports_every_authored_vector_row_exactly_once() {
         total += got.len();
     }
     assert_eq!(total, 171);
-    assert_eq!(QUALIFICATION_VECTORS.len(), 170);
+    assert_eq!(QUALIFICATION_VECTORS.len(), 171);
 }
