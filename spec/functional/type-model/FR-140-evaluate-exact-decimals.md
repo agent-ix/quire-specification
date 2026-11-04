@@ -136,6 +136,19 @@ decimal(225,2)` as an unannotated `let` right side or both operands of `=`, is
 `refused { code: ill_typed, cause: ambiguous-literal }`; no coefficient range,
 scale, rounding mode or target scale is inferred from the literal spellings.
 
+Operand membership applies to source operands: a literal or value that is not a
+member of the shared type is outside that type's domain under the membership
+rule above, and no source form feeds an operation an operand outside it. A retained operand may nevertheless carry a
+scale above the target scale `T` when it is a member whose normalized scale is
+at most `smax` (for example `decimal(100,2)` in a scale-0 type), so the
+accounting behavior for retained operands wider than the target is expressible
+in source. TC-185 also names evaluator-boundary vectors that supply retained
+operands to the evaluator directly; each such vector states that it is not a
+source form and names its source-admitted counterpart. A `Rational` to
+`Decimal` conversion in source is `convert<R>(q)` on a `Rational`-typed value,
+not a decimal division of integer literals, because the integer operands of
+that division need not be members of `R`.
+
 Under `quire.value.accounting/v1`, the evaluator charges the named decimal
 points and counters before a power-of-ten expansion, coefficient operation or
 result retention. The first unavailable charge returns incomplete accounting
