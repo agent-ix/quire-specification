@@ -1,6 +1,6 @@
 {
  "version": 1,
- "note": "FR-091-AC-10 to FR-091-AC-19 (TC-980): the timestamped-event finite-window profile. Each `window` case evaluates one temporal operator at the activations named by `activate` over positions `[stamp, p]` (p is T, F, absent = valuation missing, or conflict = both values admitted). `w` is the inclusive progress watermark, `complete` the asserted completeness `through` tick or null for Incomplete, `scope` is informational (an open scope settles only by a decisive witness or counterexample). `lower` is the lower-boundary kind of a past operator. `expected.outcome` is true, false, pending or indeterminate, with `where` (position of the deciding activation), `deadline` (pending) and `reason` (indeterminate) where stated. The rules are FR-091 'established' and the possibility sets of FR-160. QSL TC-1295 rows 1 to 22, 27, 28 and 31 are the origin (rows 23 to 26, 29 and 30 are QSL entry, work and result-identity rows); `uncertainty` is a counter-cover uncertainty (default exact), `basis` and `support` are the settlement basis and decision-support pairs; `row` names the row. The evaluator is QSL's; QSpec's test applies the stated rule.",
+ "note": "FR-091-AC-10 to FR-091-AC-26 (TC-980): the timestamped-event finite-window profile. Each `window` case evaluates one temporal operator at the activations named by `activate` over positions `[stamp, p]` (p is T, F, absent = valuation missing, or conflict = both values admitted). `w` is the inclusive progress watermark, `complete` the asserted completeness `through` tick or null for Incomplete, `scope` is informational (an open scope settles only by a decisive witness or counterexample). `lower` is the lower-boundary kind of a past operator. `expected.outcome` is true, false, pending or indeterminate, with `where` (position of the deciding activation), `deadline` (pending) and `reason` (indeterminate) where stated. The rules are FR-091 'established' and the possibility sets of FR-160. QSL TC-1295 rows 1 to 22, 27, 28, 31 to 33, 35 to 37, 39 and 40 are the origin (rows 23 to 26, 29, 30 and 34 are QSL entry, work and result-identity rows, or repeat row 18; row 38 is FWV-52 and FWV-73). The observations of a case may be listed in any order and are read in canonical order (stamp, order authority, key); several observations of one stamp are readings of one instant; `uncertainty` is a counter-cover uncertainty (default exact), `basis` and `support` are the settlement basis and decision-support pairs; `row` names the row. The evaluator is QSL's; QSpec's test applies the stated rule.",
  "window": [
   {"id": "FWV-01", "row": 1, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"], [2, "F"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "false", "where": 0}},
   {"id": "FWV-02", "row": 2, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"], [2, "T"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "true"}},
@@ -16,7 +16,7 @@
   {"id": "FWV-12", "row": 7, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"], [1, "F"]], "w": 1, "complete": 1, "scope": "open", "note": "decisive counterexample", "expected": {"outcome": "false", "where": 0, "basis": "decisive-counterexample"}},
   {"id": "FWV-13", "row": 8, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "absent"], [5, "F"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "indeterminate", "where": 0, "reason": "MissingValuation", "position": 1, "basis": "unavailable"}},
   {"id": "FWV-14", "row": 9, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "absent"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "note": "missing fact outside the decision support", "expected": {"outcome": "true"}},
-  {"id": "FWV-15", "row": 10, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "conflict"], [5, "F"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "indeterminate", "where": 0, "reason": "ConflictingValuation", "position": 1}},
+  {"id": "FWV-15", "row": 10, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "T"], [2, "F"], [5, "F"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "indeterminate", "where": 0, "reason": "ConflictingValuation", "position": 1}},
   {"id": "FWV-16", "row": 11, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "absent"], [5, "F"]], "w": 3, "complete": 3, "scope": "closed", "expected": {"outcome": "pending", "where": 0, "deadline": 5}},
   {"id": "FWV-17", "row": 12, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"]], "w": 5, "complete": null, "scope": "closed", "expected": {"outcome": "indeterminate", "where": 0, "reason": "IncompleteInput"}},
   {"id": "FWV-18", "row": 12, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "true"}},
@@ -40,7 +40,12 @@
   {"id": "FWV-53", "row": 27, "op": "eventually", "a": 0, "b": 3000, "activate": "origin", "uncertainty": 1, "positions": [[0, "F"]], "w": 3002, "complete": 3002, "scope": "closed", "expected": {"outcome": "false", "where": 0}},
   {"id": "FWV-54", "row": 27, "op": "eventually", "a": 0, "b": 3000, "activate": "origin", "positions": [[0, "F"]], "w": 3000, "complete": 3000, "scope": "closed", "note": "exact cover has no margin", "expected": {"outcome": "false", "where": 0}},
   {"id": "FWV-55", "row": 31, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "F"], [5, "F"]], "w": 5, "complete": 9, "scope": "closed", "note": "completeness may run ahead of W", "expected": {"outcome": "false", "where": 0}},
-  {"id": "FWV-56", "row": 31, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "F"], [5, "F"]], "w": 3, "complete": 9, "scope": "closed", "expected": {"outcome": "pending", "where": 0, "deadline": 5}}
+  {"id": "FWV-56", "row": 31, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "F"], [5, "F"]], "w": 3, "complete": 9, "scope": "closed", "expected": {"outcome": "pending", "where": 0, "deadline": 5}},
+  {"id": "FWV-59", "row": 37, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "T"], [2, "T"], [5, "F"]], "w": 5, "complete": 5, "scope": "closed", "note": "equal valuations of two observations of one stamp are a singleton", "expected": {"outcome": "true"}},
+  {"id": "FWV-68", "row": 33, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[5, "T"], [0, "T"], [2, "F"]], "w": 5, "complete": 5, "scope": "closed", "note": "listed as stamps 5, 0, 2: positions are canonical indices", "expected": {"outcome": "false", "where": 0, "basis": "closed-scope", "support": [[1, "p"]]}},
+  {"id": "FWV-73", "row": 38, "op": "eventually", "a": 0, "b": 3000, "activate": "origin", "positions": [[0, "F"]], "w": 3001, "complete": 3002, "scope": "closed", "note": "the same input as FWV-52 under exact cover", "expected": {"outcome": "false", "where": 0}},
+  {"id": "FWV-74", "row": 39, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"], [2, "F"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "execution": "open", "expected": {"outcome": "false", "where": 0}},
+  {"id": "FWV-75", "row": 39, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"], [2, "F"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "execution": "closed", "expected": {"outcome": "false", "where": 0}}
  ],
  "order": [
   {"id": "FWV-31", "row": 17, "op": "until", "positions": [[0, null], [1, null], [1, null]], "expected": "refuse", "refused_at": 2},
@@ -50,7 +55,16 @@
   {"id": "FWV-35", "row": 17, "op": "eventually", "positions": [[0, null], [1, null], [1, null]], "expected": "evaluate", "note": "an order-insensitive operator needs no key"},
   {"id": "FWV-36", "row": 18, "op": "until", "positions": [[0, null], [1, ["A", 1]], [1, ["A", 2]]], "expected": "evaluate", "note": "keys from one order authority"},
   {"id": "FWV-37", "row": 18, "op": "until", "positions": [[0, null], [1, ["A", 1]], [1, ["B", 2]]], "expected": "refuse", "refused_at": 2, "note": "keys from two order authorities"},
-  {"id": "FWV-38", "row": 18, "op": "until", "positions": [[1, ["A", 2]], [1, ["A", 1]], [0, null]], "expected": "evaluate", "same_order_as": "FWV-36", "note": "insertion order reversed, keys unchanged: the admitted order is unchanged"}
+  {"id": "FWV-38", "row": 18, "op": "until", "positions": [[1, ["A", 2]], [1, ["A", 1]], [0, null]], "expected": "evaluate", "same_order_as": "FWV-36", "note": "insertion order reversed, keys unchanged: the admitted order is unchanged"},
+  {"id": "FWV-60", "row": 40, "op": "until", "positions": [[0, null], [1, ["A", 1]], [1, ["A", 1]]], "expected": "refuse", "refused_at": 2, "note": "a repeated key of one authority is not a usable order"},
+  {"id": "FWV-61", "row": 40, "op": "release", "positions": [[0, null], [1, ["A", 1]], [1, ["A", 1]]], "expected": "refuse", "refused_at": 2},
+  {"id": "FWV-62", "row": 40, "op": "since", "positions": [[0, null], [1, ["A", 1]], [1, ["A", 1]]], "expected": "refuse", "refused_at": 2},
+  {"id": "FWV-63", "row": 40, "op": "triggered", "positions": [[0, null], [1, ["A", 1]], [1, ["A", 1]]], "expected": "refuse", "refused_at": 2},
+  {"id": "FWV-64", "row": 40, "op": "eventually", "positions": [[0, null], [1, ["A", 1]], [1, ["A", 1]]], "expected": "evaluate", "note": "an order-insensitive operator needs no usable order"},
+  {"id": "FWV-65", "row": 17, "op": "until", "positions": [[0, null], [1, ["A", 1]], [1, null]], "expected": "refuse", "refused_at": 2, "note": "a key on one position only"},
+  {"id": "FWV-66", "row": 32, "op": "eventually", "positions": [[5, null], [0, null], [2, null]], "expected": "evaluate", "same_order_as": "FWV-67", "note": "listed 5, 0, 2"},
+  {"id": "FWV-67", "row": 32, "op": "eventually", "positions": [[0, null], [2, null], [5, null]], "expected": "evaluate"},
+  {"id": "FWV-69", "row": 35, "op": "eventually", "positions": [[1, ["B", 1]], [1, null], [1, ["A", 2]], [1, ["A", 1]]], "expected": "evaluate", "canonical_order": [["A", 1], ["A", 2], ["B", 1], null], "note": "keyed observations of one authority first by key, then the next authority, the keyless last"}
  ],
  "counter": [
   {"id": "FWV-39", "row": 20, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true"},
@@ -58,7 +72,10 @@
   {"id": "FWV-41", "row": 20, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"},
   {"id": "FWV-42", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true"},
   {"id": "FWV-43", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "true"},
-  {"id": "FWV-44", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"}
+  {"id": "FWV-44", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"},
+  {"id": "FWV-70", "row": 36, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true", "note": "a trace input that names no cover is exact"},
+  {"id": "FWV-71", "row": 36, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "true"},
+  {"id": "FWV-72", "row": 36, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"}
  ],
  "tick_cover_vectors": {"file": "../checked-package-v2/tick-cover-vectors.json", "row": 21, "ids": ["TCV-01", "TCV-02", "TCV-03", "TCV-04", "TCV-05", "TCV-06", "TCV-07", "TCV-08", "TCV-09", "TCV-10", "TCV-11", "TCV-12", "TCV-13", "TCV-14", "TCV-15"]},
  "covered": [
@@ -68,6 +85,6 @@
  ],
  "admit": [
   {"id": "FWV-57", "row": 31, "stamps": [], "expected": "refuse", "note": "no instants"},
-  {"id": "FWV-58", "row": 31, "stamps": [0, 5, 2], "expected": "refuse", "note": "decreasing stamps"}
+  {"id": "FWV-58", "row": 31, "stamps": [0, 5, 2], "expected": "evaluate", "note": "listed with decreasing stamps: read in canonical order, not refused"}
  ]
 }

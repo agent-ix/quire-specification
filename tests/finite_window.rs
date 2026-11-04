@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Agent-IX
 
-//! FR-091-AC-10 to FR-091-AC-19 and FR-094 (TC-980): the timestamped-event
+//! FR-091-AC-10 to FR-091-AC-26 and FR-094 (TC-980): the timestamped-event
 //! finite-window profile. The evaluator is QSL's; this test applies the stated
 //! rule (the established window of FR-091 over the FR-160 possibility sets) to
 //! the published vectors, so a vector that the rule does not produce is a defect
@@ -54,8 +54,29 @@ struct Window {
     scope_closed: bool,
 }
 
+/// The valuation of one instant: observations that share a stamp are readings
+/// of one instant, so equal valuations are a singleton and differing ones
+/// conflict; an observation with no valuation adds nothing.
+fn merge(values: &[Valuation]) -> Valuation {
+    let has = |v: Valuation| values.contains(&v);
+    match (
+        has(Valuation::T),
+        has(Valuation::F),
+        has(Valuation::Conflict),
+    ) {
+        (true, true, _) | (_, _, true) => Valuation::Conflict,
+        (true, false, false) => Valuation::T,
+        (false, true, false) => Valuation::F,
+        (false, false, false) => Valuation::Absent,
+    }
+}
+
 fn window(case: &Value) -> Window {
-    let positions = case["positions"].as_array().unwrap();
+    // Observations are read in canonical order: ascending stamp (the sort is
+    // stable, and no case here gives keys to a window).
+    let mut positions = case["positions"].as_array().unwrap().clone();
+    positions.sort_by_key(|p| p[0].as_i64().unwrap());
+    let positions = &positions;
     let valuation = |s: &str| match s {
         "T" => Valuation::T,
         "F" => Valuation::F,
@@ -78,7 +99,15 @@ fn window(case: &Value) -> Window {
         stamps: positions.iter().map(|p| p[0].as_i64().unwrap()).collect(),
         values: positions
             .iter()
-            .map(|p| valuation(p[1].as_str().unwrap()))
+            .map(|p| {
+                let stamp = p[0].as_i64().unwrap();
+                let readings: Vec<Valuation> = positions
+                    .iter()
+                    .filter(|q| q[0].as_i64().unwrap() == stamp)
+                    .map(|q| valuation(q[1].as_str().unwrap()))
+                    .collect();
+                merge(&readings)
+            })
             .collect(),
         w: case["w"].as_i64().unwrap(),
         complete: case["complete"].as_i64(),
@@ -292,7 +321,10 @@ fn vectors() -> Value {
     "FR-091-AC-19",
     "FR-091-AC-20",
     "FR-091-AC-21",
-    "FR-091-AC-22"
+    "FR-091-AC-22",
+    "FR-091-AC-23",
+    "FR-091-AC-24",
+    "FR-091-AC-26"
 )]
 #[test]
 fn tc_980_window_vectors_follow_the_established_window_rule() {
@@ -316,30 +348,40 @@ fn tc_980_window_vectors_follow_the_established_window_rule() {
     }
 }
 
+type Key = Option<(String, i64)>;
+
+/// Two instants of one stamp have a usable order exactly when both carry an
+/// order key, the keys come from one authority and the keys differ.
+fn usable(x: &Key, y: &Key) -> bool {
+    matches!((x, y), (Some((a, k)), Some((b, l))) if a == b && k != l)
+}
+
 /// The order-sensitive operators refuse at the first position that shares a
-/// stamp with an earlier one without a comparable order key.
-fn refused_at(positions: &[(i64, Option<(String, i64)>)]) -> Option<usize> {
+/// stamp with an earlier one without a usable order.
+fn refused_at(positions: &[(i64, Key)]) -> Option<usize> {
     for (j, (stamp, key)) in positions.iter().enumerate() {
         for (earlier_stamp, earlier_key) in &positions[..j] {
-            if earlier_stamp != stamp {
-                continue;
-            }
-            match (key, earlier_key) {
-                (Some((authority, _)), Some((other, _))) if authority == other => {}
-                _ => return Some(j),
+            if earlier_stamp == stamp && !usable(key, earlier_key) {
+                return Some(j);
             }
         }
     }
     None
 }
 
-fn ordered(positions: &[(i64, Option<(String, i64)>)]) -> Vec<(i64, Option<(String, i64)>)> {
+/// The canonical order: stamp, then authority (a keyless observation after
+/// every keyed one), then key. Observation identity, the last step, is not
+/// modelled: it fixes indices and never orders a pair for an operator.
+fn ordered(positions: &[(i64, Key)]) -> Vec<(i64, Key)> {
     let mut sorted = positions.to_vec();
-    sorted.sort_by(|x, y| (x.0, x.1.as_ref().map(|k| k.1)).cmp(&(y.0, y.1.as_ref().map(|k| k.1))));
+    sorted.sort_by(|x, y| {
+        let rank = |k: &Key| (k.is_none(), k.clone());
+        (x.0, rank(&x.1)).cmp(&(y.0, rank(&y.1)))
+    });
     sorted
 }
 
-fn order_positions(case: &Value) -> Vec<(i64, Option<(String, i64)>)> {
+fn order_positions(case: &Value) -> Vec<(i64, Key)> {
     case["positions"]
         .as_array()
         .unwrap()
@@ -354,7 +396,7 @@ fn order_positions(case: &Value) -> Vec<(i64, Option<(String, i64)>)> {
         .collect()
 }
 
-#[trace("TC-980", "FR-091-AC-16")]
+#[trace("TC-980", "FR-091-AC-16", "FR-091-AC-23")]
 #[test]
 fn tc_980_equal_distance_instants_need_an_admitted_order_key() {
     let doc = vectors();
@@ -381,6 +423,27 @@ fn tc_980_equal_distance_instants_need_an_admitted_order_key() {
             "evaluate" => assert_eq!(refused, None, "{id}"),
             other => panic!("{id}: unknown expectation {other}"),
         }
+        // The listing order is not consulted: the reversed listing refuses at
+        // the same canonical position and reads in the same canonical order.
+        let mut reversed = positions.clone();
+        reversed.reverse();
+        assert_eq!(ordered(&reversed), ordered(&positions), "{id} listing");
+        if sensitive {
+            assert_eq!(refused_at(&ordered(&reversed)), refused, "{id} reversed");
+        }
+        if let Some(canonical) = case.get("canonical_order") {
+            let want: Vec<Key> = canonical
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|k| {
+                    k.as_array()
+                        .map(|k| (k[0].as_str().unwrap().to_owned(), k[1].as_i64().unwrap()))
+                })
+                .collect();
+            let got: Vec<Key> = ordered(&positions).into_iter().map(|p| p.1).collect();
+            assert_eq!(got, want, "{id} canonical order");
+        }
         if let Some(other) = case.get("same_order_as") {
             let twin = cases.iter().find(|c| &c["id"] == other).expect("twin case");
             assert_eq!(ordered(&positions), ordered(&order_positions(twin)), "{id}");
@@ -392,7 +455,7 @@ fn cover(k: i64, u: i64) -> (i64, bool, i64, bool) {
     (k - u, false, k + 1 + u, true)
 }
 
-#[trace("TC-980", "FR-091-AC-18")]
+#[trace("TC-980", "FR-091-AC-18", "FR-091-AC-25")]
 #[test]
 fn tc_980_counter_cover_straddling_a_bound_is_indeterminate() {
     let doc = vectors();
@@ -403,8 +466,12 @@ fn tc_980_counter_cover_straddling_a_bound_is_indeterminate() {
             case["request_tick"].as_i64().unwrap(),
             case["ack_tick"].as_i64().unwrap(),
         );
-        let verdict = if case["cover"] == "exact" {
-            if ack - req <= bound { "true" } else { "false" }
+        let verdict = if case["cover"] == "exact" || case["cover"] == "omitted" {
+            if ack - req <= bound {
+                "true"
+            } else {
+                "false"
+            }
         } else {
             let u = case["uncertainty"].as_i64().unwrap();
             let (b, a) = (cover(ack, u), cover(req, u));
@@ -449,10 +516,11 @@ fn tc_980_a_watermark_covers_its_own_tick_and_not_the_next() {
     }
 }
 
-/// A trace with no instants, or with decreasing stamps, is refused on admission.
+/// A trace with no instants is refused on admission; one listed with decreasing
+/// stamps is read in canonical order and not refused.
 #[trace("TC-980", "FR-091-AC-22")]
 #[test]
-fn tc_980_an_empty_or_decreasing_trace_is_refused_on_admission() {
+fn tc_980_an_empty_trace_is_refused_on_admission() {
     for case in vectors()["admit"].as_array().unwrap() {
         let stamps: Vec<i64> = case["stamps"]
             .as_array()
@@ -460,7 +528,7 @@ fn tc_980_an_empty_or_decreasing_trace_is_refused_on_admission() {
             .iter()
             .map(|s| s.as_i64().unwrap())
             .collect();
-        let refused = stamps.is_empty() || stamps.windows(2).any(|pair| pair[1] < pair[0]);
+        let refused = stamps.is_empty();
         assert_eq!(refused, case["expected"] == "refuse", "{}", case["id"]);
     }
 }
@@ -484,6 +552,11 @@ fn tc_980_vector_ids_are_unique_and_every_origin_row_is_present() {
         }
     }
     rows.insert(doc["tick_cover_vectors"]["row"].as_i64().unwrap());
-    let want: BTreeSet<i64> = (1..=22).chain([27, 28, 31]).collect();
+    let want: BTreeSet<i64> = (1..=22)
+        .chain([27, 28])
+        .chain(31..=33)
+        .chain(35..=37)
+        .chain([38, 39, 40])
+        .collect();
     assert_eq!(rows, want);
 }

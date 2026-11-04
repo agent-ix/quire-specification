@@ -97,12 +97,27 @@ support); otherwise it is `pending` while `W < t0 + H + m` (declared progress co
 resolve it, its deadline being `t0 + H + m`) and `indeterminate` once `W >= t0 + H + m` (closed evidence still
 unresolved: a missing or conflicting valuation, a completeness assertion short
 of `t0 + H + m`, or missing history, which a look-back-only clause reports at once because its `H` is 0). `incomplete` is reserved for a missing
-required current valuation at the anchor and for resource exhaustion. Two
-instants with equal clock distance are ordered only by an admitted order key; the
-eligible set, `until`/`since` and their duals use that order and refuse without
-it, when the order-sensitive operator is evaluated. A trace with no instants, or
-whose stamps decrease along the admitted order, is refused on admission before
-any instant is visited. `release` remains the Boolean dual.
+required current valuation at the anchor and for resource exhaustion. The evaluator orders the observations before it visits any instant, by ascending
+stamp, then by ascending order-authority identity (an observation without an order
+key after every keyed one), then by ascending key within the authority, then by
+ascending observation identity; it never consults the order in which the caller
+listed them, and neither the outcome nor the result identity depends on that
+listing. A position is an index in this canonical order. Two instants of one stamp
+have a *usable order* exactly when both carry an order key, the keys come from one
+order authority and the keys differ; a key that repeats another key of its
+authority at the same stamp is not usable, because the authority places both
+observations at one point of its sequence, and observation identity is a content
+identity, not a causal order, so it fixes the positions' indices and never orders a
+pair for an order-sensitive operator. The eligible set, `until`/`since` and their
+duals use that order and refuse, when the order-sensitive operator is evaluated,
+over two instants of one stamp that lack a usable order. Observations that share a
+stamp are readings of one instant: when they give differing valuations of one atom
+the atom is conflicting at every position of that stamp (reported at the lowest
+position of the stamp), and equal valuations are a singleton. A trace with no
+instants is refused on admission before any instant is visited; a trace listed with
+decreasing stamps is not refused, because it is read in canonical order. The cover
+of the stamps (exact, or a counter cover of uncertainty `u`) is declared by the
+trace input and is exact when the input omits it. `release` remains the Boolean dual.
 
 The evaluator shall return `satisfied` or `violated` for an open decision scope only when the
 selected profile proves that every admitted continuation preserves it. Such a
@@ -150,16 +165,20 @@ Where a bounded temporal profile is selected, the evaluator shall refuse an unbo
 | FR-091-AC-10 | Over stamps 0, 2, 5 ms with `W` 5 and completeness through 5, `always[0,5] holds(p)` is false at position 0 when `p` is true at 0 and 5 and false at 2 and true when `p` is true at all three; `eventually[0,1] holds(p)` with `p` true only at stamp 2 is false and `eventually[0,2] holds(p)` is true. A position stamped 6 is outside `[0,5]` and one stamped 5 is inside (`FWV-01` to `FWV-05`). | Test (TC-980) |
 | FR-091-AC-11 | One position stamped 0 with `p` true, `W` 1 and completeness through 1: `always[0,1] holds(p)` is true, with no synthetic false atom after closure, where false extension gives false. With `W` 3 and completeness through 3, `eventually[2,3] holds(p)` is false and `always[2,3] holds(p)` is true, the empty windows of an established activation (`FWV-06` to `FWV-08`). | Test (TC-980) |
 | FR-091-AC-12 | Stamps 0 and 1 with `p` false at both, `W` 1 and completeness through 1, `eventually[0,5] holds(p)` is `pending` with deadline 5; the same positions with `W` 5 and completeness through 5 give false with no further observation. With an open scope, `p` true at stamp 1 and `W` 1 gives true (decisive witness), and `always[0,5] holds(p)` with `p` false at stamp 1 gives false (decisive counterexample) (`FWV-09` to `FWV-12`). | Test (TC-980) |
-| FR-091-AC-13 | Stamps 0, 2, 5, `eventually[0,5] holds(p)`, `W` 5 and completeness through 5: `p` false at 0 and 5 and absent at 2 is `indeterminate` (missing valuation at position 1); `p` true at 5 and absent at 2 is true; `p` both true and false at stamp 2 is `indeterminate` (conflicting valuation at position 1); the absent case with `W` 3 is `pending` with deadline 5. None is false (`FWV-13` to `FWV-16`). | Test (TC-980) |
+| FR-091-AC-13 | Stamps 0, 2, 5, `eventually[0,5] holds(p)`, `W` 5 and completeness through 5: `p` false at 0 and 5 and absent at 2 is `indeterminate` (missing valuation at position 1); `p` true at 5 and absent at 2 is true; `p` true in one of two observations stamped 2 and false in the other, and false elsewhere, is `indeterminate` (conflicting valuation at position 1); the absent case with `W` 3 is `pending` with deadline 5. None is false (`FWV-13` to `FWV-16`). | Test (TC-980) |
 | FR-091-AC-14 | With `p` true at stamp 0, a closed scope, `W` 5 and completeness not asserted, `always[0,5] holds(p)` is `indeterminate` (incomplete input), and with completeness through 5 it is true; with completeness not asserted `eventually[2,3] holds(p)` is `indeterminate` and not false, and with completeness through only 2 and `W` 3 it is also `indeterminate` (`FWV-17` to `FWV-20`). | Test (TC-980) |
 | FR-091-AC-15 | An eligible instant at the inclusive deadline participates (`eventually[0,3] holds(q)` with `q` true at stamp 3 and `W` 3 is true) and one after it does not (`q` true only at stamp 4 gives false). A single position with `p` false and `W` 3 gives false for `eventually[0,3] holds(p)` with no later observation. A half-open watermark `[.., 3)` without an FR-289 mapping is the inclusive watermark 2 and leaves that window `pending` (`FWV-21` to `FWV-24`). | Test (TC-980) |
-| FR-091-AC-16 | Stamps 0, 1, 1 without order keys refuse `until`, `release`, `since` and `triggered` at the third position while `eventually[0,1]` evaluates; keys from one order authority admit `until`, keys from two authorities refuse it, and reversing the insertion order with keys unchanged leaves the admitted order unchanged (`FWV-31` to `FWV-38`). | Test (TC-980) |
+| FR-091-AC-16 | Stamps 0, 1, 1 without order keys refuse `until`, `release`, `since` and `triggered` at the third position while `eventually[0,1]` evaluates; a key on the second position only refuses at the third; distinct keys from one order authority admit `until`, keys from two authorities refuse it, and reversing the insertion order with keys unchanged leaves the admitted order unchanged. Two positions of one stamp both keyed `(A, 1)`, with distinct observation identities, refuse the four operators at the third position for either listing and are not ordered by observation identity, while `eventually[0,1]` over them evaluates to one outcome for both listings (`FWV-31` to `FWV-38`, `FWV-60` to `FWV-65`). | Test (TC-980) |
 | FR-091-AC-17 | Stamps 3 and 4, `once[0,4] holds(p)` activated at each position with `p` false at both (each activation is established at `W` 4; the first, at position 0, reaches before the trace): a history-cutoff lower boundary gives `indeterminate` (missing history) and an authoritative origin gives false; `p` true at stamp 3 gives true for both (`FWV-25` to `FWV-28`). | Test (TC-980) |
 | FR-091-AC-18 | With counter cover and uncertainty 0, a request at tick 0 and `holds(req) implies eventually[0,3000] holds(ack)`, an acknowledgement at tick 2998 is true, at 3000 `indeterminate` (the cover straddles the bound) and at 3001 false; under exact cover the three are true, true and false. The neighbouring ticks and the same-tick pair are `TCV-01` to `TCV-15` of FR-160 (`FWV-39` to `FWV-44`). | Test (TC-980) |
 | FR-091-AC-19 | `eventually[0,2] holds(p)` activated at each position, over stamps 0 and 10 with `p` false at both, `W` 10 and completeness through 10: the activation at 0 is definitely false and the one at 10 is `pending`, so the outcome is false at position 0; with `p` true at stamp 0 the outcome is `pending` at position 1 with deadline 12, not true (`FWV-29`, `FWV-30`). | Test (TC-980) |
 | FR-091-AC-20 | With counter cover of uncertainty 1, a request at tick 0 and `eventually[0,3000] holds(ack)` with no acknowledgement and completeness through 3002: `W` 3001 is `pending` with deadline 3002 (margin `2u`), and `W` 3002 is false. Under exact cover `W` 3000 with completeness through 3000 is already false (`FWV-52` to `FWV-54`). | Test (TC-980) |
 | FR-091-AC-21 | Over stamps 0, 2, 5 with `p` true, false, true and `W` 5 with completeness through 5, `always[0,5] holds(p)` is false with basis `closed-scope` for a closed scope and `decisive-counterexample` for an open scope, with decision support exactly {(position 1, `p`)}; `eventually[0,5] holds(p)` with `p` false, false, true is true with basis `closed-scope` and support {(position 2, `p`)}. A definite verdict on an unestablished activation reports `decisive-witness` whatever the scope, `pending` reports `unsettled` and `indeterminate` reports `unavailable` with no truth (`FWV-09`, `FWV-13`, `FWV-48` to `FWV-51`). | Test (TC-980) |
-| FR-091-AC-22 | Completeness through 9 with `W` 5 for `eventually[0,5] holds(p)` over stamps 0, 2, 5 with `p` false is false (established at 5), and with `W` 3 it is `pending` with deadline 5. A trace with no instants and a trace with stamps 0, 5, 2 are each refused on admission before any instant is visited (`FWV-55` to `FWV-58`). | Test (TC-980) |
+| FR-091-AC-22 | Completeness through 9 with `W` 5 for `eventually[0,5] holds(p)` over stamps 0, 2, 5 with `p` false is false (established at 5), and with `W` 3 it is `pending` with deadline 5. A trace with no instants is refused on admission before any instant is visited, and a trace listed with stamps 0, 5, 2 is not refused (`FWV-55` to `FWV-58`). | Test (TC-980) |
+| FR-091-AC-23 | Listing the observations of FR-091-AC-10 as stamps 5, 0, 2 gives the outcome, decision support and result identity of the listing 0, 2, 5; with `p` true at 0 and 5 and false at 2 the outcome is false at position 0 with support {(position 1, `p`)}, positions being canonical indices. Four observations of one stamp keyed A1, A2 (authority A), B1 (authority B) and one keyless have the canonical order A1, A2, B1, keyless for every listing (`FWV-66` to `FWV-69`). | Test (TC-980) |
+| FR-091-AC-24 | Over stamps 0, 2, 2, 5 with `eventually[0,5] holds(p)`, `W` 5 and completeness through 5, `p` true at both observations stamped 2 and false at the others is true and not `indeterminate` (`FWV-59`). | Test (TC-980) |
+| FR-091-AC-25 | A trace input that names no cover evaluates the request of FR-091-AC-18 as under exact cover (true, true, false); a supplied counter cover of uncertainty 1 gives the outcomes of FR-091-AC-20, and the same input with exact cover gives false for `W` 3001 and completeness through 3002, with a different result identity (`FWV-70` to `FWV-73`). | Test (TC-980) |
+| FR-091-AC-26 | A request whose surrounding execution is open and one whose surrounding execution is closed report the closure they carry and give the same verdict (`FWV-74`, `FWV-75`). | Test (TC-980) |
 
 ## Dependencies
 
