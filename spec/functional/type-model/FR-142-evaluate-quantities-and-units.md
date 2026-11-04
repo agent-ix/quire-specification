@@ -335,6 +335,10 @@ by `quire.value.complete/v1`. An explicit later conversion may select a
 compatible declared I04 unit; multiplication never guesses one from a matching
 name or scale. For an integer exponent, `x^0` is exactly one for every `x`,
 including zero, and a zero base under a negative exponent is undefined.
+Integer power is written `e ^ n` with `n` a `signed-int` literal (the shared
+grammar's complete-V1 `power` production); its result unit is the power
+result unit of FR-322 "Quantity integer power", a compound unit for every
+`n`, and it lowers to `quire.op.quantity.pow` (FR-322).
 All identity reads, traversed edges, exact rational operations, target-domain
 checks and result retention use the named points in
 `quire.value.accounting/v1`, in its unit schedule: operand identity reads, then

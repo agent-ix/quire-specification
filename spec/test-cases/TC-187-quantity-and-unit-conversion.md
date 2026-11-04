@@ -121,6 +121,30 @@ inputs are the cases of
 | U43 | Execute `CQ-E03` to `CQ-E06`, `CQ-E09` to `CQ-E11`, `CQ-E14` to `CQ-E16`: U08's members and the one-below and one-over values, U17, U18, U29's `3 m` and `250 cm` (`5/2 m`) into `Decimal[-2, 2; 0, 0]` (FR-142-AC-29) | `-2 m` and `2 m` succeed; `-3 m`, `3 m` and (U29) `3 m` into `Int[-2, 2]` refuse `decimal_out_of_domain` or `integer_out_of_domain`/`outside-domain` after `unit.target-domain` and before `unit.result-retain`, atomically; U17 and U29 then `incomplete` at `unit.target-domain` with limit one; U18 `incomplete` for `decimal_digits` with the coefficient never materialized; `250 cm` is both inexact and out of bounds and refuses `inexact_conversion` first |
 | U44 | Execute `CQ-E17` to `CQ-E19`: convert `1 in` into `Quantity<m, Decimal[-100, 100; 2, 2; nearest-even]>`, `25 cm` into `Quantity<m, Int[-2, 2; nearest-even]>` and `13/5 m` into the same integer carrier, and `1 in` into `Quantity<m, Decimal[-100, 100; 2, 2]>` naming no mode (FR-142-AC-30) | `(3, 2) m` with U07's `DecimalLoss`; `25 cm` is `0 m` with its loss; `13/5 m` rounds to `3` and then refuses `integer_out_of_domain`; the conversion naming no mode is the `exact` one of U42 and never rounds; the nearest-even outcomes of U07, U16 and U29 are unchanged, and `CQ-E17` to `CQ-E19` fix the carried forms |
 
+Quantity power wire cases. The following rows read the checked-package wire of
+`quire.op.quantity.pow` (FR-322 "Quantity integer power", FR-322-AC-383) over
+the unit graph above, with `d: Quantity<ms>` and `x: Quantity<m2>` parameters.
+Each names the application's arguments, its `result_type` and its laws, mode,
+member and leaves. A row not stated otherwise has operator `binary`, no laws,
+`mode` `null`, no member and no leaves. `N(k)` is the `value`/`literal` node of
+`value_kind` `integer` and value `"k"` typed by the builtin Integer node, and
+`C[U e, ...]` is the `scalar_type`/`compound_unit` node with those root-unit
+terms. Evaluation of the admitted rows is U12, U13 and U21. They are outside
+the `Vector` table, as the carried quantity cases are.
+
+| Case | Wire | Expected disposition |
+| --- | --- | --- |
+| QP-01 | `2 m ^ 2`: `[reference(2 m), reference(N(2))]`, `result_type` `C[m 2]` | admitted; `2 m * 2 m` has the same `result_type` node |
+| QP-02 | `d ^ 0`: `[reference(d), reference(N(0))]`, `result_type` `C[]` (`["scalar_type", "compound_unit"]`) | admitted |
+| QP-03 | `d ^ 1`: `result_type` `C[s 1]`; then the same with `result_type` the unit node of `ms` | admitted; then `ill_typed`/`operator-ineligible` |
+| QP-04 | `x ^ -1`: `[reference(x), reference(N(-1))]`, `result_type` `C[m -2]` | admitted (the base-dimension map of `Area` is `L^2`) |
+| QP-05 | `2 m ^ 18446744073709551616`: `result_type` `C[m 18446744073709551616]` | admitted; no machine width bounds the exponent |
+| QP-06 | QP-01 with a third argument `reference(N(1))`; QP-01 with the exponent argument removed | each `ill_typed`/`operator-ineligible` |
+| QP-07 | QP-01 with the exponent as the inline `literal` `2` typed Integer; as a reference to a `value`/`parameter` node `k: Integer`; as a reference to a `value`/`literal` node of `value_kind` `decimal` | each `ill_typed`/`operator-ineligible` |
+| QP-08 | QP-01 with the base a reference to an `integer` literal node; to a parameter of type `Quantity<m, Int[-2, 2]>`; to a `degC` literal node with `result_type` `C[K 2]` | each `ill_typed`/`operator-ineligible` |
+| QP-09 | QP-01 with `mode` `{kind: "rounding", value: "exact"}`; QP-01 with a `laws` entry | `invalid_package`/`operation-mode-mismatch`; `invalid_package`/`operation-law-mismatch` |
+| QP-10 | QP-01 with `result_type` `C[m 3]` | `ill_typed`/`operator-ineligible` |
+
 For U01, U04 and U07, compare the complete exact affine composition through
 the canonical unit, result unit identity, normalized dimension map, original
 unit/value provenance and any FR-140 `DecimalLoss`.
