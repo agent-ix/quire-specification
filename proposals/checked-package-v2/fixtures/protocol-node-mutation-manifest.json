@@ -6101,9 +6101,9 @@
         "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
-        "locus": "/semantic_graph/nodes/67"
+        "locus": "/semantic_graph/nodes/78"
       },
-      "note": "vector prose defect: the prose expects invalid_model_binding/malformed-declaration at the target, but a run that names a role leaves the control tree unrooted, so Membership step 5 (Containment: a control held by nothing) is the first defect in reader order. The expected node is the first unheld control in node-id order as recommended by the STD-609 review; the root control Main is itself unrooted and the node-id order that picks Applied over Main is the reviewer's, not stated by FR-464."
+      "note": "with `run` naming a role, no clause argument holds the root control `Main` (node 78), so Membership step 5 (FR-464: a control held by nothing refuses `invalid_semantic_graph` at the control node) is the first defect in reader order, and `Main` is the control held by nothing; its child `Applied` is still held by `Main`. The earlier prose expected invalid_model_binding/malformed-declaration at the target; reader order puts Membership first."
     },
     {
       "id": "M1",
@@ -6179,9 +6179,9 @@
         "stage": "reader",
         "code": "invalid_semantic_graph",
         "cause": null,
-        "locus": "/semantic_graph/nodes/82"
+        "locus": "/semantic_graph/nodes/59"
       },
-      "note": "the repeat is inside one set argument, so it is the canonical-order rule 'repeats an entry refuses invalid_semantic_graph at the node' (the clause node), not Single listing (a node named by two arguments or two clauses)"
+      "note": "a node listed twice in one set argument is the Single listing rule (FR-464), so the refusal is at the listed member node, /semantic_graph/nodes/59 (Example::OrderFlow::role::Orders), not at the clause that lists it"
     },
     {
       "id": "M8",

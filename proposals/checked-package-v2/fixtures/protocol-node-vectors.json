@@ -253,21 +253,21 @@
       "section": "Placement and operators",
       "id": "V3",
       "Edit to the base": "the `Orders` role node's operator is `channel`",
-      "Expected": "`ill_typed`/`operator-ineligible` at the node (operator of another form)"
+      "Expected": "`malformed_wire` at the node (the schema refuses the operator of another form first; the protocol step alone gives `ill_typed`/`operator-ineligible`)"
     },
     {
       "test_case": "TC-946",
       "section": "Placement and operators",
       "id": "V4",
       "Edit to the base": "the `Orders` node's `semantic_form` is `control` with the `role` operator",
-      "Expected": "`ill_typed`/`operator-ineligible` at the node"
+      "Expected": "`malformed_wire` at the node (schema first; the protocol step alone gives `ill_typed`/`operator-ineligible`)"
     },
     {
       "test_case": "TC-946",
       "section": "Placement and operators",
       "id": "V5",
       "Edit to the base": "a `quire.op.protocol.control` application nested as an argument of `Main`",
-      "Expected": "`malformed_wire` at the nested application (strict wire validation)"
+      "Expected": "`malformed_wire` at the node pointer `/semantic_graph/nodes/{i}` of `Main` (strict wire validation, the schema's first error path)"
     },
     {
       "test_case": "TC-946",
@@ -281,7 +281,7 @@
       "section": "Placement and operators",
       "id": "V7",
       "Edit to the base": "`Requested`'s member operator is `jump`",
-      "Expected": "`invalid_package`/`operation-member-mismatch` at the application"
+      "Expected": "`malformed_wire` at the node (schema first; the operation step alone gives `invalid_package`/`operation-member-mismatch`)"
     },
     {
       "test_case": "TC-946",
@@ -1525,7 +1525,7 @@
       "section": "Clause body",
       "id": "C12",
       "Edit to the base": "`run` names a `role` node",
-      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+      "Expected": "`invalid_semantic_graph` at the root control `Main`, which nothing holds (Membership precedes the clause slots in reader order)"
     },
     {
       "test_case": "TC-946",
@@ -1546,7 +1546,7 @@
       "section": "Membership",
       "id": "M1",
       "Edit to the base": "`Orders` listed in `roles` twice",
-      "Expected": "`invalid_semantic_graph` at the clause node"
+      "Expected": "`invalid_semantic_graph` at the listed member node (`Orders`)"
     },
     {
       "test_case": "TC-946",
@@ -2890,7 +2890,7 @@
       "section": "Layouts",
       "id": "L19",
       "Encoded": "`Requested`'s member operator is `jump`",
-      "Expected": "`invalid_package`/`operation-member-mismatch`"
+      "Expected": "`malformed_wire` at the node (schema first; the operation step alone gives `invalid_package`/`operation-member-mismatch`)"
     },
     {
       "test_case": "TC-948",
