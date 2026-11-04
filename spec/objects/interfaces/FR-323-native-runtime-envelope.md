@@ -59,13 +59,17 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 - `contract_version` — exactly `quire.native-runtime/v1`.
 - `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `package` — exact FR-322 checked-package reference; a non-replay request
-  carries the reference alone, and a replay request adds the `sources` and
-  `dependencies` members below, as
-  `{checked_package, contract_version, sources, dependencies}` plus the optional
-  `refinement_internals` below. Definition and
+  carries the reference alone. In a replay request `package` is the proved
+  FR-322 checked-package document itself (its `contract_version` is the constant
+  `quire.checked-package/v2`), which supplies the package `name`, its lock
+  `sources` and, when its lock has one, the lock's `refinement_internals`; the
+  request's `dependencies` are separate `{identity, sources}` entries, as the
+  corpus schema's `$defs.ReplayRequest` states them
+  (`proposals/conformance-corpus-v1/schema.json`). Definition and
   domain-package documents are reached through `byte_provision` by the
   identity the recompiled sources name.
-  `sources` is the proved package's own FR-322 lock `sources`.
+  `sources` is the proved package's own FR-322 lock `sources`
+  (`package.lock.sources`).
   `dependencies` holds one entry per library identity in the proved package's
   derived closure (its direct selections plus the closure of every selected
   dependency), in ascending UTF-8 byte order of `identity`, each
@@ -80,10 +84,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
   transitive-only packages, and invents none. The executor recompiles each
   dependency from its entry's `sources` and supplies it under the entry's
   `identity` to every direct or transitive import of that identity (FR-307),
-  then recompiles the proved package from `package.sources` and uses the
+  then recompiles the proved package from `package.lock.sources` and uses the
   result. The replay compares no recompiled package with any supplied or
-  recorded package; `package.checked_package` is the package reference of a
-  non-replay request and is not read by a replay. It refuses with the first of these, each rule
+  recorded package; a replay reads the proved package document only for its
+  `name`, lock `sources` and lock `refinement_internals`. It refuses with the first of these, each rule
   applied over all entries, in entry order, before the next rule, and
   yields no result:
   1. before any recompile, entries not in strictly ascending UTF-8 byte
@@ -529,7 +533,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
 | FR-323-AC-5 | A replay request's `byte_provision` supplies every source and definition input the replay recompiles, each located by the `{authority, identity}` its lock `sources` entry names, and every domain-package document, an entry of the ordered provision located by the identity it declares; the executor reads no recompilation input by path, environment variable or search location. Before any recompile, a named input the provision does not carry refuses `missing_import`/`missing-selection` naming the requested `{authority, identity}`, or the requested domain-package identity, and the `package` member that names it; a second document under one key is a duplicate definition and refuses `invalid_package`/`conflicting-definition`. | Test (TC-277) |
 | FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the replay target (`function`, `frame_operation` or `state_clause`), for a function request arguments keyed by parameter node id, the semantic profile selections, for a function request the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
-| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per identity in its derived closure, in ascending UTF-8 identity order, each carrying that dependency's `identity` and own lock `sources`, including transitive-only dependencies. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import in the dependency tree reaches `invalid_package`/`invalid-value`. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
+| FR-323-AC-7 | A replay request's `package` is the proved checked-package document, whose lock `sources` are the proved package's own, and the request carries one `dependencies` entry per identity in its derived closure, in ascending UTF-8 identity order, each carrying that dependency's `identity` and own lock `sources`, including transitive-only dependencies. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import in the dependency tree reaches `invalid_package`/`invalid-value`. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |
 | FR-323-AC-9 | Withdrawn: the replay comparison of the recompiled checked package with a supplied one is removed; replay recompiles the supplied inputs and uses the result. | Withdrawn |
 | FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings and B (AC-15), independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work; a ceiling omitted at the caller API resolves to its own published default 16777216, while a wire `limits.supplied` object that is incomplete or malformed refuses before consumption. | Test (TC-278) |
