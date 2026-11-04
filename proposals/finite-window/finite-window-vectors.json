@@ -42,6 +42,8 @@
   {"id": "FWV-55", "row": 31, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "F"], [5, "F"]], "w": 5, "complete": 9, "scope": "closed", "note": "completeness may run ahead of W", "expected": {"outcome": "false", "where": 0}},
   {"id": "FWV-56", "row": 31, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "F"], [5, "F"]], "w": 3, "complete": 9, "scope": "closed", "expected": {"outcome": "pending", "where": 0, "deadline": 5}},
   {"id": "FWV-59", "row": 37, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "T"], [2, "T"], [5, "F"]], "w": 5, "complete": 5, "scope": "closed", "note": "equal valuations of two observations of one stamp are a singleton", "expected": {"outcome": "true"}},
+  {"id": "FWV-76", "row": 32, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[5, "T"], [0, "F"], [2, "F"]], "w": 5, "complete": 5, "scope": "closed", "listing_twin": "FWV-77", "note": "listed with decreasing stamps: read in canonical order, the verdict is the increasing listing's", "expected": {"outcome": "true"}},
+  {"id": "FWV-77", "row": 32, "op": "eventually", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "F"], [2, "F"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "expected": {"outcome": "true"}},
   {"id": "FWV-68", "row": 33, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[5, "T"], [0, "T"], [2, "F"]], "w": 5, "complete": 5, "scope": "closed", "note": "listed as stamps 5, 0, 2: positions are canonical indices", "expected": {"outcome": "false", "where": 0, "basis": "closed-scope", "support": [[1, "p"]]}},
   {"id": "FWV-73", "row": 38, "op": "eventually", "a": 0, "b": 3000, "activate": "origin", "positions": [[0, "F"]], "w": 3001, "complete": 3002, "scope": "closed", "note": "the same input as FWV-52 under exact cover", "expected": {"outcome": "false", "where": 0}},
   {"id": "FWV-74", "row": 39, "op": "always", "a": 0, "b": 5, "activate": "origin", "positions": [[0, "T"], [2, "F"], [5, "T"]], "w": 5, "complete": 5, "scope": "closed", "execution": "open", "expected": {"outcome": "false", "where": 0}},
@@ -67,15 +69,15 @@
   {"id": "FWV-69", "row": 35, "op": "eventually", "positions": [[1, ["B", 1]], [1, null], [1, ["A", 2]], [1, ["A", 1]]], "expected": "evaluate", "canonical_order": [["A", 1], ["A", 2], ["B", 1], null], "note": "keyed observations of one authority first by key, then the next authority, the keyless last"}
  ],
  "counter": [
-  {"id": "FWV-39", "row": 20, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true"},
-  {"id": "FWV-40", "row": 20, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "indeterminate", "reason": "StraddlesBound"},
-  {"id": "FWV-41", "row": 20, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"},
-  {"id": "FWV-42", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true"},
-  {"id": "FWV-43", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "true"},
-  {"id": "FWV-44", "row": 20, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"},
-  {"id": "FWV-70", "row": 36, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true", "note": "a trace input that names no cover is exact"},
-  {"id": "FWV-71", "row": 36, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "true"},
-  {"id": "FWV-72", "row": 36, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"}
+  {"id": "FWV-39", "row": 20, "w": 3001, "complete": 3001, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true"},
+  {"id": "FWV-40", "row": 20, "w": 3001, "complete": 3001, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "indeterminate", "reason": "StraddlesBound"},
+  {"id": "FWV-41", "row": 20, "w": 3001, "complete": 3001, "cover": "counter", "uncertainty": 0, "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"},
+  {"id": "FWV-42", "row": 20, "w": 3001, "complete": 3001, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true"},
+  {"id": "FWV-43", "row": 20, "w": 3001, "complete": 3001, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "true"},
+  {"id": "FWV-44", "row": 20, "w": 3001, "complete": 3001, "cover": "exact", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"},
+  {"id": "FWV-70", "row": 36, "w": 3001, "complete": 3001, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 2998, "expected": "true", "note": "a trace input that names no cover is exact"},
+  {"id": "FWV-71", "row": 36, "w": 3001, "complete": 3001, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 3000, "expected": "true"},
+  {"id": "FWV-72", "row": 36, "w": 3001, "complete": 3001, "cover": "omitted", "bound": 3000, "request_tick": 0, "ack_tick": 3001, "expected": "false"}
  ],
  "tick_cover_vectors": {"file": "../checked-package-v2/tick-cover-vectors.json", "row": 21, "ids": ["TCV-01", "TCV-02", "TCV-03", "TCV-04", "TCV-05", "TCV-06", "TCV-07", "TCV-08", "TCV-09", "TCV-10", "TCV-11", "TCV-12", "TCV-13", "TCV-14", "TCV-15"]},
  "covered": [

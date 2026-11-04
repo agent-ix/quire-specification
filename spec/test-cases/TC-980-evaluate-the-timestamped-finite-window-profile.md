@@ -28,7 +28,7 @@ authority ordered by observation identity for an order-sensitive operator.
 
 Apply the established-window rule of FR-091 and the possibility sets of FR-160 to
 each vector of `proposals/finite-window/finite-window-vectors.json` (`FWV-01` to
-`FWV-75`; QSL TC-1295 rows 1 to 22, 27, 28, 31 to 33, 35 to 37, 39 and 40) and compare the outcome class, deciding
+`FWV-77`; QSL TC-1295 rows 1 to 22, 27, 28, 31 to 33, 35 to 37, 39 and 40) and compare the outcome class, deciding
 position, deadline and reason with the stated expectation. The tick-cover vectors
 `TCV-01` to `TCV-15` are consumed from `tick-cover-vectors.json`.
 

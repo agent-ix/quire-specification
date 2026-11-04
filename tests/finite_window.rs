@@ -333,6 +333,17 @@ fn tc_980_window_vectors_follow_the_established_window_rule() {
         let win = window(case);
         let outcome = evaluate(&win);
         assert_eq!(outcome, expected(case), "{id}");
+        // A listing in another order is read in canonical order: same verdict.
+        if let Some(twin) = case.get("listing_twin") {
+            let twin = vectors()["window"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|c| &c["id"] == twin)
+                .cloned()
+                .expect("twin case");
+            assert_eq!(evaluate(&window(&twin)), outcome, "{id} listing twin");
+        }
         if let Some(want) = case["expected"].get("basis") {
             assert_eq!(basis(&win, &outcome), want.as_str().unwrap(), "{id} basis");
         }
@@ -466,6 +477,15 @@ fn tc_980_counter_cover_straddling_a_bound_is_indeterminate() {
             case["request_tick"].as_i64().unwrap(),
             case["ack_tick"].as_i64().unwrap(),
         );
+        // The request at tick 0 is established when progress and completeness
+        // cover tick `bound + 2u` (FR-091); an unestablished one is not decided.
+        let u = case.get("uncertainty").and_then(Value::as_i64).unwrap_or(0);
+        let reach = req + bound + 2 * u;
+        let (w, complete) = (
+            case["w"].as_i64().unwrap(),
+            case["complete"].as_i64().unwrap(),
+        );
+        assert!(w >= reach && complete >= reach, "{id} is established");
         let verdict = if case["cover"] == "exact" || case["cover"] == "omitted" {
             if ack - req <= bound {
                 "true"
@@ -485,6 +505,10 @@ fn tc_980_counter_cover_straddling_a_bound_is_indeterminate() {
             }
         };
         assert_eq!(verdict, case["expected"].as_str().unwrap(), "{id}");
+        // An indeterminate verdict is a straddled bound, never a missing input.
+        if verdict == "indeterminate" {
+            assert_eq!(case["reason"], "StraddlesBound", "{id}");
+        }
     }
     // Row 21: the neighbouring-tick and same-tick vectors are the published TCV file.
     let cover_file: Value = serde_json::from_str(TICK_COVER).unwrap();
