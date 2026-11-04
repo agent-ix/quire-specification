@@ -19,6 +19,23 @@ without deriving identity from its relationships or presentation.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| authority_identity | String | 1..1 |  |
+| subject_kind | String | 1..1 |  |
+| authority_local_object_identity | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| authority_identity | type not stated in source; see Field sources |
+| subject_kind | type not stated in source; see Field sources |
+| authority_local_object_identity | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authority identity | FR-035 | Exact identity of the selected binding authority. |

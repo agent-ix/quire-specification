@@ -26,8 +26,8 @@ output and never editable source."
 
 | Value | Description |
 | --- | --- |
-| `mltl.closed-trace/v1` | The TL target named by FR-095 for "Event-position false-extension, bounded future core, complete execution", supported "when every bridge premise below holds". FR-095 also records it as the target of two unsupported rows: "Finite-window future semantics" is "Unsupported because TL extends atoms false beyond closure". FR-091 pins the native lower-bound convention to it: the `until` convention "matches `mltl.closed-trace/v1` and shall not be replaced by a different unbounded-until convention under the same identity." |
-| `mltl.online-prefix/v1` | The TL target named by FR-095 for "Event-position false-extension, bounded future core, open prefix", supported "when every bridge premise below holds". |
+| mltl_closed_trace_v1 | Wire spelling `mltl.closed-trace/v1`. The TL target named by FR-095 for "Event-position false-extension, bounded future core, complete execution", supported "when every bridge premise below holds". FR-095 also records it as the target of two unsupported rows: "Finite-window future semantics" is "Unsupported because TL extends atoms false beyond closure". FR-091 pins the native lower-bound convention to it: the `until` convention "matches `mltl.closed-trace/v1` and shall not be replaced by a different unbounded-until convention under the same identity." |
+| mltl_online_prefix_v1 | Wire spelling `mltl.online-prefix/v1`. The TL target named by FR-095 for "Event-position false-extension, bounded future core, open prefix", supported "when every bridge premise below holds". |
 
 FR-095 additionally records "The same TL profiles" as the target for
 fixed-sample false-extension bounded future core, "Supported only with one total

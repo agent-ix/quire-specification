@@ -18,6 +18,33 @@ When observation facts are supplied to a semantic consumer, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| authority | String | 1..1 |  |
+| revision | String | 1..1 |  |
+| records | String | 1..1 |  |
+| populations | String | 1..1 |  |
+| positions | String | 1..1 |  |
+| progress | String | 1..1 |  |
+| conflicts | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| authority | type not stated in source; multiplicity not stated in source; see Field sources |
+| revision | type not stated in source; multiplicity not stated in source; see Field sources |
+| records | type not stated in source; multiplicity not stated in source; see Field sources |
+| populations | type not stated in source; multiplicity not stated in source; see Field sources |
+| positions | type not stated in source; multiplicity not stated in source; see Field sources |
+| progress | type not stated in source; multiplicity not stated in source; see Field sources |
+| conflicts | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 - `contract_version` — exactly `quire.observation-authority/v1`.
 - `authority` — producer, scope and contract identity.
 - `revision` — immutable revision and explicit predecessor/supersession relation.

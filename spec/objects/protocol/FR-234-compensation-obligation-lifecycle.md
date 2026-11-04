@@ -23,7 +23,90 @@ FR-057 states that the evaluator "SHALL NOT infer recovery success from
 compensation-operation success", and FR-056 states that the evaluator "does not
 invoke the compensating operation".
 
-## States & Transitions
+## States
+
+| State | Description |
+|---|---|
+| not_registered | No compensation registration exists yet; the entry state of the diagram. |
+| registered | The registration of [FR-233](FR-233-compensation-registration.md) exists (FR-056). |
+| refused_without_effect | A send, receive, delivery or attempt lacking the required successful effect was refused registration (FR-056, FR-056-AC-2). |
+| ordering_violation | One of the distinct ordering violations named by FR-057-AC-3 and FR-056-AC-4. |
+| attempt_observed | A compensation attempt was observed for this registration (FR-058). |
+| retry_bound_refused | An attempt beyond the authored finite retry bound was refused (FR-058, FR-058-AC-4). |
+| effect_established | The compensation effect was established and is held distinct from the attempt (FR-051, FR-058). |
+| recovery_decided | The authored typed recovery relation ([FR-238](FR-238-recovery-relation.md)) was evaluated (FR-057). |
+| incomplete | A state, commit or compensation-effect input is missing (FR-057-AC-4). |
+
+## Operations
+
+### register_compensation
+
+Register an admitted compensation definition paired with a successfully established forward effect (FR-056).
+
+### refuse_registration_without_effect
+
+Refuse a send, receive, delivery or attempt that lacks the required successful effect (FR-056, FR-056-AC-2).
+
+### observe_compensation_before_effect
+
+Observe compensation before its paired forward effect (FR-056-AC-4, FR-057-AC-3).
+
+### replay_forward_effect
+
+Replay the same effect identity, which creates no second registration (FR-056-AC-3).
+
+### register_after_forbidding_commit
+
+Register after a forbidding commit (FR-057, FR-057-AC-3).
+
+### observe_compensation_attempt
+
+Observe a compensation attempt for this registration (FR-058).
+
+### retry_attempt
+
+Observe a retried attempt within the authored finite retry bound (FR-058-AC-1).
+
+### refuse_attempt_beyond_retry_bound
+
+Refuse an attempt beyond the authored finite retry bound (FR-058, FR-058-AC-4).
+
+### observe_compensation_after_forbidding_commit
+
+Observe compensation after a forbidding commit (FR-057, FR-057-AC-3).
+
+### establish_compensation_effect
+
+Establish the compensation effect, held distinct from the attempt (FR-051, FR-058).
+
+### decide_recovery
+
+Evaluate the authored typed recovery relation over the retained target and achieved states (FR-057).
+
+### report_incomplete_inputs
+
+Report a missing state, commit or compensation-effect input as incomplete (FR-057-AC-4).
+
+## Transitions
+
+| From | To | Trigger | Guard | Emits |
+|---|---|---|---|---|
+| not_registered | registered | register_compensation | | |
+| not_registered | refused_without_effect | refuse_registration_without_effect | | |
+| not_registered | ordering_violation | observe_compensation_before_effect | | |
+| registered | registered | replay_forward_effect | | |
+| registered | ordering_violation | register_after_forbidding_commit | | |
+| registered | attempt_observed | observe_compensation_attempt | | |
+| attempt_observed | attempt_observed | retry_attempt | | |
+| attempt_observed | retry_bound_refused | refuse_attempt_beyond_retry_bound | | |
+| attempt_observed | ordering_violation | observe_compensation_after_forbidding_commit | | |
+| attempt_observed | effect_established | establish_compensation_effect | | |
+| effect_established | recovery_decided | decide_recovery | | |
+| effect_established | incomplete | report_incomplete_inputs | | |
+
+The initial pseudostate of the diagram below enters `not_registered` and is not a state, so it is drawn in the diagram only.
+
+## State diagram
 
 ```mermaid
 stateDiagram-v2

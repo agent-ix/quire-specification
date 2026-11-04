@@ -27,7 +27,7 @@ When a global-conformance claim is reported, the result producer SHALL retain ex
 | `open` | The global closure record is open. It prevents complete global success and remains represented (FR-059, FR-061). |
 | `incomplete` | The global closure record is incomplete. It prevents complete global success and remains represented (FR-059, FR-061). |
 | `contradicted` | The global closure record is contradicted. It prevents complete global success and remains represented (FR-059, FR-061). |
-| `not-required` | The claim is not global conformance. The record is explicitly `not-required` and carries no global premise set; a supplied global premise under `not-required`, a global claim marked `not-required`, or another progress/closure axis relabelled `not-required` is refused (FR-061, FR-115, FR-116). |
+| not_required | Wire spelling `not-required`. The claim is not global conformance. The record is explicitly `not-required` and carries no global premise set; a supplied global premise under `not-required`, a global claim marked `not-required`, or another progress/closure axis relabelled `not-required` is refused (FR-061, FR-115, FR-116). |
 
 ## Identity and comparison
 

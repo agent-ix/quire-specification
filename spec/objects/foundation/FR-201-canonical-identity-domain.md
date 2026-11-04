@@ -30,6 +30,18 @@ than its components.
 - **Causal order** — not applicable. An identity participates in no causal
   structure.
 
+## Values
+
+| Value | Description |
+|---|---|
+| NodeId | Structural identity whose exact members, in comparison order, are `package`, `path`, `ordinal`; defined in "Structural identities" below. |
+| EffectiveId | Structural identity whose exact members, in comparison order, are `owner_effective_type`, `original`; defined in "Structural identities" below. |
+| MemberId | Structural identity whose exact members, in comparison order, are `owner`, `member`; defined in "Structural identities" below. |
+| VariantId | Structural identity whose exact members, in comparison order, are `owner`, `case`; defined in "Structural identities" below. |
+| UnitId | Structural identity whose exact members, in comparison order, are one arm: `declared`, or `terms`; defined in "Structural identities" below. |
+| UniverseId | Structural identity whose exact members, in comparison order, are the `NodeId` itself; defined in "Structural identities" below. |
+| PopulationId | Structural identity whose exact members, in comparison order, are the `NodeId` itself; defined in "Structural identities" below. |
+
 ## Structural identities
 
 A structural identity is a value of named components compared componentwise,

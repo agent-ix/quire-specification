@@ -27,6 +27,30 @@ no provider present.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| decision | MeasuredDecision | 1..1 |  |
+| estimate | String | 1..1 |  |
+| interval | String | 1..1 |  |
+| basis | String | 1..1 |  |
+| provenance | String | 1..1 |  |
+| tests | String | 0..* |  |
+| witnesses | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| estimate | type not stated in source; see Field sources |
+| interval | type not stated in source; see Field sources |
+| basis | type not stated in source; see Field sources |
+| provenance | type not stated in source; see Field sources |
+| tests | type not stated in source; see Field sources |
+| witnesses | type not stated in source; see Field sources |
+
+
 The value has two parts: the `StatisticalVerdict` record and the sampled
 witnesses it holds, each with its replay rule below.
 

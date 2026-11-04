@@ -23,8 +23,10 @@ position, coverage and authority facts.
 
 | Value | Description |
 | --- | --- |
-| `execution-origin` | The exact authoritative origin of the assessed execution; the selected false-extension profile may interpret positions before it. |
-| `history-cutoff` | The earliest position supplied by a retained history or admitted state restoration; it proves no fact about earlier execution positions. |
+| execution_origin | Wire spelling `execution-origin`. The exact authoritative origin of the assessed execution; the selected false-extension profile may interpret positions before it. |
+| history_cutoff | Wire spelling `history-cutoff`. The earliest position supplied by a retained history or admitted state restoration; it proves no fact about earlier execution positions. |
+
+The Value column holds the Identifier form of each member (`execution_origin`, `history_cutoff`); the wire spelling (`execution-origin`, `history-cutoff`) leads each Description and is the spelling every other artifact quotes.
 
 A state-restoration contract may authenticate complete history through a
 `history-cutoff`; it cannot relabel that cutoff as an execution origin. A

@@ -20,6 +20,29 @@ between a selected snapshot and a selected event-time window."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| snapshot_identity | String | 1..1 |  |
+| distinctness_from_a_window | String | 1..1 |  |
+| subject_participation | String | 1..1 |  |
+| declaration_and_membership_selection | String | 1..1 |  |
+| capture_assertion | String | 1..1 |  |
+| admitted_observations | AdmittedObservationIdentityPreimage | 0..* |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| snapshot_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| distinctness_from_a_window | type not stated in source; see Field sources |
+| subject_participation | type not stated in source; see Field sources |
+| declaration_and_membership_selection | type not stated in source; see Field sources |
+| capture_assertion | type not stated in source; see Field sources |
+| admitted_observations | sorted distinct bounded observation keys |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Snapshot identity | FR-112 Description | Retained among "population and snapshot/window identities". |

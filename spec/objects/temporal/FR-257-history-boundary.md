@@ -24,6 +24,24 @@ FR-092 states the distinction as a rule about what a supplied boundary proves:
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| boundary_kind | HistoryBoundaryKind | 1..1 |  |
+| boundary_position | String | 1..1 |  |
+| closure_authority | String | 1..1 |  |
+| covered_history | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| boundary_position | type not stated in source; see Field sources |
+| closure_authority | type not stated in source; multiplicity not stated in source; see Field sources |
+| covered_history | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Boundary kind | FR-092 Behavior | Exactly one FR-293 `execution-origin` or `history-cutoff`. The two are not interchangeable. |

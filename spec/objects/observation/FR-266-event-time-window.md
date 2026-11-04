@@ -26,6 +26,29 @@ Behavior applies progress and closure "only to admitted members with instants
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| window_identity | String | 1..1 |  |
+| start | String | 1..1 |  |
+| end | String | 1..1 |  |
+| bounds | String | 1..1 |  |
+| distinctness_from_a_snapshot | String | 1..1 |  |
+| progress_and_closure_applicability | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| window_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| start | type not stated in source; multiplicity not stated in source; see Field sources |
+| end | type not stated in source; multiplicity not stated in source; see Field sources |
+| bounds | type not stated in source; see Field sources |
+| distinctness_from_a_snapshot | type not stated in source; see Field sources |
+| progress_and_closure_applicability | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Window identity | FR-112 Description | Retained among "population and snapshot/window identities". |

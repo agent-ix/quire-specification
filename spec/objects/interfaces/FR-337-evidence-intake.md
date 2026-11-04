@@ -18,6 +18,32 @@ When a producer result enters the assurance evidence store, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| evidence_id | String | 1..1 |  |
+| subjects | String | 1..1 |  |
+| results | String | 1..1 |  |
+| artifacts | String | 1..1 |  |
+| traceability | String | 1..1 |  |
+| rights | String | 1..1 |  |
+| limitations | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| subjects | type not stated in source; see Field sources |
+| results | type not stated in source; multiplicity not stated in source; see Field sources |
+| artifacts | type not stated in source; multiplicity not stated in source; see Field sources |
+| traceability | type not stated in source; multiplicity not stated in source; see Field sources |
+| rights | type not stated in source; multiplicity not stated in source; see Field sources |
+| limitations | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 - `contract_version` — exactly `quire.evidence-intake/v1`.
 - `evidence_id` — the evidence's identifier, assigned at intake and compared as an exact string.
 - `subjects` — exact requirement, semantic, implementation and run identities.

@@ -18,6 +18,33 @@ When a verification provider returns a method result, the producer SHALL use the
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| run_id | String | 1..1 |  |
+| subject_claim | String | 1..1 |  |
+| outcome | String | 1..1 |  |
+| assumptions_domain | String | 1..1 |  |
+| witness | String | 1..1 |  |
+| coverage | String | 1..1 |  |
+| provenance | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| run_id | type not stated in source; multiplicity not stated in source; see Field sources |
+| subject_claim | type not stated in source; see Field sources |
+| outcome | type not stated in source; multiplicity not stated in source; see Field sources |
+| assumptions_domain | type not stated in source; see Field sources |
+| witness | type not stated in source; multiplicity not stated in source; see Field sources |
+| coverage | type not stated in source; multiplicity not stated in source; see Field sources |
+| provenance | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 - `contract_version` — exactly `quire.method-result/v1`.
 - `run_id` — request, provider and option identity.
 - `subject_claim` — exact obligation and claimed strength.

@@ -45,6 +45,29 @@ operation agree.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| semantic_type | JsonObject | 1..1 |  |
+| occurrences | JsonObject | 0..* |  |
+| modifies | JsonObject | 0..* |  |
+| creates | JsonObject | 0..* |  |
+| deletes | JsonObject | 0..* |  |
+| deletes_scoped | JsonObject | 0..* |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| semantic_type | NodeRef; see Field sources |
+| occurrences | every occurrence has role `generated`; type and multiplicity not stated in source; see Field sources |
+| modifies | array of FrameModifiesEntry |
+| creates | array of NodeRef |
+| deletes | array of NodeRef |
+| deletes_scoped | array of FrameDeletesScopedEntry |
+
+
 - **semantic_type** (`NodeRef`) — the `model`/`object_type`, `model`/`process`
   or `model`/`state_machine` node declaring the operations that share this
   frame: the `context` of every `state`/`operation_anchor` node that binds the

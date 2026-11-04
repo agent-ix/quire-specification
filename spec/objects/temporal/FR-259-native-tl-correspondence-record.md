@@ -26,6 +26,39 @@ generated TL artifact is internal derived output and never editable source."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| native_source_identity_and_exact_clause_expression_span | SourceRegion | 1..1 |  |
+| clause_requirement_identity | String | 1..1 |  |
+| language_and_temporal_profile_definition | TemporalSemanticProfile | 1..1 |  |
+| model_type_predicate_bindings | String | 1..1 |  |
+| evaluation_anchor | TemporalEvaluationAnchor | 1..1 |  |
+| immutable_capture_environment | ActivationCapture | 1..1 |  |
+| clock_observation_binding | TemporalClockBinding | 1..1 |  |
+| interval | BoundedTemporalInterval | 1..1 |  |
+| closure_history_premises | String | 1..1 |  |
+| tl_formula_profile_proposition_identities | String | 1..1 |  |
+| bridge_definition | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| native_source_identity_and_exact_clause_expression_span | multiplicity not stated in source; see Field sources |
+| clause_requirement_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| language_and_temporal_profile_definition | multiplicity not stated in source; see Field sources |
+| model_type_predicate_bindings | type not stated in source; multiplicity not stated in source; see Field sources |
+| evaluation_anchor | multiplicity not stated in source; see Field sources |
+| immutable_capture_environment | multiplicity not stated in source; see Field sources |
+| clock_observation_binding | multiplicity not stated in source; see Field sources |
+| interval | multiplicity not stated in source; see Field sources |
+| closure_history_premises | closure and history premises of FR-257 and FR-258; type not stated in source; see Field sources |
+| tl_formula_profile_proposition_identities | type not stated in source; see Field sources |
+| bridge_definition | type not stated in source; see Field sources |
+
+
 FR-095 enumerates the preserved axes verbatim. For a supported mapping, the
 bridge preserves:
 

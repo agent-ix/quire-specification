@@ -53,17 +53,17 @@ outcome independent from every other member.
 
 | Value | Description |
 | --- | --- |
-| `value-validity` | Whether a Boolean clause over admitted values, pure expressions and function applications holds for every assignment of its declared domain. |
-| `operation-contract` | Whether a state operation's precondition, postcondition, invariant and frame clauses hold for every admitted pre-state and input. |
-| `finite-replay` | Whether one finite execution, recorded or generated, conforms step by step to the selected protocol semantics. |
-| `temporal-satisfaction` | Whether a temporal requirement holds over the traces of its selected temporal profile. |
-| `global-conformance` | Finite global protocol conformance under the exact selected closure premises. |
+| value_validity | Wire spelling `value-validity`. Whether a Boolean clause over admitted values, pure expressions and function applications holds for every assignment of its declared domain. |
+| operation_contract | Wire spelling `operation-contract`. Whether a state operation's precondition, postcondition, invariant and frame clauses hold for every admitted pre-state and input. |
+| finite_replay | Wire spelling `finite-replay`. Whether one finite execution, recorded or generated, conforms step by step to the selected protocol semantics. |
+| temporal_satisfaction | Wire spelling `temporal-satisfaction`. Whether a temporal requirement holds over the traces of its selected temporal profile. |
+| global_conformance | Wire spelling `global-conformance`. Finite global protocol conformance under the exact selected closure premises. |
 | `monitorability` | Whether the selected admitted fragment can be monitored under the declared observations. |
-| `local-projection` | Whether one selected participant projection is defined under its exact premises. |
+| local_projection | Wire spelling `local-projection`. Whether one selected participant projection is defined under its exact premises. |
 | `refinement` | Whether one exact protocol refines another under a selected relation; its two subjects are protocol models (FR-177). |
 | `realizability` | Whether the selected protocol admits a causal implementation strategy. |
 | `composition` | Whether selected components compose under independently discharged assumptions. |
-| `probabilistic-satisfaction` | Whether a probabilistic claim's bound holds over a model subject under its workload or every scheduler ([FR-407](../../functional/analysis/FR-407-state-probabilistic-claims.md)), with `statistical` or `exact` evidence. |
+| probabilistic_satisfaction | Wire spelling `probabilistic-satisfaction`. Whether a probabilistic claim's bound holds over a model subject under its workload or every scheduler ([FR-407](../../functional/analysis/FR-407-state-probabilistic-claims.md)), with `statistical` or `exact` evidence. |
 | `schedulability` | Whether a task set is schedulable, or a task's response time is bounded, under a named scheduling policy ([FR-419](../../functional/analysis/FR-419-analyze-task-set-schedulability.md)). |
 
 ## Families

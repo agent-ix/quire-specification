@@ -19,6 +19,27 @@ When a conformance result is derived, the result SHALL identify the exact premis
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| sender | String | 1..1 |  |
+| receiver | String | 1..1 |  |
+| message_type | String | 1..1 |  |
+| ordering_policy | String | 1..1 |  |
+| delivery_policy | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| sender | type not stated in source; see Field sources |
+| receiver | type not stated in source; see Field sources |
+| message_type | type not stated in source; see Field sources |
+| ordering_policy | type not stated in source; see Field sources |
+| delivery_policy | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Sender | FR-054 | The exact authored sending role of the channel. Missing or conflicting refuses admission. |

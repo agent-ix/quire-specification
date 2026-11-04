@@ -23,9 +23,23 @@ relationships:
 
 When a protocol body is linked, the protocol linker SHALL construct one finite acyclic causal control graph for authored sequence, labeled choice, parallel branches, join, bounded iteration and termination without deriving causal edges from source order or timestamps ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)).
 
+## Properties
+
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | QualifiedProtocolDefinitionIdentity | 1..1 | identity |
+
 ## Members
 
+| Member | Multiplicity |
+|---|---|
+| ProtocolNodeOccurrence | 0..* |
+| OwnedChoice | 0..* |
+| BoundedControlConstruct | 0..* |
+
 The graph is the aggregate; its members have no standing outside it.
+
+## Member descriptions
 
 - **node occurrences** ([FR-221](FR-221-protocol-node-occurrence.md)) — the
   typed protocol nodes the graph orders. FR-052 takes "typed protocol nodes" as
