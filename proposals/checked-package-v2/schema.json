@@ -4381,6 +4381,7 @@
         "quire.op.function.call",
         "quire.op.temporal.clause",
         "quire.op.temporal.holds",
+        "quire.op.temporal.aggregate",
         "quire.op.temporal.true",
         "quire.op.temporal.false",
         "quire.op.temporal.not",

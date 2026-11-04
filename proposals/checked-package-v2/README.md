@@ -77,6 +77,11 @@ structures, but any external consumer receives only the contract.
   for operation, protocol-root, attempt-node, parallel-branch,
   compensation-template and hybrid-transition targets, plus closed-shape
   mutations rejected by the V2 `OperationMember` schema (FR-322-AC-293).
+- `temporal-aggregate-vectors.json` publishes the one `aggregate` argument of
+  `quire.op.temporal.aggregate` (FR-370 "Window aggregate atom"): a positive
+  per aggregate kind and the reader cases AR-* with the first defect's code,
+  cause and body-relative pointer (FR-370-AC-17, FR-370-AC-18). The reader
+  that decides them is quire-contract-ir's.
 - `fixtures/protocol-node-base.json` is the checked OrderFlow base package of
   the protocol node vectors (TC-946, TC-947, TC-948).
   `fixtures/protocol-node-mutation-manifest.json` is their executable form
