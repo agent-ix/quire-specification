@@ -86,7 +86,7 @@ FR-465-AC-10.
 | CH13a | `delivery` is each of `[0,3]`, `[0,0]`, `[2,2]` and `[0,18446744073709551615]` | admitted: four distinct channel bodies, each distinct from CH13's; the channel's node id, its declaration path, is unchanged |
 | CH13b | `delivery` is `[0,3]`, then `[0,4]`; `delivery` is `[1,1]`, then `exactly-once-premise` | admitted; each pair gives two different channel bodies |
 | CH14 | `delivery` is `exactly-once` | refuses `malformed_wire` |
-| CH14a | `delivery` is each of `[4,3]`, `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` | refuses `malformed_wire` at the `delivery` term |
+| CH14a | `delivery` is each of `[4,3]`, `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` | refuses `malformed_wire` at the channel node pointer `/semantic_graph/nodes/{i}`: the V2 schema refuses a spelling that is not an interval shape (a space, a leading zero, a sign, a fraction, a missing bound, an unclosed or unopened bracket) at the channel node pointer `/semantic_graph/nodes/{i}`, and the reader's strict wire layout check refuses `lo > hi` and a numeral above 18446744073709551615 at the same pointer, because no JSON Schema keyword expresses either |
 | CH15 | `delivery` removed | refuses `malformed_wire` |
 | CH16 | `ordering` removed | refuses `malformed_wire` |
 | CH17 | changing `delivery` from `at-least-once` to `unknown` | the channel's body, the clause's and the checked package change |
