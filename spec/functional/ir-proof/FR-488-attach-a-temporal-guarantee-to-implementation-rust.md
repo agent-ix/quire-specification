@@ -29,9 +29,10 @@ relationships:
 
 When a temporal claim over a model subject is requested as a guarantee of the
 implementation Rust bound to that subject, the verification planner SHALL
-settle it `proved` only from four premises it carries by identity: the claim
+settle it `proved` only from the premises it carries by identity: the claim
 proved over the model, a checked correspondence between the implementation and
-the model, a progress-preservation premise and the environment premises. A
+the model and the environment premises, and, for a liveness or progress claim
+only, a progress-preservation premise. A
 state abstraction binding (FR-353) is one input of the correspondence and is
 never by itself a temporal proof.
 
@@ -97,10 +98,12 @@ frame and the environment premises it reads; it needs no progress item.
 
 | Premises and checks | FR-360 label | FR-243 basis | Cause |
 | --- | --- | --- | --- |
-| All premises `proved` or supplied, correspondence and progress items `proved` for a liveness clause | `proved` | `decisive-witness` | none; the witness is the set of premise records |
+| A liveness clause with every premise and every correspondence and progress item `proved` | `proved` | `decisive-witness` | none; the witness is the set of premise records |
+| A safety clause with the model claim, initialization, transition simulation, frame and environment premises `proved` or supplied | `proved` | `decisive-witness` | none; no progress item is read |
+| The model claim not `proved` | `inconclusive` | `unsettled` | `premise-unproved`, naming the model claim and its result |
 | A correspondence item not `proved` (a violating step included) | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise and its result |
-| An infinite stutter behaviour, an absent measure, or a fairness premise stronger than the environment's | `inconclusive` | `unsettled` | `transfer-not-preserving`, naming the divergence or the unimplied constraint |
-| A required premise not supplied | `inconclusive` | `unsettled` | `premise-missing`, naming the premise |
+| A progress item not `proved` (an infinite stutter behaviour, an absent measure, a fairness premise stronger than the environment's, or no progress item for a liveness clause) | `inconclusive` | `unsettled` | `premise-unproved`, naming the progress item and its result |
+| A premise identity that names no settled result | -- | -- | refused `invalid_runtime_input`/`invalid-value`, naming the member (FR-380) |
 | A model element with no bound abstraction relation | -- | -- | refused `missing_declaration`/`missing-name` (FR-353-AC-3), scoped to the item |
 | Verus or the checking backend not registered | `unsupported` | `unavailable` | the missing capability (FR-350-AC-5) |
 | Work or resource bound reached | `incomplete` | `unavailable` | the reached limit |
@@ -108,7 +111,7 @@ frame and the environment premises it reads; it needs no progress item.
 A guarantee item is never `refuted`: an implementation counterexample refutes a
 correspondence premise, not the model claim. A finite implementation trace,
 however long, is evidence for that trace only and never promotes a liveness
-guarantee to `proved`. Missing backend, missing premise, missing binding and
+guarantee to `proved`. Missing backend, missing premise identity, missing binding and
 exhausted work stay distinct outcomes, each with its own extent; a result that
 only references another result is not evidence of its validity (FR-354).
 
@@ -126,12 +129,14 @@ invalidates the record.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-488-AC-1 | A liveness item whose model claim, initialization, transition simulation, frame, no-divergence and fairness-correspondence premises are all `proved` and whose environment premises are supplied settles `proved`, basis `decisive-witness`, with the conclusion record naming the relation revision, the claim and `F_P`, every premise result, the assumptions, the extent and the trust basis. | Test (TC-982) |
-| FR-488-AC-2 | An implementation step that violates the abstraction relation refutes the transition premise with a replayable counterexample and the guarantee item settles `inconclusive`, cause `premise-unproved`, naming the transition premise; the same implementation with only per-step contracts proved (FR-350) and no progress item does not settle a liveness item `proved`. | Test (TC-982) |
-| FR-488-AC-3 | An implementation with an infinite run of allowed-stutter steps, and one whose stutter steps decrease no declared measure, settle `inconclusive`, cause `transfer-not-preserving`, naming the divergence; a fairness premise stronger than the environment's settles it the same way naming the unimplied constraint. | Test (TC-982) |
-| FR-488-AC-4 | A safety item settles `proved` from the model claim, initialization, transition simulation, frame and environment premises with no progress item; the same clause as a liveness item without the progress items settles `inconclusive`, cause `premise-missing`. | Test (TC-982) |
-| FR-488-AC-5 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability, a missing premise settles `premise-missing`, and an exhausted bound settles `incomplete`; the four are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
-| FR-488-AC-6 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
-| FR-488-AC-7 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
+| FR-488-AC-2 | An implementation step that violates the abstraction relation refutes the transition premise with a replayable counterexample and the guarantee item settles `inconclusive`, cause `premise-unproved`, naming the transition premise. | Test (TC-982) |
+| FR-488-AC-3 | A liveness item whose implementation has only the FR-350 per-step contracts proved and no progress item settles `inconclusive`, cause `premise-unproved`, naming the first progress item. | Test (TC-982) |
+| FR-488-AC-4 | An implementation with an infinite run of allowed-stutter steps, one whose stutter steps decrease no declared measure, and one whose fairness premise is stronger than the environment's each settle `inconclusive`, cause `premise-unproved`, naming the progress item. | Test (TC-982) |
+| FR-488-AC-5 | A safety item settles `proved` from the model claim, initialization, transition simulation, frame and environment premises with no progress item. | Test (TC-982) |
+| FR-488-AC-6 | A model claim not `proved` settles `inconclusive`, cause `premise-unproved`, naming the model claim; a premise identity naming no settled result is refused `invalid_runtime_input`/`invalid-value`. | Test (TC-982) |
+| FR-488-AC-7 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles `incomplete`; the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
+| FR-488-AC-8 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
+| FR-488-AC-9 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
 
 ## Dependencies
 

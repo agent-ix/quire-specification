@@ -25,21 +25,23 @@ boundary:
 1. Supply all premises, each discharged by a proved guarantee naming its own
    subject, under a supported composition rule.
 2. Supply the liveness dependency as one success flag; then as the four lists.
-3. Discharge the liveness dependency with a guarantee over `Consumer`, then
-   with a weaker liveness claim, then with a safety guarantee.
-4. Make `Producer`'s guarantee depend on `Consumer`'s progress; then declare a
-   well-founded measure and discharge it.
-5. Omit a premise; supply an assumption as trusted; select an unsupported
-   rule; fail a component check; deny a work-unit bound.
-6. Supply a premise identity naming no settled result; one whose subject
-   differs; one whose referenced result is `inconclusive`; add an unrelated
-   supported claim to each request.
+3. Supply the liveness dependency's guarantee over `Consumer` instead of
+   `Producer`, then a weaker liveness claim, then a safety guarantee, each as
+   a supplied guarantee that does not name a discharge record.
+4. Make `Producer`'s guarantee depend on `Consumer`'s progress under a rule
+   with no declared lattice; then under a profile declaring FR-176's monotone
+   lattice, initial element and convergence rule.
+5. Supply a premise discharged only by a trusted assumption; select an
+   unsupported rule; fail a component check; deny a work-unit bound.
+6. Supply a discharge record whose guarantee subject differs from its premise's
+   subject; one whose identity names no settled result; one whose referenced
+   result is `inconclusive`; add an unrelated supported claim to each request.
 
 ## Expected Results
 
 1. `proved`, `decisive-witness`, with the premise discharge record.
 2. The flag refused `invalid_runtime_input`/`invalid-value`; the four lists accepted.
-3. Each `inconclusive`/`premise-mismatch`, premise undischarged.
-4. `inconclusive`/`circular-reasoning`; with the measure `proved`.
-5. `premise-missing`; `trusted` naming the assumption; `unsupported` naming the capability; `premise-unproved`; `incomplete`; five distinct outcomes.
-6. Refused naming the member; refused; premise undischarged; the unrelated claim settles in each.
+3. Each `inconclusive`/`premise-unproved` naming the premise, premise undischarged.
+4. Refused as FR-176-AC-3 refuses circular reasoning; with the lattice accepted and every iteration recorded.
+5. `proved` with certification `trusted` naming the assumption; `unsupported` naming the capability; `inconclusive`/`premise-unproved`; `incomplete`; four distinct outcomes.
+6. The first two refused `invalid_runtime_input`/`invalid-value` naming the member; the third leaves the premise undischarged (`inconclusive`/`premise-unproved`); the unrelated claim settles in each.

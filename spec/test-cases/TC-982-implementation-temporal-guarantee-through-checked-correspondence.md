@@ -43,10 +43,10 @@ Rust boundary and compare the complete typed result.
 
 1. `proved`, `decisive-witness`, with the conclusion record of FR-488.
 2. Transition premise refuted with a counterexample, item `inconclusive`/`premise-unproved` naming it.
-3. `inconclusive`, `premise-missing` (or `premise-unproved`), never `proved`.
-4. The unmeasured loop `inconclusive`/`transfer-not-preserving` naming divergence; the counted loop `proved`.
-5. `inconclusive`/`transfer-not-preserving` naming the constraint.
-6. Safety `proved` without progress items; the liveness item `inconclusive`/`premise-missing`.
+3. `inconclusive`/`premise-unproved` naming the first progress item.
+4. The unmeasured loop `inconclusive`/`premise-unproved` naming the progress item; the counted loop `proved`.
+5. `inconclusive`/`premise-unproved` naming the fairness-correspondence item.
+6. Safety `proved` without progress items; the liveness item `inconclusive`/`premise-unproved` naming the first progress item.
 7. Refused `missing_declaration`/`missing-name`; `unsupported` naming the capability; `incomplete` naming the limit; the three are distinct and sibling items settle independently.
 8. Not `proved`; no item settles `refuted`.
 9. Each invalidates the record and the item is settled again.
