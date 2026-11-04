@@ -32,9 +32,19 @@ configuration".
 | relationship_type | String | 1..1 |  |
 | domain_package_identity | String | 1..1 |  |
 | relationship_declaration_key | String | 1..1 |  |
-| related_instance_endpoints | String | 1..1 |  |
+| related_instance_endpoints | String | 0..* |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| relationship_type | type not stated in source; multiplicity not stated in source; see Field sources |
+| domain_package_identity | type not stated in source; see Field sources |
+| relationship_declaration_key | type not stated in source; see Field sources |
+| related_instance_endpoints | type not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

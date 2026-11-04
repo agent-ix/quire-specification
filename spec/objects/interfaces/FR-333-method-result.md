@@ -31,6 +31,20 @@ When a verification provider returns a method result, the producer SHALL use the
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| run_id | type not stated in source; multiplicity not stated in source; see Field sources |
+| subject_claim | type not stated in source; see Field sources |
+| outcome | type not stated in source; multiplicity not stated in source; see Field sources |
+| assumptions_domain | type not stated in source; see Field sources |
+| witness | type not stated in source; multiplicity not stated in source; see Field sources |
+| coverage | type not stated in source; multiplicity not stated in source; see Field sources |
+| provenance | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 - `contract_version` — exactly `quire.method-result/v1`.
 - `run_id` — request, provider and option identity.
 - `subject_claim` — exact obligation and claimed strength.

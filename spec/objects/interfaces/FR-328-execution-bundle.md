@@ -23,13 +23,27 @@ When domain results are composed for a workflow request, the producer SHALL use 
 | contract_version | String | 1..1 |  |
 | request | String | 1..1 |  |
 | shared_prerequisites | String | 1..1 |  |
-| state_results | String | 1..1 |  |
-| temporal_results | String | 1..1 |  |
-| protocol_results | String | 1..1 |  |
-| analysis_results | String | 1..1 |  |
+| state_results | String | 0..* |  |
+| temporal_results | String | 0..* |  |
+| protocol_results | String | 0..* |  |
+| analysis_results | String | 0..1 |  |
 | bundle_disposition | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| request | type not stated in source; multiplicity not stated in source; see Field sources |
+| shared_prerequisites | type not stated in source; see Field sources |
+| state_results | type not stated in source; see Field sources |
+| temporal_results | type not stated in source; see Field sources |
+| protocol_results | type not stated in source; see Field sources |
+| analysis_results | type not stated in source; see Field sources |
+| bundle_disposition | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 - `contract_version` — exactly `quire.execution-bundle/v1`.
 - `request` — package, workflow, selected claims, observations, domains and limits.

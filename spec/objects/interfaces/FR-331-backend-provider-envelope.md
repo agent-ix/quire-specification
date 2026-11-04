@@ -99,18 +99,34 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
-| capability_vocabulary | String | 1..1 |  |
-| manifest | RequestAndNegotiateTemporalItemsOverAModelSubject | 1..1 |  |
-| request | SettleProbabilisticClaimsWithStatisticalEvidence | 1..1 |  |
-| temporal | RequestAndNegotiateTemporalItemsOverAModelSubject | 1..1 |  |
-| candidates | String | 1..1 |  |
+| capability_vocabulary | ProtocolClaimKind | 1..1 |  |
+| manifest | String | 0..* |  |
+| request | String | 1..1 |  |
+| temporal | String | 1..1 |  |
+| candidates | String | 0..* |  |
 | dispositions | String | 1..1 |  |
 | artifacts | String | 1..1 |  |
-| results | MeasuredDecisionVocabulary | 1..1 |  |
-| counterexamples | CarryAndReplayATemporalCounterexample | 1..1 |  |
-| accounting | SettleATemporalClaimOverEveryBehaviourOfAModel | 1..1 |  |
+| results | String | 1..1 |  |
+| counterexamples | String | 1..1 |  |
+| accounting | String | 0..* |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| manifest | type not stated in source; see Field sources |
+| request | type not stated in source; see Field sources |
+| temporal | type not stated in source; see Field sources |
+| candidates | type not stated in source; see Field sources |
+| dispositions | type not stated in source; multiplicity not stated in source; see Field sources |
+| artifacts | type not stated in source; multiplicity not stated in source; see Field sources |
+| results | type not stated in source; see Field sources |
+| counterexamples | type not stated in source; multiplicity not stated in source; see Field sources |
+| accounting | type not stated in source; see Field sources |
+
 
 - `contract_version` — exactly `quire.backend-provider/v1`.
 - `capability_vocabulary` — exactly `quire.capability-kind/v1`; it selects the FR-290 vocabulary for every kind in `manifest`, `request` and `results`.

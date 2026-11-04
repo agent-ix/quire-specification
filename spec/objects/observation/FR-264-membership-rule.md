@@ -27,6 +27,15 @@ mismatch is refused without ambient defaulting.
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| rule_identity | type not stated in source; see Field sources |
+| finiteness | type not stated in source; see Field sources |
+| required_members | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Rule identity | FR-112 Description | "declared finite membership rule": the contract name and version. A mismatch refuses (FR-112-AC-4). |

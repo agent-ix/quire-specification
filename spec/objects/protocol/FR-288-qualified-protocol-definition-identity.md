@@ -21,12 +21,21 @@ When a linked protocol definition is used as an identity qualifier, the linker S
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| authored_source_document_key | String | 1..1 |  |
+| authored_source_document_key | AuthoredSourceDocument | 1..1 |  |
 | admitted_declaration_handle | String | 1..1 |  |
 | formal_owner_and_clause | String | 1..1 |  |
 | semantic_selection_closure | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| admitted_declaration_handle | type not stated in source; see Field sources |
+| formal_owner_and_clause | type not stated in source; see Field sources |
+| semantic_selection_closure | type not stated in source; see Field sources |
+
 
 - **authored source document key** — the exact FR-202 document identity
   of the source owning the declaration.

@@ -28,11 +28,21 @@ derive, not copy, a target status.
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | requiredRoleInstanceRefs | String | 0..1 |  |
-| participatingRoleInstanceRefs | String | 0..1 |  |
+| participatingRoleInstanceRefs | String | 1..1 |  |
 | missingDependencyRefs | String | 0..1 |  |
 | reasons | String | 0..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| requiredRoleInstanceRefs | required by variant `known` only, forbidden in `unknown`; type not stated in source; see Field sources |
+| participatingRoleInstanceRefs | required by both variants; type not stated in source; see Field sources |
+| missingDependencyRefs | required by variant `unknown` only, forbidden in `known`; type not stated in source; see Field sources |
+| reasons | required by variant `unknown` only, forbidden in `known`; type not stated in source; see Field sources |
+
 
 | Variant | Required properties | Meaning |
 | --- | --- | --- |

@@ -33,6 +33,16 @@ When a communication or business observation is bound to a protocol instance, th
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| role | type not stated in source; see Field sources |
+| operation | type not stated in source; see Field sources |
+| outcome | type not stated in source; see Field sources |
+
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — an attempt is
   an authored protocol node. The
   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)

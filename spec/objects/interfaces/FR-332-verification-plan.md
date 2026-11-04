@@ -23,7 +23,7 @@ When an authored verification plan completes linking, the producer SHALL use the
 | contract_version | String | 1..1 |  |
 | plan_id | String | 1..1 |  |
 | obligations | String | 1..1 |  |
-| methods | String | 1..1 |  |
+| methods | String | 0..* |  |
 | domains | String | 1..1 |  |
 | assumptions | String | 1..1 |  |
 | dependencies | String | 1..1 |  |
@@ -31,6 +31,20 @@ When an authored verification plan completes linking, the producer SHALL use the
 | providers | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| obligations | type not stated in source; see Field sources |
+| methods | type not stated in source; see Field sources |
+| domains | type not stated in source; multiplicity not stated in source; see Field sources |
+| assumptions | type not stated in source; multiplicity not stated in source; see Field sources |
+| dependencies | type not stated in source; multiplicity not stated in source; see Field sources |
+| bounds | type not stated in source; multiplicity not stated in source; see Field sources |
+| providers | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 - `contract_version` — exactly `quire.verification-plan/v1`.
 - `plan_id` — the identity assigned to the plan, compared as an exact string. It is not computed from the other members.

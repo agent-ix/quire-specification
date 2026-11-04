@@ -26,13 +26,27 @@ When the protocol linker admits a protocol channel, the linker SHALL bind its se
 | key | String | 1..1 | identity |
 | sender | String | 1..1 |  |
 | receiver | String | 1..1 |  |
-| message_types | ProtocolMessage | 1..1 |  |
+| message_types | String | 1..1 |  |
 | ordering_policy | String | 1..1 |  |
 | delivery_policy | String | 1..1 |  |
 | typed_declaration | String | 1..1 |  |
 | channel_contract | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| sender | type not stated in source; multiplicity not stated in source; see Field sources |
+| receiver | type not stated in source; multiplicity not stated in source; see Field sources |
+| message_types | type not stated in source; multiplicity not stated in source; see Field sources |
+| ordering_policy | type not stated in source; multiplicity not stated in source; see Field sources |
+| delivery_policy | type not stated in source; see Field sources |
+| typed_declaration | type not stated in source; see Field sources |
+| channel_contract | type not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

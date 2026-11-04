@@ -19,11 +19,20 @@ When a numeric operand or result is checked, the checker SHALL require its named
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| named_type | EstablishExactNumericDefinednessInTheSelectedDomain | 1..1 |  |
+| named_type | String | 1..1 |  |
 | unit | String | 1..1 |  |
-| bounds | String | 1..1 |  |
+| bounds | String | 0..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| named_type | type not stated in source; see Field sources |
+| unit | type not stated in source; see Field sources |
+| bounds | type not stated in source; see Field sources |
+
 
 - **named_type** (identity component) — the declared numeric type. Ordinary
   operands and results share their named numeric type

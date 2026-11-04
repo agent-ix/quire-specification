@@ -27,9 +27,22 @@ When a human accepts, rejects or limits a qualification or release scope, the pr
 | evidence | String | 1..1 |  |
 | disposition | String | 1..1 |  |
 | rationale | String | 1..1 |  |
-| supersedes | String | 1..1 |  |
+| supersedes | String | 0..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| actor | type not stated in source; multiplicity not stated in source; see Field sources |
+| scope | type not stated in source; see Field sources |
+| evidence | type not stated in source; multiplicity not stated in source; see Field sources |
+| disposition | type not stated in source; multiplicity not stated in source; see Field sources |
+| rationale | type not stated in source; multiplicity not stated in source; see Field sources |
+| supersedes | type not stated in source; see Field sources |
+
 
 - `contract_version` — exactly `quire.human-decision/v1`.
 - `decision_id` — the identity assigned to the decision when it is recorded, compared as an exact string.

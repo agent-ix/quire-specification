@@ -30,19 +30,31 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | request_id | String | 1..1 |  |
-| package | String | 1..1 |  |
-| byte_provision | String | 1..1 |  |
-| selection | String | 1..1 |  |
-| state_environment | String | 1..1 |  |
-| limits | String | 1..1 |  |
-| stage_limits | String | 1..1 |  |
-| results | String | 1..1 |  |
-| replay | String | 1..1 |  |
-| function | String | 1..1 |  |
-| frame_operation | CheckedPackageFrameBody | 1..1 |  |
-| state_clause | CheckedPackageStateClauseBody | 1..1 |  |
+| package | JsonObject | 1..1 |  |
+| byte_provision | JsonObject | 0..1 |  |
+| selection | String | 0..* |  |
+| state_environment | JsonObject | 1..1 |  |
+| limits | JsonObject | 1..1 |  |
+| stage_limits | JsonObject | 0..1 |  |
+| results | JsonObject | 0..* |  |
+| replay | JsonObject | 0..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.native-runtime/v1` |
+| package | exact FR-322 checked-package reference |
+| byte_provision | present on a replay request only |
+| selection | ordered clause/function identifiers |
+| state_environment | type not stated in source; see Field sources |
+| limits | `quire.value.accounting/v1` limit objects |
+| stage_limits | present on a replay request |
+| results | one ordered typed disposition per selected item |
+| replay | present only on a replay request; carries one of `function`, `frame_operation` or `state_clause` (sub-members, see Field sources) |
+
 
 - `contract_version` — exactly `quire.native-runtime/v1`.
 - `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.

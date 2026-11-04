@@ -40,6 +40,8 @@ source-obligation order ([FR-298](FR-298-per-obligation-output-mapping-record.md
 
 ## Property descriptions
 
+Type and Multiplicity in Properties were derived from this text. The text names no type for `source_package_ref`, `generator` or `limits`, so those are String; `key` is the synthetic identity row for the Key stated under Identity and comparison.
+
 | Property | Description |
 | --- | --- |
 | `source_package_ref` | Strict FS05 source-package reference: the source package identity and version the request admitted. No source digest is carried. |

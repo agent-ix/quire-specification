@@ -31,6 +31,18 @@ between a selected snapshot and a selected event-time window."
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| snapshot_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| distinctness_from_a_window | type not stated in source; see Field sources |
+| subject_participation | type not stated in source; see Field sources |
+| declaration_and_membership_selection | type not stated in source; see Field sources |
+| capture_assertion | type not stated in source; see Field sources |
+| admitted_observations | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Snapshot identity | FR-112 Description | Retained among "population and snapshot/window identities". |

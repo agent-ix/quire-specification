@@ -25,8 +25,8 @@ membership and closure provenance."
 |---|---|---|---|
 | key | String | 1..1 | identity |
 | population_key | String | 1..1 |  |
-| declared_finite_membership_rule | DeclaredMembershipRule | 1..1 |  |
-| bounds | SelectedEventTimeWindow | 1..1 |  |
+| declared_finite_membership_rule | String | 1..1 |  |
+| bounds | String | 1..1 |  |
 | domain_package_identity_version_and_population_declaration_key | String | 1..1 |  |
 | observation_sources | String | 1..1 |  |
 | configuration_identity_and_version | String | 1..1 |  |
@@ -34,6 +34,21 @@ membership and closure provenance."
 | completeness_and_progress_dependencies | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| population_key | type not stated in source; see Field sources |
+| declared_finite_membership_rule | type not stated in source; multiplicity not stated in source; see Field sources |
+| bounds | type not stated in source; see Field sources |
+| domain_package_identity_version_and_population_declaration_key | type not stated in source; see Field sources |
+| observation_sources | type not stated in source; see Field sources |
+| configuration_identity_and_version | type not stated in source; multiplicity not stated in source; see Field sources |
+| closure_identity_and_version | type not stated in source; multiplicity not stated in source; see Field sources |
+| completeness_and_progress_dependencies | type not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

@@ -36,6 +36,20 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| subject_kind | multiplicity not stated in source; see Field sources |
+| static_declaration_path | type not stated in source; see Field sources |
+| workflow_instance_identity | type not stated in source; see Field sources |
+| iteration_identity | type not stated in source; see Field sources |
+| role_ownership | type not stated in source; see Field sources |
+| declaration_span | multiplicity not stated in source; see Field sources |
+| bound_typed_record | type not stated in source; see Field sources |
+
+
 - **subject kind** ([FR-210](FR-210-protocol-subject-vocabulary.md))
   — which distinct typed subject this node observes. FR-049-AC-2 states that
   "Send, receive, delivery, operation attempt, effect and compensation

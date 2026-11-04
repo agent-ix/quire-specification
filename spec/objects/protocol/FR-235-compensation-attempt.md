@@ -31,11 +31,22 @@ receive, delivery, attempt and effect as distinct typed subjects".
 |---|---|---|---|
 | key | String | 1..1 | identity |
 | attempt_identity | String | 1..1 |  |
-| owning_registration | CompensationRegistration | 1..1 |  |
+| owning_registration | String | 1..1 |  |
 | related_effect_identity | String | 1..1 |  |
-| attempt_outcome | PartitionCompensationAttemptAndAggregateRecoveryOutcomes | 1..1 |  |
+| attempt_outcome | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| attempt_identity | type not stated in source; see Field sources |
+| owning_registration | type not stated in source; see Field sources |
+| related_effect_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| attempt_outcome | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

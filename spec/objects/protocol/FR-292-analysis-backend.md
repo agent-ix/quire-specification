@@ -23,10 +23,17 @@ the exact backend interface identity plus the admitted fragment and claim capabi
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | interface_identity | String | 1..1 |  |
-| admitted_fragment | String | 1..1 |  |
-| claim_capabilities | String | 1..1 |  |
+| admitted_fragment | AdmittedAnalysisFragment | 1..1 |  |
+| claim_capabilities | ProtocolClaimKind | 0..* |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| interface_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 - **interface identity** — nonempty owner-qualified backend contract identity.
 - **admitted fragment** — exact FR-291 key.

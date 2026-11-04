@@ -30,14 +30,27 @@ that "A quiet eligible deadline settles only with declared progress authority."
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | selected_progress_assertion_definition_identity | String | 1..1 |  |
-| declared_clock_interpretation | DistinguishableObservationTimeFacts | 1..1 |  |
+| declared_clock_interpretation | String | 1..1 |  |
 | progress_authority | String | 1..1 |  |
 | captured_trigger_identity | String | 1..1 |  |
 | late_data_cutoff | String | 1..1 |  |
 | restoration_basis | String | 1..1 |  |
-| window_applicability | SelectedEventTimeWindow | 1..1 |  |
+| window_applicability | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| selected_progress_assertion_definition_identity | type not stated in source; see Field sources |
+| declared_clock_interpretation | type not stated in source; multiplicity not stated in source; see Field sources |
+| progress_authority | type not stated in source; multiplicity not stated in source; see Field sources |
+| captured_trigger_identity | type not stated in source; see Field sources |
+| late_data_cutoff | type not stated in source; see Field sources |
+| restoration_basis | type not stated in source; multiplicity not stated in source; see Field sources |
+| window_applicability | type not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

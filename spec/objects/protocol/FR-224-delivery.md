@@ -32,6 +32,14 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| transport_record | type not stated in source; see Field sources |
+
+
 The prose distinguishes the delivery identity from the relationships it must
 satisfy and from the receipt records that provide observation provenance.
 

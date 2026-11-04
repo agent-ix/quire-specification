@@ -21,15 +21,28 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
-| source | String | 1..1 |  |
+| source | AuthoredSourceDocument | 1..1 |  |
 | edition | String | 1..1 |  |
-| tokens | String | 1..1 |  |
-| trivia | String | 1..1 |  |
-| nodes | String | 1..1 |  |
-| diagnostics | String | 1..1 |  |
+| tokens | String | 0..* |  |
+| trivia | String | 0..* |  |
+| nodes | String | 0..* |  |
+| diagnostics | DiagnosticCatalog | 1..1 |  |
 | recoveries | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| edition | type not stated in source; see Field sources |
+| tokens | type not stated in source; see Field sources |
+| trivia | type not stated in source; see Field sources |
+| nodes | type not stated in source; see Field sources |
+| diagnostics | multiplicity not stated in source; see Field sources |
+| recoveries | type not stated in source; see Field sources |
+
 
 - `contract_version` — exactly `quire.parsed-source/v1`.
 - `source` — exact FR-202 source-document identity.

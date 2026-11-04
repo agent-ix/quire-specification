@@ -26,6 +26,15 @@ When a package imports a domain package for native linking, the checker SHALL us
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| identity | type not stated in source; see Field sources |
+| declarations | type not stated in source; see Field sources |
+| effective_view | type not stated in source; see Field sources |
+
+
 - `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration and recorded by the package's `model_root` node only. There is no lock row, digest, digest domain or version. The source names the identity alone (FR-154 "Model selection in source").
 - `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity)` and keeps the IR node's FCD `origin` (FR-154).
 - `effective_view` — the `quire.model.effective-view/v2` identity that QSL derives from those declarations under the selected `quire.model.complete/v1` definition.

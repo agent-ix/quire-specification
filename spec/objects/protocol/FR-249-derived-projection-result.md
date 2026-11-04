@@ -32,6 +32,20 @@ When a canonical protocol result is projected to portable verification, the proj
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| resultId | type not stated in source; see Field sources |
+| sourceResultRef | type not stated in source; see Field sources |
+| targetContractVersion | type not stated in source; multiplicity not stated in source; see Field sources |
+| targetBinding | type not stated in source; see Field sources |
+| adapter | type not stated in source; see Field sources |
+| nativeArtifacts | type not stated in source; see Field sources |
+| provenance | type not stated in source; see Field sources |
+
+
 | Property | Description |
 | --- | --- |
 | `resultId` | The closed object `{sourceResultKey, adapter}` stated by FR-062: the FR-286 `resultKey` of the source and the adapter identity and version. It nests at most three levels, carries no hash and does not repeat the target binding. |

@@ -149,6 +149,8 @@ quire validate --scope . 'spec/**/*.md' 'plan/*/plan.md' 'plan/*/index.md' 'plan
 The first Cargo run fetches the git dependencies; later runs can add
 `--offline`. The dated review glob selects the typed review artifacts. The older review note
 has no type frontmatter, and an unrestricted glob reports that structural error.
+The typed `## Properties` tables of the object documents derive Type and Multiplicity from the retained prose, which each document keeps under `## Field sources`; a field whose prose states no type or multiplicity is listed in that section's derivation table, and the `Constraints` cell is left to the closed keyword set the module reads (so notes cannot live there).
+Enumeration documents write each `## Values` cell in Identifier form (letters, digits and underscores, so `timed_out`) because the module reads that cell as an Identifier; the Description begins with the wire spelling in backticks (``Wire spelling `timed-out`.``), and other artifacts quote the wire spelling.
 The plan globs name the Plan, index and Task files and leave out each
 `plan/*/log.md`: those are execution logs with frontmatter `type: log`, which no
 installed module registers, and `quire validate` has no exclude option.

@@ -47,18 +47,34 @@ refuses with `invalid_timed_model`/`model-time-on-untimed-model`.
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| selected_profile_identity | TemporalSemanticProfileIdentity | 1..1 |  |
+| selected_profile_identity | String | 1..1 |  |
 | clock_identity | String | 1..1 |  |
 | unit | String | 1..1 |  |
 | epoch | String | 1..1 |  |
-| period | ExactRationalValue | 1..1 |  |
+| period | String | 1..1 |  |
 | sequence_authority | String | 1..1 |  |
-| admitted_order | BoundedTemporalOperatorVocabulary | 1..1 |  |
+| admitted_order | String | 1..1 |  |
 | completeness_premise | String | 1..1 |  |
 | time_source | String | 1..1 |  |
 | binding_kind | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| selected_profile_identity | type not stated in source; see Field sources |
+| clock_identity | type not stated in source; see Field sources |
+| unit | type not stated in source; see Field sources |
+| epoch | type not stated in source; see Field sources |
+| period | type not stated in source; see Field sources |
+| sequence_authority | type not stated in source; see Field sources |
+| admitted_order | type not stated in source; see Field sources |
+| completeness_premise | type not stated in source; see Field sources |
+| time_source | type not stated in source; see Field sources |
+| binding_kind | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

@@ -32,11 +32,24 @@ upper bound without treating the half-open end as an included instant.
 | native_interval | String | 1..1 |  |
 | observation_carrier | String | 1..1 |  |
 | membership_mapping | String | 1..1 |  |
-| progress_mapping | String | 1..1 |  |
+| progress_mapping | String | 0..1 |  |
 | discrete_successor | String | 1..1 |  |
 | non_discrete_end | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| clock_binding | type not stated in source; see Field sources |
+| native_interval | type not stated in source; multiplicity not stated in source; see Field sources |
+| observation_carrier | type not stated in source; see Field sources |
+| membership_mapping | type not stated in source; see Field sources |
+| progress_mapping | type not stated in source; see Field sources |
+| discrete_successor | type not stated in source; see Field sources |
+| non_discrete_end | type not stated in source; see Field sources |
+
 
 - **clock binding** — exact clock identity shared by both domains.
 - **native interval** — inclusive lower and upper bounds `[a,b]`, with `a <= b`.

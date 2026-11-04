@@ -26,10 +26,24 @@ When a formal decision requests an external workflow effect, the producer SHALL 
 | idempotency_key | String | 1..1 |  |
 | effect_request | String | 1..1 |  |
 | transport_receipt | String | 1..1 |  |
-| effect_observation | String | 1..1 |  |
+| effect_observation | String | 0..1 |  |
 | lineage | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | type not stated in source; see Field sources |
+| decision | type not stated in source; see Field sources |
+| authority_grant | type not stated in source; multiplicity not stated in source; see Field sources |
+| idempotency_key | type not stated in source; see Field sources |
+| effect_request | type not stated in source; multiplicity not stated in source; see Field sources |
+| transport_receipt | type not stated in source; multiplicity not stated in source; see Field sources |
+| effect_observation | type not stated in source; see Field sources |
+| lineage | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 - `contract_version` — exactly `quire.effect-decision/v1`.
 - `decision` — exact semantic result and recommended action identity.

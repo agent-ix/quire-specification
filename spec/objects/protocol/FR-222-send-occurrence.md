@@ -31,6 +31,15 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| message | type not stated in source; see Field sources |
+| typed_payload_record | type not stated in source; see Field sources |
+
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — a send is an
   authored protocol node, so it carries the node occurrence identity. FR-049-AC-2
   keeps send references distinct from receive, delivery, operation attempt,

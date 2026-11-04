@@ -37,6 +37,13 @@ material here, not an adopted selection.
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| interpretation_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Interpretation identity | Proposed catalog, header | "Interpretation identity: `quire.native.diagnostics/v1`". |

@@ -36,9 +36,17 @@ Inputs names "bounded retry policy" as an input to the evaluation.
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | authored_finite_retry_bound | String | 1..1 |  |
-| owning_registration | CompensationRegistration | 1..1 |  |
+| owning_registration | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| authored_finite_retry_bound | type not stated in source; see Field sources |
+| owning_registration | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

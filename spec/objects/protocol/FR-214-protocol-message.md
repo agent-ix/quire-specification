@@ -27,9 +27,22 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 | authored_obligation | String | 1..1 |  |
 | distinct_from_its_events | String | 1..1 |  |
 | cardinality_independence | String | 1..1 |  |
-| message_type_in_a_channel | ProtocolChannel | 1..1 |  |
+| message_type_in_a_channel | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| typed_declaration | type not stated in source; see Field sources |
+| declaration_kind | type not stated in source; multiplicity not stated in source; see Field sources |
+| authored_obligation | type not stated in source; see Field sources |
+| distinct_from_its_events | type not stated in source; see Field sources |
+| cardinality_independence | type not stated in source; see Field sources |
+| message_type_in_a_channel | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |

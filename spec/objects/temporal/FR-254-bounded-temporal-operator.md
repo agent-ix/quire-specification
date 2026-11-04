@@ -51,6 +51,8 @@ owns their meaning.
 | since | Wire spelling `since[a,b]`. Past, order-sensitive. FR-092: "Some `d` in `[a,b]` makes `q` true at `i-d`, and every `e` in `[a,d)` makes `p` true at `i-e`". |
 | triggered | Wire spelling `triggered[a,b]`. Past, order-sensitive. FR-092: "The Boolean dual of `not p since[a,b] not q` under the same profile". |
 
+The Value column holds the Identifier form of each operator (`eventually`, `always`, `until`, `release`, `once`, `historically`, `since`, `triggered`); the wire spelling with its interval (`eventually[a,b]` and so on) leads each Description and is the spelling FR-091 and FR-092 quote.
+
 `strong previous` is not a ninth member. FR-092 states that "The v1 profile shall
 define strong previous as `once[1,1]`", that is, as a fixed instance of an
 existing member. FR-092 also states that "If a later profile admits weak

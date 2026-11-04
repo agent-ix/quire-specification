@@ -37,6 +37,19 @@ compensation-operation success".
 
 ## Field sources
 
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| authored_recovery_predicate | type not stated in source; see Field sources |
+| declared_type | type not stated in source; see Field sources |
+| target_state | type not stated in source; see Field sources |
+| achieved_state | type not stated in source; see Field sources |
+| selected_state_and_temporal_profiles | type not stated in source; see Field sources |
+| declared_population_scope_membership_and_completeness_authorities | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored recovery predicate | FR-057 Inputs | Evaluated under the selected state and temporal profiles. |

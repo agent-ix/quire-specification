@@ -19,12 +19,21 @@ When a clause location is exchanged, the producer SHALL bind it to one authored 
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| document_identity | BindClauseLocationsToExactSourceBytes | 1..1 | identity |
-| bytes | PreserveOriginalSourceLocationsThroughLexicalRecognition | 1..1 |  |
+| document_identity | String | 1..1 | identity |
+| bytes | Bytes | 1..1 |  |
 | segment_map | String | 0..1 |  |
 | extracted_body | String | 0..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| document_identity | type not stated in source; see Field sources |
+| segment_map | type not stated in source; see Field sources |
+| extracted_body | type not stated in source; see Field sources |
+
 
 - **document_identity** (identity) — the original document identity carried with
   every exchanged clause location

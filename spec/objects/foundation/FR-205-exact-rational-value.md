@@ -17,10 +17,18 @@ When an exact rational literal is admitted, the checker SHALL compare its normal
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| numerator | NormalizeExactRationalLiteralsBeforeDomainAdmission | 1..1 |  |
-| denominator | String | 1..1 |  |
+| numerator | Integer | 1..1 |  |
+| denominator | Integer | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| numerator | normalized signed integer |
+| denominator | normalized signed integer |
+
 
 - **numerator** (`signed integer`, normalized) — carries the sign. Normalization
   moves the sign to the numerator and divides both components by their greatest

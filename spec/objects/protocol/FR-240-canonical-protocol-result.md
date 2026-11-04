@@ -59,26 +59,47 @@ When a protocol assessment result is emitted or read, the strict reader SHALL re
 |---|---|---|---|
 | contractVersion | String | 1..1 |  |
 | kind | String | 1..1 |  |
-| resultKey | CanonicalProtocolResultKey | 1..1 | identity |
-| assessment_execution | AssessmentExecutionDispositionVocabulary | 1..1 |  |
-| decision_scope_progress | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
-| decision_scope_closure | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
-| surrounding_execution_progress | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
-| surrounding_execution_closure | ScopeProgressAndClosureStateVocabulary | 1..1 |  |
-| complete_global_conformance_closure | CompleteGlobalConformanceClosureStateVocabulary | 1..1 |  |
-| truth | TruthDispositionVocabulary | 1..1 |  |
-| settlement_basis | SettlementBasisVocabulary | 1..1 |  |
-| activation | ActivationStateVocabulary | 1..1 |  |
+| resultKey | String | 1..1 | identity |
+| assessment_execution | AssessmentExecutionDisposition | 1..1 |  |
+| decision_scope_progress | String | 1..1 |  |
+| decision_scope_closure | String | 1..1 |  |
+| surrounding_execution_progress | String | 1..1 |  |
+| surrounding_execution_closure | String | 1..1 |  |
+| complete_global_conformance_closure | String | 1..1 |  |
+| truth | TruthDisposition | 1..1 |  |
+| settlement_basis | SettlementBasis | 1..1 |  |
+| activation | ActivationState | 1..1 |  |
 | participation | ParticipationFact | 1..1 |  |
-| assumptions | AssumptionStateVocabulary | 1..1 |  |
-| completeness | String | 1..1 |  |
-| observation_adequacy | ObservationAdequacyStateVocabulary | 1..1 |  |
-| protocol_adequacy | ProtocolAdequacyStateVocabulary | 1..1 |  |
+| assumptions | String | 1..1 |  |
+| completeness | InputCompletenessState | 1..1 |  |
+| observation_adequacy | ObservationAdequacyState | 1..1 |  |
+| protocol_adequacy | ProtocolAdequacyState | 1..1 |  |
 | claim | String | 1..1 |  |
 | decision_support | DecisionSupportRecord | 1..1 |  |
 | provenance | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contractVersion | type not stated in source; see Field sources |
+| kind | type not stated in source; see Field sources |
+| resultKey | type not stated in source; see Field sources |
+| decision_scope_progress | type not stated in source; see Field sources |
+| decision_scope_closure | type not stated in source; see Field sources |
+| surrounding_execution_progress | type not stated in source; see Field sources |
+| surrounding_execution_closure | type not stated in source; see Field sources |
+| complete_global_conformance_closure | type not stated in source; see Field sources |
+| truth | multiplicity not stated in source; see Field sources |
+| settlement_basis | exactly one basis per truth result plus supporting fact and progress identities |
+| activation | multiplicity not stated in source; see Field sources |
+| assumptions | type not stated in source; see Field sources |
+| claim | exactly one FR-290 protocol-family claim kind plus, for an advanced result, strength, fragment and further fields; type not stated in source; see Field sources |
+| decision_support | multiplicity not stated in source; see Field sources |
+| provenance | type not stated in source; multiplicity not stated in source; see Field sources |
+
 
 Every property below is stated by [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md)
 or [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md). This

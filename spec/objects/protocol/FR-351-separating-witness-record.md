@@ -31,13 +31,23 @@ When a truth result settles on a `decisive-witness` or `decisive-counterexample`
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| deciding_quantifier | ImmutableCheckedPackageArtifact | 1..1 |  |
+| deciding_quantifier | String | 1..1 |  |
 | deciding_element | String | 1..1 |  |
-| index | String | 1..1 |  |
+| index | Integer | 0..1 |  |
 | value_path | RuntimeValuePath | 1..1 |  |
 | trace_position | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| deciding_quantifier | occurrence key (node_id, role, ordinal) of the quantifier node; type not stated in source; see Field sources |
+| deciding_element | type not stated in source; see Field sources |
+| index | where the family assigns a positional index |
+| trace_position | type not stated in source; see Field sources |
+
 
 | Property | Description |
 | --- | --- |

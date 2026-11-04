@@ -26,12 +26,20 @@ selects from.
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| event_time | SelectedEventTimeWindow | 1..1 |  |
-| ingestion_time | String | 1..1 |  |
-| causal_relation | DeclaredInstanceRelationship | 1..1 |  |
+| event_time | Timestamp | 1..1 |  |
+| ingestion_time | Timestamp | 1..1 |  |
+| causal_relation | String | 1..1 |  |
 | clock_uncertainty | String | 1..1 |  |
 
 ## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| causal_relation | type not stated in source; see Field sources |
+| clock_uncertainty | type not stated in source; see Field sources |
+
 
 | Property | Source | Note |
 | --- | --- | --- |
