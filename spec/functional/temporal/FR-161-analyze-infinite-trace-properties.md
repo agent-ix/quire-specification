@@ -164,7 +164,7 @@ clock valuation, and the analyzer reads them as follows.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-161-AC-1 | A provider proves or refutes only under the exact transition/fairness premises and returns replayable evidence. | Test (TC-200) |
-| FR-161-AC-2 | A finite-prefix monitor returns pending/inconclusive rather than proved for an unresolved liveness property. | Test (TC-200) |
+| FR-161-AC-2 | A finite-prefix monitor returns `pending` rather than proved for an unresolved liveness property. | Test (TC-200) |
 | FR-161-AC-3 | Unsupported operators, a missing fairness premise or exhausted analysis return distinct non-conclusive dispositions. | Test (TC-200, TC-292) |
 | FR-161-AC-4 | Always, eventually, until, release and each past operator satisfy their inductive infinite-trace definitions on conformance lassos. | Test (TC-200) |
 | FR-161-AC-5 | Fairness filters traces before evaluation and is included in every proof or counterexample replay identity. | Test (TC-200) |

@@ -49,7 +49,9 @@ Their incomplete or refused evaluator outcomes carry no truth fact at the lower
 boundary. The canonical FR-061 adapter represents that absence as the supplied
 value `unavailable` while retaining the distinct execution disposition and
 missing premise. It never treats absence itself as `unavailable` before that
-explicit adaptation.
+explicit adaptation. An `indeterminate` outcome of the timestamped finite-window
+profile (FR-091) likewise carries no truth fact and adapts to `unavailable` with
+settlement basis `unavailable`.
 
 ## Acceptance Criteria
 

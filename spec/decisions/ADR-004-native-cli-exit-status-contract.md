@@ -19,7 +19,8 @@ relationships:
 
 The native CLI carries the exit status contract that
 [FR-301](../functional/tooling/FR-301-expose-complete-cli.md) states: `0`
-completed without violation, `10` logical violation, `20` invalid or refused
+completed without violation or still pending on declared progress, `10` logical violation, `11` indeterminate temporal
+clause, `20` invalid or refused
 input, `21` unsupported, `22` incomplete and `30` tool failure.
 
 `ix://agent-ix/quire-spec-language/FR-010` states the same contract, and its

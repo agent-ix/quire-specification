@@ -58,7 +58,9 @@ same-revision conflicting assertion shall produce a typed contradiction or
 refusal and shall not roll back progress, restamp closure or replace earlier
 result bytes.
 
-Progress shall cover an inclusive boundary.
+Progress shall cover an inclusive boundary. A progress watermark `W` is an inclusive
+reading of tick `W`; an instant stamped `W` is covered, an instant stamped `W + 1`
+is not.
 
 Where a supplying observation contract uses a half-open window or watermark,
 the evaluator shall consume only an FR-289 mapping that proves inclusive
@@ -117,6 +119,7 @@ authority or automatically repair settled history.
 | FR-094-AC-8 | A same-binding progress regression or conflicting assertion revision produces a typed contradiction/refusal and cannot roll back progress, closure or an earlier result identity. | Test (TC-115) |
 | FR-094-AC-9 | A resource ceiling stopping one obligation leaves an independently settled sibling result unchanged, while the stopped obligation emits no Boolean fallback. | Test (TC-116) |
 | FR-094-AC-10 | A half-open observation end/watermark equal to an inclusive deadline cannot settle it; an FR-289 carrier with exact same-clock coverage strictly beyond the endpoint admits the endpoint and filters later carrier members. | Test (TC-115) |
+| FR-094-AC-11 | A progress watermark `W` covers an instant stamped `W` and does not cover one stamped `W + 1` (`FWV-45` to `FWV-47`, `proposals/finite-window/finite-window-vectors.json`). | Test (TC-980) |
 
 ## Dependencies
 

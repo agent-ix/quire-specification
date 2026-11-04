@@ -21,6 +21,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-367
     type: references
+  - target: ix://agent-ix/quire-specification/FR-160
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-094
+    type: references
 ---
 ## Description
 
@@ -38,8 +42,8 @@ progress/closure information for the subject's required observations.
 
 A `satisfied`, `violated` or `pending` temporal truth disposition with the exact
 decision scope, settlement basis and decision-support identities needed by the
-shared result contract, or a separate incomplete or refused evaluator outcome
-with the affected clause, interval and missing premise. A non-completed
+shared result contract, or a separate `indeterminate`, incomplete or refused
+evaluator outcome with the affected clause, interval and missing premise. A non-completed
 evaluator outcome carries no truth fact at this boundary; the canonical result
 adapter represents that absence as truth `unavailable` with settlement basis
 `unavailable`.
@@ -71,10 +75,51 @@ For the timestamped finite-window profile, an eligible future instant has an
 admitted clock distance in `[a,b]`. Existential and universal operators quantify
 only eligible admitted instants; `until` uses the admitted order and requires
 its left operand at every eligible earlier instant from the lower bound to the
-witness. Empty existential windows are false and empty universal windows are
-true only after the observation authority establishes completeness through the
-upper endpoint; before then the result is pending or incomplete. `release`
-remains the Boolean dual.
+witness. For an activation at admitted tick `t0` of a clause whose nested interval
+operators reach `H` ticks into the future (the greatest sum of upper bounds of
+the future interval operators along a nesting path; past operators add nothing,
+since a look-back needs only the retained history of
+[FR-092](FR-092-evaluate-bounded-past.md)), the activation is *established*
+exactly when the observation authority asserts completeness through `t0 + H + m`
+and the progress watermark `W` satisfies `W >= t0 + H + m`, where the margin `m`
+is 0 for an exact clock and `2u` for a counter cover of uncertainty `u` ticks (it
+keeps every unseen reading above `W` outside the window; FR-160). The
+completeness assertion may run ahead of `W`; establishment needs both
+conditions. An established activation is evaluated over its eligible admitted
+instants only, with no synthetic atom after closure, and its result is definite
+true or false, including the empty existential (false) and empty universal
+(true) window. Before establishment, or when the input is incomplete, the
+evaluator applies the possibility rules of
+[FR-160](FR-160-evaluate-uncertain-revisioned-time.md) over every admissible
+continuation: the result is definite when every possibility agrees (a valid
+early witness or counterexample, or a missing fact outside the decision
+support); otherwise it is `pending` while `W < t0 + H + m` (declared progress could
+resolve it, its deadline being `t0 + H + m`) and `indeterminate` once `W >= t0 + H + m` (closed evidence still
+unresolved: a missing or conflicting valuation, a completeness assertion short
+of `t0 + H + m`, or missing history, which a look-back-only clause reports at once because its `H` is 0). `incomplete` is reserved for a missing
+required current valuation at the anchor and for resource exhaustion. The evaluator orders the observations before it visits any instant, by ascending
+stamp, then by ascending order-authority identity (an observation without an order
+key after every keyed one), then by ascending key within the authority, then by
+ascending observation identity; it never consults the order in which the caller
+listed them, and neither the outcome nor the result identity depends on that
+listing. A position is an index in this canonical order. Two instants of one stamp
+have a *usable order* exactly when both carry an order key, the keys come from one
+order authority and the keys differ; a key that repeats another key of its
+authority at the same stamp is not usable, because the authority places both
+observations at one point of its sequence, and observation identity is a content
+identity, not a causal order, so it fixes the positions' indices and never orders a
+pair for an order-sensitive operator. The eligible set, `until`/`since` and their
+duals use that order and refuse, when the order-sensitive operator is evaluated,
+over two instants of one stamp that lack a usable order, at stage `evaluate` with
+`invalid_runtime_input`/`invalid-value` at the later position. Observations that share a
+stamp are readings of one instant: when they give differing valuations of one atom
+the atom is conflicting at every position of that stamp (reported at the lowest
+position of the stamp), and equal valuations are a singleton. A trace with no
+instants is refused at stage `admit` with `invalid_runtime_input`/`invalid-value`
+before any instant is visited; a trace listed with
+decreasing stamps is not refused, because it is read in canonical order. The cover
+of the stamps (exact, or a counter cover of uncertainty `u`) is declared by the
+trace input and is exact when the input omits it. `release` remains the Boolean dual.
 
 The evaluator shall return `satisfied` or `violated` for an open decision scope only when the
 selected profile proves that every admitted continuation preserves it. Such a
@@ -83,10 +128,22 @@ result shall identify `decisive-witness` for `satisfied` or
 capture, clock, progress and profile facts that form its decision-support set.
 Closure of that decision scope authorizes `closed-scope`; it does not imply
 closure of the surrounding execution. An undecided open scope shall remain
-pending with settlement basis `unsettled`.
+pending with settlement basis `unsettled`. For the timestamped finite-window
+profile the settlement basis is `closed-scope` when the activation is established
+and the decision scope is closed, `decisive-witness` or `decisive-counterexample`
+for any other definite verdict, `unsettled` for `pending` and `unavailable` for
+`indeterminate`, which carries no truth fact. The decision-support set holds the
+`(position, atom)` pairs whose single valuation, flipped, or whose instant other
+than the anchor, removed, would change the verdict; for `pending` and
+`indeterminate` the pairs whose valuation would decide it. Decision-scope
+closure, surrounding-execution closure, assessment execution and input
+completeness stay independent fields ([FR-094](FR-094-interpret-progress-history-and-closure.md)).
 
-The evaluator shall represent missing required current valuations or an
-incomplete closed input as incomplete rather than pending future time or `violated`.
+For the false-extension profiles, the evaluator shall represent missing required
+current valuations or an incomplete closed input as incomplete rather than
+pending future time or `violated`; for the timestamped finite-window profile an
+incomplete closed input is `indeterminate` as stated above and `incomplete` keeps
+only the two cases reserved there.
 The evaluator shall make truth unavailable when a fact is missing inside the
 exact decision-support set. The evaluator shall retain a fact missing outside a
 completed decision-support set in completeness and any dependent
@@ -101,16 +158,37 @@ Where a bounded temporal profile is selected, the evaluator shall refuse an unbo
 | FR-091-AC-1 | Independent truth tables cover all four operators, every inclusive endpoint, zero-width intervals, nonzero lower bounds, nesting and short traces. | Test (TC-111) |
 | FR-091-AC-2 | On a one-position closed trace where atomic `p` is true, `always[0,1] p` is false under false-extension and true under a complete finite-window interpretation; the profiles cannot share one result identity. | Test (TC-112) |
 | FR-091-AC-3 | `p until[1,2] q` may be true with `p` false at the anchor when `q` is true at offset one, pinning the selected lower-bound convention. | Test (TC-111) |
-| FR-091-AC-4 | A decisive open decision scope may settle early only with the matching decisive basis, complete exact decision support and proof over every admitted continuation; every other unclosed future remains pending, while a closed incomplete input reports incomplete rather than applying false extension. | Test (TC-116) |
-| FR-091-AC-5 | Timestamped empty existential/universal window truth is emitted only after complete progress through the inclusive upper endpoint; an eligible event exactly at the deadline participates before settlement. | Test (TC-115) |
+| FR-091-AC-4 | A decisive open decision scope may settle early only with the matching decisive basis, complete exact decision support and proof over every admitted continuation; every other unclosed future remains pending, while, under the false-extension profiles, a closed incomplete input reports incomplete rather than applying false extension. | Test (TC-116) |
+| FR-091-AC-5 | Timestamped empty existential/universal window truth is emitted only after complete progress through the inclusive upper endpoint; an eligible event exactly at the deadline participates before settlement; an incomplete input never admits that truth (FR-091-AC-14). | Test (TC-115) |
 | FR-091-AC-6 | Where a bounded temporal profile is selected, unbounded intervals return a non-Boolean disposition; unavailable total valuations and exhausted semantic work return non-Boolean dispositions under every profile. | Test (TC-118) |
 | FR-091-AC-7 | On a one-position closed trace with `p` true, `always[0,1] not holds(p)` is false and `eventually[0,1] not holds(p)` is true under false extension, distinguishing pointwise temporal negation from an untimed reading. | Test (TC-111) |
 | FR-091-AC-8 | Where the infinite-trace profile is selected, the unbounded future operators evaluate under their FR-161 infinite-trace meaning and return that requirement's conclusive or non-conclusive disposition. | Test (TC-200) |
 | FR-091-AC-9 | Where the infinite-trace profile is selected, `eventually[a,b]`, `always[a,b]`, `until[a,b]` and `release[a,b]` evaluate with their offset meaning over the infinite trace, including nested under an unbounded operator, and no position reads a closed-boundary value. | Test (TC-298) |
+| FR-091-AC-10 | Over stamps 0, 2, 5 ms with `W` 5 and completeness through 5, `always[0,5] holds(p)` is false at position 0 when `p` is true at 0 and 5 and false at 2 and true when `p` is true at all three; `eventually[0,1] holds(p)` with `p` true only at stamp 2 is false and `eventually[0,2] holds(p)` is true. A position stamped 6 is outside `[0,5]` and one stamped 5 is inside (`FWV-01` to `FWV-05`). | Test (TC-980) |
+| FR-091-AC-11 | One position stamped 0 with `p` true, `W` 1 and completeness through 1: `always[0,1] holds(p)` is true, with no synthetic false atom after closure, where false extension gives false. With `W` 3 and completeness through 3, `eventually[2,3] holds(p)` is false and `always[2,3] holds(p)` is true, the empty windows of an established activation (`FWV-06` to `FWV-08`). | Test (TC-980) |
+| FR-091-AC-12 | Stamps 0 and 1 with `p` false at both, `W` 1 and completeness through 1, `eventually[0,5] holds(p)` is `pending` with deadline 5; the same positions with `W` 5 and completeness through 5 give false with no further observation. With an open scope, `p` true at stamp 1 and `W` 1 gives true (decisive witness), and `always[0,5] holds(p)` with `p` false at stamp 1 gives false (decisive counterexample) (`FWV-09` to `FWV-12`). | Test (TC-980) |
+| FR-091-AC-13 | Stamps 0, 2, 5, `eventually[0,5] holds(p)`, `W` 5 and completeness through 5: `p` false at 0 and 5 and absent at 2 is `indeterminate` (missing valuation at position 1); `p` true at 5 and absent at 2 is true; `p` true in one of two observations stamped 2 and false in the other, and false elsewhere, is `indeterminate` (conflicting valuation at position 1); the absent case with `W` 3 is `pending` with deadline 5. None is false (`FWV-13` to `FWV-16`). | Test (TC-980) |
+| FR-091-AC-14 | With `p` true at stamp 0, a closed scope, `W` 5 and completeness not asserted, `always[0,5] holds(p)` is `indeterminate` (incomplete input), and with completeness through 5 it is true; with completeness not asserted `eventually[2,3] holds(p)` is `indeterminate` and not false, and with completeness through only 2 and `W` 3 it is also `indeterminate` (`FWV-17` to `FWV-20`). | Test (TC-980) |
+| FR-091-AC-15 | An eligible instant at the inclusive deadline participates (`eventually[0,3] holds(q)` with `q` true at stamp 3 and `W` 3 is true) and one after it does not (`q` true only at stamp 4 gives false). A single position with `p` false and `W` 3 gives false for `eventually[0,3] holds(p)` with no later observation. A half-open watermark `[.., 3)` without an FR-289 mapping is the inclusive watermark 2 and leaves that window `pending` (`FWV-21` to `FWV-24`). | Test (TC-980) |
+| FR-091-AC-16 | Stamps 0, 1, 1 without order keys refuse `until`, `release`, `since` and `triggered` at stage `evaluate`, `invalid_runtime_input`/`invalid-value` at the third position, while `eventually[0,1]` evaluates; a key on the second position only refuses at the third; distinct keys from one order authority admit `until`, keys from two authorities refuse it, and reversing the insertion order with keys unchanged leaves the admitted order unchanged. Two positions of one stamp both keyed `(A, 1)`, with distinct observation identities, refuse the four operators at the third position for either listing and are not ordered by observation identity, while `eventually[0,1]` over them evaluates to one outcome for both listings (`FWV-31` to `FWV-38`, `FWV-60` to `FWV-65`). | Test (TC-980) |
+| FR-091-AC-17 | Stamps 3 and 4, `once[0,4] holds(p)` activated at each position with `p` false at both (each activation is established at `W` 4; the first, at position 0, reaches before the trace): a history-cutoff lower boundary gives `indeterminate` (missing history) and an authoritative origin gives false; `p` true at stamp 3 gives true for both (`FWV-25` to `FWV-28`). | Test (TC-980) |
+| FR-091-AC-18 | With counter cover and uncertainty 0, a request at tick 0 and `holds(req) implies eventually[0,3000] holds(ack)`, an acknowledgement at tick 2998 is true, at 3000 `indeterminate` (the cover straddles the bound) and at 3001 false; under exact cover the three are true, true and false. The neighbouring ticks and the same-tick pair are `TCV-01` to `TCV-15` of FR-160 (`FWV-39` to `FWV-44`). | Test (TC-980) |
+| FR-091-AC-19 | `eventually[0,2] holds(p)` activated at each position, over stamps 0 and 10 with `p` false at both, `W` 10 and completeness through 10: the activation at 0 is definitely false and the one at 10 is `pending`, so the outcome is false at position 0; with `p` true at stamp 0 the outcome is `pending` at position 1 with deadline 12, not true (`FWV-29`, `FWV-30`). | Test (TC-980) |
+| FR-091-AC-20 | With counter cover of uncertainty 1, a request at tick 0 and `eventually[0,3000] holds(ack)` with no acknowledgement and completeness through 3002: `W` 3001 is `pending` with deadline 3002 (margin `2u`), and `W` 3002 is false. Under exact cover `W` 3000 with completeness through 3000 is already false (`FWV-52` to `FWV-54`). | Test (TC-980) |
+| FR-091-AC-21 | Over stamps 0, 2, 5 with `p` true, false, true and `W` 5 with completeness through 5, `always[0,5] holds(p)` is false with basis `closed-scope` for a closed scope and `decisive-counterexample` for an open scope, with decision support exactly {(position 1, `p`)}; `eventually[0,5] holds(p)` with `p` false, false, true is true with basis `closed-scope` and support {(position 2, `p`)}. A definite verdict on an unestablished activation reports `decisive-witness` whatever the scope, `pending` reports `unsettled` and `indeterminate` reports `unavailable` with no truth (`FWV-09`, `FWV-13`, `FWV-48` to `FWV-51`). | Test (TC-980) |
+| FR-091-AC-22 | Completeness through 9 with `W` 5 for `eventually[0,5] holds(p)` over stamps 0, 2, 5 with `p` false is false (established at 5), and with `W` 3 it is `pending` with deadline 5. A trace with no instants is refused at stage `admit`, `invalid_runtime_input`/`invalid-value`, before any instant is visited (an order refusal is at stage `evaluate`), and a trace listed with stamps 0, 5, 2 is not refused: `eventually[0,5] holds(p)` with `p` false, false, true at stamps 5, 0, 2 listed in that order gives the verdict of the same observations listed 0, 2, 5 (`FWV-55` to `FWV-58`, `FWV-76`, `FWV-77`). | Test (TC-980) |
+| FR-091-AC-23 | Listing the observations of FR-091-AC-10 as stamps 5, 0, 2 gives the outcome, decision support and result identity of the listing 0, 2, 5; with `p` true at 0 and 5 and false at 2 the outcome is false at position 0 with support {(position 1, `p`)}, positions being canonical indices. Four observations of one stamp keyed A1, A2 (authority A), B1 (authority B) and one keyless have the canonical order A1, A2, B1, keyless for every listing (`FWV-66` to `FWV-69`). | Test (TC-980) |
+| FR-091-AC-24 | Over stamps 0, 2, 2, 5 with `eventually[0,5] holds(p)`, `W` 5 and completeness through 5, `p` true at both observations stamped 2 and false at the others is true and not `indeterminate` (`FWV-59`). | Test (TC-980) |
+| FR-091-AC-25 | A trace input that names no cover evaluates the request of FR-091-AC-18 as under exact cover (true, true, false); a supplied counter cover of uncertainty 1 gives the outcomes of FR-091-AC-20, and the same input with exact cover gives false for `W` 3001 and completeness through 3002, with a different result identity (`FWV-70` to `FWV-73`). | Test (TC-980) |
+| FR-091-AC-26 | A request whose surrounding execution is open and one whose surrounding execution is closed report the closure they carry and give the same verdict (`FWV-74`, `FWV-75`). | Test (TC-980) |
 
 ## Dependencies
 
 - [FR-090](FR-090-select-temporal-profile-and-clock.md).
+- [FR-160](FR-160-evaluate-uncertain-revisioned-time.md) for the possibility
+  sets, the counter-tick cover and the `pending`/`indeterminate` split.
+- [FR-094](FR-094-interpret-progress-history-and-closure.md) for the inclusive
+  watermark. The vectors are `proposals/finite-window/finite-window-vectors.json`.
 - Total Boolean predicate projection from
   [contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63).
 
