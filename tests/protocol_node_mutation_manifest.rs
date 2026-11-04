@@ -765,3 +765,49 @@ fn schema_first_placement_rows_and_the_single_listing_row_pin_their_loci() {
     }
     assert!(defects.is_empty(), "{defects:#?}");
 }
+
+/// FR-464-AC-2, FR-464-AC-6: V5 (a nested protocol application) is refused by
+/// the schema at the holding node's pointer; C12 refuses at `Main`, the control
+/// nothing holds; V16, CP28 and C11 pass the schema, so their refusals are the
+/// reader's, not the schema's.
+#[trace("TC-946", "TC-948", "FR-464-AC-2", "FR-464-AC-4", "FR-464-AC-6")]
+#[test]
+fn nested_application_and_unheld_root_rows_pin_their_stage_and_locus() {
+    let manifest = parse(MANIFEST);
+    let base = parse(BASE);
+    let validator = jsonschema::validator_for(&parse(PACKAGE_SCHEMA)).expect("schema is valid");
+    let row = |id: &str| rows(&manifest).iter().find(|r| r["id"] == id).expect("row");
+    let index_of = |name: &str| {
+        nodes_of(&base)
+            .iter()
+            .position(|n| declaration_name(n) == name)
+            .expect("node")
+    };
+    let mut defects = Vec::new();
+    let v5 = row("V5");
+    let first = validator
+        .iter_errors(&apply(&base, &edit_of(v5)))
+        .next()
+        .map(|e| e.instance_path().to_string());
+    let main = format!("/semantic_graph/nodes/{}", index_of("Example::OrderFlow::run::Main"));
+    if v5["expect"]["stage"] != "schema"
+        || v5["expect"]["locus"] != main.as_str()
+        || first.as_deref() != Some(main.as_str())
+    {
+        defects.push(format!("V5: schema first error {first:?}, recorded {}", v5["expect"]));
+    }
+    let c12 = row("C12");
+    if c12["expect"]["locus"] != main.as_str() || c12["expect"]["code"] != "invalid_semantic_graph" {
+        defects.push(format!("C12: recorded {}", c12["expect"]));
+    }
+    if !validator.is_valid(&apply(&base, &edit_of(c12))) {
+        defects.push("C12: the edit is refused by the schema, so the row is not a reader row".into());
+    }
+    for id in ["V16", "CP28", "C11"] {
+        let r = row(id);
+        if r["expect"]["stage"] != "reader" || !validator.is_valid(&apply(&base, &edit_of(r))) {
+            defects.push(format!("{id}: not a schema-valid reader-stage row"));
+        }
+    }
+    assert!(defects.is_empty(), "{defects:#?}");
+}

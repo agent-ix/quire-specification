@@ -84,7 +84,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | V2 | `Requested`'s body applies `quire.op.state.clause` | `ill_typed`/`operator-ineligible` at the node (a state clause application at a protocol node's root) |
 | V3 | the `Orders` role node's operator is `channel` | `malformed_wire` at the node (the schema refuses the operator of another form first; the protocol step alone gives `ill_typed`/`operator-ineligible`) |
 | V4 | the `Orders` node's `semantic_form` is `control` with the `role` operator | `malformed_wire` at the node (schema first; the protocol step alone gives `ill_typed`/`operator-ineligible`) |
-| V5 | a `quire.op.protocol.control` application nested as an argument of `Main` | `malformed_wire` at the nested application (strict wire validation) |
+| V5 | a `quire.op.protocol.control` application nested as an argument of `Main` | `malformed_wire` at the node pointer `/semantic_graph/nodes/{i}` of `Main` (strict wire validation, the schema's first error path) |
 | V6 | a `protocol_reference` carrier's body is a `quire.op.protocol.control` application | refuses `malformed_wire` (`malformed_wire`) |
 | V7 | `Requested`'s member operator is `jump` | `malformed_wire` at the node (schema first; the operation step alone gives `invalid_package`/`operation-member-mismatch`) |
 | V8 | `Requested`'s member is `null` | `invalid_package`/`operation-member-mismatch` |
@@ -139,7 +139,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | C9 | `activation` is `origin` and carries `trigger` | refuses `malformed_wire` |
 | C10 | `requirements` names a `state`/`state_clause` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | C11 | `relationships` names a `protocol`/`role` node | `invalid_model_binding`/`wrong-export` at the target, retaining required kind `relationship`, the actual kind and both keys |
-| C12 | `run` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
+| C12 | `run` names a `role` node | `invalid_semantic_graph` at the root control `Main`, which nothing holds (Membership precedes the clause slots in reader order) |
 | C13 | `compensations` names a node of the graph that is not in the clause's `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step) |
 | C13a | `compensations` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 

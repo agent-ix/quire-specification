@@ -267,7 +267,7 @@
       "section": "Placement and operators",
       "id": "V5",
       "Edit to the base": "a `quire.op.protocol.control` application nested as an argument of `Main`",
-      "Expected": "`malformed_wire` at the nested application (strict wire validation)"
+      "Expected": "`malformed_wire` at the node pointer `/semantic_graph/nodes/{i}` of `Main` (strict wire validation, the schema's first error path)"
     },
     {
       "test_case": "TC-946",
@@ -1525,7 +1525,7 @@
       "section": "Clause body",
       "id": "C12",
       "Edit to the base": "`run` names a `role` node",
-      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+      "Expected": "`invalid_semantic_graph` at the root control `Main`, which nothing holds (Membership precedes the clause slots in reader order)"
     },
     {
       "test_case": "TC-946",
