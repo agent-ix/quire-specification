@@ -1,6 +1,6 @@
 {
   "version": "quire.protocol-node-mutation-manifest/v1",
-  "note": "STD-609 PR 1. Executable form of the machine-derivable vectors of protocol-node-vectors.json. Each row edits fixtures/protocol-node-base.json with RFC 6902 operations and states the typed outcome. 'later' lists vectors a following pull request carries; 'pending' lists vectors whose outcome the spec text leaves open. Reproducibility: protocol-node-base.json and this manifest are the source of truth and are edited by patch only; there is no generator. The test recomputes every edited protocol node's dependencies from its body references, so a hand edit cannot be masked by a graph-stage refusal. A row states the first defect in reader order only (FR-464 'Reader order'); later defects are masked by design. The Q-LAYOUT vectors stay pending: schema.json defines ProtocolControlApplication but references it nowhere, and referencing it from the ProtocolNode body rule makes the base package itself fail at the parallel, choice and protocol-clause nodes, so no first schema error path exists for them until the schema is fixed in its own pull request.",
+  "note": "STD-609 PR 1. Executable form of the machine-derivable vectors of protocol-node-vectors.json. Each row edits fixtures/protocol-node-base.json with RFC 6902 operations and states the typed outcome. 'later' lists vectors a following pull request carries; 'pending' lists vectors whose outcome the spec text leaves open. Reproducibility: protocol-node-base.json and this manifest are the source of truth and are edited by patch only; there is no generator. The test recomputes every edited protocol node's dependencies from its body references, so a hand edit cannot be masked by a graph-stage refusal. A row states the first defect in reader order only (FR-464 'Reader order'); later defects are masked by design. The Q-LAYOUT vectors stay in 'pending' only as a partition record: STD-650 wires ProtocolControlApplication into the ProtocolNode body rule (the base stays schema-valid), and the 26 vectors with a first schema error path are the rows of protocol-node-layout-rows.json, checked by tests/protocol_node_layout_rows.rs. CH14a (a list of malformed delivery spellings in one vector) has no row yet.",
   "base": {
     "fixture": "protocol-node-base.json",
     "domain_document": "../domain-package-acme-orders.json",
@@ -8747,163 +8747,162 @@
     {
       "id": "V12",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "C5",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "C6",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "C7",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "C8",
       "test_case": "TC-946",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L10",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L11",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L13",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L14",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L15",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L16",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L17",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "L12",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path). Needs a fence node the OrderFlow base does not hold, and the layout schema is not yet referenced by any node rule (see the manifest note)."
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path). Carried as row L12 of protocol-node-layout-rows.json (STD-650), which appends the fence node the OrderFlow base does not hold; it stays listed here so this manifest still partitions the vectors."
     },
     {
       "id": "RL17",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "CH15",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "CH16",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "CH14",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "CH14a",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path). Not yet a row: the vector lists ten malformed delivery spellings at the delivery term and the layout rows carry one edit each; STD-650 wired the schema rule, so each spelling now has a first schema error path to record in protocol-node-layout-rows.json."
     },
     {
       "id": "CH4",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "QU6",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "TM3",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "TM4",
       "test_case": "TC-947",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "CE1",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "PA1",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "RP2",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "RP3",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     },
     {
       "id": "RP4",
       "test_case": "TC-948",
-      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Not yet a row: schema.json references ProtocolControlApplication nowhere, and referencing it from the ProtocolNode body rule rejects the unedited base at the parallel, choice and protocol-clause nodes (and its layout constrains names and counts, not term shape or enumerated values), so the first schema error path does not exist until the schema is fixed in its own pull request.",
-      "evidence": "wiring ProtocolControlApplication fails the unedited base at nodes 70, 73 and 82, so no first schema error path exists for this edit"
+      "question": "Q-LAYOUT (answered: stage schema, malformed_wire, locus = first schema error path, FR-464 Reader order / FR-466). Carried as a row of protocol-node-layout-rows.json (STD-650, same id): schema.json applies ProtocolControlApplication to every protocol node but a protocol_reference carrier, and tests/protocol_node_layout_rows.rs asserts the recorded first schema error path. It stays listed here so this manifest still partitions the vectors.",
+      "evidence": "STD-650: the rule is wired and the unedited base is schema-valid; the row and its locus are in protocol-node-layout-rows.json"
     }
   ]
 }

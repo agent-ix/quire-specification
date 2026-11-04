@@ -61,10 +61,23 @@ fn apply(base: &Value, edit: &[Value]) -> Value {
     package
 }
 
-/// FR-464-AC-1, FR-464-AC-5, FR-466-AC-1, FR-466-AC-3, FR-466-AC-5: the base is
-/// schema-valid with the application rule wired, and each of the 26 layout
-/// vectors is refused by the schema at the recorded first error path.
-#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-1", "FR-464-AC-5")]
+/// FR-464-AC-1, FR-464-AC-5, FR-464-AC-24, FR-466-AC-1, FR-466-AC-3,
+/// FR-466-AC-5: the base is schema-valid with the application rule wired, and
+/// each of the 26 layout vectors is refused by the schema at the recorded first
+/// error path. The rows cover an enumerated value outside its set (AC-1), a
+/// `choice` with one case (AC-3) and a `repeat` with `exhausted` but no
+/// `maximum` (AC-5).
+#[trace(
+    "TC-946",
+    "TC-947",
+    "TC-948",
+    "FR-464-AC-1",
+    "FR-464-AC-5",
+    "FR-464-AC-24",
+    "FR-466-AC-1",
+    "FR-466-AC-3",
+    "FR-466-AC-5"
+)]
 #[test]
 fn layout_vectors_are_refused_by_the_schema_at_their_first_error_path() {
     let rows = parse(ROWS);
@@ -108,4 +121,119 @@ fn the_appended_fence_is_refused_for_its_ordering_alone() {
     assert!(!validator.is_valid(&apply(&base, &edit)));
     edit[0]["value"]["body"]["arguments"][0]["value"]["value"] = "acquire".into();
     assert!(validator.is_valid(&apply(&base, &edit)));
+}
+
+fn text(value: &str) -> Value {
+    serde_json::json!({
+        "term": "literal",
+        "type": {"ordinal": 0, "package": "example", "path": ["scalar_type", "text"]},
+        "value": value,
+        "value_kind": "text"
+    })
+}
+
+/// FR-464-AC-24, FR-466-AC-1: every spelling an enumeration admits stays
+/// schema-valid, so tightening the rule past the enumerations fails here. Each
+/// case edits the base at one path: a scalar `replace` or the members of a
+/// list of spellings.
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-24", "FR-466-AC-1")]
+#[test]
+fn every_admitted_enumerated_spelling_is_schema_valid() {
+    let base = parse(BASE);
+    let validator = jsonschema::validator_for(&parse(SCHEMA)).expect("schema is valid");
+    let node = "/semantic_graph/nodes";
+    // (path, spellings, true when the path holds a list of spelling literals)
+    let cases: [(String, &[&str], bool); 8] = [
+        (format!("{node}/62/body/arguments/4/value/value"), &["unknown", "at-most-once", "at-least-once", "exactly-once-premise"], false),
+        (format!("{node}/63/body/arguments/2/value/value"), &["reject", "block"], false),
+        (format!("{node}/66/body/arguments/2/value/members"), &["relaxed", "acquire", "release", "acq_rel", "seq_cst"], true),
+        (format!("{node}/70/body/arguments/0/value/members"), &["sc", "tso", "ra"], true),
+        (format!("{node}/70/body/arguments/4/value/members"), &["continue", "cancel"], true),
+        (format!("{node}/70/body/arguments/2/value/members/0/value/value"), &["all", "any"], false),
+        (format!("{node}/80/body/arguments/0/value/value"), &["any"], false),
+        (format!("{node}/82/body/arguments/10/value/members"), &["adversarial"], true),
+    ];
+    let mut defects = Vec::new();
+    for (path, spellings, list) in &cases {
+        for spelling in *spellings {
+            let value = if *list {
+                Value::Array(vec![text(spelling)])
+            } else {
+                Value::from(*spelling)
+            };
+            let edit = [serde_json::json!({"op": "replace", "path": path, "value": value})];
+            if !validator.is_valid(&apply(&base, &edit)) {
+                defects.push(format!("{path}: {spelling} is refused"));
+            }
+        }
+    }
+    // `overflow` `loss` pairs with one `loss` spelling; `when` with a condition.
+    for spelling in ["head", "tail", "new"] {
+        let edit = [
+            serde_json::json!({"op": "replace", "path": format!("{node}/63/body/arguments/2/value/value"), "value": "loss"}),
+            serde_json::json!({"op": "replace", "path": format!("{node}/63/body/arguments/3/value/members"), "value": [text(spelling)]}),
+        ];
+        if !validator.is_valid(&apply(&base, &edit)) {
+            defects.push(format!("queue overflow loss with {spelling} is refused"));
+        }
+    }
+    let edit = [
+        serde_json::json!({"op": "replace", "path": format!("{node}/80/body/arguments/0/value/value"), "value": "when"}),
+        serde_json::json!({"op": "replace", "path": format!("{node}/80/body/arguments/1/value/members"), "value": [text("condition")]}),
+    ];
+    if !validator.is_valid(&apply(&base, &edit)) {
+        defects.push("terminal when with a condition is refused".to_owned());
+    }
+    assert!(defects.is_empty(), "{defects:#?}");
+}
+
+/// FR-464-AC-24, FR-466-AC-1: a `fence` with each admitted ordering, and an
+/// `event` and an `await` appended with their layouts, are schema-valid.
+#[trace("TC-946", "TC-948", "FR-464-AC-24", "FR-466-AC-1")]
+#[test]
+fn appended_fence_event_and_await_nodes_are_schema_valid() {
+    let rows = parse(ROWS);
+    let base = parse(BASE);
+    let validator = jsonschema::validator_for(&parse(SCHEMA)).expect("schema is valid");
+    let row = rows["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["id"] == "L12")
+        .expect("row L12");
+    let appended = row["edit"][0]["value"].clone();
+    let effect = &base["semantic_graph"]["nodes"][67]["body"]["arguments"];
+    let term = |index: usize| effect[index]["value"].clone();
+    let binding = |name: &str, value: Value| {
+        serde_json::json!({"term": "binding", "name": name, "value": value})
+    };
+    let mut nodes = Vec::new();
+    for ordering in ["acquire", "release", "acq_rel", "seq_cst"] {
+        let mut node = appended.clone();
+        node["body"]["arguments"][0]["value"]["value"] = ordering.into();
+        nodes.push((format!("fence {ordering}"), node));
+    }
+    let mut event = appended.clone();
+    event["body"]["operation"]["member"]["operator"] = "event".into();
+    event["body"]["arguments"] = Value::Array(vec![
+        binding("role", term(0)),
+        binding("compensation", term(0)),
+        binding("binder", term(0)),
+        binding("related", term(1)),
+        binding("constraint", term(2)),
+    ]);
+    nodes.push(("event".to_owned(), event));
+    let mut wait = appended.clone();
+    wait["body"]["operation"]["member"]["operator"] = "await".into();
+    wait["body"]["arguments"] = Value::Array(
+        ["after", "clock", "within", "event", "then", "timeout"]
+            .iter()
+            .map(|name| binding(name, term(0)))
+            .collect(),
+    );
+    nodes.push(("await".to_owned(), wait));
+    for (label, node) in nodes {
+        let edit = [serde_json::json!({"op": "add", "path": "/semantic_graph/nodes/-", "value": node})];
+        assert!(validator.is_valid(&apply(&base, &edit)), "{label} is schema-valid");
+    }
 }
