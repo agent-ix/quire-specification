@@ -39,7 +39,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | typed_declaration | type not stated in source; see Field sources |
 | declaration_kind | type not stated in source; see Field sources |
 | authority | type not stated in source; see Field sources |
-| internality | multiplicity not stated in source; see Field sources |
+| internality | one of internal or external (FR-050, FR-217) |
 | choice_ownership | type not stated in source; multiplicity not stated in source; see Field sources |
 | declaration_span | type not stated in source; see Field sources |
 

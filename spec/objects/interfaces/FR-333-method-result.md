@@ -22,12 +22,12 @@ When a verification provider returns a method result, the producer SHALL use the
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | run_id | String | 1..1 |  |
-| subject_claim | String | 1..1 |  |
+| subject_claim | JsonObject | 1..1 |  |
 | outcome | String | 1..1 |  |
-| assumptions_domain | String | 1..1 |  |
-| witness | String | 1..1 |  |
-| coverage | String | 1..1 |  |
-| provenance | String | 1..1 |  |
+| assumptions_domain | JsonObject | 1..1 |  |
+| witness | JsonObject | 1..1 |  |
+| coverage | JsonObject | 1..1 |  |
+| provenance | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -35,14 +35,14 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
+| contract_version | exactly `quire.method-result/v1` |
 | run_id | type not stated in source; multiplicity not stated in source; see Field sources |
-| subject_claim | type not stated in source; see Field sources |
-| outcome | type not stated in source; multiplicity not stated in source; see Field sources |
-| assumptions_domain | type not stated in source; see Field sources |
-| witness | type not stated in source; multiplicity not stated in source; see Field sources |
-| coverage | type not stated in source; multiplicity not stated in source; see Field sources |
-| provenance | type not stated in source; multiplicity not stated in source; see Field sources |
+| subject_claim | record: obligation and claimed strength |
+| outcome | string tag: proved, refuted, tested, observed, inconclusive, unsupported, incomplete or failed; multiplicity not stated in source |
+| assumptions_domain | record: premises and explored domain |
+| witness | record: one of proof reference, test observations, strategy, counterexample; multiplicity not stated in source |
+| coverage | record: explored items, transitions, branches, omitted scope; multiplicity not stated in source |
+| provenance | record: package, model, observations, timestamps; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.method-result/v1`.

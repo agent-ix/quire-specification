@@ -49,7 +49,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | package | exact FR-322 checked-package reference |
 | byte_provision | present on a replay request only |
 | selection | ordered clause/function identifiers |
-| state_environment | type not stated in source; see Field sources |
+| state_environment | JSON object: typed anchors, values, object populations, frames and invocation captures (retained bullet) |
 | limits | `quire.value.accounting/v1` limit objects |
 | stage_limits | present on a replay request |
 | results | one ordered typed disposition per selected item |

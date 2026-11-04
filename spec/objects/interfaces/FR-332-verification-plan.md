@@ -22,13 +22,13 @@ When an authored verification plan completes linking, the producer SHALL use the
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | plan_id | String | 1..1 |  |
-| obligations | String | 1..1 |  |
-| methods | String | 0..* |  |
-| domains | String | 1..1 |  |
-| assumptions | String | 1..1 |  |
-| dependencies | String | 1..1 |  |
-| bounds | String | 1..1 |  |
-| providers | String | 1..1 |  |
+| obligations | JsonObject | 1..1 |  |
+| methods | JsonObject | 0..* |  |
+| domains | JsonObject | 1..1 |  |
+| assumptions | JsonObject | 1..1 |  |
+| dependencies | JsonObject | 1..1 |  |
+| bounds | JsonObject | 1..1 |  |
+| providers | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -36,14 +36,14 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| obligations | type not stated in source; see Field sources |
-| methods | type not stated in source; see Field sources |
-| domains | type not stated in source; multiplicity not stated in source; see Field sources |
-| assumptions | type not stated in source; multiplicity not stated in source; see Field sources |
-| dependencies | type not stated in source; multiplicity not stated in source; see Field sources |
-| bounds | type not stated in source; multiplicity not stated in source; see Field sources |
-| providers | type not stated in source; multiplicity not stated in source; see Field sources |
+| contract_version | exactly `quire.verification-plan/v1` |
+| obligations | list of obligation records: clause or claim plus expected evidence class; multiplicity not stated in source |
+| methods | ordered list of method selections |
+| domains | record: model, input, trace, time, candidate domains; multiplicity not stated in source |
+| assumptions | record: authored premises with authorities; multiplicity not stated in source |
+| dependencies | record: prerequisite edges between plan nodes; multiplicity not stated in source |
+| bounds | record: method work bounds and semantic-domain bounds; multiplicity not stated in source |
+| providers | record: capability-constrained selections and fallback or refusal policy; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.verification-plan/v1`.

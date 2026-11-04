@@ -29,7 +29,7 @@ When a producer locates a value inside a validated runtime subject, the producer
 |---|---|---|---|
 | root_observation | String | 1..1 |  |
 | root_subject | String | 1..1 |  |
-| steps | String | 0..* |  |
+| steps | JsonObject | 0..* |  |
 
 ## Field sources
 
@@ -39,7 +39,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | root_observation | selected observation identity; type not stated in source; see Field sources |
 | root_subject | exactly one of: declared object identity (DeclaredObjectIdentity), invocation binding, population, built collection; the text names no union type; see Field sources |
-| steps | ordered sequence of traversal step, possibly empty; each step is one of six kinds; step type not stated in source; see Field sources |
+| steps | JSON array of tagged step objects, ordered, possibly empty (Canonical serialization) |
 
 
 - **root.observation** (`selected observation identity`) — the observation the

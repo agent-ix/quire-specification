@@ -31,7 +31,7 @@ FR-056 states that the evaluator "does not invoke the compensating operation".
 |---|---|---|---|
 | key | String | 1..1 | identity |
 | source_compensation_definition | String | 1..1 |  |
-| forward_effect_identity | String | 1..1 |  |
+| forward_effect_identity | AuthorityQualifiedRuntimeSubjectReference | 1..1 |  |
 | role | String | 1..1 |  |
 | eligibility_conditions | String | 1..1 |  |
 | retry_policy | CompensationRetryPolicy | 1..1 |  |
@@ -46,7 +46,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | key | type not stated in source; see Field sources |
 | source_compensation_definition | type not stated in source; see Field sources |
-| forward_effect_identity | type not stated in source; see Field sources |
+| forward_effect_identity | FR-287 value of kind `business-effect` (Identity and comparison) |
 | role | type not stated in source; multiplicity not stated in source; see Field sources |
 | eligibility_conditions | type not stated in source; multiplicity not stated in source; see Field sources |
 | retry_policy | multiplicity not stated in source; see Field sources |

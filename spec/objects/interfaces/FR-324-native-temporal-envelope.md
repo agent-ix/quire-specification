@@ -21,13 +21,13 @@ When temporal meaning crosses the native temporal boundary, the producer SHALL u
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
-| artifact | String | 1..1 |  |
-| clock_binding | String | 1..1 |  |
-| history_boundary | String | 1..1 |  |
-| valuation | String | 1..1 |  |
-| progress | String | 1..1 |  |
-| result | String | 1..1 |  |
-| supersession | String | 1..1 |  |
+| artifact | JsonObject | 1..1 |  |
+| clock_binding | JsonObject | 1..1 |  |
+| history_boundary | JsonObject | 1..1 |  |
+| valuation | JsonObject | 1..1 |  |
+| progress | JsonObject | 1..1 |  |
+| result | JsonObject | 1..1 |  |
+| supersession | JsonObject | 0..1 |  |
 
 ## Field sources
 
@@ -35,14 +35,14 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| artifact | type not stated in source; multiplicity not stated in source; see Field sources |
-| clock_binding | type not stated in source; multiplicity not stated in source; see Field sources |
-| history_boundary | type not stated in source; multiplicity not stated in source; see Field sources |
-| valuation | type not stated in source; multiplicity not stated in source; see Field sources |
-| progress | type not stated in source; multiplicity not stated in source; see Field sources |
-| result | type not stated in source; multiplicity not stated in source; see Field sources |
-| supersession | type not stated in source; multiplicity not stated in source; see Field sources |
+| contract_version | exactly `quire.native-temporal/v1` |
+| artifact | record: formula graph, typed atoms, interval bounds, profile identity; multiplicity not stated in source |
+| clock_binding | record: authority, epoch, unit, resolution, ordering contract; multiplicity not stated in source |
+| history_boundary | record: origin, cutoff, closure facts; multiplicity not stated in source |
+| valuation | record: partial atom values, observation identities, uncertainty sets; multiplicity not stated in source |
+| progress | record: observed frontier and completeness state; multiplicity not stated in source |
+| result | record: truth, settlement, execution, adequacy, provenance axes plus witness; multiplicity not stated in source |
+| supersession | record: prior result and revision relation; present when repaired |
 
 
 - `contract_version` — exactly `quire.native-temporal/v1`.

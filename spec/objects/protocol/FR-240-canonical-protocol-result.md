@@ -74,7 +74,7 @@ When a protocol assessment result is emitted or read, the strict reader SHALL re
 | completeness | InputCompletenessState | 1..1 |  |
 | observation_adequacy | ObservationAdequacyState | 1..1 |  |
 | protocol_adequacy | ProtocolAdequacyState | 1..1 |  |
-| claim | String | 1..1 |  |
+| claim | JsonObject | 1..1 |  |
 | decision_support | DecisionSupportRecord | 1..1 |  |
 | provenance | String | 1..1 |  |
 
@@ -84,18 +84,18 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contractVersion | type not stated in source; see Field sources |
-| kind | type not stated in source; see Field sources |
+| contractVersion | exactly `quire.protocol.result/v1-draft.1` (FR-061, FR-240-AC-1) |
+| kind | exactly `ProtocolResult` (FR-061, FR-240-AC-1) |
 | decision_scope_progress | type not stated in source; see Field sources |
 | decision_scope_closure | type not stated in source; see Field sources |
 | surrounding_execution_progress | type not stated in source; see Field sources |
 | surrounding_execution_closure | type not stated in source; see Field sources |
 | complete_global_conformance_closure | type not stated in source; see Field sources |
-| truth | multiplicity not stated in source; see Field sources |
+| truth | one truth disposition (FR-242) |
 | settlement_basis | exactly one basis per truth result plus supporting fact and progress identities |
-| activation | multiplicity not stated in source; see Field sources |
+| activation | one activation state (FR-244) |
 | assumptions | type not stated in source; see Field sources |
-| claim | exactly one FR-290 protocol-family claim kind plus, for an advanced result, strength, fragment and further fields; type not stated in source; see Field sources |
+| claim | JSON object: exactly one FR-290 protocol-family claim kind plus, for an advanced result, FR-281 strength, FR-291 fragment and FR-292 backend selection (FR-240 claim) |
 | decision_support | multiplicity not stated in source; see Field sources |
 | provenance | type not stated in source; multiplicity not stated in source; see Field sources |
 

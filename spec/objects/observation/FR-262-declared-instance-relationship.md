@@ -32,7 +32,7 @@ configuration".
 | relationship_type | String | 1..1 |  |
 | domain_package_identity | String | 1..1 |  |
 | relationship_declaration_key | String | 1..1 |  |
-| related_instance_endpoints | String | 0..* |  |
+| related_instance_endpoints | AuthorityQualifiedRuntimeSubjectReference | 0..* |  |
 
 ## Field sources
 
@@ -40,10 +40,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| relationship_type | type not stated in source; multiplicity not stated in source; see Field sources |
+| relationship_type | type not stated in source; required key component (FR-262 Absence); see Field sources |
 | domain_package_identity | type not stated in source; see Field sources |
 | relationship_declaration_key | type not stated in source; see Field sources |
-| related_instance_endpoints | type not stated in source; see Field sources |
+| related_instance_endpoints | ordered source and target, each one complete FR-287 key (FR-262-AC-5) |
 
 
 | Property | Source | Note |

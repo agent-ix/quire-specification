@@ -23,7 +23,7 @@ When a request names a workflow instance, the binder SHALL treat it as an author
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
 | authored_identity | String | 1..1 |  |
 | typed_declaration_and_configuration_identity | String | 1..1 |  |
 | explicit_binding | String | 1..1 |  |
@@ -37,7 +37,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
+| key | exactly one FR-287 value of kind `workflow-instance` (Identity and comparison) |
 | authored_identity | type not stated in source; multiplicity not stated in source; see Field sources |
 | typed_declaration_and_configuration_identity | type not stated in source; see Field sources |
 | explicit_binding | type not stated in source; multiplicity not stated in source; see Field sources |

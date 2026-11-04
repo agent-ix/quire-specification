@@ -41,8 +41,8 @@ the surrounding execution as closed."
 |---|---|---|---|
 | scope_role | String | 1..1 |  |
 | scope_identity | String | 1..1 |  |
-| progress_state | String | 1..1 |  |
-| closure_state | String | 1..1 |  |
+| progress_state | ScopeProgressAndClosureState | 1..1 |  |
+| closure_state | ScopeProgressAndClosureState | 1..1 |  |
 | input_completeness | String | 1..1 |  |
 | exact_decision_support_set | String | 1..1 |  |
 
@@ -54,8 +54,8 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | scope_role | type not stated in source; see Field sources |
 | scope_identity | type not stated in source; see Field sources |
-| progress_state | type not stated in source; see Field sources |
-| closure_state | type not stated in source; see Field sources |
+| progress_state | exactly one FR-284 state (`open` or `closed`) |
+| closure_state | exactly one FR-284 state (`open` or `closed`) |
 | input_completeness | type not stated in source; see Field sources |
 | exact_decision_support_set | type not stated in source; see Field sources |
 

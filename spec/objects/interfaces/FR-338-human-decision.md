@@ -22,8 +22,8 @@ When a human accepts, rejects or limits a qualification or release scope, the pr
 |---|---|---|---|
 | contract_version | String | 1..1 |  |
 | decision_id | String | 1..1 |  |
-| actor | String | 1..1 |  |
-| scope | String | 1..1 |  |
+| actor | JsonObject | 1..1 |  |
+| scope | JsonObject | 1..1 |  |
 | evidence | String | 1..1 |  |
 | disposition | String | 1..1 |  |
 | rationale | String | 1..1 |  |
@@ -35,13 +35,13 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| actor | type not stated in source; multiplicity not stated in source; see Field sources |
-| scope | type not stated in source; see Field sources |
+| contract_version | exactly `quire.human-decision/v1` |
+| actor | record: authenticated human identity and authority reference; multiplicity not stated in source |
+| scope | record: qualification, release, capability, artifact identities |
 | evidence | type not stated in source; multiplicity not stated in source; see Field sources |
-| disposition | type not stated in source; multiplicity not stated in source; see Field sources |
-| rationale | type not stated in source; multiplicity not stated in source; see Field sources |
-| supersedes | type not stated in source; see Field sources |
+| disposition | string tag: accept, reject or accept-with-explicit-limits; multiplicity not stated in source |
+| rationale | retained human-authored text; multiplicity not stated in source |
+| supersedes | optional prior `decision_id` string (compared as exact string) |
 
 
 - `contract_version` — exactly `quire.human-decision/v1`.

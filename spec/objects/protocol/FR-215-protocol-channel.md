@@ -39,10 +39,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | key | type not stated in source; see Field sources |
-| sender | type not stated in source; multiplicity not stated in source; see Field sources |
-| receiver | type not stated in source; multiplicity not stated in source; see Field sources |
+| sender | type not stated in source; multiplicity 1..1, a missing premise refuses admission (FR-054-AC-3) |
+| receiver | type not stated in source; multiplicity 1..1, a missing premise refuses admission (FR-054-AC-3) |
 | message_types | a bound premise: message types of the channel |
-| ordering_policy | type not stated in source; multiplicity not stated in source; see Field sources |
+| ordering_policy | type not stated in source; multiplicity 1..1, a missing premise refuses admission (FR-054-AC-3) |
 | delivery_policy | type not stated in source; see Field sources |
 | typed_declaration | type not stated in source; see Field sources |
 | channel_contract | type not stated in source; see Field sources |

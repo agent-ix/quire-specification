@@ -41,7 +41,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| interpretation_identity | type not stated in source; multiplicity not stated in source; see Field sources |
+| interpretation_identity | string identity such as `quire.native.diagnostics/v1`; exactly one (proposed catalog header; Key) |
 
 
 | Property | Source | Note |

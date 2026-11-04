@@ -31,7 +31,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| rule_identity | type not stated in source; see Field sources |
+| rule_identity | contract string, `quire.observation.explicit-members/v1` in v1 (FR-264 Identity) |
 | finiteness | type not stated in source; see Field sources |
 | required_members | type not stated in source; see Field sources |
 

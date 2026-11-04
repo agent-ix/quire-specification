@@ -21,7 +21,7 @@ When a package imports a domain package for native linking, the checker SHALL us
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | identity | String | 1..1 |  |
-| declarations | String | 1..1 |  |
+| declarations | JsonObject | 1..1 |  |
 | effective_view | String | 1..1 |  |
 
 ## Field sources
@@ -30,9 +30,9 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| identity | type not stated in source; see Field sources |
-| declarations | type not stated in source; see Field sources |
-| effective_view | type not stated in source; see Field sources |
+| identity | domain package identity string, e.g. `acme/orders` |
+| declarations | collection of declaration records keyed by (identity, IR node identity); multiplicity not stated in source |
+| effective_view | exactly one `quire.model.effective-view/v2` identity |
 
 
 - `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration and recorded by the package's `model_root` node only. There is no lock row, digest, digest domain or version. The source names the identity alone (FR-154 "Model selection in source").

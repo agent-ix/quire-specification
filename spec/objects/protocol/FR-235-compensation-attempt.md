@@ -29,10 +29,10 @@ receive, delivery, attempt and effect as distinct typed subjects".
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
 | attempt_identity | String | 1..1 |  |
 | owning_registration | CompensationRegistration | 1..1 |  |
-| related_effect_identity | String | 1..1 |  |
+| related_effect_identity | String | 0..1 |  |
 | attempt_outcome | CompensationAttemptOutcome | 1..1 |  |
 
 ## Field sources
@@ -41,10 +41,10 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
+| key | exactly one FR-287 value of kind `compensation-attempt` (Identity and comparison) |
 | attempt_identity | type not stated in source; see Field sources |
-| related_effect_identity | type not stated in source; multiplicity not stated in source; see Field sources |
-| attempt_outcome | multiplicity not stated in source; see Field sources |
+| related_effect_identity | type not stated in source; absent when no effect is established (Absence) |
+| attempt_outcome | one per attempt (FR-058, FR-236) |
 
 
 | Property | Source | Note |

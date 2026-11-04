@@ -30,12 +30,12 @@ no provider present.
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | decision | MeasuredDecision | 1..1 |  |
-| estimate | String | 1..1 |  |
-| interval | String | 1..1 |  |
-| basis | String | 1..1 |  |
-| provenance | String | 1..1 |  |
-| tests | String | 0..* |  |
-| witnesses | String | 1..1 |  |
+| estimate | JsonObject | 1..1 |  |
+| interval | JsonObject | 0..1 |  |
+| basis | JsonObject | 1..1 |  |
+| provenance | JsonObject | 1..1 |  |
+| tests | JsonObject | 0..* |  |
+| witnesses | JsonObject | 0..* |  |
 
 ## Field sources
 
@@ -43,12 +43,12 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| estimate | type not stated in source; see Field sources |
-| interval | type not stated in source; see Field sources |
-| basis | type not stated in source; see Field sources |
-| provenance | type not stated in source; see Field sources |
-| tests | type not stated in source; see Field sources |
-| witnesses | type not stated in source; see Field sources |
+| estimate | JSON object `{value, quantile?}`; `proposals/backend-provider-v1/schema.json` `Estimate` |
+| interval | JSON object `{lower, upper}`; absent only for the sequential method (Absence); `proposals/backend-provider-v1/schema.json` `Interval` |
+| basis | `StatisticalBasis{method, confidence, samples, draws, tests, coverage, grid}` object |
+| provenance | object: seed, sampler identity, per-test entries |
+| tests | one object per test, in test-index order |
+| witnesses | up to `max_witnesses` sampled witness objects |
 
 
 The value has two parts: the `StatisticalVerdict` record and the sampled

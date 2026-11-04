@@ -31,7 +31,7 @@ When a truth result settles on a `decisive-witness` or `decisive-counterexample`
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| deciding_quantifier | String | 1..1 |  |
+| deciding_quantifier | JsonObject | 0..1 |  |
 | deciding_element | String | 1..1 |  |
 | index | Integer | 0..1 |  |
 | value_path | RuntimeValuePath | 1..1 |  |
@@ -43,7 +43,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| deciding_quantifier | occurrence key (node_id, role, ordinal) of the quantifier node; type not stated in source; see Field sources |
+| deciding_quantifier | JSON object, occurrence key (node_id, role, ordinal) of the quantifier node; absent for a family with no quantifier occurrence |
 | deciding_element | type not stated in source; see Field sources |
 | index | where the family assigns a positional index |
 | trace_position | type not stated in source; see Field sources |
