@@ -989,58 +989,109 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["kind", "declaration", "name"],
+          "required": [
+            "kind",
+            "declaration",
+            "name"
+          ],
           "properties": {
-            "kind": {"const": "operation"},
-            "declaration": {"$ref": "#/$defs/NodeId"},
-            "name": {"$ref": "#/$defs/Identifier"}
+            "kind": {
+              "const": "operation"
+            },
+            "declaration": {
+              "$ref": "#/$defs/NodeId"
+            },
+            "name": {
+              "$ref": "#/$defs/Identifier"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind", "node"],
+          "required": [
+            "kind",
+            "node"
+          ],
           "properties": {
-            "kind": {"const": "protocol_root"},
-            "node": {"$ref": "#/$defs/NodeId"}
+            "kind": {
+              "const": "protocol_root"
+            },
+            "node": {
+              "$ref": "#/$defs/NodeId"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind", "node"],
+          "required": [
+            "kind",
+            "node"
+          ],
           "properties": {
-            "kind": {"const": "attempt_node"},
-            "node": {"$ref": "#/$defs/NodeId"}
+            "kind": {
+              "const": "attempt_node"
+            },
+            "node": {
+              "$ref": "#/$defs/NodeId"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind", "parallel", "branch"],
+          "required": [
+            "kind",
+            "parallel",
+            "branch"
+          ],
           "properties": {
-            "kind": {"const": "parallel_branch"},
-            "parallel": {"$ref": "#/$defs/NodeId"},
-            "branch": {"$ref": "#/$defs/Identifier"}
+            "kind": {
+              "const": "parallel_branch"
+            },
+            "parallel": {
+              "$ref": "#/$defs/NodeId"
+            },
+            "branch": {
+              "$ref": "#/$defs/Identifier"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind", "node"],
+          "required": [
+            "kind",
+            "node"
+          ],
           "properties": {
-            "kind": {"const": "compensation_template"},
-            "node": {"$ref": "#/$defs/NodeId"}
+            "kind": {
+              "const": "compensation_template"
+            },
+            "node": {
+              "$ref": "#/$defs/NodeId"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind", "declaration", "name"],
+          "required": [
+            "kind",
+            "declaration",
+            "name"
+          ],
           "properties": {
-            "kind": {"const": "hybrid_transition"},
-            "declaration": {"$ref": "#/$defs/NodeId"},
-            "name": {"$ref": "#/$defs/Identifier"}
+            "kind": {
+              "const": "hybrid_transition"
+            },
+            "declaration": {
+              "$ref": "#/$defs/NodeId"
+            },
+            "name": {
+              "$ref": "#/$defs/Identifier"
+            }
           },
           "additionalProperties": false
         }
@@ -4088,27 +4139,45 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["kind", "index"],
+          "required": [
+            "kind",
+            "index"
+          ],
           "properties": {
-            "kind": { "const": "argument" },
-            "index": { "$ref": "#/$defs/KeyOrdinal" }
+            "kind": {
+              "const": "argument"
+            },
+            "index": {
+              "$ref": "#/$defs/KeyOrdinal"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind", "index"],
+          "required": [
+            "kind",
+            "index"
+          ],
           "properties": {
-            "kind": { "const": "member" },
-            "index": { "$ref": "#/$defs/KeyOrdinal" }
+            "kind": {
+              "const": "member"
+            },
+            "index": {
+              "$ref": "#/$defs/KeyOrdinal"
+            }
           },
           "additionalProperties": false
         },
         {
           "type": "object",
-          "required": ["kind"],
+          "required": [
+            "kind"
+          ],
           "properties": {
-            "kind": { "const": "binding_value" }
+            "kind": {
+              "const": "binding_value"
+            }
           },
           "additionalProperties": false
         }
@@ -5630,6 +5699,33 @@
                 "obligation",
                 "compensation"
               ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "semantic_form": {
+                "enum": [
+                  "protocol_clause",
+                  "role",
+                  "channel",
+                  "queue",
+                  "control",
+                  "obligation",
+                  "compensation"
+                ]
+              }
+            },
+            "required": [
+              "semantic_form"
+            ]
+          },
+          "then": {
+            "properties": {
+              "body": {
+                "$ref": "#/$defs/ProtocolControlApplication"
+              }
             }
           }
         }
@@ -10063,11 +10159,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "protocol"
+                        "const": "protocol",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10091,7 +10193,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolReference"
                       }
                     },
                     "required": [
@@ -10111,7 +10213,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolActivation"
                       }
                     },
                     "required": [
@@ -10131,7 +10233,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolRecordsTerm"
                       }
                     },
                     "required": [
@@ -10291,7 +10393,46 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "members"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "aggregate"
+                          },
+                          "members": {
+                            "type": "array",
+                            "maxItems": 1,
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "term",
+                                "type",
+                                "value_kind",
+                                "value"
+                              ],
+                              "properties": {
+                                "term": {
+                                  "const": "literal"
+                                },
+                                "type": {
+                                  "$ref": "#/$defs/NodeRef"
+                                },
+                                "value_kind": {
+                                  "const": "text"
+                                },
+                                "value": {
+                                  "enum": [
+                                    "adversarial"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          }
+                        }
                       }
                     },
                     "required": [
@@ -10355,11 +10496,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "role"
+                        "const": "role",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10427,11 +10574,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "channel"
+                        "const": "channel",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10515,7 +10668,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolOrderingGroup"
                       }
                     },
                     "required": [
@@ -10535,7 +10688,33 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "type",
+                          "value_kind",
+                          "value"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "literal"
+                          },
+                          "type": {
+                            "$ref": "#/$defs/NodeRef"
+                          },
+                          "value_kind": {
+                            "const": "text"
+                          },
+                          "value": {
+                            "enum": [
+                              "unknown",
+                              "at-most-once",
+                              "at-least-once",
+                              "exactly-once-premise"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -10559,11 +10738,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "queue"
+                        "const": "queue",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10607,7 +10792,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolCapacity"
                       }
                     },
                     "required": [
@@ -10627,7 +10812,32 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "type",
+                          "value_kind",
+                          "value"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "literal"
+                          },
+                          "type": {
+                            "$ref": "#/$defs/NodeRef"
+                          },
+                          "value_kind": {
+                            "const": "text"
+                          },
+                          "value": {
+                            "enum": [
+                              "reject",
+                              "block",
+                              "loss"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -10647,7 +10857,48 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "members"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "aggregate"
+                          },
+                          "members": {
+                            "type": "array",
+                            "maxItems": 1,
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "term",
+                                "type",
+                                "value_kind",
+                                "value"
+                              ],
+                              "properties": {
+                                "term": {
+                                  "const": "literal"
+                                },
+                                "type": {
+                                  "$ref": "#/$defs/NodeRef"
+                                },
+                                "value_kind": {
+                                  "const": "text"
+                                },
+                                "value": {
+                                  "enum": [
+                                    "head",
+                                    "tail",
+                                    "new"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          }
+                        }
                       }
                     },
                     "required": [
@@ -10660,7 +10911,76 @@
                 ],
                 "type": "array"
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "value": {
+                                  "const": "loss"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        true,
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "minItems": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        true,
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "maxItems": 0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
           }
         },
         {
@@ -10671,11 +10991,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "finish"
+                        "const": "finish",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10743,11 +11069,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "terminal"
+                        "const": "terminal",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10771,7 +11103,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolTerminalMode"
                       }
                     },
                     "required": [
@@ -10804,7 +11136,70 @@
                 ],
                 "type": "array"
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "value": {
+                                  "const": "when"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "minItems": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "maxItems": 0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
           }
         },
         {
@@ -10815,11 +11210,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "sequence"
+                        "const": "sequence",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10867,11 +11268,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "choice"
+                        "const": "choice",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10935,7 +11342,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolRecordsMin2"
                       }
                     },
                     "required": [
@@ -10959,11 +11366,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "parallel"
+                        "const": "parallel",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -10987,7 +11400,48 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "members"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "aggregate"
+                          },
+                          "members": {
+                            "type": "array",
+                            "maxItems": 1,
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "term",
+                                "type",
+                                "value_kind",
+                                "value"
+                              ],
+                              "properties": {
+                                "term": {
+                                  "const": "literal"
+                                },
+                                "type": {
+                                  "$ref": "#/$defs/NodeRef"
+                                },
+                                "value_kind": {
+                                  "const": "text"
+                                },
+                                "value": {
+                                  "enum": [
+                                    "sc",
+                                    "tso",
+                                    "ra"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          }
+                        }
                       }
                     },
                     "required": [
@@ -11007,7 +11461,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolRecordsMin2"
                       }
                     },
                     "required": [
@@ -11027,7 +11481,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolJoin"
                       }
                     },
                     "required": [
@@ -11067,7 +11521,47 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "members"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "aggregate"
+                          },
+                          "members": {
+                            "type": "array",
+                            "maxItems": 1,
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "term",
+                                "type",
+                                "value_kind",
+                                "value"
+                              ],
+                              "properties": {
+                                "term": {
+                                  "const": "literal"
+                                },
+                                "type": {
+                                  "$ref": "#/$defs/NodeRef"
+                                },
+                                "value_kind": {
+                                  "const": "text"
+                                },
+                                "value": {
+                                  "enum": [
+                                    "continue",
+                                    "cancel"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          }
+                        }
                       }
                     },
                     "required": [
@@ -11091,11 +11585,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "repeat"
+                        "const": "repeat",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11179,7 +11679,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolProof"
                       }
                     },
                     "required": [
@@ -11252,7 +11752,82 @@
                 ],
                 "type": "array"
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "minItems": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "minItems": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "arguments": {
+                      "prefixItems": [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        {
+                          "properties": {
+                            "value": {
+                              "properties": {
+                                "members": {
+                                  "maxItems": 0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
           }
         },
         {
@@ -11263,11 +11838,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "await"
+                        "const": "await",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11415,11 +11996,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "check"
+                        "const": "check",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11467,11 +12054,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "send"
+                        "const": "send",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11535,7 +12128,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolRecordsTerm"
                       }
                     },
                     "required": [
@@ -11579,11 +12172,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "receive"
+                        "const": "receive",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11711,11 +12310,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "attempt"
+                        "const": "attempt",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11779,7 +12384,50 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "members"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "aggregate"
+                          },
+                          "members": {
+                            "type": "array",
+                            "maxItems": 1,
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "term",
+                                "type",
+                                "value_kind",
+                                "value"
+                              ],
+                              "properties": {
+                                "term": {
+                                  "const": "literal"
+                                },
+                                "type": {
+                                  "$ref": "#/$defs/NodeRef"
+                                },
+                                "value_kind": {
+                                  "const": "text"
+                                },
+                                "value": {
+                                  "enum": [
+                                    "relaxed",
+                                    "acquire",
+                                    "release",
+                                    "acq_rel",
+                                    "seq_cst"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          }
+                        }
                       }
                     },
                     "required": [
@@ -11883,11 +12531,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "effect"
+                        "const": "effect",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -11995,11 +12649,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "event"
+                        "const": "event",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -12127,11 +12787,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "commit"
+                        "const": "commit",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -12219,11 +12885,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "fence"
+                        "const": "fence",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -12247,7 +12919,33 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "type": "object",
+                        "required": [
+                          "term",
+                          "type",
+                          "value_kind",
+                          "value"
+                        ],
+                        "properties": {
+                          "term": {
+                            "const": "literal"
+                          },
+                          "type": {
+                            "$ref": "#/$defs/NodeRef"
+                          },
+                          "value_kind": {
+                            "const": "text"
+                          },
+                          "value": {
+                            "enum": [
+                              "acquire",
+                              "release",
+                              "acq_rel",
+                              "seq_cst"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -12271,11 +12969,17 @@
                   "member": {
                     "properties": {
                       "operator": {
-                        "const": "compensate"
+                        "const": "compensate",
+                        "type": "string"
                       }
-                    }
+                    },
+                    "type": "object",
+                    "required": [
+                      "operator"
+                    ]
                   }
-                }
+                },
+                "type": "object"
               }
             },
             "required": [
@@ -12399,7 +13103,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolRecordsTerm"
                       }
                     },
                     "required": [
@@ -12439,7 +13143,7 @@
                         "const": "binding"
                       },
                       "value": {
-                        "$ref": "#/$defs/MemberTerm"
+                        "$ref": "#/$defs/ProtocolRecordsTerm"
                       }
                     },
                     "required": [
@@ -12561,85 +13265,18 @@
           "type": "array"
         },
         "operation": {
-          "additionalProperties": false,
-          "properties": {
-            "identity": {
-              "const": "quire.op.protocol.control"
+          "allOf": [
+            {
+              "$ref": "#/$defs/Operation"
             },
-            "laws": {
-              "items": {
-                "additionalProperties": false,
-                "properties": {
-                  "definition": {
-                    "$ref": "#/$defs/DefinitionRef"
-                  },
-                  "role": {
-                    "const": "protocol_profile"
-                  }
-                },
-                "required": [
-                  "role",
-                  "definition"
-                ],
-                "type": "object"
-              },
-              "maxItems": 1,
-              "minItems": 1,
-              "type": "array"
-            },
-            "leaves": {
-              "maxItems": 0,
-              "type": "array"
-            },
-            "member": {
-              "additionalProperties": false,
+            {
               "properties": {
-                "kind": {
-                  "const": "profile_operator"
-                },
-                "operator": {
-                  "enum": [
-                    "protocol",
-                    "role",
-                    "channel",
-                    "queue",
-                    "finish",
-                    "terminal",
-                    "sequence",
-                    "choice",
-                    "parallel",
-                    "repeat",
-                    "await",
-                    "check",
-                    "send",
-                    "receive",
-                    "attempt",
-                    "effect",
-                    "event",
-                    "commit",
-                    "fence",
-                    "compensate"
-                  ]
+                "laws": {
+                  "maxItems": 1
                 }
-              },
-              "required": [
-                "kind",
-                "operator"
-              ],
-              "type": "object"
-            },
-            "mode": {
-              "type": "null"
+              }
             }
-          },
-          "required": [
-            "identity",
-            "laws",
-            "mode",
-            "member",
-            "leaves"
-          ],
-          "type": "object"
+          ]
         },
         "operator": {
           "const": "protocol_control"
@@ -13019,57 +13656,123 @@
     },
     "ResolvedEqualityUnitForm": {
       "oneOf": [
-        { "$ref": "#/$defs/DeclaredEqualityUnitForm" },
-        { "$ref": "#/$defs/CompoundEqualityUnitForm" }
+        {
+          "$ref": "#/$defs/DeclaredEqualityUnitForm"
+        },
+        {
+          "$ref": "#/$defs/CompoundEqualityUnitForm"
+        }
       ]
     },
     "DeclaredEqualityUnitForm": {
       "type": "object",
-      "required": ["kind", "dimension_node", "dimension_terms", "root_unit", "path"],
+      "required": [
+        "kind",
+        "dimension_node",
+        "dimension_terms",
+        "root_unit",
+        "path"
+      ],
       "properties": {
-        "kind": { "const": "declared" },
-        "dimension_node": { "$ref": "#/$defs/NodeRef" },
-        "dimension_terms": { "type": "array", "items": { "$ref": "#/$defs/UnitDimensionTerm" } },
-        "root_unit": { "$ref": "#/$defs/NodeRef" },
-        "path": { "type": "array", "items": { "$ref": "#/$defs/UnitConversionEdge" } }
+        "kind": {
+          "const": "declared"
+        },
+        "dimension_node": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "dimension_terms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnitDimensionTerm"
+          }
+        },
+        "root_unit": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnitConversionEdge"
+          }
+        }
       },
       "additionalProperties": false
     },
     "CompoundEqualityUnitForm": {
       "type": "object",
-      "required": ["kind", "dimension_terms", "terms"],
+      "required": [
+        "kind",
+        "dimension_terms",
+        "terms"
+      ],
       "properties": {
-        "kind": { "const": "compound" },
-        "dimension_terms": { "type": "array", "items": { "$ref": "#/$defs/UnitDimensionTerm" } },
-        "terms": { "type": "array", "items": { "$ref": "#/$defs/CompoundEqualityUnitTerm" } }
+        "kind": {
+          "const": "compound"
+        },
+        "dimension_terms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnitDimensionTerm"
+          }
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CompoundEqualityUnitTerm"
+          }
+        }
       },
       "additionalProperties": false
     },
     "UnitDimensionTerm": {
       "type": "object",
-      "required": ["dimension", "exponent"],
+      "required": [
+        "dimension",
+        "exponent"
+      ],
       "properties": {
-        "dimension": { "$ref": "#/$defs/NodeRef" },
-        "exponent": { "$ref": "#/$defs/IntegerString" }
+        "dimension": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "exponent": {
+          "$ref": "#/$defs/IntegerString"
+        }
       },
       "additionalProperties": false
     },
     "CompoundEqualityUnitTerm": {
       "type": "object",
-      "required": ["root_unit", "exponent"],
+      "required": [
+        "root_unit",
+        "exponent"
+      ],
       "properties": {
-        "root_unit": { "$ref": "#/$defs/NodeRef" },
-        "exponent": { "$ref": "#/$defs/IntegerString" }
+        "root_unit": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "exponent": {
+          "$ref": "#/$defs/IntegerString"
+        }
       },
       "additionalProperties": false
     },
     "UnitConversionEdge": {
       "type": "object",
-      "required": ["target", "scale", "offset"],
+      "required": [
+        "target",
+        "scale",
+        "offset"
+      ],
       "properties": {
-        "target": { "$ref": "#/$defs/NodeRef" },
-        "scale": { "$ref": "#/$defs/Rational" },
-        "offset": { "$ref": "#/$defs/Rational" }
+        "target": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "scale": {
+          "$ref": "#/$defs/Rational"
+        },
+        "offset": {
+          "$ref": "#/$defs/Rational"
+        }
       },
       "additionalProperties": false
     },
@@ -13320,6 +14023,935 @@
             }
           },
           "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolReference": {
+      "type": "object",
+      "required": [
+        "term",
+        "target"
+      ],
+      "properties": {
+        "term": {
+          "const": "reference"
+        },
+        "target": {
+          "$ref": "#/$defs/NodeRef"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolText": {
+      "type": "object",
+      "required": [
+        "term",
+        "type",
+        "value_kind",
+        "value"
+      ],
+      "properties": {
+        "term": {
+          "const": "literal"
+        },
+        "type": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "value_kind": {
+          "const": "text"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolInteger": {
+      "type": "object",
+      "required": [
+        "term",
+        "type",
+        "value_kind",
+        "value"
+      ],
+      "properties": {
+        "term": {
+          "const": "literal"
+        },
+        "type": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "value_kind": {
+          "const": "integer"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolRecordsTerm": {
+      "type": "object",
+      "required": [
+        "term",
+        "members"
+      ],
+      "properties": {
+        "term": {
+          "const": "aggregate"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GroupTerm"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtocolActivation": {
+      "type": "object",
+      "required": [
+        "term",
+        "members"
+      ],
+      "properties": {
+        "term": {
+          "const": "aggregate"
+        },
+        "members": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "required": [
+                "term",
+                "name",
+                "value"
+              ],
+              "properties": {
+                "term": {
+                  "const": "binding"
+                },
+                "name": {
+                  "const": "kind"
+                },
+                "value": {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "type",
+                    "value_kind",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "literal"
+                    },
+                    "type": {
+                      "$ref": "#/$defs/NodeRef"
+                    },
+                    "value_kind": {
+                      "const": "text"
+                    },
+                    "value": {
+                      "enum": [
+                        "origin",
+                        "each"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "origin"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "each"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 2,
+                "maxItems": 3,
+                "prefixItems": [
+                  true,
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "trigger"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/ProtocolReference"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "guard"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/MemberTerm"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProtocolOrderingGroup": {
+      "type": "object",
+      "required": [
+        "term",
+        "members"
+      ],
+      "properties": {
+        "term": {
+          "const": "aggregate"
+        },
+        "members": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "required": [
+                "term",
+                "name",
+                "value"
+              ],
+              "properties": {
+                "term": {
+                  "const": "binding"
+                },
+                "name": {
+                  "const": "kind"
+                },
+                "value": {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "type",
+                    "value_kind",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "literal"
+                    },
+                    "type": {
+                      "$ref": "#/$defs/NodeRef"
+                    },
+                    "value_kind": {
+                      "const": "text"
+                    },
+                    "value": {
+                      "enum": [
+                        "unordered",
+                        "fifo"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "unordered"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "fifo"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 3,
+                "maxItems": 3,
+                "prefixItems": [
+                  true,
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "binder"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/ProtocolReference"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "key"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/MemberTerm"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProtocolCapacity": {
+      "type": "object",
+      "required": [
+        "term",
+        "members"
+      ],
+      "properties": {
+        "term": {
+          "const": "aggregate"
+        },
+        "members": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "required": [
+                "term",
+                "name",
+                "value"
+              ],
+              "properties": {
+                "term": {
+                  "const": "binding"
+                },
+                "name": {
+                  "const": "kind"
+                },
+                "value": {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "type",
+                    "value_kind",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "literal"
+                    },
+                    "type": {
+                      "$ref": "#/$defs/NodeRef"
+                    },
+                    "value_kind": {
+                      "const": "text"
+                    },
+                    "value": {
+                      "enum": [
+                        "literal",
+                        "symbolic"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "literal"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 2,
+                "maxItems": 2,
+                "prefixItems": [
+                  true,
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "value"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/ProtocolInteger"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "symbolic"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 2,
+                "maxItems": 2,
+                "prefixItems": [
+                  true,
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "name"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/ProtocolText"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProtocolJoin": {
+      "type": "object",
+      "required": [
+        "term",
+        "members"
+      ],
+      "properties": {
+        "term": {
+          "const": "aggregate"
+        },
+        "members": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "required": [
+                "term",
+                "name",
+                "value"
+              ],
+              "properties": {
+                "term": {
+                  "const": "binding"
+                },
+                "name": {
+                  "const": "policy"
+                },
+                "value": {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "type",
+                    "value_kind",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "literal"
+                    },
+                    "type": {
+                      "$ref": "#/$defs/NodeRef"
+                    },
+                    "value_kind": {
+                      "const": "text"
+                    },
+                    "value": {
+                      "enum": [
+                        "all",
+                        "any",
+                        "quorum",
+                        "predicate"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "all"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "any"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "quorum"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 2,
+                "maxItems": 2,
+                "prefixItems": [
+                  true,
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "count"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/ProtocolInteger"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "members": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "value": {
+                        "properties": {
+                          "value": {
+                            "const": "predicate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "members": {
+                "minItems": 2,
+                "maxItems": 2,
+                "prefixItems": [
+                  true,
+                  {
+                    "type": "object",
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "properties": {
+                      "term": {
+                        "const": "binding"
+                      },
+                      "name": {
+                        "const": "predicate"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/ProtocolReference"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProtocolProof": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "term",
+            "members"
+          ],
+          "properties": {
+            "term": {
+              "const": "aggregate"
+            },
+            "members": {
+              "type": "array",
+              "maxItems": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "term",
+            "members"
+          ],
+          "properties": {
+            "term": {
+              "const": "aggregate"
+            },
+            "members": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "invariant"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/MemberTerm"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "term",
+                    "name",
+                    "value"
+                  ],
+                  "properties": {
+                    "term": {
+                      "const": "binding"
+                    },
+                    "name": {
+                      "const": "variant"
+                    },
+                    "value": {
+                      "$ref": "#/$defs/MemberTerm"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "ProtocolRecordsMin2": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ProtocolRecordsTerm"
+        },
+        {
+          "properties": {
+            "members": {
+              "minItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "ProtocolTerminalMode": {
+      "type": "object",
+      "required": [
+        "term",
+        "type",
+        "value_kind",
+        "value"
+      ],
+      "properties": {
+        "term": {
+          "const": "literal"
+        },
+        "type": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "value_kind": {
+          "const": "text"
+        },
+        "value": {
+          "enum": [
+            "any",
+            "when"
+          ]
         }
       },
       "additionalProperties": false
