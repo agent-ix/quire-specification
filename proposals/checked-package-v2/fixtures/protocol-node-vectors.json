@@ -22,9 +22,11 @@
     {
       "arguments": [
         "model",
-        "replication"
+        "replication",
+        "model_member"
       ],
       "operator": "role",
+      "optional_arguments": 1,
       "semantic_form": "role"
     },
     {

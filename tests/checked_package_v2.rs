@@ -2866,7 +2866,13 @@ fn protocol_node_vectors_match_the_schema_argument_layouts() {
             .collect::<Vec<_>>();
         assert!(!names.is_empty());
         assert_eq!(names, expected_names, "{operator} schema argument layout");
-        assert_eq!(rule["then"]["properties"]["arguments"]["minItems"], names.len());
+        // FR-465: a role's trailing `model_member` is present only on a role
+        // on a Port, so the vector marks its trailing optional arguments.
+        let optional = vector["optional_arguments"].as_u64().unwrap_or(0) as usize;
+        assert_eq!(
+            rule["then"]["properties"]["arguments"]["minItems"],
+            names.len() - optional
+        );
         assert_eq!(rule["then"]["properties"]["arguments"]["maxItems"], names.len());
     }
 }

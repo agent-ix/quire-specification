@@ -15,7 +15,7 @@ relationships:
 
 Schema and reader vectors for the `protocol`/`role`, `channel`, `queue` and
 `obligation` (`finish`, `terminal`) node bodies. Scope: FR-465-AC-1 to
-FR-465-AC-10.
+FR-465-AC-12.
 
 ## Test Procedure
 
@@ -59,6 +59,11 @@ FR-465-AC-10.
 | RL23 | RL20 with a non-empty `replication` Group | `invalid_model_binding`/`malformed-declaration` at the role node |
 | RL24 | `model` is an integer, a Boolean and a Group, one each | refuses `malformed_wire` |
 | RL25 | RL22 with a non-empty `replication` Group: a text naming no `model_root` node and a replication | `missing_declaration`/`missing-selection` at the role node: the selection check precedes the replication check |
+| RL26 | the architecture fixture's role `Outlet` on the Port `M::pump_out` and `Inlet` on `M::tank_in` | admitted; each carries `model_member` `{package, node}` of its own Port, the `model` reference targets `Sys`, and the two roles have different node ids (FR-465-AC-11) |
+| RL27 | the role `Operator` on `M::Sys` and a role on the whole model `M` | admitted with no third argument; the bytes equal those of the same package without the member (FR-465-AC-11) |
+| RL28 | RL26 with `package` naming another package; with `node` naming a component of `M`; with `node` naming no declaration | each `invalid_model_binding`/`malformed-declaration` at the role node, retaining `package` and `node` (FR-465-AC-12) |
+| RL29 | RL26 with an empty `package` text; with an empty `node` text; with a third binding in the Group; with an empty Group | each `malformed_wire` (FR-465-AC-12) |
+| RL30 | a `model_member` on a role whose `model` is a `model_root` text | `invalid_model_binding`/`malformed-declaration` at the role node (FR-465-AC-12) |
 
 ## Channel vectors
 

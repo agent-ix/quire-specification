@@ -10518,7 +10518,7 @@
             "properties": {
               "arguments": {
                 "items": false,
-                "maxItems": 2,
+                "maxItems": 3,
                 "minItems": 2,
                 "prefixItems": [
                   {
@@ -10546,6 +10546,26 @@
                     "properties": {
                       "name": {
                         "const": "replication"
+                      },
+                      "term": {
+                        "const": "binding"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/MemberTerm"
+                      }
+                    },
+                    "required": [
+                      "term",
+                      "name",
+                      "value"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "const": "model_member"
                       },
                       "term": {
                         "const": "binding"
