@@ -721,7 +721,7 @@ fn property_rows_hold_on_the_base_they_describe() {
 /// edited node's pointer; the reader cause the prose names is what the step
 /// returns alone on the same edit (`step_alone`). M1 (FR-464 "Single listing")
 /// refuses at the listed member node, `Orders`, not at the clause.
-#[trace("TC-946", "TC-948", "FR-464-AC-2", "FR-466-AC-1")]
+#[trace("TC-946", "TC-948", "FR-464-AC-2", "FR-464-AC-6", "FR-466-AC-1")]
 #[test]
 fn schema_first_placement_rows_and_the_single_listing_row_pin_their_loci() {
     let manifest = parse(MANIFEST);
@@ -807,6 +807,85 @@ fn nested_application_and_unheld_root_rows_pin_their_stage_and_locus() {
         let r = row(id);
         if r["expect"]["stage"] != "reader" || !validator.is_valid(&apply(&base, &edit_of(r))) {
             defects.push(format!("{id}: not a schema-valid reader-stage row"));
+        }
+    }
+    assert!(defects.is_empty(), "{defects:#?}");
+}
+
+const TC946: &str =
+    include_str!("../spec/test-cases/TC-946-checked-package-protocol-node-family.md");
+const TC948: &str =
+    include_str!("../spec/test-cases/TC-948-checked-package-protocol-control-bodies.md");
+
+/// The vectors file and the TC-946/TC-948 tables state the same code, cause and
+/// locus kind as the manifest row for the rows IR-1322 amended, so prose and
+/// vector drift fails. Each cell is compared by the row's code, its cause (the
+/// reader cause, or the `step_alone` cause of a schema-stage row) and a locus
+/// phrase that names the manifest locus kind.
+#[trace("TC-946", "TC-948", "FR-464-AC-2", "FR-464-AC-4", "FR-464-AC-6")]
+#[test]
+fn amended_vector_and_test_case_cells_agree_with_the_manifest_rows() {
+    let manifest = parse(MANIFEST);
+    let vectors = parse(VECTORS);
+    let mut cells: BTreeMap<String, Vec<(String, String)>> = BTreeMap::new();
+    fn collect(value: &Value, out: &mut BTreeMap<String, Vec<(String, String)>>) {
+        match value {
+            Value::Object(map) => {
+                if let (Some(id), Some(expected)) = (
+                    map.get("id").and_then(Value::as_str),
+                    map.get("Expected").and_then(Value::as_str),
+                ) {
+                    out.entry(id.to_owned())
+                        .or_default()
+                        .push(("vectors".to_owned(), expected.to_owned()));
+                }
+                map.values().for_each(|v| collect(v, out));
+            }
+            Value::Array(items) => items.iter().for_each(|v| collect(v, out)),
+            _ => {}
+        }
+    }
+    collect(&vectors, &mut cells);
+    for (name, text) in [("TC-946", TC946), ("TC-948", TC948)] {
+        for line in text.lines() {
+            let columns: Vec<&str> = line.split('|').map(str::trim).collect();
+            if columns.len() > 4 && columns[0].is_empty() {
+                cells
+                    .entry(columns[1].to_owned())
+                    .or_default()
+                    .push((name.to_owned(), columns[3].to_owned()));
+            }
+        }
+    }
+    let phrases = [
+        ("M1", "listed member node"),
+        ("V3", "at the node"),
+        ("V4", "at the node"),
+        ("V5", "node pointer"),
+        ("V7", "at the node"),
+        ("C12", "root control `Main`"),
+        ("L19", "at the node"),
+    ];
+    let mut defects = Vec::new();
+    for (id, phrase) in phrases {
+        let row = rows(&manifest).iter().find(|r| r["id"] == id).expect("row");
+        let expect = &row["expect"];
+        let code = expect["code"].as_str().unwrap();
+        let cause = expect["step_alone"]["cause"]
+            .as_str()
+            .or_else(|| expect["cause"].as_str());
+        let found = cells.get(id).expect("a vector cell");
+        assert!(found.iter().any(|(source, _)| source == "vectors"), "{id}: vectors cell");
+        for (source, cell) in found {
+            let mut wants = vec![format!("`{code}`"), phrase.to_owned()];
+            if let Some(cause) = cause {
+                wants.push(cause.to_owned());
+            }
+            for want in wants {
+                if !cell.contains(&want) && !(source != "vectors" && want == format!("`{code}`") && cell.contains(code)) {
+                    defects.push(format!("{id} ({source}): cell {cell:?} lacks {want:?}"));
+                }
+            }
         }
     }
     assert!(defects.is_empty(), "{defects:#?}");
