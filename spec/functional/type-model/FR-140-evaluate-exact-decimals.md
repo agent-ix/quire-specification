@@ -37,7 +37,7 @@ value is not an integer multiple of `10^-T` for target scale `T`; a value
 outside the declared range refuses under every mode. No binary float is used as
 an intermediate.
 
-An omitted rounding spelling selects strict `exact`. A successful rounded
+An omitted rounding spelling in a wire or semantic form selects strict `exact`; a source spelling never omits it. A successful rounded
 operation carries `DecimalLoss { exact_numerator, exact_denominator,
 rounded_coefficient, rounded_scale, mode }`; the exact rational difference is
 therefore reconstructable and a message string is never the loss authority.
@@ -59,7 +59,7 @@ the pre-normalized coefficient/scale.
 
 In `Decimal[lo, hi; smin, smax; mode]`, `lo` and `hi` are the inclusive
 coefficient bounds, `smin` and `smax` are the inclusive scale bounds and `mode`
-is the optional rounding spelling. The type is well formed only when
+is the rounding spelling. In source the spelling is required: the source grammar's only `Decimal` form ends `; mode ]`, and a `Decimal[..]` written without a mode is a syntax refusal at parse, not an implied `exact`. The spelling `Decimal[lo, hi; smin, smax]`, which names no mode, is the domain notation (diagnostic payloads, FR-272) and the wire and semantic form that omits the mode, which carries the default `exact`. The type is well formed only when
 `lo <= hi`, `smin <= smax` and `smax <= u32::MAX`; any other declaration refuses
 type checking with `refused { code: ill_typed }`. For a value `v` with
 normalized representation (`c`, `s`), the membership scale is
@@ -69,7 +69,7 @@ normalized representation (`c`, `s`), the membership scale is
 only: equal values have equal membership, and a pre-normalized coefficient or
 scale never decides it. This differs from `Rational` bounds, which check the
 normalized numerator and denominator, because a decimal scale is
-representational: `Decimal[0,10000;2,2]` admits `1` and `1.1` as `1.00` and
+representational: `Decimal[0,10000;2,2;exact]` admits `1` and `1.1` as `1.00` and
 `1.10`. Membership is decided without materializing `c*` (for example by
 comparing digit counts and exact magnitudes), makes no accounting charge and is
 total for every well-formed `smin` and `smax` up to `u32::MAX`. The target
@@ -79,7 +79,7 @@ Each operand's retained representation is its literal coefficient/scale as
 written or, for a computed result, (`v × 10^T`, `T`) at that result's target
 scale `T`. An FR-478 text-to-decimal conversion is the one computed result
 retained as spelled, like a literal: a spelled scale at most `T` keeps its
-spelled coefficient/scale, so `1.5` into `Decimal[0,1000;0,2]` retains
+spelled coefficient/scale, so `1.5` into `Decimal[0,1000;0,2;exact]` retains
 (`15`, `1`), and only a spelled scale above `T` is retained at `T`; operations and accounting use retained representations, never a
 normalized form. Addition/subtraction align to the greater operand scale using exact powers of
 ten. Multiplication multiplies coefficients and adds scales. Unary negation
@@ -119,7 +119,7 @@ classifies it, and every decimal-to-decimal conversion to a smaller maximum
 scale, as a scale reduction (`quire.op.numeric.convert_rounding`), the only
 exact-numeric conversion that rounds; an FR-478 text-to-decimal conversion
 rounds by this same rounding step under a non-`exact` target mode. A conversion that changes only the admitted range, such
-as `Int[0,300]` into `Decimal[0,20000;2,2]`, is an FR-149 range narrowing
+as `Int[0,300]` into `Decimal[0,20000;2,2;exact]`, is an FR-149 range narrowing
 (`quire.op.numeric.narrow`): its membership is an FR-146 obligation, and it
 never rounds or clamps.
 
@@ -177,7 +177,8 @@ make no later charge.
 | FR-140-AC-5 | Division by zero is undefined, while a value whose membership coefficient `c*` or membership scale `s*` is outside the target domain is refused with `decimal_out_of_domain`/`outside-domain`, except a `sum` seed or running total, which is FR-145's located undefined outcome; neither produces a value or uses a floating intermediate. A declaration with `lo > hi`, `smin > smax` or `smax > u32::MAX` refuses type checking with `ill_typed`. Membership charges nothing and is total up to scale `u32::MAX`. | Test (TC-185, TC-233) |
 | FR-140-AC-6 | Exact-bound accounting succeeds and denial of a named next decimal charge returns incomplete without a value or an implementation-specific retry; zero-divisor, strict-`exact` and membership outcomes occur at their defined charge positions, and all-zero discarded digits make no `decimal.rounding` charge. | Test (TC-185) |
 | FR-140-AC-7 | A `Rational` to `Decimal` conversion follows the decimal division rule and schedule at target scale `smax`, decimal operands and result share one named type, and a `decimal(c,s)` literal without a unique expected type is `ill_typed` with cause `ambiguous-literal`. | Test (TC-185) |
-| FR-140-AC-8 | A `decimal(c,s)` source literal that is not a member of its unique expected type (`decimal(150,2)` in `Decimal[-9,9;0,0]`, `decimal(1234,3)` in `Decimal[-1000,1000;0,1]`) is `refused { code: ill_typed, cause: type-mismatch }` at type checking before any charge, while a member literal spelled at a scale above `smax` (`decimal(100,2)` in `Decimal[-9,9;0,0]`) is admitted and retained as spelled. | Test (TC-185) |
+| FR-140-AC-8 | A `decimal(c,s)` source literal that is not a member of its unique expected type (`decimal(150,2)` in `Decimal[-9,9;0,0;exact]`, `decimal(1234,3)` in `Decimal[-1000,1000;0,1;exact]`) is `refused { code: ill_typed, cause: type-mismatch }` at type checking before any charge, while a member literal spelled at a scale above `smax` (`decimal(100,2)` in `Decimal[-9,9;0,0;exact]`) is admitted and retained as spelled. | Test (TC-185) |
+| FR-140-AC-9 | A source `Decimal[lo, hi; smin, smax]` written without a rounding mode (as a type annotation, a `convert` target or a `Quantity` carrier) is a syntax refusal at parse and reaches no type check, while `Decimal[lo, hi; smin, smax; exact]` checks; the spelling without a mode stays the domain notation of diagnostic payloads and denotes mode `exact` in a wire or semantic form that omits it. | Test (TC-185) |
 
 ## Dependencies
 

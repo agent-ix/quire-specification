@@ -57,7 +57,7 @@ token after the identity string, a `version` or `digest` token included, is
 `L` is the FR-322 library identity: a non-empty string compared byte for
 byte, with no segment structure. A supplied library is one library's
 source, offered under its identity `L` alone, with no version string, and
-optionally its own `refinement_internals` value, the library's internal step
+optionally its own `refinement_internals` value (on a replay request, its `dependencies` entry's optional `refinement_internals`, absent meaning the empty list), the library's internal step
 lists ([FR-375](../analysis/FR-375-declare-model-refinement.md)); the value
 changes the library's refinement nodes, and a refusal
 of it refuses the whole compilation. The

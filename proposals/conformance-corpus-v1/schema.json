@@ -585,6 +585,13 @@
           "items": {
             "$ref": "#/$defs/SourceRef"
           }
+        },
+        "refinement_internals": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "urn:quire:checked-package:v2#/$defs/RefinementInternal"
+          }
         }
       },
       "additionalProperties": false
