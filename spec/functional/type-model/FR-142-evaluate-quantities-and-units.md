@@ -251,10 +251,10 @@ affine unit does. The operation lowers to `quire.op.quantity.negate` (FR-322).
 
 **Carried quantity.** `Quantity<u, C>` is the type of the quantities whose
 unit is `u` and whose magnitude is a value of the numeric carrier `C`, which is
-exactly one of `Int[lo, hi]`, `Decimal[lo, hi; smin, smax]` and
-`Rational[n1, n2; d1, d2]`, an `Int` or `Decimal` carrier with an
+exactly one of `Int[lo, hi]`, `Decimal[lo, hi; smin, smax; mode]` and
+`Rational[n1, n2; d1, d2]`, an `Int` carrier with an
 optional trailing `; mode` naming a rounding mode (FR-140; omitted means
-`exact`; the grammar takes any `type-ref` there and the checker refuses the rest). The carrier is bounded: bare `Integer`, bare `Decimal` and bare `Rational` are not
+`exact`) and a `Decimal` carrier with a required `; mode` (a `Decimal` carrier written without one is a syntax refusal, FR-140; the grammar takes any `type-ref` there and the checker refuses the rest). The carrier is bounded: bare `Integer`, bare `Decimal` and bare `Rational` are not
 carriers. A `Rational[..]` carrier names no mode: its mode is `exact`, and it
 is how an exact rational with a unit is carried, for example the members of a
 domain-package Rational value type with a `unit` (FR-154 "Rational value
