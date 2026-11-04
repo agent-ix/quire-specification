@@ -139,9 +139,11 @@ scale, rounding mode or target scale is inferred from the literal spellings.
 Operand membership applies to source operands. A `decimal(c,s)` literal that
 is not a member of its unique expected type under the membership rule above, for
 example `decimal(150,2)` in a type whose `smax` is 0, is
-`refused { code: decimal_out_of_domain, cause: outside-domain }` at type
-checking, before any accounting charge and with no value; membership charges
-nothing. No source form feeds an operation an operand outside the shared type.
+`refused { code: ill_typed, cause: type-mismatch }` at type checking, the
+literal's value needing a scale or coefficient its expected type does not
+admit, before any accounting charge and with no value; membership charges
+nothing. (`decimal_out_of_domain` stays the evaluator's value refusal for a
+computed decimal result.) No source form feeds an operation an operand outside the shared type.
 A retained operand may nevertheless carry a scale above the target scale `T`
 when it is a member whose normalized scale is at most `smax` (for example
 `decimal(100,2)` in a scale-0 type), so the accounting behavior for retained
@@ -175,7 +177,7 @@ make no later charge.
 | FR-140-AC-5 | Division by zero is undefined, while a value whose membership coefficient `c*` or membership scale `s*` is outside the target domain is refused with `decimal_out_of_domain`/`outside-domain`, except a `sum` seed or running total, which is FR-145's located undefined outcome; neither produces a value or uses a floating intermediate. A declaration with `lo > hi`, `smin > smax` or `smax > u32::MAX` refuses type checking with `ill_typed`. Membership charges nothing and is total up to scale `u32::MAX`. | Test (TC-185, TC-233) |
 | FR-140-AC-6 | Exact-bound accounting succeeds and denial of a named next decimal charge returns incomplete without a value or an implementation-specific retry; zero-divisor, strict-`exact` and membership outcomes occur at their defined charge positions, and all-zero discarded digits make no `decimal.rounding` charge. | Test (TC-185) |
 | FR-140-AC-7 | A `Rational` to `Decimal` conversion follows the decimal division rule and schedule at target scale `smax`, decimal operands and result share one named type, and a `decimal(c,s)` literal without a unique expected type is `ill_typed` with cause `ambiguous-literal`. | Test (TC-185) |
-| FR-140-AC-8 | A `decimal(c,s)` source literal that is not a member of its unique expected type (`decimal(150,2)` in `Decimal[-9,9;0,0]`, `decimal(1234,3)` in `Decimal[-1000,1000;0,1]`) is `refused { code: decimal_out_of_domain, cause: outside-domain }` at type checking before any charge, while a member literal spelled at a scale above `smax` (`decimal(100,2)` in `Decimal[-9,9;0,0]`) is admitted and retained as spelled. | Test (TC-185) |
+| FR-140-AC-8 | A `decimal(c,s)` source literal that is not a member of its unique expected type (`decimal(150,2)` in `Decimal[-9,9;0,0]`, `decimal(1234,3)` in `Decimal[-1000,1000;0,1]`) is `refused { code: ill_typed, cause: type-mismatch }` at type checking before any charge, while a member literal spelled at a scale above `smax` (`decimal(100,2)` in `Decimal[-9,9;0,0]`) is admitted and retained as spelled. | Test (TC-185) |
 
 ## Dependencies
 

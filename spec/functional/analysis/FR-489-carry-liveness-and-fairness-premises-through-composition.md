@@ -98,7 +98,8 @@ route for a cycle.
 | Premises and checks | FR-360 label | FR-243 basis | Cause |
 | --- | --- | --- | --- |
 | Every premise discharged under a supported rule | `proved` | `decisive-witness` | none; the witness is the premise discharge record |
-| A premise discharged only by a trusted assumption | `proved` with FR-354 certification `trusted` | `decisive-witness` | none; the discharge record names the assumption |
+| A premise discharged by an accepted plugin result that itself carries certification `trusted` (FR-354) | `proved` with certification `trusted` | `decisive-witness` | none; the discharge record cites that plugin result |
+| A premise supplied only as an assumption, with no plugin result behind it | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise and the assumption |
 | A premise no supplied guarantee discharges (absent, weaker, of another kind or over another subject) | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise |
 | A failed component check | `inconclusive` | `unsettled` | `premise-unproved`, naming the component's premise |
 | An unsupported composition rule | `unsupported` | `unavailable` | the missing capability (FR-348-AC-4) |
@@ -119,8 +120,9 @@ Unrelated supported claims in the request continue.
 | FR-489-AC-3 | A two-component fixture whose safety relies and liveness dependencies are all discharged under a supported rule settles `proved`, `decisive-witness`, with the discharge record. | Test (TC-983) |
 | FR-489-AC-4 | Two components each depending on the other's progress, under a rule with no declared fixed-point lattice, are refused as FR-176-AC-3 refuses circular reasoning and no guarantee of the pair is available as an assumption. | Test (TC-983) |
 | FR-489-AC-5 | The same pair under a profile that declares FR-176's monotone lattice, initial element and convergence rule is accepted with every iteration recorded in the discharge record (FR-176-AC-4). | Test (TC-983) |
-| FR-489-AC-6 | A premise discharged only by a trusted assumption settles `proved` with certification `trusted` and names the assumption; an unsupported rule settles `unsupported` naming the capability; a failed component check settles `inconclusive`/`premise-unproved`; an exhausted bound settles `incomplete`; the four are distinct with their own trust basis and extent. | Test (TC-983) |
+| FR-489-AC-6 | A premise discharged by an accepted plugin result that carries certification `trusted` settles `proved` with certification `trusted`, the discharge record citing that plugin result; an unsupported rule settles `unsupported` naming the capability; a failed component check settles `inconclusive`/`premise-unproved`; an exhausted bound settles `incomplete`; the four are distinct with their own trust basis and extent. | Test (TC-983) |
 | FR-489-AC-7 | A discharge record whose guarantee subject differs from its premise's subject, and one whose identity names no settled result, are refused `invalid_runtime_input`/`invalid-value` naming the member; a referenced result that is itself `inconclusive` does not discharge the premise; sibling claims of the same request settle independently. | Test (TC-983) |
+| FR-489-AC-8 | A premise supplied only as an assumption, with no plugin result behind it, is not settled `proved`: the composition settles `inconclusive`, cause `premise-unproved`, naming the premise and the assumption; `trusted` belongs to plugin results alone (FR-354-AC-1, AC-6). | Test (TC-983) |
 
 ## Dependencies
 
@@ -128,7 +130,7 @@ Unrelated supported claims in the request continue.
   this requirement adds only the typed premise transport and its discharge record.
 - [FR-176](../protocol/FR-176-compose-assume-guarantee-contracts.md) and
   [FR-177](../protocol/FR-177-check-protocol-refinement.md):
-  the assume-guarantee algorithm and fixed-point rule (FR-176) and protocol refinement (FR-177), .
+  the assume-guarantee algorithm and fixed-point rule (FR-176) and protocol refinement (FR-177).
 - [FR-380](FR-380-transfer-claims-through-refinement.md): the refinement
   transfer, stutter-closure and fairness rules.
 - [FR-362](../temporal/FR-362-apply-fairness-constraints.md),

@@ -53,3 +53,25 @@ FR-488 and FR-489 add typed premise lists, settlement tables and ACs that can fa
 | FND-006 | medium | FR-140 new paragraph states that no source form feeds a non-member operand but gives no disposition for a non-member source literal, no AC, and no vector; the evaluator-boundary contract is stated only by D13 and D18 | spec/functional/type-model/FR-140-evaluate-exact-decimals.md:139 |
 | FND-007 | low | FR-489 trusted-assumption row gives label "per rule", which no test can compare | spec/functional/analysis/FR-489-carry-liveness-and-fairness-premises-through-composition.md:91 |
 | FND-008 | low | FR-140 new paragraph is not wrapped like its neighbours and TC-185 D24 repeats its conversion sentence | spec/test-cases/TC-185-exact-decimal-semantics.md:50 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-009 | medium | FR-489 settles a trusted-assumption-only discharge as proved with certification trusted, but FR-354 reserves trusted for plugin results | spec/functional/analysis/FR-489-carry-liveness-and-fairness-premises-through-composition.md:98 |
+| FND-010 | medium | FR-140 emits decimal_out_of_domain at type checking for a source literal, while FR-271 and FR-146 define it as an evaluator value refusal | spec/functional/type-model/FR-140-evaluate-exact-decimals.md:139 |
+| FND-011 | low | FR-488 settlement table has no row for a required environment premise that is not supplied | spec/functional/ir-proof/FR-488-attach-a-temporal-guarantee-to-implementation-rust.md:98 |
+| FND-012 | low | Dangling punctuation in FR-489 Dependencies after "reused unchanged" was removed | spec/functional/analysis/FR-489-carry-liveness-and-fairness-premises-through-composition.md:131 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Only premise-unproved is used; FR-331 and the schema are untouched |
+| FND-002 | fixed | Two input shapes separated by whether a discharge record is named |
+| FND-003 | fixed | Cycles follow FR-176 unchanged; refused or accepted with iterations recorded |
+| FND-004 | fixed | Safety, model-claim and progress rows added; Description limits progress to liveness |
+| FND-005 | fixed | TC-982 case 3 and FR-488-AC-3 name premise-unproved |
+| FND-006 | fixed | Literal disposition, FR-140-AC-8, D28 added (see FND-010 for the code stage) |
+| FND-007 | fixed | The per-rule row is removed (see FND-009 for the replacement) |
+| FND-008 | fixed | D24 states the conversion once; paragraph rewrapped |

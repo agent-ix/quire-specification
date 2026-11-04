@@ -31,7 +31,7 @@ boundary:
 4. Make `Producer`'s guarantee depend on `Consumer`'s progress under a rule
    with no declared lattice; then under a profile declaring FR-176's monotone
    lattice, initial element and convergence rule.
-5. Supply a premise discharged only by a trusted assumption; select an
+5. Supply a premise discharged by an accepted plugin result carrying certification `trusted`; then a premise supplied only as an assumption with no plugin result; select an
    unsupported rule; fail a component check; deny a work-unit bound.
 6. Supply a discharge record whose guarantee subject differs from its premise's
    subject; one whose identity names no settled result; one whose referenced
@@ -43,5 +43,5 @@ boundary:
 2. The flag refused `invalid_runtime_input`/`invalid-value`; the four lists accepted.
 3. Each `inconclusive`/`premise-unproved` naming the premise, premise undischarged.
 4. Refused as FR-176-AC-3 refuses circular reasoning; with the lattice accepted and every iteration recorded.
-5. `proved` with certification `trusted` naming the assumption; `unsupported` naming the capability; `inconclusive`/`premise-unproved`; `incomplete`; four distinct outcomes.
+5. `proved` with certification `trusted` citing the plugin result; `inconclusive`/`premise-unproved` naming the premise and the assumption; `unsupported` naming the capability; `inconclusive`/`premise-unproved`; `incomplete`; five distinct outcomes.
 6. The first two refused `invalid_runtime_input`/`invalid-value` naming the member; the third leaves the premise undischarged (`inconclusive`/`premise-unproved`); the unrelated claim settles in each.

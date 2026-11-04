@@ -32,7 +32,8 @@ Rust boundary and compare the complete typed result.
 5. Replace the environment premise with strong fairness for `inc_cas`, a
    premise the environment does not supply, and request `F_P = fair strong each inc`.
 6. Request the safety clause `always holds(c.value >= 0)`; then request case
-   1's clause with the progress items omitted.
+   1's clause with the progress items omitted; then omit a required environment
+   premise; then name an environment premise record that does not exist.
 7. Remove the binding of the cell; then run with no Verus backend registered;
    then deny the work-unit bound of a premise.
 8. Supply a finite 10000-step implementation trace over which the clause
@@ -46,7 +47,7 @@ Rust boundary and compare the complete typed result.
 3. `inconclusive`/`premise-unproved` naming the first progress item.
 4. The unmeasured loop `inconclusive`/`premise-unproved` naming the progress item; the counted loop `proved`.
 5. `inconclusive`/`premise-unproved` naming the fairness-correspondence item.
-6. Safety `proved` without progress items; the liveness item `inconclusive`/`premise-unproved` naming the first progress item.
+6. Safety `proved` without progress items; the liveness item `inconclusive`/`premise-unproved` naming the first progress item; the omitted environment premise `inconclusive`/`premise-unproved` naming it; the nonexistent record refused `invalid_runtime_input`/`invalid-value`.
 7. Refused `missing_declaration`/`missing-name`; `unsupported` naming the capability; `incomplete` naming the limit; the three are distinct and sibling items settle independently.
 8. Not `proved`; no item settles `refuted`.
 9. Each invalidates the record and the item is settled again.

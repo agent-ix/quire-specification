@@ -38,3 +38,10 @@ FR-140-AC-6 (charge positions, all-zero discarded digits) maps to D13 and D26. F
 | --- | --- | --- | --- |
 | FND-001 | medium | No AC or vector covers a non-member decimal literal supplied in source (for example decimal(150,2) into a scale-0 type) | spec/functional/type-model/FR-140-evaluate-exact-decimals.md:139 |
 | FND-002 | medium | TC-982 case 3 expected result is a disjunction that no outcome can fail | spec/test-cases/TC-982-implementation-temporal-guarantee-through-checked-correspondence.md:46 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-140-AC-8 and TC-185 D28 cover the non-member source literal |
+| FND-002 | fixed | TC-982 case 3 expects premise-unproved only |
