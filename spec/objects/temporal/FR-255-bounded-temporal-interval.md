@@ -59,9 +59,9 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 |---|---|
 | lower_bound_a | type not stated in source; see Field sources |
 | upper_bound_b | type not stated in source; see Field sources |
-| lower_end_openness | type not stated in source; see Field sources |
-| upper_end_openness | type not stated in source; see Field sources |
-| clock_binding | multiplicity not stated in source; see Field sources |
+| lower_end_openness | string tag `closed` or `open` (Timed profile) |
+| upper_end_openness | string tag `closed` or `open` (Timed profile) |
+| clock_binding | exactly one clock binding; a Key component (FR-255 Key) |
 
 
 | Property | Source | Note |

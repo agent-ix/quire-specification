@@ -28,6 +28,34 @@ When a protocol body is linked, the protocol linker SHALL construct one finite a
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | key | QualifiedProtocolDefinitionIdentity | 1..1 | identity |
+| node_occurrences | ProtocolNodeOccurrence | 0..* |  |
+| choices | OwnedChoice | 0..* |  |
+| control_constructs | BoundedControlConstruct | 0..* |  |
+
+`node_occurrences`, `choices` and `control_constructs` are the members below,
+held as the graph's own properties; they are consistency content, not key
+components (Identity and comparison).
+
+## Invariants
+
+The clauses the graph enforces over its own properties. Each clause owns one
+`quire` fence under its own `### <clauseId>` heading.
+
+Finiteness, acyclicity and the authored origin of every edge are stated over
+the authored causal, branch and progress edges, which this artifact describes
+but does not hold as typed properties; they stay as stated under Member
+descriptions and are enforced by FR-052's refusals (FR-052-AC-3) and
+FR-220-AC-1 to FR-220-AC-4.
+
+### EveryChoiceIsANodeOfTheGraph
+
+A labeled choice is an authored control node of this graph
+([FR-227](FR-227-owned-choice.md): "a choice is an authored control node in the
+causal control graph").
+
+```quire
+forall(c in self.choices: contains(self.node_occurrences, c.occurrence))
+```
 
 ## Members
 

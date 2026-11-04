@@ -21,12 +21,12 @@ When a protocol declaration completes static checking, the producer SHALL use th
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | definition | String | 1..1 |  |
-| roles | String | 1..1 |  |
-| messages_channels | String | 1..1 |  |
-| control_graph | String | 1..1 |  |
-| guards_obligations | String | 1..1 |  |
-| compensations | String | 1..1 |  |
-| bounds | String | 1..1 |  |
+| roles | JsonObject | 1..1 |  |
+| messages_channels | JsonObject | 1..1 |  |
+| control_graph | JsonObject | 1..1 |  |
+| guards_obligations | JsonObject | 1..1 |  |
+| compensations | JsonObject | 1..1 |  |
+| bounds | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -35,12 +35,12 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Field | Derivation note |
 |---|---|
 | definition | type not stated in source; multiplicity not stated in source; see Field sources |
-| roles | type not stated in source; multiplicity not stated in source; see Field sources |
-| messages_channels | type not stated in source; multiplicity not stated in source; see Field sources |
-| control_graph | type not stated in source; see Field sources |
-| guards_obligations | type not stated in source; multiplicity not stated in source; see Field sources |
-| compensations | type not stated in source; multiplicity not stated in source; see Field sources |
-| bounds | type not stated in source; see Field sources |
+| roles | role nodes (Carriage: role nodes of the checked package); multiplicity not stated in source |
+| messages_channels | channel and queue nodes (Carriage); multiplicity not stated in source |
+| control_graph | control nodes of the protocol (Carriage) |
+| guards_obligations | obligation nodes (Carriage); multiplicity not stated in source |
+| compensations | compensation nodes (Carriage); multiplicity not stated in source |
+| bounds | bound members of the protocol nodes (Carriage) |
 
 
 - `definition` — package-qualified protocol declaration identity.

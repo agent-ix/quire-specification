@@ -23,11 +23,11 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 | contract_version | String | 1..1 |  |
 | source | AuthoredSourceDocument | 1..1 |  |
 | edition | String | 1..1 |  |
-| tokens | String | 0..* |  |
-| trivia | String | 0..* |  |
-| nodes | String | 0..* |  |
+| tokens | JsonObject | 0..* |  |
+| trivia | JsonObject | 0..* |  |
+| nodes | JsonObject | 0..* |  |
 | diagnostics | DiagnosticCatalog | 1..1 |  |
-| recoveries | String | 1..1 |  |
+| recoveries | JsonObject | 1..1 |  |
 
 ## Field sources
 
@@ -35,13 +35,13 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
-| edition | type not stated in source; see Field sources |
-| tokens | type not stated in source; see Field sources |
-| trivia | type not stated in source; see Field sources |
-| nodes | type not stated in source; see Field sources |
+| contract_version | exactly `quire.parsed-source/v1` |
+| edition | identity string (retained text: selected language edition identity) |
+| tokens | ordered list of token records: kind, byte region, original bytes |
+| trivia | ordered list of byte-region records |
+| nodes | ordered list of CST node records: kind, byte region, child indices, recovery state |
 | diagnostics | multiplicity not stated in source; see Field sources |
-| recoveries | type not stated in source; see Field sources |
+| recoveries | list of recovery records with source loci; multiplicity not stated in source |
 
 
 - `contract_version` — exactly `quire.parsed-source/v1`.

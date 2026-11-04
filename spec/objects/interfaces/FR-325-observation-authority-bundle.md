@@ -35,7 +35,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| contract_version | type not stated in source; see Field sources |
+| contract_version | exactly `quire.observation-authority/v1` |
 | authority | type not stated in source; multiplicity not stated in source; see Field sources |
 | revision | type not stated in source; multiplicity not stated in source; see Field sources |
 | records | type not stated in source; multiplicity not stated in source; see Field sources |

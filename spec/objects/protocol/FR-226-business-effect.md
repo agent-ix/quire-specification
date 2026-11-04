@@ -25,7 +25,7 @@ When a business observation is bound to a protocol instance, the protocol binder
 
 | Field | Type | Multiplicity | Constraints |
 |---|---|---|---|
-| key | String | 1..1 | identity |
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
 | occurrence | ProtocolNodeOccurrence | 1..1 |  |
 | establishing_attempt | OperationAttempt | 1..1 |  |
 | captures | String | 1..1 |  |
@@ -36,8 +36,8 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| key | type not stated in source; see Field sources |
-| occurrence | multiplicity not stated in source; see Field sources |
+| key | exactly one FR-287 value of kind `business-effect` (Identity and comparison) |
+| occurrence | mandatory relationship (Identity and comparison) |
 | captures | type not stated in source; see Field sources |
 
 

@@ -31,9 +31,9 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| target_family | type not stated in source; see Field sources |
+| target_family | string tag, exactly one of `ocl`, `sysml-kerml`, `fretish` |
 | target_standard_refs | type not stated in source; see Field sources |
-| mapping_profile_id | type not stated in source; multiplicity not stated in source; see Field sources |
+| mapping_profile_id | string identity, one of three `quire.output.*/v1` names; absence refuses dispatch (Absence) |
 | required_capabilities | type not stated in source; see Field sources |
 | observer_selection | type not stated in source; see Field sources |
 

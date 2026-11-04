@@ -32,7 +32,7 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 
 | Field | Derivation note |
 |---|---|
-| source_schema_identity_and_version | type not stated in source; multiplicity not stated in source; see Field sources |
+| source_schema_identity_and_version | type not stated in source; required key member (FR-296 Absence); see Field sources |
 
 
 The observation key is the tuple `(source schema identity and version, declared
