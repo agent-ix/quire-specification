@@ -29,7 +29,10 @@ fn definition_validator(schema: &Value, name: &str) -> jsonschema::Validator {
 /// index segments"), so the corpus schema compiles against that schema.
 fn compile(schema: &Value) -> jsonschema::Validator {
     let registry = jsonschema::Registry::new()
-        .add("urn:quire:checked-package:v2", parsed(CHECKED_PACKAGE_SCHEMA))
+        .add(
+            "urn:quire:checked-package:v2",
+            parsed(CHECKED_PACKAGE_SCHEMA),
+        )
         .expect("checked-package schema registers")
         .prepare()
         .expect("registry prepares");
@@ -194,9 +197,15 @@ fn object_environment_identity_is_the_closed_two_member_pair() {
     let schema = parsed(SCHEMA);
     let environment = definition_validator(&schema, "ObjectEnvironmentRef");
     let two_member = json!({"identity": {"authority": "agent-ix", "identity": "env"}});
-    assert!(environment.is_valid(&two_member), "AC-10: the environment identity is two-member");
+    assert!(
+        environment.is_valid(&two_member),
+        "AC-10: the environment identity is two-member"
+    );
     let extra = json!({"identity": {"authority": "agent-ix", "identity": "env", "other": "x"}});
-    assert!(!environment.is_valid(&extra), "AC-10: no other member on an environment identity");
+    assert!(
+        !environment.is_valid(&extra),
+        "AC-10: no other member on an environment identity"
+    );
 }
 
 const REPLAY_REQUEST: &str =
@@ -212,7 +221,10 @@ fn replay_request_carries_the_proved_checked_package() {
     let schema = parsed(SCHEMA);
     let request = definition_validator(&schema, "ReplayRequest");
     let fixture = parsed(REPLAY_REQUEST);
-    assert!(request.is_valid(&fixture), "AC-7: the published request validates");
+    assert!(
+        request.is_valid(&fixture),
+        "AC-7: the published request validates"
+    );
     assert_eq!(fixture.as_object().expect("request is an object").len(), 14);
 
     let mut without_package = fixture.clone();
@@ -220,11 +232,57 @@ fn replay_request_carries_the_proved_checked_package() {
         .as_object_mut()
         .expect("request is an object")
         .remove("package");
-    assert!(!request.is_valid(&without_package), "AC-7: package is required");
+    assert!(
+        !request.is_valid(&without_package),
+        "AC-7: package is required"
+    );
 
     let mut not_a_package = fixture;
     not_a_package["package"] = json!({"name": "example"});
-    assert!(!request.is_valid(&not_a_package), "AC-7: package is a closed checked package");
+    assert!(
+        !request.is_valid(&not_a_package),
+        "AC-7: package is a closed checked package"
+    );
+}
+
+/// FR-336-AC-7, FR-323-AC-17: a `dependencies` entry may carry its own lock's
+/// `refinement_internals` (absent means the empty list); the member is the
+/// checked-package `RefinementInternal` list, non-empty when present, and the
+/// entry stays closed.
+#[test]
+#[trace("TC-970", "FR-336-AC-7")]
+fn dependency_entry_carries_optional_refinement_internals() {
+    let schema = parsed(SCHEMA);
+    let request = definition_validator(&schema, "ReplayRequest");
+    let fixture = parsed(REPLAY_REQUEST);
+    assert!(fixture["dependencies"][0]
+        .get("refinement_internals")
+        .is_none());
+    assert!(request.is_valid(&fixture), "absent member is admitted");
+
+    let mut carried = fixture.clone();
+    carried["dependencies"][0]["refinement_internals"] =
+        json!([{"refinement": "Spec::Twice", "internal": ["Spec::Twice::finish"]}]);
+    assert!(
+        request.is_valid(&carried),
+        "a refinement_internals list is admitted"
+    );
+
+    let mut empty = fixture.clone();
+    empty["dependencies"][0]["refinement_internals"] = json!([]);
+    assert!(
+        !request.is_valid(&empty),
+        "an empty list is refused (absent is the empty list)"
+    );
+    let mut malformed = fixture.clone();
+    malformed["dependencies"][0]["refinement_internals"] = json!([{"refinement": "Spec::Twice"}]);
+    assert!(
+        !request.is_valid(&malformed),
+        "a RefinementInternal needs its internal list"
+    );
+    let mut extra = carried;
+    extra["dependencies"][0]["invented"] = json!(true);
+    assert!(!request.is_valid(&extra), "the entry stays closed");
 }
 
 /// Every NodeId a replay request names, found by shape (`package`, `path`,
@@ -233,11 +291,15 @@ fn request_node_ids(value: &Value, found: &mut Vec<Value>) {
     match value {
         Value::Object(members) => {
             if members.len() == 3
-                && ["package", "path", "ordinal"].iter().all(|key| members.contains_key(*key))
+                && ["package", "path", "ordinal"]
+                    .iter()
+                    .all(|key| members.contains_key(*key))
             {
                 found.push(value.clone());
             } else {
-                members.values().for_each(|member| request_node_ids(member, found));
+                members
+                    .values()
+                    .for_each(|member| request_node_ids(member, found));
             }
         }
         Value::Array(items) => items.iter().for_each(|item| request_node_ids(item, found)),
@@ -257,7 +319,11 @@ fn replay_request_node_ids_resolve_in_its_embedded_package() {
             request_node_ids(value, &mut ids);
         }
     }
-    assert_eq!(ids.len(), 3, "target, obligation and declared domain name a node each: {ids:?}");
+    assert_eq!(
+        ids.len(),
+        3,
+        "target, obligation and declared domain name a node each: {ids:?}"
+    );
     let graph_ids: Vec<&Value> = fixture["package"]["semantic_graph"]["nodes"]
         .as_array()
         .expect("package graph has nodes")
@@ -265,7 +331,10 @@ fn replay_request_node_ids_resolve_in_its_embedded_package() {
         .map(|node| &node["node_id"])
         .collect();
     for id in &ids {
-        assert!(graph_ids.contains(&id), "AC-7: {id} resolves in the embedded package");
+        assert!(
+            graph_ids.contains(&id),
+            "AC-7: {id} resolves in the embedded package"
+        );
     }
     let selected: Vec<&Value> = fixture["package"]["lock"]["dependency_selections"]
         .as_array()
@@ -279,7 +348,10 @@ fn replay_request_node_ids_resolve_in_its_embedded_package() {
         .iter()
         .map(|entry| &entry["identity"])
         .collect();
-    assert_eq!(entries, selected, "AC-7: one dependency entry per selected dependency");
+    assert_eq!(
+        entries, selected,
+        "AC-7: one dependency entry per selected dependency"
+    );
 }
 
 /// FR-336-AC-7: unknown members, unknown tags and noncanonical decimals are
@@ -297,35 +369,62 @@ fn replay_request_mutations_are_refused_one_at_a_time() {
 
     let mut unknown_member = fixture.clone();
     unknown_member["invented"] = json!(true);
-    assert!(!request.is_valid(&unknown_member), "top-level unknown member");
+    assert!(
+        !request.is_valid(&unknown_member),
+        "top-level unknown member"
+    );
     let mut unknown_nested = fixture.clone();
     unknown_nested["accounting_limits"]["invented"] = json!("0");
-    assert!(!request.is_valid(&unknown_nested), "structural-object unknown member");
+    assert!(
+        !request.is_valid(&unknown_nested),
+        "structural-object unknown member"
+    );
 
     let mut witness = fixture.clone();
     witness["source"]["assignments"] =
         json!([{"parameter": parameter, "value": {"kind": "integer", "decimal": "7"}}]);
-    assert!(request.is_valid(&witness), "an integer assignment is admitted");
+    assert!(
+        request.is_valid(&witness),
+        "an integer assignment is admitted"
+    );
     let mut unknown_witness_tag = witness.clone();
     unknown_witness_tag["source"]["assignments"][0]["value"]["kind"] = json!("text-ish");
-    assert!(!request.is_valid(&unknown_witness_tag), "unknown WitnessValue tag");
+    assert!(
+        !request.is_valid(&unknown_witness_tag),
+        "unknown WitnessValue tag"
+    );
     let mut json_number = witness.clone();
     json_number["source"]["assignments"][0]["value"]["decimal"] = json!(7);
-    assert!(!request.is_valid(&json_number), "JSON number in place of a decimal string");
+    assert!(
+        !request.is_valid(&json_number),
+        "JSON number in place of a decimal string"
+    );
     let mut noncanonical = witness;
     noncanonical["source"]["assignments"][0]["value"]["decimal"] = json!("07");
-    assert!(!request.is_valid(&noncanonical), "noncanonical integer decimal");
+    assert!(
+        !request.is_valid(&noncanonical),
+        "noncanonical integer decimal"
+    );
 
     let mut unknown_domain_tag = fixture.clone();
     unknown_domain_tag["declared_domains"][0]["domain"]["kind"] = json!("elsewhere");
-    assert!(!request.is_valid(&unknown_domain_tag), "unknown DomainKey tag");
+    assert!(
+        !request.is_valid(&unknown_domain_tag),
+        "unknown DomainKey tag"
+    );
 
     let mut leading_zero_limit = fixture.clone();
     leading_zero_limit["accounting_limits"]["work_units"] = json!("00");
-    assert!(!request.is_valid(&leading_zero_limit), "noncanonical limit decimal");
+    assert!(
+        !request.is_valid(&leading_zero_limit),
+        "noncanonical limit decimal"
+    );
     let mut number_limit = fixture.clone();
     number_limit["stage_limits"] = json!({"format.output_bytes": 5});
-    assert!(!request.is_valid(&number_limit), "stage limit is a decimal string");
+    assert!(
+        !request.is_valid(&number_limit),
+        "stage limit is a decimal string"
+    );
 
     let mut outside_setting = fixture;
     outside_setting["stage_limits"] = json!({"not.a.setting": "5"});

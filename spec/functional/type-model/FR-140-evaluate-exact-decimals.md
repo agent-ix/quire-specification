@@ -59,7 +59,7 @@ the pre-normalized coefficient/scale.
 
 In `Decimal[lo, hi; smin, smax; mode]`, `lo` and `hi` are the inclusive
 coefficient bounds, `smin` and `smax` are the inclusive scale bounds and `mode`
-is the rounding spelling. In source the spelling is required: the source grammar's only `Decimal` form ends `; mode ]`, and a `Decimal[..]` written without a mode is a syntax refusal at parse, not an implied `exact`. The mode-free spelling `Decimal[lo, hi; smin, smax; exact]` is the domain notation (diagnostic payloads, FR-272) and the wire and semantic form of a type whose mode is omitted, which carries the default `exact`. The type is well formed only when
+is the rounding spelling. In source the spelling is required: the source grammar's only `Decimal` form ends `; mode ]`, and a `Decimal[..]` written without a mode is a syntax refusal at parse, not an implied `exact`. The spelling `Decimal[lo, hi; smin, smax]`, which names no mode, is the domain notation (diagnostic payloads, FR-272) and the wire and semantic form that omits the mode, which carries the default `exact`. The type is well formed only when
 `lo <= hi`, `smin <= smax` and `smax <= u32::MAX`; any other declaration refuses
 type checking with `refused { code: ill_typed }`. For a value `v` with
 normalized representation (`c`, `s`), the membership scale is
@@ -178,7 +178,7 @@ make no later charge.
 | FR-140-AC-6 | Exact-bound accounting succeeds and denial of a named next decimal charge returns incomplete without a value or an implementation-specific retry; zero-divisor, strict-`exact` and membership outcomes occur at their defined charge positions, and all-zero discarded digits make no `decimal.rounding` charge. | Test (TC-185) |
 | FR-140-AC-7 | A `Rational` to `Decimal` conversion follows the decimal division rule and schedule at target scale `smax`, decimal operands and result share one named type, and a `decimal(c,s)` literal without a unique expected type is `ill_typed` with cause `ambiguous-literal`. | Test (TC-185) |
 | FR-140-AC-8 | A `decimal(c,s)` source literal that is not a member of its unique expected type (`decimal(150,2)` in `Decimal[-9,9;0,0;exact]`, `decimal(1234,3)` in `Decimal[-1000,1000;0,1;exact]`) is `refused { code: ill_typed, cause: type-mismatch }` at type checking before any charge, while a member literal spelled at a scale above `smax` (`decimal(100,2)` in `Decimal[-9,9;0,0;exact]`) is admitted and retained as spelled. | Test (TC-185) |
-| FR-140-AC-9 | A source `Decimal[lo, hi; smin, smax]` written without a rounding mode (as a type annotation, a `convert` target or a `Quantity` carrier) is a syntax refusal at parse and reaches no type check, while `Decimal[lo, hi; smin, smax; exact]` checks; the mode-free spelling stays the domain notation of diagnostic payloads and denotes mode `exact` in a wire or semantic form that omits it. | Test (TC-185) |
+| FR-140-AC-9 | A source `Decimal[lo, hi; smin, smax]` written without a rounding mode (as a type annotation, a `convert` target or a `Quantity` carrier) is a syntax refusal at parse and reaches no type check, while `Decimal[lo, hi; smin, smax; exact]` checks; the spelling without a mode stays the domain notation of diagnostic payloads and denotes mode `exact` in a wire or semantic form that omits it. | Test (TC-185) |
 
 ## Dependencies
 
