@@ -3219,6 +3219,45 @@ type), and no law, mode, member, constraint or leaves. It takes no `rounding`
 mode, because negation is exact, and its operand is a non-affine unit's
 quantity.
 
+**Quantity integer power.** `quire.op.quantity.pow` is the integer power of
+FR-142 (source `e ^ n`, the shared grammar's complete-V1 `power` production):
+an application of operator `binary` with exactly two arguments, in the order
+base, exponent, and no law, mode, member, constraint or leaves.
+
+- Argument 0, the base, is a `quantity` typed by a `scalar_type`/`unit` node
+  whose unit is not affine (FR-142: a nonzero composed offset to its root) or
+  by a `scalar_type`/`compound_unit` node.
+- Argument 1, the exponent, is an integer literal: a `reference` to a
+  `value`/`literal` node of `value_kind` `integer` typed by the builtin Integer
+  node, written as a graph child as "Integer literal operands" requires of a
+  literal outside the six integer operations. Its `value` is the canonical
+  decimal-integer text of "Scalar literal values", of any magnitude: no machine
+  width bounds it (FR-142: `2 m ^ 18446744073709551616` is a well-formed
+  power). The exponent is a literal because it fixes the result type.
+- `result_type` is the `scalar_type`/`compound_unit` node of FR-142's power
+  result unit for exponent `n`: the root-unit terms a multiplication forms for
+  the base (the base's own terms when it is typed by a compound unit), each
+  exponent multiplied by `n`, zero exponents dropped, in the node's term
+  order. The result is that compound-unit node for every `n`: for `n = 0` it
+  is the dimensionless node `["scalar_type", "compound_unit"]`, and for
+  `n = 1` over `Quantity<ms>` it is the node of `s` to the power 1, never the
+  unit node of `ms` or of `s`. `2 m ^ 2` and `2 m * 2 m` name one result node.
+  A declared unit with an equal base-dimension map is reached only by an
+  explicit `quire.op.quantity.convert`.
+- A third or a missing argument; a base that is not a `quantity`, is a
+  carried quantity or is of an affine unit; an exponent that is an inline
+  `literal`, a reference to any node other than such a `value`/`literal` node
+  (a parameter, an application, a literal of another `value_kind` or type);
+  and a `result_type` other than that node each refuse
+  `ill_typed`/`operator-ineligible` at the application. A `mode` value refuses
+  `invalid_package`/`operation-mode-mismatch` and a `laws` entry
+  `invalid_package`/`operation-law-mismatch`, in the reader order of
+  "Operation families, groups and constraints".
+- Evaluation is FR-142's: the base in its canonical root raised to `n`, with
+  `x ^ 0` exactly one for every `x`, a zero base under a negative exponent
+  undefined, and the unit schedule of `quire.value.accounting/v1` (TC-187 U12,
+  U13 and U21). The wire carries no evaluation result.
+
 ## Identity and validation
 
 A checked package is identified by its `name` and its contents compared
@@ -4396,6 +4435,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-380 | A field, an operation parameter, an operation result and a plain alias typed by the Rational value type `Ratio` (FR-154-AC-42: `Rational[-3, 7; 1, 12]`, no `unit`) each have the type `Rational[-3, 7; 1, 12]` and name one `bounded_domain`/`rational_range` node over the `scalar_type`/`rational` node with bindings `numerator_min` `-3`, `numerator_max` `7`, `denominator_min` `1` and `denominator_max` `12`; a second value type of equal bounds names the same node and one with `maxDenominator` 13 names another; `Ratio` as a tuple position `typeRef` and as a variant case `payloadType` is admitted (`TK-36`), while a Rational value type with no `constraints` there is refused as FR-322-AC-181 and FR-322-AC-182 state and a member of it has no type as FR-322-AC-183 states. | Test (TC-981) |
 | FR-322-AC-381 | `Ratio` with `unit` `ix://quire/unit/m` types its members `Quantity<m, Rational[-3, 7; 1, 12]>`, the `scalar_type`/`carried_quantity` node over `m`'s unit node, the `rational_range` node of FR-322-AC-380 and `rounding` `exact`; a second value type of equal bounds and unit `m` names that node, and `Ratio` without a unit and a value type of equal bounds with unit `cm` name two other nodes; a `unit` of `ix://quire/unit/nosuch` refuses `missing_declaration`/`missing-name` at the value type node and `TypeDefinition.unit`. | Test (TC-981) |
 | FR-322-AC-382 | A `scalar_type`/`carried_quantity` node whose carrier is a `rational_range` node and whose `rounding` is `exact` is admitted; the same node with `rounding` `nearest-even` and a node whose carrier is the unbounded `scalar_type`/`rational` node each refuse `invalid_package`/`invalid-derived-shape` at the node; a `quire.op.quantity.convert` application into it with `mode` `{kind: rounding, value: exact}` is admitted and one with any other `mode` or `null` refuses `invalid_package`/`operation-mode-type-mismatch` (`CQ-W06`, `CQ-W16` to `CQ-W19`). | Test (TC-981) |
+| FR-322-AC-383 | `quire.op.quantity.pow` (TC-187 QP-01 to QP-10): `2 m ^ 2`, an application of operator `binary` with arguments `[reference(L), reference(N)]`, `L` the `quantity` literal node of `2 m` and `N` the `value`/`literal` node of `value_kind` `integer` and value `"2"` typed by the builtin Integer node, with `result_type` the compound-unit node of `m` to the power 2 (the node `2 m * 2 m` also names), no laws, `mode` `null`, no member and no leaves, is admitted; so are `d ^ 0` over `Quantity<ms>` with the dimensionless compound-unit node, `d ^ 1` over `Quantity<ms>` with the node of `s` to the power 1, `x ^ -1` over `Quantity<m2>` with the node of `m` to the power -2, and `2 m ^ 18446744073709551616` with the node of `m` to that power. A third argument, a missing exponent, an exponent that is an inline literal, a reference to an Integer `value`/`parameter` node or a `decimal` literal, a base typed `integer`, a carried-quantity base, a base of the affine unit `degC`, `d ^ 1` with `result_type` the unit node of `ms`, and `2 m ^ 2` with the node of `m` to the power 3 each refuse `ill_typed`/`operator-ineligible`; a `mode` value refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry `invalid_package`/`operation-law-mismatch`. | Test (TC-187) |
 
 ## Dependencies
 

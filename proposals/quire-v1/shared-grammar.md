@@ -410,6 +410,8 @@ postfix       = primary, { '.', member-name,
                            [ '(', [ expr, { ',', expr } ], ')' ]
                          | '[', expr, ']' } ;
 product       = unary, { ('*' | '/' | 'div' | 'rem' | 'mod'), unary } ;
+unary         = ('not' | '-'), unary | power ;
+power         = postfix, [ '^', signed-int ] ;
 collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
                   '(', ident, 'in', expr, ':', expr, ')'
                 | 'flatten', '(', expr, ')'
@@ -448,6 +450,14 @@ an object type and the string is the key's object identity as UTF-8 bytes
 (`M::Server#"s1"`). `#` is a punctuation token of this production alone. Its
 typing, lowering and resolution are
 [FR-480](../../spec/functional/type-model/FR-480-check-and-resolve-reference-literals.md)'s.
+
+The complete-V1 `power` production is the integer power of a quantity
+(FR-142, lowered to `quire.op.quantity.pow` by FR-322 "Quantity integer
+power"). Its exponent is a `signed-int` literal, because the exponent fixes the
+result unit; `^` binds tighter than the prefix `-`, so `-1 m ^ 2` is
+`-(1 m ^ 2)`, and does not chain, so `a ^ 2 ^ 3` is invalid syntax. `^` is the
+token `dimension-term` already uses. A base that is not a quantity is refused
+by FR-142, not by the grammar.
 
 Over a `Float32` or `Float64`, unary `-` is IEEE `negate` (a sign-bit flip, FR-148),
 and `=`, `!=`, `<`, `<=`, `>` and `>=` are the IEEE quiet comparisons built from
@@ -1066,7 +1076,7 @@ owns the meaning.
 ## Precedence and bindings
 
 From lowest to highest: `let`/`if`; `implies` (right associative); `or`; `and`;
-one comparison; addition/subtraction; product; unary `not`/negation; field access,
+one comparison; addition/subtraction; product; unary `not`/negation; power; field access,
 calls and parenthesized primaries. Addition/product chains associate left.
 Comparisons do not chain: `a < b < c` is invalid syntax. Parentheses select an
 explicit tree, which must still type-check. `not a = b` means `(not a) = b`;
