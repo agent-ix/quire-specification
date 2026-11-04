@@ -34,14 +34,14 @@ they consume without claiming another requirement's list is incomplete.
 | `receive` | A protocol event held distinct from `send`. Named distinct by FR-051 and by FR-049-AC-2. A receive alone does not establish a business effect (FR-051 behavior). |
 | `delivery` | One concrete delivery subject. Named distinct by FR-051, FR-049-AC-2, FR-111 and FR-035 (as "message deliveries"). A second delivery key for one send increases delivery cardinality but establishes no second effect. |
 | `receipt` | A distinct observation/provenance record that refers to a delivery. Replaying or adding receipt records for one delivery key does not mint a delivery, receive occurrence or effect (FR-051). |
-| `operation-attempt` | One forward-operation invocation try. Named `attempt` by FR-051/FR-111/FR-035 and `operation attempt` by FR-049-AC-2. An attempt with no established effect remains an attempt (FR-051-AC-3). |
-| `business-effect` | A declared successful business-state transition, named `effect` by FR-051/FR-049/FR-111/FR-035. It is never inferred from a send, receive, successful transport status, repeated delivery, trace identifier or equal payload alone. |
-| `compensation-attempt` | One attempt against a compensation registration, distinct from `operation-attempt` under FR-058. |
-| `compensation-effect` | One business effect of a compensation attempt, distinct from both its attempt and a forward `business-effect` under FR-058. |
+| operation_attempt | Wire spelling `operation-attempt`. One forward-operation invocation try. Named `attempt` by FR-051/FR-111/FR-035 and `operation attempt` by FR-049-AC-2. An attempt with no established effect remains an attempt (FR-051-AC-3). |
+| business_effect | Wire spelling `business-effect`. A declared successful business-state transition, named `effect` by FR-051/FR-049/FR-111/FR-035. It is never inferred from a send, receive, successful transport status, repeated delivery, trace identifier or equal payload alone. |
+| compensation_attempt | Wire spelling `compensation-attempt`. One attempt against a compensation registration, distinct from `operation-attempt` under FR-058. |
+| compensation_effect | Wire spelling `compensation-effect`. One business effect of a compensation attempt, distinct from both its attempt and a forward `business-effect` under FR-058. |
 | `commit` | A concrete observation of an authored commit-boundary occurrence under FR-057; it is distinct from the static boundary object. |
 | `compensation` | Named distinct by FR-049-AC-2 ("Send, receive, delivery, operation attempt, effect and compensation references remain distinct"). FR-051, FR-111 and FR-035 do not name it in their subject lists. |
-| `workflow-instance` | One assessed occurrence. Named distinct by FR-111 and FR-035; FR-050 binds it to its exact typed declaration and configuration identity. FR-051 does not name it in its subject list. |
-| `role-instance` | Named distinct by FR-035 ("Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects") and kept distinct from its static definition by FR-050. FR-051, FR-049-AC-2 and FR-111 do not name it in their subject lists. |
+| workflow_instance | Wire spelling `workflow-instance`. One assessed occurrence. Named distinct by FR-111 and FR-035; FR-050 binds it to its exact typed declaration and configuration identity. FR-051 does not name it in its subject list. |
+| role_instance | Wire spelling `role-instance`. Named distinct by FR-035 ("Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects") and kept distinct from its static definition by FR-050. FR-051, FR-049-AC-2 and FR-111 do not name it in their subject lists. |
 
 ## Identity and comparison
 

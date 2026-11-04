@@ -18,6 +18,32 @@ When a protocol claim is submitted to an analyzer, the producer SHALL use the im
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| request_id | String | 1..1 |  |
+| claim | JsonObject | 1..1 |  |
+| subject | JsonObject | 1..1 |  |
+| premises | JsonObject | 1..1 |  |
+| provider | JsonObject | 1..1 |  |
+| result | CanonicalProtocolResult | 1..1 |  |
+| witness | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.protocol.assessment/v1` |
+| claim | record: claim kind and exact strength |
+| subject | record: checked protocol plus observations or finite model; multiplicity not stated in source |
+| premises | record: closure, fairness, channel, population, environment assumptions; multiplicity not stated in source |
+| provider | record: selected capability, profile, options; multiplicity not stated in source |
+| result | multiplicity not stated in source; see Field sources |
+| witness | record: one of strategy, trace set, counterexample, incompatibility core; multiplicity not stated in source |
+
+
 - `contract_version` — exactly `quire.protocol.assessment/v1`.
 - `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `claim` — conformance, projection, realizability, composition or refinement with exact strength.

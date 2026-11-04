@@ -19,6 +19,26 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-78
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-310
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-311
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-312
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-313
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-314
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-315
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-316
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-317
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-318
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-27
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
@@ -212,7 +232,7 @@ rows to list exactly FR-272-AC-17's cause and payload keys. Parse the
 `runtime_invariant` rows of both and require FR-272-AC-18's cause and
 population-identity payload keys. Parse the `invalid_result` rows of both and
 the first cells of FR-331's "Result entries" table, and require FR-272-AC-23's
-causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, and require the `resource_exhausted` rows and
+causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, parse the `invalid_capability` rows of both and require FR-272-AC-27's `inapplicable-kind` and `invalid-state-graph-forms` causes, the `request_index`, `capability` and `family` payload keys of `inapplicable-kind` and the backend identity of `invalid-state-graph-forms`, and `request_index` and `family` in FR-272's canonical payload-name list, and require the `resource_exhausted` rows and
 `value-accounting.md` to state FR-272-AC-19's `stage` rule. Parse
 the rows of FR-272-AC-11's twelve codes in both documents and require each to
 list exactly that criterion's causes and payload keys, and require FR-272's
@@ -686,7 +706,7 @@ diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
 native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
 the `resource_exhausted` and `cancelled` rows of both each list exactly
 FR-272-AC-16's causes and payload keys; the `conflicting_declaration` rows each list
-exactly FR-272-AC-17's cause and payload keys; the `runtime_invariant` rows each
+exactly FR-272-AC-17's cause and payload keys; the `invalid_capability` rows each list FR-272-AC-27's two causes and payload keys; the `runtime_invariant` rows each
 list FR-272-AC-18's cause and keys and the `stage` rule matches FR-272-AC-19; the rows of FR-272-AC-11's twelve codes each list exactly that criterion's
 causes and payload keys, every one of them a canonical FR-272 payload name;
 FR-270's Revision cell quotes the header's revision; FR-271 has one row
@@ -732,4 +752,30 @@ control gives two distinct declaration nodes equal display names and source
 spans, while malformed rows cover absent, foreign, wrong-kind and mismapped
 identities, missing occurrences and duplicate keys. The 26-unit work boundary
 admits; one fewer unit refuses at the final probabilistic-claim row with no
-partial data view (FR-322-AC-288..292, AC-296..297).
+partial data view (FR-322-AC-288..292, AC-296..297). A protocol-location row
+whose `application` names an admitted leaf node (literal, Local parameter or
+reference; the PL-R3 vectors carry the graph) refuses
+`invalid_package`/`invalid-value` at that row's `application`, also when the
+leaf row copies an enclosing application's location, while a row naming the
+admitted application is not refused by the leaf rule (FR-322-AC-310..312). Each
+protocol slot row carries a `type_declaration` site-name origin, and only
+PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..318).
+
+FR-322-AC-319 to FR-322-AC-341 and FR-272-AC-26 are retired (source-byte integrity removed); no published package carries a `source_integrity` member and no test checks one.
+
+Temporal clause names and per-occurrence clock bindings (FR-322 "Temporal clause names"
+and "Temporal clock bindings", IR-1278, QSL FR-515 `name()` and `clock()`, FR-518 row 8):
+`temporal-clause-name-vectors.json` over `positive-timed-clause-nodes.json` admits CN-P1
+(one named clause), CN-P2 (a shared node, two occurrences, two names, two binding rows)
+and CN-P3 (rename, identity unchanged); refuses CN-S1..CN-S8 in the closed schema
+(`malformed_wire`), CN-G1 (a node `declaration`, `invalid_semantic_graph`) and
+CN-R1..CN-R11 with `invalid_package` and the exact cause and locus: coverage, absent
+and wrong-kind declaration, unowned and non-claim occurrence, repeated key, order, and
+the per-row order of join, repeated key, order and coverage (FR-322-AC-342..358,
+FR-370-AC-16). `temporal-clock-occurrence-vectors.json` admits twins with different
+(BO-P1) and equal (BO-P2) clock configurations and refuses BO-S1..BO-S3 in the closed
+schema and BO-R1..BO-R9 in the reader with the same checks over `temporal_bindings`,
+plus the clock name and kind of a second occurrence (FR-322-AC-359..370). A repeated
+(`declaration`, `occurrence`) key is `conflicting-definition` in `temporal_bindings`
+too (TCB-10, CB-04). Every published positive package with a temporal clause carries
+its name and binding rows.

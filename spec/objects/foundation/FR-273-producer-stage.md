@@ -37,6 +37,25 @@ it never chooses another list by label or rewrites the pair.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| producer_interface_reference | String | 1..1 |  |
+| stage_label | String | 1..1 |  |
+| originating_stage_retention | String | 1..1 |  |
+| selected_producer_interface | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| producer_interface_reference | type not stated in source; see Field sources |
+| stage_label | exact string label of the interface's closed stage vocabulary; lexicographic label order (Key order) |
+| originating_stage_retention | type not stated in source; see Field sources |
+| selected_producer_interface | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Producer-interface reference | FR-047 and native catalog | Exact identity of the interface that owns stage membership. |

@@ -19,6 +19,24 @@ When a linked protocol definition is used as an identity qualifier, the linker S
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| authored_source_document_key | AuthoredSourceDocument | 1..1 |  |
+| admitted_declaration_handle | String | 1..1 |  |
+| formal_owner_and_clause | JsonObject | 1..1 |  |
+| semantic_selection_closure | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| admitted_declaration_handle | type not stated in source; see Field sources |
+| formal_owner_and_clause | structured value of requirement package, requirement identity, requirement revision and clause identity (FR-049) |
+| semantic_selection_closure | structured value of language edition, protocol profile definition identity and domain package identities (FR-030) |
+
+
 - **authored source document key** — the exact FR-202 document identity
   of the source owning the declaration.
 - **admitted declaration handle** — the source-inventory-qualified handle of

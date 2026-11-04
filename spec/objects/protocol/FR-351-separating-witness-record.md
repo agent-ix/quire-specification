@@ -29,6 +29,26 @@ When a truth result settles on a `decisive-witness` or `decisive-counterexample`
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| deciding_quantifier | JsonObject | 0..1 |  |
+| deciding_element | String | 1..1 |  |
+| index | Integer | 0..1 |  |
+| value_path | RuntimeValuePath | 1..1 |  |
+| trace_position | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| deciding_quantifier | JSON object, occurrence key (node_id, role, ordinal) of the quantifier node; absent for a family with no quantifier occurrence |
+| deciding_element | type not stated in source; see Field sources |
+| index | where the family assigns a positional index |
+| trace_position | type not stated in source; see Field sources |
+
+
 | Property | Description |
 | --- | --- |
 | deciding quantifier | The occurrence key (`node_id`, `role`, `ordinal`, the [FR-322](../interfaces/FR-322-checked-package-artifact.md) `source_map` key) of the quantifier node whose decisive occurrence decided the result, where the decision is a collection quantifier's decisive occurrence (collection `forall`/`exists`, FR-041-AC-4). It holds the quantifier node's identity and tells two occurrences of one node apart. Absent for a family whose decision has no quantifier occurrence. |

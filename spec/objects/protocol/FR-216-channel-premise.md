@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
+  - target: ix://agent-ix/quire-specification/FR-465
+    type: references
 ---
 # FR-216: Channel premise
 
@@ -17,13 +19,34 @@ When a conformance result is derived, the result SHALL identify the exact premis
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| sender | String | 1..1 |  |
+| receiver | String | 1..1 |  |
+| message_type | String | 1..1 |  |
+| ordering_policy | String | 1..1 |  |
+| delivery_policy | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| sender | type not stated in source; see Field sources |
+| receiver | type not stated in source; see Field sources |
+| message_type | type not stated in source; see Field sources |
+| ordering_policy | type not stated in source; see Field sources |
+| delivery_policy | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Sender | FR-054 | The exact authored sending role of the channel. Missing or conflicting refuses admission. |
 | Receiver | FR-054 | The exact authored receiving role of the channel. Missing or conflicting refuses admission. |
 | Message type | FR-054 | The one exact admitted message type carried by the channel. Missing or conflicting refuses admission. |
 | Ordering policy | FR-054 | Exactly `unordered`, or `fifo` with its admitted declaration-local binder and typed key-expression definition. |
-| Delivery policy | FR-054 | Exactly one of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise`. |
+| Delivery policy | FR-054 | Exactly one of the four policy words `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise`, or one delivery count interval `[lo,hi]` with natural `lo <= hi` ([FR-465](../interfaces/FR-465-checked-package-protocol-declaration-bodies.md)). An interval and a policy word are never equal, and two intervals are equal only when both bounds are. |
 
 Synchronized clocks are likewise never inferred (FR-054).
 

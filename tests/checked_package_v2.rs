@@ -2866,7 +2866,13 @@ fn protocol_node_vectors_match_the_schema_argument_layouts() {
             .collect::<Vec<_>>();
         assert!(!names.is_empty());
         assert_eq!(names, expected_names, "{operator} schema argument layout");
-        assert_eq!(rule["then"]["properties"]["arguments"]["minItems"], names.len());
+        // FR-465: a role's trailing `model_member` is present only on a role
+        // on a Port, so the vector marks its trailing optional arguments.
+        let optional = vector["optional_arguments"].as_u64().unwrap_or(0) as usize;
+        assert_eq!(
+            rule["then"]["properties"]["arguments"]["minItems"],
+            names.len() - optional
+        );
         assert_eq!(rule["then"]["properties"]["arguments"]["maxItems"], names.len());
     }
 }
@@ -13065,10 +13071,13 @@ fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
         let bindings = bindings.unwrap_or_else(|| {
             panic!("{name} has clock-configured clauses but no temporal_bindings")
         });
+        let occurrences = |node: &Value| {
+            node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim").count()
+        };
         assert_eq!(
             bindings.len(),
-            configured.len(),
-            "{name} has one row for every clock-configured clause"
+            configured.iter().map(|(node, _, _)| occurrences(node)).sum::<usize>(),
+            "{name} has one row for every claim occurrence of every clock-configured clause"
         );
         for (node, profile, kind) in configured {
             let id = &node["node_id"];
@@ -13076,8 +13085,9 @@ fn every_positive_fixture_carries_each_required_temporal_clock_binding() {
                 .iter()
                 .filter(|row| row["declaration"] == *id)
                 .collect::<Vec<_>>();
-            assert_eq!(matching.len(), 1, "{name} binds {profile} clause {id} once");
+            assert_eq!(matching.len(), occurrences(node), "{name} binds {profile} clause {id} once per occurrence");
             let row = matching[0];
+            assert_eq!(row["occurrence"], 0, "{name}: the row names its claim occurrence");
             assert_eq!(
                 row["clock_name"], node["body"]["arguments"][1]["value"],
                 "{name} carries the clause's exact clock name"
@@ -13319,8 +13329,10 @@ fn shapes_members(document: &Value, name: &str) -> Vec<(String, Option<Value>)> 
     members
 }
 
+/// A position, union-value and equality refusal of the tuple/union vectors is
+/// decided by the package reader, so it carries `stage` `reader` (FR-322-AC-371).
 fn shapes_refusal(code: &str, cause: &str) -> Value {
-    json!({"refused": {"code": code, "cause": cause}})
+    json!({"refused": {"code": code, "cause": cause, "stage": "reader"}})
 }
 
 /// Step 3 and 4 for a `position` member of a tuple value type.
@@ -13412,14 +13424,19 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
     };
     // FR-322 "Admitted payload and position types": the four declared types
     // with no step 4 row are refused at intake (FR-322-AC-181, -182).
-    // A package value type is refused when its native is `Rational` or `Decimal`, or `Text` without
-    // the flat `lower`, `upper` and `profile` members (FR-154's value type
+    // A package value type is refused when its native is `Decimal`, `Rational` without the flat
+    // `numerator_min`, `numerator_max`, `denominator_min` and `denominator_max` members (the
+    // unbounded Rational value type of FR-154 "Rational value types"; a bounded one has a step 4
+    // row), or `Text` without the flat `lower`, `upper` and `profile` members (FR-154's value type
     // shape, as `model-member-type-vectors.json` publishes it).
     let unmapped = |reference: &str| match read_through(reference).strip_prefix("ix://quire/native/") {
         Some(native) => matches!(native, "Rational" | "Decimal" | "Text"),
         None => value_type(&read_through(reference)).is_some_and(|found| {
             match found["native"].as_str().and_then(|native| native.strip_prefix("ix://quire/native/")) {
-                Some("Rational" | "Decimal") => true,
+                Some("Decimal") => true,
+                Some("Rational") => ["numerator_min", "numerator_max", "denominator_min", "denominator_max"]
+                    .iter()
+                    .any(|member| found.get(member).is_none()),
                 Some("Text") => ["lower", "upper", "profile"].iter().any(|member| found.get(member).is_none()),
                 _ => false,
             }
@@ -16294,6 +16311,7 @@ fn temporal_clock_package(case: &Value) -> Value {
     replace_exact_json_value(&mut package, &old_id, &new_id);
     package["temporal_bindings"] = json!([{
         "declaration": new_id,
+        "occurrence": 0,
         "clock": case["clock"].clone(),
         "clock_name": case["clock_name"].clone()
     }]);
@@ -16438,7 +16456,13 @@ fn tc_233_compensation_rows_follow_the_temporal_binding_rules() {
             }
             "refused" => {
                 assert_eq!(case["code"], "invalid_package", "{id}");
-                assert_eq!(case["cause"], "timed-node-reference", "{id}");
+                // A repeated (declaration, occurrence) key is `conflicting-definition`; every
+                // other binding refusal is `timed-node-reference`.
+                let repeated = rows.iter().enumerate().any(|(i, row)| {
+                    rows[..i].iter().any(|earlier| earlier["declaration"] == row["declaration"])
+                });
+                let expected_cause = if repeated { "conflicting-definition" } else { "timed-node-reference" };
+                assert_eq!(case["cause"], expected_cause, "{id}");
                 assert_eq!(outcome.as_deref(), case["locus"].as_str(), "{id}: the refusal locus");
                 refused += 1;
             }
@@ -16653,7 +16677,10 @@ fn temporal_clock_binding_vectors_are_closed_and_profile_typed() {
         );
         assert_eq!(refusal["schema"], "valid");
         assert_eq!(refusal["expected_code"], "invalid_package");
-        assert_eq!(refusal["expected_cause"], "timed-node-reference");
+        assert_eq!(
+            refusal["expected_cause"],
+            if refusal["mutation"] == "duplicate-row" { "conflicting-definition" } else { "timed-node-reference" }
+        );
         assert_eq!(
             refusal["locus"].as_str().unwrap(),
             expected_locus,
@@ -19784,6 +19811,350 @@ const CHECKED_TERM_DATA_VECTORS: &str =
 const TEMPORAL_FAIRNESS_TARGET_VECTORS: &str = include_str!(
     "../proposals/checked-package-v2/temporal-fairness-target-vectors.json"
 );
+const TEMPORAL_AGGREGATE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-aggregate-vectors.json");
+
+/// FR-370 "Window aggregate atom": the closed bindings, in table order.
+const AGGREGATE_BINDINGS: [&str; 11] = [
+    "kind",
+    "q",
+    "predicate",
+    "value",
+    "filter",
+    "window_kind",
+    "lower",
+    "upper",
+    "min_count",
+    "comparison",
+    "threshold",
+];
+
+#[derive(Debug, PartialEq)]
+enum AggregatePresence {
+    Required,
+    Optional,
+    Excluded,
+}
+
+/// The presence column of FR-370's window aggregate table for one kind.
+fn aggregate_presence(kind: &str, binding: &str) -> AggregatePresence {
+    let required_when = |holds: bool| {
+        if holds {
+            AggregatePresence::Required
+        } else {
+            AggregatePresence::Excluded
+        }
+    };
+    match binding {
+        "q" => required_when(kind == "quantile"),
+        "predicate" => required_when(kind == "fraction"),
+        "value" => required_when(matches!(kind, "sum" | "min" | "max" | "quantile")),
+        "filter" => AggregatePresence::Optional,
+        _ => AggregatePresence::Required,
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum AggregateFamily<'a> {
+    Boolean,
+    Integer,
+    Rational,
+    Quantity(&'a Value),
+    Other,
+}
+
+/// The family of a binding term: a literal's `value_kind`, or the vector's
+/// declared family of the expression node a reference targets.
+fn aggregate_term_family<'a>(term: &'a Value, references: &'a [Value]) -> AggregateFamily<'a> {
+    let (family, unit) = match term["term"].as_str() {
+        Some("literal") => (term["value_kind"].as_str(), &term["type"]),
+        Some("reference") => {
+            let row = references
+                .iter()
+                .find(|row| row["target"] == term["target"])
+                .expect("every referenced expression node has a declared family");
+            (row["family"].as_str(), &row["unit"])
+        }
+        _ => (None, &Value::Null),
+    };
+    match family {
+        Some("boolean") => AggregateFamily::Boolean,
+        Some("integer") => AggregateFamily::Integer,
+        Some("rational") => AggregateFamily::Rational,
+        Some("quantity") => AggregateFamily::Quantity(unit),
+        _ => AggregateFamily::Other,
+    }
+}
+
+/// The literal's `value` when `term` is a literal of `value_kind`.
+fn aggregate_literal<'a>(term: &'a Value, value_kind: &str) -> Option<&'a str> {
+    if term["term"] == "literal" && term["value_kind"] == value_kind {
+        term["value"].as_str()
+    } else {
+        None
+    }
+}
+
+/// An exact magnitude spelled `n` or `n/d` (FR-322 "Scalar literal values").
+fn aggregate_magnitude(spelled: &str) -> (BigInt, BigInt) {
+    let (numerator, denominator) = spelled.split_once('/').unwrap_or((spelled, "1"));
+    (
+        numerator.parse().expect("an integer numerator"),
+        denominator.parse().expect("an integer denominator"),
+    )
+}
+
+type AggregateRefusal = (&'static str, &'static str, String);
+
+/// Independent reader oracle for one window aggregate argument, FR-370
+/// "Window aggregate atom" steps 1 to 5. Pointers are relative to the
+/// application body.
+fn aggregate_argument_refusal(
+    profile: &str,
+    argument: &Value,
+    references: &[Value],
+    clock_unit: &Value,
+) -> Result<(), AggregateRefusal> {
+    let refuse = |code, cause, pointer: String| Err((code, cause, pointer));
+    let whole = "/arguments/0".to_owned();
+    let member = |at: usize| format!("/arguments/0/members/{at}");
+    let profile_window = match profile {
+        "quire.temporal.event-position.false-extension/v1" => "positions",
+        "quire.temporal.timestamped-event.finite-window/v1" => "duration",
+        _ => return refuse("invalid_package", "invalid-value", String::new()),
+    };
+    let members = argument["members"].as_array().expect("an aggregate argument");
+
+    let mut held: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut last_rank = None;
+    for (at, candidate) in members.iter().enumerate() {
+        let rank = (candidate["term"] == "binding")
+            .then(|| candidate["name"].as_str())
+            .flatten()
+            .and_then(|name| AGGREGATE_BINDINGS.iter().position(|binding| *binding == name));
+        let Some(rank) = rank else {
+            return refuse("invalid_package", "unknown-member", member(at));
+        };
+        let name = AGGREGATE_BINDINGS[rank];
+        if held.contains_key(name) {
+            return refuse("invalid_package", "duplicate-member", member(at));
+        }
+        if last_rank.is_some_and(|last| rank < last) {
+            return refuse("invalid_package", "invalid-value", member(at));
+        }
+        held.insert(name, at);
+        last_rank = Some(rank);
+    }
+
+    let Some(&kind_at) = held.get("kind") else {
+        return refuse("invalid_package", "missing-member", whole);
+    };
+    let Some(kind) = aggregate_literal(&members[kind_at]["value"], "text") else {
+        return refuse("invalid_package", "wrong-value-kind", format!("{}/value", member(kind_at)));
+    };
+    if !["count", "sum", "min", "max", "fraction", "quantile"].contains(&kind) {
+        return refuse("invalid_package", "invalid-value", format!("{}/value", member(kind_at)));
+    }
+
+    for (at, candidate) in members.iter().enumerate() {
+        let name = candidate["name"].as_str().expect("a checked binding name");
+        if aggregate_presence(kind, name) == AggregatePresence::Excluded {
+            return refuse("invalid_package", "unknown-member", member(at));
+        }
+    }
+    if AGGREGATE_BINDINGS
+        .iter()
+        .any(|name| aggregate_presence(kind, name) == AggregatePresence::Required && !held.contains_key(name))
+    {
+        return refuse("invalid_package", "missing-member", whole);
+    }
+
+    let term_of = |name: &str| &members[held[name]]["value"];
+    let value_family = held.get("value").map(|_| aggregate_term_family(term_of("value"), references));
+    let mut window = "";
+    for name in AGGREGATE_BINDINGS {
+        let Some(&at) = held.get(name) else { continue };
+        let term = term_of(name);
+        let pointer = format!("{}/value", member(at));
+        match name {
+            "q" => {
+                let Some(spelled) = aggregate_literal(term, "rational") else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                let (numerator, denominator) = aggregate_magnitude(spelled);
+                if numerator <= BigInt::from(0) || numerator >= denominator {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+            }
+            "predicate" | "filter" if aggregate_term_family(term, references) != AggregateFamily::Boolean => {
+                return refuse("ill_typed", "type-mismatch", pointer);
+            }
+            "value"
+                if !matches!(
+                    aggregate_term_family(term, references),
+                    AggregateFamily::Integer | AggregateFamily::Rational | AggregateFamily::Quantity(_)
+                ) =>
+            {
+                return refuse("ill_typed", "type-mismatch", pointer);
+            }
+            "window_kind" | "comparison" => {
+                let Some(spelled) = aggregate_literal(term, "text") else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                let admitted: &[&str] = if name == "window_kind" {
+                    &["positions", "duration"]
+                } else {
+                    &["<", "<=", "=", ">=", ">"]
+                };
+                if !admitted.contains(&spelled) {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+                if name == "window_kind" {
+                    if spelled != profile_window {
+                        return refuse("ill_typed", "unit-mismatch", pointer);
+                    }
+                    window = spelled;
+                }
+            }
+            "lower" | "upper" => {
+                let value_kind = if window == "positions" { "integer" } else { "quantity" };
+                let Some(spelled) = aggregate_literal(term, value_kind) else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                if value_kind == "quantity" && term["type"] != *clock_unit {
+                    return refuse("ill_typed", "unit-mismatch", pointer);
+                }
+                if spelled.starts_with('-') {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+                if name == "upper" {
+                    let lower = term_of("lower");
+                    let (low_n, low_d) = aggregate_magnitude(lower["value"].as_str().expect("a checked bound"));
+                    let (up_n, up_d) = aggregate_magnitude(spelled);
+                    if low_n * &up_d > up_n * &low_d {
+                        return refuse("invalid_package", "invalid-value", whole);
+                    }
+                }
+            }
+            "min_count" => {
+                let Some(spelled) = aggregate_literal(term, "integer") else {
+                    return refuse("invalid_package", "wrong-value-kind", pointer);
+                };
+                if spelled.starts_with('-') || (spelled == "0" && !matches!(kind, "count" | "sum")) {
+                    return refuse("invalid_package", "invalid-value", pointer);
+                }
+            }
+            "threshold" => {
+                let expected = match kind {
+                    "count" => AggregateFamily::Integer,
+                    "fraction" => AggregateFamily::Rational,
+                    _ => value_family.expect("a checked value binding"),
+                };
+                let actual = aggregate_term_family(term, references);
+                if let (AggregateFamily::Quantity(_), AggregateFamily::Quantity(_)) = (&expected, &actual) {
+                    if expected != actual {
+                        return refuse("ill_typed", "unit-mismatch", pointer);
+                    }
+                } else if expected != actual {
+                    return refuse("ill_typed", "type-mismatch", pointer);
+                }
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+/// Whether `case` is `base` with exactly one member replaced, added, removed
+/// or moved: some member of each, once removed, leaves equal sequences.
+fn single_member_mutation(base: &[Value], case: &[Value]) -> bool {
+    fn without(members: &[Value], at: usize) -> Vec<&Value> {
+        members.iter().enumerate().filter(|(index, _)| *index != at).map(|(_, member)| member).collect()
+    }
+    fn whole(members: &[Value]) -> Vec<&Value> {
+        members.iter().collect()
+    }
+    match case.len().cmp(&base.len()) {
+        std::cmp::Ordering::Greater => (0..case.len()).any(|at| without(case, at) == whole(base)),
+        std::cmp::Ordering::Less => (0..base.len()).any(|at| without(base, at) == whole(case)),
+        std::cmp::Ordering::Equal => {
+            base != case
+                && (0..base.len()).any(|from| (0..case.len()).any(|to| without(base, from) == without(case, to)))
+        }
+    }
+}
+
+/// FR-370-AC-17 and FR-370-AC-18 (TC-303 step 15): the aggregate atom is
+/// catalogued and enumerated, every published positive argument is admitted
+/// and every reader case refuses at its first defect.
+#[trace("TC-303", "FR-370-AC-17", "FR-370-AC-18")]
+#[test]
+fn tc_303_window_aggregate_arguments_admit_each_kind_and_refuse_at_the_first_defect() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let entry = catalog["operations"]
+        .as_array()
+        .expect("catalog operations are an array")
+        .iter()
+        .find(|entry| entry["identity"] == "quire.op.temporal.aggregate")
+        .expect("quire.op.temporal.aggregate is catalogued");
+    assert_eq!(entry["operator"], "temporal_formula");
+    assert_eq!(entry["operands"], json!(["aggregate"]));
+    assert_eq!(entry["result"], "temporal");
+    assert_eq!(entry["member"], Value::Null);
+    assert_eq!(entry["laws"], json!([]));
+    let schema = parsed_fixture(SCHEMA);
+    assert!(
+        string_set(&schema["$defs"]["OperationIdentity"]["enum"], "identities").contains("quire.op.temporal.aggregate"),
+        "the schema enumerates the aggregate identity"
+    );
+    let argument_shape = schema_for_def(&schema, "MemberTerm");
+
+    let vectors = parsed_fixture(TEMPORAL_AGGREGATE_VECTORS);
+    let references = vectors["references"].as_array().expect("references");
+    let clock_unit = &vectors["clock_unit"];
+    let mut kinds = BTreeSet::new();
+    for row in vectors["positive"].as_array().expect("positive cases") {
+        let id = row["id"].as_str().expect("an id");
+        let argument = &row["argument"];
+        assert!(argument_shape.is_valid(argument), "{id} meets the argument shape");
+        let profile = row["profile"].as_str().expect("a profile");
+        assert_eq!(aggregate_argument_refusal(profile, argument, references, clock_unit), Ok(()), "{id}");
+        kinds.insert(argument["members"][0]["value"]["value"].as_str().expect("a kind").to_owned());
+    }
+    assert_eq!(
+        kinds,
+        ["count", "sum", "min", "max", "fraction", "quantile"].map(str::to_owned).into_iter().collect(),
+        "a positive for every kind"
+    );
+    let positives = vectors["positive"].as_array().expect("positive cases");
+    for row in vectors["reader"].as_array().expect("reader cases") {
+        let id = row["id"].as_str().expect("an id");
+        let argument = &row["argument"];
+        assert!(argument_shape.is_valid(argument), "{id} meets the argument shape");
+        let base = positives
+            .iter()
+            .find(|positive| positive["id"] == row["base"])
+            .unwrap_or_else(|| panic!("{id} names a published base positive"));
+        let members = argument["members"].as_array().expect("case members");
+        let base_members = base["argument"]["members"].as_array().expect("base members");
+        if row["profile"] == base["profile"] {
+            assert!(single_member_mutation(base_members, members), "{id} mutates exactly one member of its base");
+        } else {
+            assert_eq!(members, base_members, "{id} changes only the profile of its base");
+        }
+        let expected = &row["expected"];
+        let profile = row["profile"].as_str().expect("a profile");
+        assert_eq!(
+            aggregate_argument_refusal(profile, argument, references, clock_unit),
+            Err((
+                expected["code"].as_str().expect("a code"),
+                expected["cause"].as_str().expect("a cause"),
+                expected["pointer"].as_str().expect("a pointer").to_owned(),
+            )),
+            "{id}"
+        );
+    }
+}
 
 /// Every published JSON file under `proposals/checked-package-v2`, recursively.
 fn published_checked_package_files() -> Vec<(String, Value)> {
@@ -20104,7 +20475,16 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-291",
     "FR-322-AC-292",
     "FR-322-AC-296",
-    "FR-322-AC-297"
+    "FR-322-AC-297",
+    "FR-322-AC-310",
+    "FR-322-AC-311",
+    "FR-322-AC-312",
+    "FR-322-AC-313",
+    "FR-322-AC-314",
+    "FR-322-AC-315",
+    "FR-322-AC-316",
+    "FR-322-AC-317",
+    "FR-322-AC-318"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20283,6 +20663,70 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         shared_terms[1]["term_ordinal"]
     );
     assert_ne!(shared_terms[0]["location"], shared_terms[1]["location"]);
+    for row in location_rows {
+        assert_eq!(
+            row["application"]["path"][1], "call",
+            "{} names a call application, never a leaf (FR-322-AC-312)",
+            row["id"]
+        );
+    }
+    // FR-322-AC-313..317: protocol locations carry checker site-name origins.
+    const SLOT_SITE: &str = "protocol Handshake compensate undo trigger-guard 0";
+    for row in location_rows {
+        let origin = &row["location"]["origin"];
+        assert_eq!(origin["kind"], "type_declaration", "{}", row["id"]);
+        let expected = if row["id"] == "PL-03-declaration" {
+            "protocol Handshake"
+        } else {
+            SLOT_SITE
+        };
+        assert_eq!(origin["name"], expected, "{} (AC-313, AC-317)", row["id"]);
+        assert!(
+            origin["name"].as_str().unwrap().starts_with("protocol "),
+            "{} names a protocol site, not a bare type (AC-318)",
+            row["id"]
+        );
+    }
+    let site = |id: &str| {
+        location_rows.iter().find(|row| row["id"] == id).unwrap()["location"].clone()
+    };
+    assert_eq!(site("PL-01-root")["origin"], site("PL-02-child")["origin"]);
+    assert_eq!(site("PL-01-root")["path"], json!([]));
+    assert_eq!(site("PL-02-child")["path"], json!([2, 0]));
+    let refusals = vectors["reader_refusals"].as_array().unwrap();
+    for vector in refusals {
+        let id = vector["id"].as_str().unwrap();
+        if id.starts_with("PL-R2") || id.starts_with("PL-R3") {
+            let rows = vector["value"].as_array().unwrap();
+            assert!(!rows.is_empty(), "{id}");
+            for row in rows {
+                assert_eq!(
+                    row["location"]["origin"],
+                    site("PL-02-child")["origin"],
+                    "{id} (AC-315)"
+                );
+            }
+        }
+    }
+    let attempt_rows: Vec<&str> = refusals
+        .iter()
+        .chain(vectors["schema_invalid"].as_array().unwrap())
+        .flat_map(|vector| {
+            let id = vector["id"].as_str().unwrap();
+            let rows = vector["value"]
+                .as_array()
+                .cloned()
+                .unwrap_or_else(|| vec![vector["value"].clone()]);
+            rows.into_iter()
+                .filter(|row| row["location"]["origin"]["kind"] == "protocol_attempt")
+                .map(move |_| id)
+        })
+        .collect();
+    assert_eq!(
+        attempt_rows,
+        ["PL-R1-duplicate-term", "PL-R1-duplicate-term"],
+        "AC-316"
+    );
 
     for row in vectors["positive"]["dispatch_tables"].as_array().unwrap() {
         let mut wire = row.clone();
@@ -20581,6 +21025,61 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
                     rows[0], root,
                     "positive root and missing-term witness must differ"
                 );
+            }
+            id if id.starts_with("PL-R3-") => {
+                let rows = value.as_array().unwrap();
+                for row in rows {
+                    assert!(location.is_valid(row), "{id}: a leaf row stays structurally valid");
+                }
+                let nodes = case["graph"]["nodes"].as_array().unwrap();
+                let node_schema = schema_for_def(&schema, "SemanticNode");
+                for node in nodes {
+                    assert!(node_schema.is_valid(node), "{id}: graph node meets SemanticNode");
+                }
+                // The vector isolates the leaf rule: every row names a node of the graph.
+                for row in rows {
+                    assert!(
+                        nodes.iter().any(|node| node["node_id"] == row["application"]),
+                        "{id}: the row names an admitted node, not an absent or foreign one"
+                    );
+                }
+                assert_eq!(
+                    decide_protocol_locations(nodes, rows),
+                    Err((
+                        case["expected_code"].as_str().unwrap().to_owned(),
+                        case["expected_cause"].as_str().unwrap().to_owned(),
+                        case["locus"].as_str().unwrap().to_owned(),
+                    )),
+                    "{id}"
+                );
+                // FR-322-AC-312: the same graph admits a row naming its application.
+                let application = nodes
+                    .iter()
+                    .find(|node| node["semantic_form"] == "call")
+                    .expect("the graph holds an admitted application");
+                let mut control = rows[0].clone();
+                control["application"] = application["node_id"].clone();
+                assert_eq!(decide_protocol_locations(nodes, &[control]), Ok(()), "{id}");
+                // Every leaf form the rule names refuses with the leaf code (FR-322-AC-310);
+                // no other expression form is asserted here, they stay under FR-322-AC-291.
+                let form_node = |tag: &str, form: &str, row: &Value| {
+                    let mut named = row.clone();
+                    named["application"] = json!({"package": "example", "path": [tag, form, "x"], "ordinal": 0});
+                    let node = json!({"node_id": named["application"], "node_tag": tag, "semantic_form": form});
+                    decide_protocol_locations(&[node], &[named])
+                };
+                let leaf_refusal = Err((
+                    "invalid_package".to_owned(),
+                    "invalid-value".to_owned(),
+                    "/checked_term_data/protocol_locations/0/application".to_owned(),
+                ));
+                for form in schema["$defs"]["ValueNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
+                    .as_array()
+                    .unwrap()
+                {
+                    assert_eq!(form_node("value", form.as_str().unwrap(), &rows[0]), leaf_refusal, "value/{form}");
+                }
+                assert_eq!(form_node("expression", "reference", &rows[0]), leaf_refusal);
             }
             "DT-R1-duplicate-selection-key" => {
                 assert!(
@@ -20961,8 +21460,8 @@ fn carried_rounding_is_exact(node: &Value) -> bool {
 const QUANTITY_CARRIER_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/quantity-carrier-vectors.json");
 
-/// FR-322-AC-301, FR-322-AC-302, FR-142-AC-28..FR-142-AC-30 (TC-280 `MU-31`..
-/// `MU-34`, TC-187 `U41`..`U44`): shape and consistency check of the published
+/// FR-322-AC-301, FR-322-AC-302, FR-322-AC-382, FR-142-AC-28..FR-142-AC-31
+/// (TC-280 `MU-31`..`MU-34`, TC-187 `U41`..`U44`, TC-981 `RV-08` and `RV-10`): shape and consistency check of the published
 /// carried-quantity vectors. QSpec holds no reader or evaluator for them (the
 /// readers are quire-contract-ir's and quire-verification's), so this test
 /// recomputes only what follows from exact arithmetic: that each carried node's
@@ -20972,6 +21471,7 @@ const QUANTITY_CARRIER_VECTORS: &str =
 /// value and the carrier decide.
 #[trace("TC-280", "FR-322-AC-301", "FR-322-AC-302")]
 #[trace("TC-187", "FR-142-AC-28", "FR-142-AC-29", "FR-142-AC-30")]
+#[trace("TC-981", "FR-322-AC-382", "FR-142-AC-31")]
 #[test]
 fn tc_280_quantity_carrier_vectors_are_consistent() {
     let root = parsed_fixture(SCHEMA);
@@ -21043,7 +21543,7 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
     }
     // Wire cases: ids, referenced nodes and mode pairs.
     let wire_ids: Vec<&str> = vectors["wire"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected_wire: Vec<String> = (1..=15).map(|n| format!("CQ-W{n:02}")).collect();
+    let expected_wire: Vec<String> = (1..=19).map(|n| format!("CQ-W{n:02}")).collect();
     assert_eq!(wire_ids, expected_wire.iter().map(String::as_str).collect::<Vec<_>>());
     for case in vectors["wire"].as_array().unwrap() {
         let id = case["id"].as_str().unwrap();
@@ -21053,8 +21553,9 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
             let carrier = &nodes[carried["carrier"].as_str().unwrap()];
             let well_formed = carried["form"] == "carried_quantity"
                 && nodes[carried["unit"].as_str().unwrap()]["form"] == "unit"
-                && matches!(carrier["form"].as_str().unwrap(), "integer_range" | "decimal_range")
-                && (carrier["form"] != "decimal_range" || carrier["rounding"] == carried["rounding"]);
+                && matches!(carrier["form"].as_str().unwrap(), "integer_range" | "decimal_range" | "rational_range")
+                && (carrier["form"] != "decimal_range" || carrier["rounding"] == carried["rounding"])
+                && (carrier["form"] != "rational_range" || carried_rounding_is_exact(carried));
             assert_eq!(well_formed, case["expected"] == "admitted", "{id}: the shape decides admission");
         }
         if let Some(app) = case.get("application") {
@@ -21080,7 +21581,7 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
     }
     // Evaluation cases: exact arithmetic decides completed and refused outcomes.
     let eval_ids: Vec<&str> = vectors["evaluation"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected_eval: Vec<String> = (1..=20).map(|n| format!("CQ-E{n:02}")).collect();
+    let expected_eval: Vec<String> = (1..=26).map(|n| format!("CQ-E{n:02}")).collect();
     assert_eq!(eval_ids, expected_eval.iter().map(String::as_str).collect::<Vec<_>>());
     let fraction = |text: &str| -> (BigInt, BigInt) {
         let (n, d) = text.split_once('/').unwrap_or((text, "1"));
@@ -21097,6 +21598,35 @@ fn tc_280_quantity_carrier_vectors_are_consistent() {
         let (un, ud) = fraction(vectors["units"][case["source"]["unit"].as_str().unwrap()].as_str().unwrap());
         // value = mag * unit_scale as num/den; scale 10^t for a decimal carrier.
         let (num, den) = (mn * un, md * ud);
+        if carrier["form"] == "rational_range" {
+            // FR-142 "Carried quantity": a `Rational[..]` carrier has no grid, so the
+            // reduced value is checked against its numerator and denominator bounds and
+            // never refuses `inexact_conversion`.
+            let bound = |member: &str| BigInt::from(carrier[member].as_i64().unwrap());
+            let divisor = num.gcd(&den);
+            let (p, q) = (&num / &divisor, &den / &divisor);
+            let inside = bound("numerator_min") <= p
+                && p <= bound("numerator_max")
+                && bound("denominator_min") <= q
+                && q <= bound("denominator_max");
+            match expected["disposition"].as_str().unwrap() {
+                "refused" => {
+                    assert!(!inside, "{id}: outside the carrier");
+                    assert_eq!(expected["code"], "rational_out_of_domain", "{id}");
+                }
+                "completed" => {
+                    assert!(inside, "{id}: inside the carrier");
+                    assert_eq!(expected["numerator"], json!(p.to_string()), "{id}");
+                    assert_eq!(expected["denominator"], json!(q.to_string()), "{id}");
+                }
+                "incomplete" => {
+                    assert!(case["limits"].is_array(), "{id}");
+                    assert_eq!(expected["charge_point"], "unit.target-domain", "{id}");
+                }
+                other => panic!("{id}: unknown disposition {other}"),
+            }
+            continue;
+        }
         let (t, lo, hi): (u32, BigInt, BigInt) = if carrier["form"] == "decimal_range" {
             if carrier["scale_max"].as_u64().unwrap() > 1000 {
                 assert_eq!(expected["disposition"], "incomplete", "{id}: the wide carrier is never materialized");
@@ -21561,6 +22091,32 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
         );
         assert_eq!(read_operation_effects(documents, &rows), Err(expected), "{id}");
     }
+}
+
+type ProtocolLocationRefusal = (String, String, String);
+
+/// FR-322 `protocol_locations` leaf rule (FR-322-AC-310): a row naming an admitted leaf
+/// node (every `ValueNode` form and `expression`/`reference`) refuses
+/// `invalid_package`/`invalid-value` at the row's `application`. Any other node, absent,
+/// foreign or non-application, is judged by FR-322-AC-291 alone, which this decider
+/// does not assign a code to. The repository has no production reader; this decider
+/// is the executable statement of the leaf rule over a vector's node list.
+fn decide_protocol_locations(nodes: &[Value], rows: &[Value]) -> Result<(), ProtocolLocationRefusal> {
+    for (index, row) in rows.iter().enumerate() {
+        let Some(node) = nodes.iter().find(|node| node["node_id"] == row["application"]) else {
+            continue;
+        };
+        let is_leaf = node["node_tag"] == "value"
+            || (node["node_tag"] == "expression" && node["semantic_form"] == "reference");
+        if is_leaf {
+            return Err((
+                "invalid_package".to_owned(),
+                "invalid-value".to_owned(),
+                format!("/checked_term_data/protocol_locations/{index}/application"),
+            ));
+        }
+    }
+    Ok(())
 }
 
 const MONITOR_PLAN_VECTORS: &str =
@@ -22111,4 +22667,380 @@ fn tc_979_declaration_less_function_keys_follow_content() {
         }),
         "the accessor label is published"
     );
+}
+// ---------------------------------------------------------------------------
+// IR-1278: temporal clause names and per-occurrence clock bindings
+// (FR-322 "Temporal clause names", "Temporal clock bindings", FR-370).
+// ---------------------------------------------------------------------------
+
+const TEMPORAL_CLAUSE_NAME_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-clause-name-vectors.json");
+const TEMPORAL_CLOCK_OCCURRENCE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/temporal-clock-occurrence-vectors.json");
+
+type CarrierRefusal = (&'static str, Option<&'static str>, String);
+
+/// Resolve the vector placeholders `<clause>` and `<node 9>`.
+fn resolve_clause_name_placeholders(value: &Value, base: &Value) -> Value {
+    match value {
+        Value::String(text) => {
+            let nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+            match text.as_str() {
+                "<clause>" => nodes[8]["node_id"].clone(),
+                "<node 9>" => nodes[9]["node_id"].clone(),
+                _ => value.clone(),
+            }
+        }
+        Value::Object(map) => Value::Object(
+            map.iter()
+                .map(|(key, item)| (key.clone(), resolve_clause_name_placeholders(item, base)))
+                .collect(),
+        ),
+        Value::Array(items) => Value::Array(
+            items.iter().map(|item| resolve_clause_name_placeholders(item, base)).collect(),
+        ),
+        other => other.clone(),
+    }
+}
+
+/// RFC 6902 patch, adding array insertion to the shared object-member applier.
+fn apply_clause_name_patch(candidate: &mut Value, patch: &Value) {
+    if patch["op"] == "add" {
+        let path = patch["path"].as_str().expect("add path");
+        let (parent, member) = path.rsplit_once('/').expect("add path has a parent");
+        if let Some(array) = candidate.pointer_mut(parent).and_then(Value::as_array_mut) {
+            array.insert(member.parse().expect("array index"), patch["value"].clone());
+            return;
+        }
+    }
+    apply_authored_patch(candidate, patch);
+}
+
+fn clause_name_case_package(base: &Value, case: &Value) -> Value {
+    let mut package = base.clone();
+    for patch in case["patch"].as_array().expect("patch") {
+        apply_clause_name_patch(&mut package, &resolve_clause_name_placeholders(patch, base));
+    }
+    package
+}
+
+fn is_temporal_clause(node: &Value) -> bool {
+    node["node_tag"] == "temporal" && node["semantic_form"] == "temporal_clause"
+}
+
+/// Per-row join, repeated-key and order checks shared by `temporal_clause_names` and
+/// `temporal_bindings`, in reader order: for each row in array order the declaration join,
+/// the occurrence join, the repeated key, then the canonical order; coverage is the caller's.
+fn decide_occurrence_rows(
+    nodes: &[Value],
+    rows: &[Value],
+    root: &str,
+    declaration_ok: &dyn Fn(&Value) -> bool,
+    occurrence_role: &dyn Fn(&Value) -> &'static str,
+    join_cause: &'static str,
+    order_at_declaration: bool,
+) -> Result<(), CarrierRefusal> {
+    let mut previous: Option<(&Value, u64)> = None;
+    for (i, row) in rows.iter().enumerate() {
+        let node = nodes
+            .iter()
+            .find(|node| node["node_id"] == row["declaration"])
+            .filter(|node| declaration_ok(node));
+        let Some(node) = node else {
+            return Err(("invalid_package", Some(join_cause), format!("{root}/{i}/declaration")));
+        };
+        let role = occurrence_role(node);
+        let owned = node["occurrences"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|o| o["role"] == role && o["ordinal"] == row["occurrence"]);
+        if !owned {
+            return Err(("invalid_package", Some(join_cause), format!("{root}/{i}/occurrence")));
+        }
+        let key = (&row["declaration"], row["occurrence"].as_u64().unwrap());
+        if rows[..i].iter().any(|e| (&e["declaration"], e["occurrence"].as_u64().unwrap()) == key) {
+            return Err(("invalid_package", Some("conflicting-definition"), format!("{root}/{i}")));
+        }
+        if let Some((declaration, occurrence)) = previous {
+            let order = node_id_order(declaration, key.0).then(occurrence.cmp(&key.1));
+            if order.is_gt() {
+                let same = declaration == key.0;
+                let locus = if order_at_declaration && !same {
+                    format!("{root}/{i}/declaration")
+                } else if order_at_declaration {
+                    format!("{root}/{i}/occurrence")
+                } else {
+                    format!("{root}/{i}")
+                };
+                return Err(("invalid_package", Some(join_cause), locus));
+            }
+        }
+        previous = Some(key);
+    }
+    Ok(())
+}
+
+/// Test-local decider for the per-occurrence carriers of a temporal clause: first the graph
+/// shape (no node `declaration`), then `temporal_bindings` rows, then `temporal_clause_names`
+/// rows. Every temporal clause of the published fixtures selects the event-position profile,
+/// so each is clock-configured.
+fn decide_temporal_clause_carriers(package: &Value) -> Result<(), CarrierRefusal> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    for (n, node) in nodes.iter().enumerate() {
+        if is_temporal_clause(node) && node.get("declaration").is_some() {
+            return Err(("invalid_semantic_graph", None, format!("/semantic_graph/nodes/{n}/declaration")));
+        }
+    }
+    let bindings = package["temporal_bindings"].as_array().cloned().unwrap_or_default();
+    let binding_role = |node: &Value| if is_temporal_clause(node) { "claim" } else { "declaration" };
+    decide_occurrence_rows(
+        nodes,
+        &bindings,
+        "/temporal_bindings",
+        &|node| {
+            is_temporal_clause(node)
+                || (node["node_tag"] == "protocol" && node["semantic_form"] == "compensation")
+        },
+        &binding_role,
+        "timed-node-reference",
+        true,
+    )?;
+    for (n, node) in nodes.iter().enumerate().filter(|(_, node)| is_temporal_clause(node)) {
+        for occurrence in node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim") {
+            if !bindings
+                .iter()
+                .any(|r| r["declaration"] == node["node_id"] && r["occurrence"] == occurrence["ordinal"])
+            {
+                return Err((
+                    "invalid_package",
+                    Some("timed-node-reference"),
+                    format!("/semantic_graph/nodes/{n}/body"),
+                ));
+            }
+        }
+    }
+    for (i, row) in bindings.iter().enumerate() {
+        let node = nodes.iter().find(|node| node["node_id"] == row["declaration"]).unwrap();
+        if !is_temporal_clause(node) {
+            continue;
+        }
+        if node["body"]["arguments"][1]["value"] != row["clock_name"] {
+            return Err(("invalid_package", Some("timed-node-reference"), format!("/temporal_bindings/{i}/clock_name")));
+        }
+        let profile = node["body"]["operation"]["laws"][0]["definition"]["identity"].as_str().unwrap();
+        if temporal_clock_kind(profile) != row["clock"]["kind"].as_str() {
+            return Err(("invalid_package", Some("timed-node-reference"), format!("/temporal_bindings/{i}/clock/kind")));
+        }
+    }
+    let names = package["temporal_clause_names"].as_array().cloned().unwrap_or_default();
+    decide_occurrence_rows(
+        nodes,
+        &names,
+        "/temporal_clause_names",
+        &|node| is_temporal_clause(node),
+        &|_| "claim",
+        "invalid-value",
+        false,
+    )?;
+    for node in nodes.iter().filter(|node| is_temporal_clause(node)) {
+        for occurrence in node["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim") {
+            if !names.iter().any(|r| r["declaration"] == node["node_id"] && r["occurrence"] == occurrence["ordinal"]) {
+                return Err(("invalid_package", Some("invalid-value"), "/temporal_clause_names".to_owned()));
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Replay one vector file of patch cases: admitted, schema-invalid and schema-valid refusals.
+fn replay_carrier_cases(
+    vectors: &Value,
+    schema: &Value,
+    row_def: &str,
+    member: &str,
+    seen: &mut BTreeSet<String>,
+) -> (usize, usize, usize) {
+    let package_validator = jsonschema::validator_for(schema).expect("checked package schema");
+    let row_validator = schema_for_def(schema, row_def);
+    let base = parsed_fixture(&std::fs::read_to_string(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("proposals/checked-package-v2")
+            .join(vectors["base"].as_str().unwrap()),
+    ).expect("base fixture"));
+    let expected_of = |case: &Value| {
+        let e = &case["expected"];
+        (e["code"].as_str().unwrap().to_owned(), e["cause"].as_str().map(str::to_owned), e["locus"].as_str().unwrap().to_owned())
+    };
+    let decided = |package: &Value| {
+        decide_temporal_clause_carriers(package)
+            .map(|()| None)
+            .unwrap_or_else(|(code, cause, locus)| Some((code.to_owned(), cause.map(str::to_owned), locus)))
+    };
+    let (mut admitted, mut schema_refused, mut refused) = (0, 0, 0);
+    assert_eq!(decided(&base), None, "the base package is admitted");
+    for case in vectors["positive"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(
+            package_validator.is_valid(&package),
+            "{id}: {:?}",
+            package_validator.iter_errors(&package).map(|e| e.to_string()).collect::<Vec<_>>()
+        );
+        assert_eq!(decided(&package), None, "{id}");
+        assert_eq!(
+            package["temporal_bindings"].as_array().unwrap().len() as u64,
+            case["bindings"].as_u64().unwrap(),
+            "{id}: one binding row per claim occurrence"
+        );
+        admitted += 1;
+    }
+    for case in vectors["schema_refusals"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(!package_validator.is_valid(&package), "{id}: the closed schema refuses the package");
+        assert_eq!(case["expected"]["code"], "malformed_wire", "{id}");
+        // A missing or extra member is refused at the row; a mistyped member at that member.
+        let row = &package[member][0];
+        let error = row_validator
+            .iter_errors(row)
+            .next()
+            .unwrap_or_else(|| panic!("{id}: the row definition refuses the row"));
+        assert_eq!(
+            format!("/{member}/0{}", error.instance_path()),
+            case["expected"]["locus"].as_str().unwrap(),
+            "{id}"
+        );
+        schema_refused += 1;
+    }
+    for case in vectors["shape_refusals"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(!package_validator.is_valid(&package), "{id}: the schema also refuses the package");
+        assert_eq!(decided(&package), Some(expected_of(case)), "{id}");
+        refused += 1;
+    }
+    for case in vectors["semantic_refusals"].as_array().into_iter().flatten() {
+        let id = case["id"].as_str().unwrap();
+        assert!(seen.insert(id.to_owned()), "{id}: unique id");
+        let package = clause_name_case_package(&base, case);
+        assert!(
+            package_validator.is_valid(&package),
+            "{id}: schema-valid reader case: {:?}",
+            package_validator.iter_errors(&package).map(|e| format!("{e} at {}", e.instance_path())).collect::<Vec<_>>()
+        );
+        assert_eq!(decided(&package), Some(expected_of(case)), "{id}");
+        refused += 1;
+    }
+    (admitted, schema_refused, refused)
+}
+
+/// FR-322-AC-342..AC-358 (TC-233): the clause-name carrier is closed, per claim occurrence and
+/// identity-free, and the vectors decide it.
+#[trace("TC-233", "TC-303", "FR-322-AC-342", "FR-322-AC-343", "FR-322-AC-344", "FR-322-AC-345", "FR-322-AC-346", "FR-322-AC-347", "FR-322-AC-348", "FR-322-AC-349", "FR-322-AC-350", "FR-322-AC-351", "FR-322-AC-352", "FR-322-AC-353", "FR-322-AC-354", "FR-322-AC-355", "FR-322-AC-356", "FR-322-AC-357", "FR-322-AC-358", "FR-370-AC-16")]
+#[test]
+fn temporal_clause_name_carrier_is_closed_per_occurrence_and_identity_free() {
+    let vectors = parsed_fixture(TEMPORAL_CLAUSE_NAME_VECTORS);
+    let schema = parsed_fixture(SCHEMA);
+    assert_eq!(schema["properties"]["temporal_clause_names"]["items"]["$ref"], "#/$defs/TemporalClauseNameRow");
+    assert!(
+        !schema["required"].as_array().unwrap().contains(&json!("temporal_clause_names")),
+        "a package with no temporal clause omits the member"
+    );
+    let row_schema = &schema["$defs"]["TemporalClauseNameRow"];
+    assert_eq!(row_schema["additionalProperties"], json!(false), "the row is closed");
+    assert_eq!(row_schema["properties"]["name"]["$ref"], "#/$defs/Identifier");
+    assert_eq!(
+        row_schema["properties"].as_object().unwrap().keys().cloned().collect::<BTreeSet<_>>(),
+        ["declaration", "name", "occurrence"].iter().map(|s| s.to_string()).collect()
+    );
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-timed-clause-nodes.json"
+    ));
+    let nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+    let clause = &nodes[vectors["clause_graph_index"].as_u64().unwrap() as usize];
+    assert!(is_temporal_clause(clause));
+    assert!(clause.get("declaration").is_none(), "AC-342: no declaration member on the node");
+    assert!(!clause["node_id"].to_string().contains("Clause0"), "AC-343: the name is outside the node id");
+
+    let mut seen = BTreeSet::new();
+    let counts = replay_carrier_cases(&vectors, &schema, "TemporalClauseNameRow", "temporal_clause_names", &mut seen);
+    assert_eq!(counts, (3, 8, 12), "positives, schema refusals, reader and shape refusals");
+
+    for case in vectors["positive"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let package = clause_name_case_package(&base, case);
+        let rows = package["temporal_clause_names"].as_array().unwrap();
+        let names: Vec<&str> = rows.iter().map(|row| row["name"].as_str().unwrap()).collect();
+        assert_eq!(names, string_list(&case["names"], "names"), "{id}");
+        let occurrences = package["semantic_graph"]["nodes"][8]["occurrences"].as_array().unwrap().len();
+        assert_eq!(names.len(), occurrences, "{id}: one name per claim occurrence");
+        if case["identity_unchanged"] == true {
+            for patch in case["patch"].as_array().unwrap() {
+                assert!(
+                    patch["path"].as_str().unwrap().starts_with("/temporal_clause_names"),
+                    "{id}: a rename touches only the name row"
+                );
+            }
+            assert_eq!(package["semantic_graph"], base["semantic_graph"], "{id}: AC-343");
+        } else if names.len() == 2 {
+            assert_eq!(rows[0]["declaration"], rows[1]["declaration"], "{id}: AC-344 one shared node");
+            assert_ne!(rows[0]["name"], rows[1]["name"], "{id}: AC-344 a name per occurrence");
+            assert_ne!(rows[0]["occurrence"], rows[1]["occurrence"], "{id}");
+        }
+    }
+}
+
+/// FR-322-AC-359..AC-370 (TC-233): the clock configuration is per claim occurrence, so twins
+/// may select different configurations, and its rows are checked like the name rows.
+#[trace("TC-233", "FR-322-AC-294", "FR-322-AC-359", "FR-322-AC-360", "FR-322-AC-361", "FR-322-AC-362", "FR-322-AC-363", "FR-322-AC-364", "FR-322-AC-365", "FR-322-AC-366", "FR-322-AC-367", "FR-322-AC-368", "FR-322-AC-369", "FR-322-AC-370")]
+#[test]
+fn temporal_clock_bindings_are_keyed_per_claim_occurrence() {
+    let vectors = parsed_fixture(TEMPORAL_CLOCK_OCCURRENCE_VECTORS);
+    let schema = parsed_fixture(SCHEMA);
+    let required: Vec<&str> = string_list(&schema["$defs"]["TemporalBinding"]["required"], "required");
+    assert!(required.contains(&"occurrence"), "AC-359: the row names its occurrence");
+    assert_eq!(schema["$defs"]["TemporalBinding"]["additionalProperties"], json!(false));
+    let mut seen = BTreeSet::new();
+    let counts = replay_carrier_cases(&vectors, &schema, "TemporalBinding", "temporal_bindings", &mut seen);
+    assert_eq!(counts, (2, 3, 9));
+    // AC-361: twins of one node select different configurations.
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-timed-clause-nodes.json"
+    ));
+    let twins = clause_name_case_package(&base, &vectors["positive"][0]);
+    let rows = twins["temporal_bindings"].as_array().unwrap();
+    assert_eq!(rows[0]["declaration"], rows[1]["declaration"]);
+    assert_ne!(rows[0]["clock"], rows[1]["clock"], "different configurations, one node");
+    assert_eq!(rows[0]["clock_name"], rows[1]["clock_name"], "the body's clock name is per node");
+}
+
+/// Every published positive package that has a temporal clause names each claim occurrence of
+/// each clause and binds each one.
+#[trace("TC-233", "FR-322-AC-345", "FR-322-AC-361")]
+#[test]
+fn every_positive_fixture_names_and_binds_each_claim_occurrence_of_each_temporal_clause() {
+    let mut with_clauses = 0;
+    for (name, package) in published_positive_packages() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+        let expected: usize = nodes
+            .iter()
+            .filter(|n| is_temporal_clause(n))
+            .map(|n| n["occurrences"].as_array().unwrap().iter().filter(|o| o["role"] == "claim").count())
+            .sum();
+        for member in ["temporal_clause_names", "temporal_bindings"] {
+            match package[member].as_array() {
+                None => assert_eq!(expected, 0, "{name}: a clause needs its {member} rows"),
+                Some(rows) => assert_eq!(rows.len(), expected, "{name}: {member}"),
+            }
+        }
+        if expected > 0 {
+            with_clauses += 1;
+        }
+        assert_eq!(decide_temporal_clause_carriers(&package), Ok(()), "{name}");
+    }
+    assert!(with_clauses >= 6, "the published clause fixtures all carry rows: {with_clauses}");
 }

@@ -25,7 +25,7 @@ When a result reports whether an obligation activated, the strict reader SHALL m
 | --- | --- |
 | `triggered` | The trigger was established and the dependent obligation exists with its exact workflow, role, effect, predicate, capture and evaluation-anchor identities (FR-055). Required for truth `satisfied`, `violated` or `pending`, and for an obligation-path protocol-adequacy demonstration (FR-061). Projects to E02 `activation.status` `activated` (FR-062). |
 | `inactive` | No trigger was admitted while the trigger scope is authoritatively closed and complete (FR-055, FR-093). Assessment execution is `completed`, truth is `unavailable`, and the surrounding subject execution may remain open (FR-061). It is not evidence that recovery behavior was exercised (FR-093). Projects to E02 `not-activated` (FR-062). |
-| `activation-unknown` | The trigger scope is open, or trigger evidence is missing or refused (FR-055, FR-093). Truth is `unavailable`; FR-295 completeness and assessment execution retain their independently derived exact states and dependencies (FR-061). Projects to E02 `unknown` (FR-062). |
+| activation_unknown | Wire spelling `activation-unknown`. The trigger scope is open, or trigger evidence is missing or refused (FR-055, FR-093). Truth is `unavailable`; FR-295 completeness and assessment execution retain their independently derived exact states and dependencies (FR-061). Projects to E02 `unknown` (FR-062). |
 
 ## Identity and comparison
 

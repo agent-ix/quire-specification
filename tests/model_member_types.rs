@@ -236,7 +236,9 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
         .iter()
         .find(|value_type| text(value_type, "node") == type_ref)
     {
-        let bound = |member: &str| text(value_type, member).parse::<i128>().ok();
+        // An unbounded value type (the Rational value type with no constraints of
+        // FR-154 "Rational value types") carries no bound members and has no row.
+        let bound = |member: &str| value_type[member].as_str()?.parse::<i128>().ok();
         let ordered = bound("lower")? <= bound("upper")?;
         return match text(value_type, "native") {
             "ix://quire/native/Integer" => ordered.then(
@@ -612,7 +614,7 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
 
 /// FR-322-AC-183: a field, an operation parameter or an operation result typed
 /// `Rational`, `Decimal` or bare `Text`, or typed by a package value type bound
-/// as `Decimal[...]` or `Rational`, is declared by the package and gives the
+/// as `Decimal[...]` or by a Rational value type with no constraints, is declared by the package and gives the
 /// member no type. Each member of `Order` is retyped in turn; the control
 /// types it `Boolean`, which resolves, so the refusal is the declared type's
 /// and not a missing member.
@@ -643,7 +645,8 @@ fn tc_280_rational_decimal_and_bare_text_members_have_no_type() {
         let mut package = vectors["domain_package"].clone();
         package["value_types"].as_array_mut().expect("value types").extend([
             json!({"node": "ix://acme/orders/Dec", "native": "ix://quire/native/Decimal", "lower": "0", "upper": "9"}),
-            json!({"node": "ix://acme/orders/Rat", "native": "ix://quire/native/Rational", "lower": "0", "upper": "9"}),
+            // The unbounded Rational value type: no bounds (FR-154 "Rational value types").
+            json!({"node": "ix://acme/orders/Rat", "native": "ix://quire/native/Rational"}),
         ]);
         let order = package["object_types"]
             .as_array_mut()

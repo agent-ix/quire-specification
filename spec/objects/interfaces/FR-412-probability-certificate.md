@@ -25,6 +25,31 @@ exact rationals with no provider present, before the item settles `proved`.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| identity | JsonObject | 1..1 |  |
+| objective | JsonObject | 1..1 |  |
+| kind | String | 1..1 |  |
+| values | JsonObject | 0..* |  |
+| ranking | JsonObject | 0..* |  |
+| policy | JsonObject | 0..* |  |
+| components | JsonObject | 0..* |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| identity | JSON object `{node_id, model, ordinal}`; `proposals/backend-provider-v1/schema.json` `CertificateIdentity` |
+| objective | JSON object; `proposals/backend-provider-v1/schema.json` `ProbabilityCertificate.objective` |
+| kind | string tag lower, upper, exact or long-run |
+| values | array of `{state, value}` objects; `proposals/backend-provider-v1/schema.json` `ProbabilityCertificate.values` |
+| ranking | array of `{state, rank}` objects; `proposals/backend-provider-v1/schema.json` `ProbabilityCertificate.ranking` |
+| policy | array of `{state, choice}` objects; `proposals/backend-provider-v1/schema.json` `ProbabilityCertificate.policy` |
+| components | for `long-run`: per component, its value and a gain-bias pair |
+
+
 `ProbabilityCertificate{identity, objective, kind, values, ranking, policy,
 components}`:
 

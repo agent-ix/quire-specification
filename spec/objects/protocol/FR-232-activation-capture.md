@@ -23,6 +23,27 @@ for that obligation."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| declared_expression | String | 1..1 |  |
+| declared_type | String | 1..1 |  |
+| value | String | 1..1 |  |
+| source_model_binding | String | 1..1 |  |
+| activation_anchor | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| declared_expression | type not stated in source; see Field sources |
+| declared_type | type not stated in source; see Field sources |
+| value | type not stated in source; see Field sources |
+| source_model_binding | type not stated in source; see Field sources |
+| activation_anchor | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Declared expression | FR-093 Behavior | Retained with the capture. |

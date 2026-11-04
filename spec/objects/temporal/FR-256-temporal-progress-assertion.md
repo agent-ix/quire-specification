@@ -29,6 +29,32 @@ their temporal interpretation."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| assertion_identity_and_revision | String | 1..1 |  |
+| named_clock | String | 1..1 |  |
+| named_subjects | String | 1..1 |  |
+| named_decision_scope | TemporalDecisionScope | 1..1 |  |
+| named_surrounding_execution | TemporalDecisionScope | 1..1 |  |
+| named_interval | BoundedTemporalInterval | 1..1 |  |
+| named_history_boundary | HistoryBoundary | 1..1 |  |
+| progress_point | String | 1..1 |  |
+| completeness_coverage | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| assertion_identity_and_revision | type not stated in source; multiplicity not stated in source; see Field sources |
+| named_clock | type not stated in source; see Field sources |
+| named_subjects | type not stated in source; see Field sources |
+| named_surrounding_execution | FR-258 scope whose `scope_role` is the surrounding execution ("either the decision scope or the surrounding execution", FR-258); "A second, independent axis (FR-258)" (this doc); exactly one |
+| progress_point | type not stated in source; see Field sources |
+| completeness_coverage | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Assertion identity and revision | FR-094 Behavior, FR-094-AC-8 | A "same-binding progress regression or conflicting assertion revision" is a typed contradiction or refusal. |

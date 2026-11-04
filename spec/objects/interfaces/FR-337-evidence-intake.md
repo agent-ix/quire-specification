@@ -18,6 +18,32 @@ When a producer result enters the assurance evidence store, the producer SHALL u
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| evidence_id | String | 1..1 |  |
+| subjects | JsonObject | 1..1 |  |
+| results | JsonObject | 1..1 |  |
+| artifacts | JsonObject | 1..1 |  |
+| traceability | JsonObject | 1..1 |  |
+| rights | JsonObject | 1..1 |  |
+| limitations | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.evidence-intake/v1` |
+| subjects | record: requirement, semantic, implementation, run identities |
+| results | list of result references; multiplicity not stated in source |
+| artifacts | record: retained bytes, media type, availability; multiplicity not stated in source |
+| traceability | typed relationship records; multiplicity not stated in source |
+| rights | record: provenance, license, disclosure, retention; multiplicity not stated in source |
+| limitations | record: missing, redacted, non-replayable material and claim impact; multiplicity not stated in source |
+
+
 - `contract_version` — exactly `quire.evidence-intake/v1`.
 - `evidence_id` — the evidence's identifier, assigned at intake and compared as an exact string.
 - `subjects` — exact requirement, semantic, implementation and run identities.

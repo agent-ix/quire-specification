@@ -17,6 +17,27 @@ identity rather than by a display name or installed tool.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| target_family | String | 1..1 |  |
+| target_standard_refs | String | 0..* |  |
+| mapping_profile_id | String | 1..1 |  |
+| required_capabilities | String | 1..1 |  |
+| observer_selection | String | 0..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| target_family | string tag, exactly one of `ocl`, `sysml-kerml`, `fretish` |
+| target_standard_refs | type not stated in source; see Field sources |
+| mapping_profile_id | string identity, one of three `quire.output.*/v1` names; absence refuses dispatch (Absence) |
+| required_capabilities | type not stated in source; see Field sources |
+| observer_selection | type not stated in source; see Field sources |
+
+
 | Property | Description |
 | --- | --- |
 | `target_family` | Exactly one of `ocl`, `sysml-kerml` or `fretish`. |

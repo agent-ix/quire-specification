@@ -18,6 +18,31 @@ When a tool or plugin is registered, the producer SHALL use the immutable ToolPl
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| tool_id | String | 1..1 |  |
+| capabilities | JsonObject | 1..1 |  |
+| effects | String | 0..* |  |
+| rights | JsonObject | 1..1 |  |
+| platform | JsonObject | 1..1 |  |
+| limits | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.tool-plugin-manifest/v1` |
+| tool_id | type not stated in source; multiplicity not stated in source; see Field sources |
+| capabilities | list of operation/profile/format tuples; multiplicity not stated in source |
+| effects | type not stated in source; see Field sources |
+| rights | record: required grants and scope constraints |
+| platform | record: target and ABI or process-wire requirements; multiplicity not stated in source |
+| limits | record: input, output, memory, time, concurrency ceilings; multiplicity not stated in source |
+
+
 - `contract_version` — exactly `quire.tool-plugin-manifest/v1`.
 - `tool_id` — authority-qualified provider identity.
 - `capabilities` — exact operation/profile/format tuples.

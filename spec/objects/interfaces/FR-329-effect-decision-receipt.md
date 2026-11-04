@@ -18,6 +18,33 @@ When a formal decision requests an external workflow effect, the producer SHALL 
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| decision | JsonObject | 1..1 |  |
+| authority_grant | JsonObject | 1..1 |  |
+| idempotency_key | String | 1..1 |  |
+| effect_request | JsonObject | 1..1 |  |
+| transport_receipt | JsonObject | 1..1 |  |
+| effect_observation | JsonObject | 0..1 |  |
+| lineage | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.effect-decision/v1` |
+| decision | record: semantic result and recommended action identity |
+| authority_grant | record: actor, action, subject, scope, expiry, rights; multiplicity not stated in source |
+| idempotency_key | caller-owned key string |
+| effect_request | record: adapter, operation, typed arguments, request identity; multiplicity not stated in source |
+| transport_receipt | record: delivery or acceptance fact; multiplicity not stated in source |
+| effect_observation | record; bullet says optional |
+| lineage | record: retry, duplicate, supersession, refusal relations; multiplicity not stated in source |
+
+
 - `contract_version` — exactly `quire.effect-decision/v1`.
 - `decision` — exact semantic result and recommended action identity.
 - `authority_grant` — actor, action, subject, scope, expiry and rights.

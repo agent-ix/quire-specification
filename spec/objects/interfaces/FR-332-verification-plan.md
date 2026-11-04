@@ -18,6 +18,34 @@ When an authored verification plan completes linking, the producer SHALL use the
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| plan_id | String | 1..1 |  |
+| obligations | JsonObject | 1..1 |  |
+| methods | JsonObject | 0..* |  |
+| domains | JsonObject | 1..1 |  |
+| assumptions | JsonObject | 1..1 |  |
+| dependencies | JsonObject | 1..1 |  |
+| bounds | JsonObject | 1..1 |  |
+| providers | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.verification-plan/v1` |
+| obligations | list of obligation records: clause or claim plus expected evidence class; multiplicity not stated in source |
+| methods | ordered list of method selections |
+| domains | record: model, input, trace, time, candidate domains; multiplicity not stated in source |
+| assumptions | record: authored premises with authorities; multiplicity not stated in source |
+| dependencies | record: prerequisite edges between plan nodes; multiplicity not stated in source |
+| bounds | record: method work bounds and semantic-domain bounds; multiplicity not stated in source |
+| providers | record: capability-constrained selections and fallback or refusal policy; multiplicity not stated in source |
+
+
 - `contract_version` — exactly `quire.verification-plan/v1`.
 - `plan_id` — the identity assigned to the plan, compared as an exact string. It is not computed from the other members.
 - `obligations` — exact clauses/claims and expected evidence class.

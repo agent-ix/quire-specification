@@ -55,6 +55,51 @@ When a protocol assessment result is emitted or read, the strict reader SHALL re
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contractVersion | String | 1..1 |  |
+| kind | String | 1..1 |  |
+| resultKey | CanonicalProtocolResultIdentityPreimage | 1..1 | identity |
+| assessment_execution | AssessmentExecutionDisposition | 1..1 |  |
+| decision_scope_progress | String | 1..1 |  |
+| decision_scope_closure | String | 1..1 |  |
+| surrounding_execution_progress | String | 1..1 |  |
+| surrounding_execution_closure | String | 1..1 |  |
+| complete_global_conformance_closure | String | 1..1 |  |
+| truth | TruthDisposition | 1..1 |  |
+| settlement_basis | SettlementBasis | 1..1 |  |
+| activation | ActivationState | 1..1 |  |
+| participation | ParticipationFact | 1..1 |  |
+| assumptions | String | 1..1 |  |
+| completeness | InputCompletenessState | 1..1 |  |
+| observation_adequacy | ObservationAdequacyState | 1..1 |  |
+| protocol_adequacy | ProtocolAdequacyState | 1..1 |  |
+| claim | JsonObject | 1..1 |  |
+| decision_support | DecisionSupportRecord | 1..1 |  |
+| provenance | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contractVersion | exactly `quire.protocol.result/v1-draft.1` (FR-061, FR-240-AC-1) |
+| kind | exactly `ProtocolResult` (FR-061, FR-240-AC-1) |
+| decision_scope_progress | type not stated in source; see Field sources |
+| decision_scope_closure | type not stated in source; see Field sources |
+| surrounding_execution_progress | type not stated in source; see Field sources |
+| surrounding_execution_closure | type not stated in source; see Field sources |
+| complete_global_conformance_closure | type not stated in source; see Field sources |
+| truth | one truth disposition (FR-242) |
+| settlement_basis | exactly one basis per truth result plus supporting fact and progress identities |
+| activation | one activation state (FR-244) |
+| assumptions | type not stated in source; see Field sources |
+| claim | JSON object: exactly one FR-290 protocol-family claim kind plus, for an advanced result, FR-281 strength, FR-291 fragment and FR-292 backend selection (FR-240 claim) |
+| decision_support | multiplicity not stated in source; see Field sources |
+| provenance | type not stated in source; multiplicity not stated in source; see Field sources |
+
+
 Every property below is stated by [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md)
 or [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md). This
 artifact adds none.

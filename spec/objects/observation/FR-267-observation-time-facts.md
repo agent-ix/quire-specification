@@ -24,6 +24,23 @@ selects from.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| event_time | Timestamp | 1..1 |  |
+| ingestion_time | Timestamp | 1..1 |  |
+| causal_relation | DeclaredInstanceRelationship | 1..1 |  |
+| clock_uncertainty | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| causal_relation | the declared relationship structure of FR-262 (FR-267 Identity, Causal order) |
+| clock_uncertainty | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Event time | FR-113 Description, FR-113-AC-2 | The instant the observed event carries. Retained as a separate fact from ingestion time, and the axis the half-open window bounds of [FR-266](FR-266-event-time-window.md) are compared against (FR-113 Behavior). |

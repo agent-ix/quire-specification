@@ -17,7 +17,30 @@ When all requested obligations have valid mapping records, the package assembler
 produce one immutable generated-output package binding exact target bytes
 to the complete ordered record set and source/profile/generator selections.
 
+## Properties
+
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| source_package_ref | String | 1..1 | |
+| target_profile | OutputMappingConsumerProfile | 1..1 | |
+| generator | String | 1..1 | |
+| target_bytes | Bytes | 1..1 | |
+| records | PerObligationOutputMappingRecord | 0..* | |
+| limits | String | 1..1 | |
+
 ## Members
+
+| Member | Multiplicity |
+|---|---|
+| PerObligationOutputMappingRecord | 0..* |
+
+The package holds its records inside its consistency boundary, in requested
+source-obligation order ([FR-298](FR-298-per-obligation-output-mapping-record.md)).
+
+## Property descriptions
+
+Type and Multiplicity in Properties were derived from this text. The text names no type for `source_package_ref`, `generator` or `limits`, so those are String; `key` is the synthetic identity row for the Key stated under Identity and comparison.
 
 | Property | Description |
 | --- | --- |
@@ -43,15 +66,36 @@ to the complete ordered record set and source/profile/generator selections.
 - **Absence** — a missing property or record prevents package construction. No
   partial package or identity is exposed after refusal, cancellation or exhaustion.
 
-## Aggregate invariants
+## Invariants
 
-- Every requested obligation appears exactly once and no unrequested obligation
-  appears.
-- Every output region is within `target_bytes`, is UTF-8 boundary-safe where the
-  profile requires UTF-8, and belongs to the record that claims it.
-- Unrepresented/refused records claim no output region.
-- Reassembling the same admitted request with the same profile/generator yields
-  byte-identical output, record identities and package identity.
+The clauses the package enforces over its own properties. Each clause owns one
+`quire` fence under its own `### <clauseId>` heading.
+
+The remaining package rules relate the package to things that are not its own
+properties, so they stay prose: every requested obligation appears and no
+unrequested one does (the request is not a package property); every output
+region is within `target_bytes`, is UTF-8 boundary-safe where the profile
+requires UTF-8, and belongs to the record that claims it (FR-298 does not yet
+type `output_regions` as byte regions); and reassembling the same admitted
+request with the same profile/generator yields byte-identical output, record
+identities and package identity (a property of assembly, FR-125, not of one
+package).
+
+### EachSourceObligationAppearsOnce
+
+Every obligation in the package appears exactly once.
+
+```quire
+forall(r in self.records: size(filter(s in self.records: s.source_obligation = r.source_obligation)) = 1)
+```
+
+### UnrepresentedOrRefusedRecordClaimsNoRegion
+
+Unrepresented and refused records claim no output region.
+
+```quire
+forall(r in self.records: (r.disposition = ConsumerMappingLoss::unrepresented or r.disposition = ConsumerMappingLoss::refused) implies size(r.output_regions) = 0)
+```
 
 ## Acceptance Criteria
 

@@ -1113,6 +1113,7 @@
       "type": "object",
       "required": [
         "profile_selections",
+        "package",
         "dependencies",
         "replay_target",
         "source",
@@ -1132,6 +1133,9 @@
           "items": {
             "$ref": "#/$defs/ProfileSelection"
           }
+        },
+        "package": {
+          "$ref": "urn:quire:checked-package:v2"
         },
         "dependencies": {
           "type": "array",

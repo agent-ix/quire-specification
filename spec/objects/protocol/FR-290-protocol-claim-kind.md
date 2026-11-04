@@ -38,6 +38,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-485
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-507
+    type: references
 ---
 # FR-290: Capability kind vocabulary
 
@@ -51,17 +53,17 @@ outcome independent from every other member.
 
 | Value | Description |
 | --- | --- |
-| `value-validity` | Whether a Boolean clause over admitted values, pure expressions and function applications holds for every assignment of its declared domain. |
-| `operation-contract` | Whether a state operation's precondition, postcondition, invariant and frame clauses hold for every admitted pre-state and input. |
-| `finite-replay` | Whether one finite execution, recorded or generated, conforms step by step to the selected state and protocol semantics. |
-| `temporal-satisfaction` | Whether a temporal requirement holds over the traces of its selected temporal profile. |
-| `global-conformance` | Finite global protocol conformance under the exact selected closure premises. |
+| value_validity | Wire spelling `value-validity`. Whether a Boolean clause over admitted values, pure expressions and function applications holds for every assignment of its declared domain. |
+| operation_contract | Wire spelling `operation-contract`. Whether a state operation's precondition, postcondition, invariant and frame clauses hold for every admitted pre-state and input. |
+| finite_replay | Wire spelling `finite-replay`. Whether one finite execution, recorded or generated, conforms step by step to the selected protocol semantics. |
+| temporal_satisfaction | Wire spelling `temporal-satisfaction`. Whether a temporal requirement holds over the traces of its selected temporal profile. |
+| global_conformance | Wire spelling `global-conformance`. Finite global protocol conformance under the exact selected closure premises. |
 | `monitorability` | Whether the selected admitted fragment can be monitored under the declared observations. |
-| `local-projection` | Whether one selected participant projection is defined under its exact premises. |
+| local_projection | Wire spelling `local-projection`. Whether one selected participant projection is defined under its exact premises. |
 | `refinement` | Whether one exact protocol refines another under a selected relation; its two subjects are protocol models (FR-177). |
 | `realizability` | Whether the selected protocol admits a causal implementation strategy. |
 | `composition` | Whether selected components compose under independently discharged assumptions. |
-| `probabilistic-satisfaction` | Whether a probabilistic claim's bound holds over a model subject under its workload or every scheduler ([FR-407](../../functional/analysis/FR-407-state-probabilistic-claims.md)), with `statistical` or `exact` evidence. |
+| probabilistic_satisfaction | Wire spelling `probabilistic-satisfaction`. Whether a probabilistic claim's bound holds over a model subject under its workload or every scheduler ([FR-407](../../functional/analysis/FR-407-state-probabilistic-claims.md)), with `statistical` or `exact` evidence. |
 | `schedulability` | Whether a task set is schedulable, or a task's response time is bounded, under a named scheduling policy ([FR-419](../../functional/analysis/FR-419-analyze-task-set-schedulability.md)). |
 
 ## Families
@@ -115,33 +117,36 @@ Each requested item is one claim and requires exactly one kind. A clause's
 kind comes from the clause's own claim form; an expression nested in it, such
 as a function application or a `case` expression, adds no kind. A function
 declaration carries no clause; each scalar operation application in its body
-is a claim of its own, as the table below states.
+is a claim of its own, as the table below states. The third column names the
+declaration family of the claim ("Declaration-family applicability").
 
-| Claim form | Required kind |
-| --- | --- |
-| Boolean clause over pure expressions, including function application | `value-validity` |
-| Clause containing a `case` expression over a sum type | `value-validity` |
-| Scalar operation application in a function body ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md)): the application is defined and its result lies in its result bound, for every argument assignment under which its path condition holds (the guards it is nested under: the condition of an enclosing `if`, required true in the `then` branch and false in the `else` branch, and, for the right operand of an enclosing `and`, `or` or `implies`, its left operand, as FR-146's propagation rule carries guard facts) | `value-validity`, one claim per occurrence |
-| Range narrowing (`quire.op.numeric.narrow`) in a function body | none. When its operand is a scalar operation application, its target range is that application's result bound; otherwise its FR-146 range obligation discharges it |
-| FR-146 `case` exhaustiveness obligation | none; it is discharged during language admission, and an unproved obligation refuses as `undefined_expression`/`unproved-exhaustiveness` |
-| Operation precondition, postcondition or invariant ([FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md)) | `operation-contract` |
-| Frame obligation over `modifies`, `creates` and `deletes` sets | `operation-contract` |
-| Replay of one finite execution against state or protocol semantics | `finite-replay` |
-| Temporal requirement under a finite-trace or infinite-trace profile | `temporal-satisfaction` |
-| State-graph claim (`possible`, `always possible`, `unique path`) over a model subject ([FR-390](../../functional/analysis/FR-390-analyze-state-graph-claims.md)) | `temporal-satisfaction`; its form is an obligation form |
-| `hyper` clause over `behaviours` of model subjects ([FR-395](../../functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md)) | `temporal-satisfaction`; its form is an obligation form |
-| Model claim of a `relation` clause over model operations ([FR-397](../../functional/analysis/FR-397-check-step-relations-over-model-operations.md)) | `temporal-satisfaction`; its form is an obligation form |
-| Code claim of a `relation` clause over model operations whose every operation has an implementation binding | `operation-contract`; one claim per relation, with every declared invariant of each execution's model as its pre-state premise |
-| Refinement between two protocols ([FR-177](../../functional/protocol/FR-177-check-protocol-refinement.md)) | `refinement` |
-| Whole refinement between two model subjects ([FR-377](../../functional/analysis/FR-377-decide-model-refinement.md)) | `temporal-satisfaction` |
-| Per-step simulation obligation of a model refinement, or a relation-family refinement gate between two operation contracts | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim, and a model refinement's step-row and initial-state obligations are such implications |
-| Claim transferred through a model refinement ([FR-380](../../functional/analysis/FR-380-transfer-claims-through-refinement.md)) | `temporal-satisfaction` |
-| FR-353 abstraction relation | none; it is a premise of the `operation-contract` claim it binds |
-| Other protocol analysis claim ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md)) | its `protocol`-family member |
-| Probabilistic claim of any FR-407 form | `probabilistic-satisfaction` |
-| Temporal claim over a timed subject under any profile, and the derived time-lock-freedom item ([FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)) | `temporal-satisfaction` |
-| `schedulable` or `response` claim over a task set | `schedulability` |
-| Hybrid-model claim ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)) | `temporal-satisfaction` |
+| Claim form | Required kind | Declaration family |
+| --- | --- | --- |
+| Boolean clause over pure expressions, including function application | `value-validity` | `value` |
+| Clause containing a `case` expression over a sum type | `value-validity` | `value` |
+| Scalar operation application in a function body ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md)): the application is defined and its result lies in its result bound, for every argument assignment under which its path condition holds (the guards it is nested under: the condition of an enclosing `if`, required true in the `then` branch and false in the `else` branch, and, for the right operand of an enclosing `and`, `or` or `implies`, its left operand, as FR-146's propagation rule carries guard facts) | `value-validity`, one claim per occurrence | `value` |
+| Range narrowing (`quire.op.numeric.narrow`) in a function body | none. When its operand is a scalar operation application, its target range is that application's result bound; otherwise its FR-146 range obligation discharges it | none |
+| FR-146 `case` exhaustiveness obligation | none; it is discharged during language admission, and an unproved obligation refuses as `undefined_expression`/`unproved-exhaustiveness` | none |
+| Operation precondition, postcondition or invariant ([FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md)) | `operation-contract` | `state-model` |
+| Frame obligation over `modifies`, `creates` and `deletes` sets | `operation-contract` | `state-model` |
+| Replay of one finite execution against protocol semantics | `finite-replay` | `protocol` |
+| Temporal requirement under a finite-trace or infinite-trace profile | `temporal-satisfaction` | `temporal-trace` |
+| State-graph claim (`possible`, `always possible`, `unique path`) over a model subject ([FR-390](../../functional/analysis/FR-390-analyze-state-graph-claims.md)) | `temporal-satisfaction`; its form is an obligation form | `temporal-trace` |
+| `hyper` clause over `behaviours` of model subjects ([FR-395](../../functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md)) | `temporal-satisfaction`; its form is an obligation form | `temporal-trace` |
+| Model claim of a `relation` clause over model operations ([FR-397](../../functional/analysis/FR-397-check-step-relations-over-model-operations.md)) | `temporal-satisfaction`; its form is an obligation form | `relation-claim` |
+| Code claim of a `relation` clause over model operations whose every operation has an implementation binding | `operation-contract`; one claim per relation, with every declared invariant of each execution's model as its pre-state premise | `relation-claim` |
+| Refinement between two protocols ([FR-177](../../functional/protocol/FR-177-check-protocol-refinement.md)) | `refinement` | `protocol` |
+| Whole refinement between two model subjects ([FR-377](../../functional/analysis/FR-377-decide-model-refinement.md)) | `temporal-satisfaction` | `relation-claim` |
+| Per-step simulation obligation of a model refinement, or a relation-family refinement gate between two operation contracts | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim, and a model refinement's step-row and initial-state obligations are such implications | `relation-claim` |
+| Claim transferred through a model refinement ([FR-380](../../functional/analysis/FR-380-transfer-claims-through-refinement.md)) | `temporal-satisfaction` | none; a transfer item is planner-local and is not a request item (FR-380) |
+| FR-353 abstraction relation | none; it is a premise of the `operation-contract` claim it binds | none |
+| Other protocol analysis claim ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md)) | its `protocol`-family member | `protocol` |
+| Probabilistic claim of any FR-407 form | `probabilistic-satisfaction` | `probabilistic` |
+| Temporal claim over a timed subject under any profile, and the derived time-lock-freedom item ([FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)) | `temporal-satisfaction` | `temporal-trace` |
+| `schedulable` or `response` claim over a task set | `schedulability` | `real-time` |
+| Hybrid-model claim ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)) | `temporal-satisfaction` | `temporal-trace` |
+| Derived deadlock-freedom item over a model subject ([FR-366](../../functional/temporal/FR-366-check-deadlock-freedom.md)) or a protocol subject (FR-429), `item_kind` `deadlock-freedom` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)) | `temporal-satisfaction` | `temporal-trace` |
+| Derived race-freedom item over a protocol subject (FR-438), `item_kind` `race-freedom` (FR-368) | `temporal-satisfaction` | `temporal-trace` |
 
 A scalar operation application is an application in a function body whose
 operation identity has one of the prefixes `quire.op.integer` (FR-044,
@@ -168,6 +173,113 @@ Unbounded quantification (FR-346), induction (FR-347), compositional discharge
 and the hyperproperty and step-relation forms (FR-396) are obligation forms
 inside a claim that has one kind from this table. The selected backend's negotiation arm
 settles the obligation forms it discharges.
+
+## Declaration-family applicability
+
+A *declaration family* is the kind of declaration that holds a request item's
+claim. The declaration families form their own closed vocabulary, separate
+from the Families table above, which groups kinds. Six labels are spelled as
+kind groups are. `relation-claim` has no kind group; it is named apart from
+the checked-package node tag `relation`, which also covers relationships and
+populations. `finite-replay` is a kind group but not a declaration family.
+
+| Declaration family | Claims it holds | Kinds that apply |
+| --- | --- | --- |
+| `value` | Boolean value clauses, including those with a `case` expression, and the scalar operation applications of function bodies | `value-validity` |
+| `state-model` | State operation preconditions, postconditions and invariants, and frame obligations | `operation-contract` |
+| `temporal-trace` | Temporal clauses under any profile, including over a timed or hybrid subject; state-graph claims; `hyper` clauses; the derived deadlock-freedom, time-lock-freedom and race-freedom items | `temporal-satisfaction` |
+| `relation-claim` | `relation` clauses over model operations (the model claim and the code claim); model refinements (the whole refinement and each per-step or initial-state obligation); relation-family refinement gates | `temporal-satisfaction`, `operation-contract` |
+| `protocol` | Protocol analysis claims, refinement between two protocols and a replay against protocol semantics | `finite-replay`, `global-conformance`, `monitorability`, `local-projection`, `refinement`, `realizability`, `composition` |
+| `probabilistic` | Probabilistic claims of every FR-407 form | `probabilistic-satisfaction` |
+| `real-time` | `schedulable` and `response` claims over a task set | `schedulability` |
+
+For each family, the kinds that apply are exactly the kinds the claim-form
+assignment table assigns to the rows whose "Declaration family" cell names
+that family. One declaration may therefore hold claims of two kinds; a
+`relation` clause with an implementation binding is an example. A row whose
+cell is "none" requests no item and takes no label. That covers a union's
+`case` exhaustiveness obligation, an FR-353 abstraction relation and a
+planner-local FR-380 transfer item.
+
+### Reading the family from a request item
+
+`negotiate_*` reads an item's declaration family from the request, never from
+the item's kind. When the item carries an `item_kind` other than `formula`
+(FR-331, FR-368), the item kind decides:
+
+| `item_kind` | Declaration family |
+| --- | --- |
+| `deadlock-freedom` | `temporal-trace` |
+| `time-lock-freedom` | `temporal-trace` |
+| `race-freedom` | `temporal-trace` |
+| `refinement` | `relation-claim` |
+
+This holds whatever the derived item's anchor node is: a deadlock-freedom or
+race-freedom item anchored on a `protocol`/`protocol_clause` node is
+`temporal-trace`.
+
+Every other item takes the family of the checked-package node its `claim`
+names, by the node's tag and `semantic_form` (FR-322) and its occurrence role:
+
+| Claim node (`tag`/`semantic_form`) and occurrence | Declaration family |
+| --- | --- |
+| a Boolean `expression` node, occurrence role `claim` or `declaration` (FR-484 forms `clause` and `case-clause`) | `value` |
+| an `expression` node of a scalar operation application, occurrence role `expression`, in the body of a `function` node (FR-484 form `scalar-operation`) | `value`, the family of the enclosing function declaration |
+| `state`/`state_clause`, occurrence role `claim` | `state-model` |
+| `state`/`operation_anchor`, occurrence role `anchor` (frame obligation) | `state-model` |
+| `temporal`/`temporal_clause` | `temporal-trace` |
+| `claim`/`state_graph` | `temporal-trace` |
+| `claim`/`hyperproperty` | `temporal-trace` |
+| `claim`/`step_relation` | `relation-claim` |
+| `relation`/`refinement` | `relation-claim` |
+| `claim`/`probabilistic_claim` | `probabilistic` |
+| `claim`/`schedulability` | `real-time` |
+| any `protocol` node | `protocol` |
+
+A claim that names a node of no row has no declaration family. Examples are
+any other `expression` occurrence, a `claim`/`verification_claim`,
+`analysis_claim` or `synthesis_request` node, and a node absent from the
+package. Every kind is inapplicable to such a claim (see below).
+
+### The refusal
+
+If a request item's admitted kind does not apply to its claim's declaration
+family, then `negotiate_*` SHALL settle the item `invalid-request` with
+`invalid_capability`/`inapplicable-kind`. The cause's payload is:
+
+- `request_index`, the item's request index;
+- `capability`, the item's kind label;
+- `family`, the claim's declaration family label, absent when the claim has no
+  family (an absent `family` compares only to absence, FR-272).
+
+No negotiation arm and no engine runs the item, and no other kind is
+substituted for its kind.
+
+`negotiate_*` SHALL NOT refuse `inapplicable-kind` an item whose kind is the
+kind the claim-form assignment table assigns to its claim's form.
+
+- **Order.** This is the first item rule after kind admission. An item with an
+  absent or unknown kind settles `absent-kind` or `unknown-kind` and is not
+  checked for applicability. An inapplicable item settles `inapplicable-kind`
+  whatever its extent, its evidence kind, its statistical method, its
+  candidates or the backend it names. It never settles `absent-evidence-kind`,
+  `unknown-evidence-kind`, `not-statistical`, `absent-extent` or a
+  candidate-table cause. FR-331's refusals before consumption are not item
+  dispositions: an item's `check` or `requirements` member on a kind that does
+  not carry it, a malformed `extent` and a missing `candidates` each refuse the
+  whole request before any item rule runs. This check does not change them.
+- **Record.** An inapplicable item stays in the FR-331 request at its
+  position. Its `request_index`, the other items' indices and the request
+  identity are those of the same request without this check. Its terminal
+  record is its FR-331 disposition `invalid-request` carrying the cause, with
+  an accounting record `settled_by` `disposition`. It has no result entry, no
+  artifact and no counterexample.
+- **Scope.** The refusal settles only its own item. The declaration and the
+  request's other items are unaffected.
+- **Producers.** A producer's own declaration catalogue maps each declaration
+  that holds a request item's claim to exactly one label of this vocabulary,
+  the label of its claims' rows. For `quire-spec-language` that mapping is QSL
+  FR-507.
 
 ## Check arm
 
@@ -340,8 +452,12 @@ The `quire-spec-language` registry computes `candidates`
 Capability negotiation happens at one point, `quire-contract-codegen`'s
 `negotiate_*` ([AD-016](../../assurance/AD-016-semantic-family-extension-path.md)).
 `negotiate_*` SHALL evaluate each item's rules in this order, and the first
-that matches settles the item: an absent kind or an unknown kind; an absent
-extent classification; then the candidate table below, top row first.
+that matches settles the item: an absent kind or an unknown kind; a kind that
+does not apply to the claim's declaration family ("Declaration-family
+applicability"); an absent extent classification; then the candidate table
+below, top row first. The declaration-family check is part of `negotiate_*`
+and not a separate point: it reads the request's checked package, which the
+request already carries.
 
 A state-graph item is a `temporal-satisfaction` item with one FR-390 form.
 A registered backend matches that item only when its FR-331
@@ -367,7 +483,7 @@ and state-graph items additionally match on exact `state_graph_forms`
 membership. A bounded-only and an unbounded-only registrant of one kind are
 both candidates, and the mode is compared only at the single candidate's arm.
 
-The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
+The item-level causes (`absent-kind`, `unknown-kind`, `inapplicable-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
@@ -432,6 +548,8 @@ backend identity.
 | FR-290-AC-14 | A per-step simulation obligation whose extent is `unbounded` with one boundable `population` domain, on a single candidate that advertises `operation-contract` only in `bounded` mode with `domains` holding `population`, settles `requires-bound` when `finite_bound_available` is true and `unsupported`, `unsupported_projection`/`unbounded-extent` when it is false; on a bounded-only candidate whose `domains` lack `population` it settles `unsupported`, `unsupported_projection`/`unsupported-requested-capability` naming `population`, whatever `finite_bound_available` says; on a candidate that advertises `unbounded` it takes the negotiation arm's own disposition; the same obligation with that population bounded is `bounded` and takes the arm's own disposition on either mode. | Test (TC-950) |
 | FR-290-AC-15 | With `qsl-model-check` advertising `temporal-satisfaction` with no `dynamics` and `dreal` advertising it with `dynamics` `["hybrid"]`, a `temporal-satisfaction` item carrying `"requirements": ["hybrid-dynamics"]` and naming no backend has the candidate set `[dreal]`, and one carrying no `requirements` `[qsl-model-check]`; naming `qsl-model-check`, the hybrid item's set is empty and it settles `unsupported`, `unsupported-requested-capability`; a hybrid item whose `candidates` is `[dreal, qsl-model-check]` settles `invalid-request`, `inconsistent-candidates`, naming `qsl-model-check`; and with `dreal`'s `dynamics` `["discrete", "hybrid"]` the item carrying no `requirements` has the set `[dreal, qsl-model-check]` and settles `ambiguous-backend`. | Test (TC-373) |
 | FR-290-AC-16 | For each FR-390 form, an EN-1 registration whose FR-331 `state_graph_forms` contains that form is a candidate and a temporal backend whose member omits it is not; an omitted member matches no state-graph form. Naming the backend that omits the form gives an empty candidate set and settles `unsupported`, `unsupported-requested-capability`, naming the state-graph form. An empty, duplicate or unknown form list, or a form list on a registration that does not advertise `temporal-satisfaction`, is refused `invalid_capability`/`invalid-state-graph-forms`, keyed by backend identity. Membership filtering is exact and does not change candidate sets for temporal formulas, hyperproperty items or step-relation items. | Test (TC-968) |
+| FR-290-AC-17 | An item whose admitted kind is not listed for its claim's declaration family settles `invalid-request` with `invalid_capability`/`inapplicable-kind` and payload `request_index`, `capability` (its kind label) and `family` (the declaration family label). The family is read from the item's `item_kind` when it is not `formula`, and otherwise from its claim node's tag, `semantic_form` and occurrence role by the tables of "Reading the family from a request item". An item whose claim node is in no row has no `family` member and is refused for every kind. No negotiation arm or engine runs the item, whatever its extent, evidence kind, statistical method, candidates or named backend, so it never settles `absent-evidence-kind`, `unknown-evidence-kind`, `not-statistical`, `absent-extent` or a candidate-table cause. An item with an absent or unknown kind settles `absent-kind` or `unknown-kind` instead. The item keeps its request position, its disposition is its terminal record with no result entry, and the request's other items settle independently. For every claim-form row whose family is not "none", the request item of that row's kind on such a claim is never refused this way. This includes both claims of one `relation` clause with an implementation binding, and the derived deadlock-freedom and race-freedom items anchored on a protocol clause node. | Test (TC-271) |
+| FR-290-AC-18 | The declaration-family vocabulary has exactly seven labels: `value`, `state-model`, `temporal-trace`, `relation-claim`, `protocol`, `probabilistic` and `real-time`. For each label, the kinds the family table lists are exactly the kinds the claim-form assignment table assigns to the rows whose "Declaration family" cell names it; `state-model` lists `operation-contract` only, and `finite-replay` is listed for `protocol` only. Every node row and `item_kind` row of "Reading the family from a request item" names a label of that vocabulary, and the rows whose family is "none" request no item. | Inspection |
 
 ## Dependencies
 

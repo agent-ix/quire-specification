@@ -18,6 +18,32 @@ When a human accepts, rejects or limits a qualification or release scope, the pr
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| decision_id | String | 1..1 |  |
+| actor | JsonObject | 1..1 |  |
+| scope | JsonObject | 1..1 |  |
+| evidence | String | 1..1 |  |
+| disposition | String | 1..1 |  |
+| rationale | String | 1..1 |  |
+| supersedes | String | 0..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.human-decision/v1` |
+| actor | record: authenticated human identity and authority reference; multiplicity not stated in source |
+| scope | record: qualification, release, capability, artifact identities |
+| evidence | type not stated in source; multiplicity not stated in source; see Field sources |
+| disposition | string tag: accept, reject or accept-with-explicit-limits; multiplicity not stated in source |
+| rationale | retained human-authored text; multiplicity not stated in source |
+| supersedes | optional prior `decision_id` string (compared as exact string) |
+
+
 - `contract_version` — exactly `quire.human-decision/v1`.
 - `decision_id` — the identity assigned to the decision when it is recorded, compared as an exact string.
 - `actor` — authenticated human identity and authority reference.

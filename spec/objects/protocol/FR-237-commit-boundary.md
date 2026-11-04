@@ -30,6 +30,27 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| authored_commit_ordering | String | 1..1 |  |
+| forbidding_selection | String | 1..1 |  |
+| commit_observation | String | 1..1 |  |
+| owning_registration | CompensationRegistration | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| authored_commit_ordering | type not stated in source; see Field sources |
+| forbidding_selection | type not stated in source; see Field sources |
+| commit_observation | type not stated in source; see Field sources |
+| owning_registration | multiplicity not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored commit ordering | FR-057 Description | The evaluator checks it; it is authored, not inferred. |

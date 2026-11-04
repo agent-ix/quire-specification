@@ -60,9 +60,9 @@ catalog).
 | `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
 | `invalid_projection_correspondence` | A loss of correspondence between exact source and derived identities. |
-| `extraction-requires-run` | An extraction refused because of the requested command mode. |
-| `extraction-package-conflict` | An extraction refused because of conflicting compilation inputs. |
-| `extraction-clause-count` | An extraction refused on binding cardinality. These three extraction refusals "cannot share only an English distinction". |
+| extraction_requires_run | Wire spelling `extraction-requires-run`. An extraction refused because of the requested command mode. |
+| extraction_package_conflict | Wire spelling `extraction-package-conflict`. An extraction refused because of conflicting compilation inputs. |
+| extraction_clause_count | Wire spelling `extraction-clause-count`. An extraction refused on binding cardinality. These three extraction refusals "cannot share only an English distinction". |
 | `runtime_invariant` | A named established evaluator or input invariant broken. "It is a failed evaluation, not a false predicate." |
 | `io_error` | An explicitly authorized tool or adapter I/O operation failed; evaluators never emit it for a semantic value. |
 | `malformed_command` | A CLI command or option set failed structural validation. |
@@ -76,7 +76,7 @@ catalog).
 | `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods. No source or registration order resolves it. |
 | `unimplemented_capability` | Valid complete-V1 meaning that is not a source form or declaration input is not implemented by the selected producer; distinct from prohibited source, unsupported backend projection and `unsupported_construct`/`not-yet-implemented`. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
-| `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
+| `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, a known kind that does not apply to its claim's declaration family, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
 | `conflicting_declaration` | Two declarations at the S3 compile or link that must be unique resolving to one identity: two `operation-body` declarations resolving to one operation identity (FR-151), or two tasks with one name. Dimensions of one name in different packages, or in a package and the unit of compilation, are distinct dimensions and refuse nothing (FR-142 "Namespaces"). |
 | `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, the FR-330 ContractPackage reader, a family `check`, `replay` or `route` reached one of its own stage limits. Its limits are caller-configured FR-461 settings carried by the stage limits (FR-323) (the FR-330 ContractPackage reader's are the members of its own limits argument, FR-330), not the work-budget meter of `resource_exhausted`; the two are distinct. |
@@ -95,7 +95,7 @@ catalog).
 | `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain. |
 | `text_length_out_of_domain` | A text value whose profile length is outside its declared `Text[..]` bounds. |
 | `integer_out_of_domain` | An exact conversion or arithmetic result outside its target integer domain. |
-| `rational_out_of_domain` | An exact rational arithmetic result outside its `Rational[..]` result domain. |
+| `rational_out_of_domain` | An exact rational arithmetic result, or the value of a conversion into a `Rational[..]` domain (FR-149 rational narrowing, FR-478 text conversion, FR-142 carried-quantity conversion into a `Rational[..]` carrier), outside its target `Rational[..]` domain. |
 | `ieee_not_exact` | Strict IEEE `exact` met an inexact, overflowing or tiny-and-inexact result. Only the would-be flags are reported. |
 | `ieee_nan_payload_not_representable` | An explicit IEEE width conversion of a NaN whose payload does not fit below the target width's quiet bit. |
 | `ieee_rational_out_of_domain` | An explicit IEEE-to-`Rational` conversion whose reduced rational is outside the target `Rational[..]` domain. |

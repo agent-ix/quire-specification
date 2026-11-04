@@ -23,6 +23,24 @@ When a business observation is bound to a protocol instance, the protocol binder
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | AuthorityQualifiedRuntimeSubjectReference | 1..1 | identity |
+| occurrence | ProtocolNodeOccurrence | 1..1 |  |
+| establishing_attempt | OperationAttempt | 1..1 |  |
+| captures | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | exactly one FR-287 value of kind `business-effect` (Identity and comparison) |
+| occurrence | mandatory relationship (Identity and comparison) |
+| captures | type not stated in source; see Field sources |
+
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — an effect is
   an authored protocol node.
 - **establishing attempt** ([FR-225](FR-225-operation-attempt.md)) — the

@@ -1,0 +1,1180 @@
+{
+  "version": "quire.protocol-node-layout-rows/v1",
+  "note": "STD-650. The 26 Q-LAYOUT vectors that STD-609 held as pending, written in the mutation-manifest row format so they can be promoted unchanged. Each edits protocol-node-base.json and is refused at the schema stage as malformed_wire; the locus is the instance path of the first error of schema.json (jsonschema 0.55.0). L12 appends a fence node because the base has none; an appended node has no 'node' name.",
+  "rows": [
+    {
+      "id": "V12",
+      "test_case": "TC-946",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Requested` has two laws",
+      "edit": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/64/body/operation/laws/-",
+          "value": {
+            "definition": {
+              "authority": "agent-ix",
+              "identity": "quire.protocol.finite-global/v1"
+            },
+            "role": "protocol_profile"
+          },
+          "node": "Example::OrderFlow::run::Main::Requested"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/64"
+      }
+    },
+    {
+      "id": "C5",
+      "test_case": "TC-946",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`roles` and `channels` swapped in the body",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/3",
+          "value": {
+            "name": "channels",
+            "term": "binding",
+            "value": {
+              "members": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "OrderFlow",
+                      "channel",
+                      "Charges"
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "term": "aggregate"
+            }
+          },
+          "node": "Example::OrderFlow"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/5",
+          "value": {
+            "name": "roles",
+            "term": "binding",
+            "value": {
+              "members": [
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "OrderFlow",
+                      "role",
+                      "Fulfillment"
+                    ]
+                  },
+                  "term": "reference"
+                },
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "OrderFlow",
+                      "role",
+                      "Orders"
+                    ]
+                  },
+                  "term": "reference"
+                },
+                {
+                  "target": {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "OrderFlow",
+                      "role",
+                      "Payments"
+                    ]
+                  },
+                  "term": "reference"
+                }
+              ],
+              "term": "aggregate"
+            }
+          },
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/82"
+      }
+    },
+    {
+      "id": "C6",
+      "test_case": "TC-946",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "the `finish` binding missing",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/82/body/arguments/12",
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/82"
+      }
+    },
+    {
+      "id": "C7",
+      "test_case": "TC-946",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`over` is a `literal`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/0/value",
+          "value": {
+            "term": "literal",
+            "type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "value": "view",
+            "value_kind": "text"
+          },
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/82"
+      }
+    },
+    {
+      "id": "C8",
+      "test_case": "TC-946",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`activation.kind` is `always`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/body/arguments/1/value/members/0/value/value",
+          "value": "always",
+          "node": "Example::OrderFlow"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/82"
+      }
+    },
+    {
+      "id": "L10",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Requested`'s two top-level arguments swapped",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/64/body/arguments/0",
+          "value": {
+            "name": "binder",
+            "term": "binding",
+            "value": {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "node": 2
+                  },
+                  "sent",
+                  "level",
+                  {
+                    "node": 1
+                  },
+                  "3",
+                  {
+                    "node": 10
+                  }
+                ]
+              },
+              "term": "reference"
+            }
+          },
+          "node": "Example::OrderFlow::run::Main::Requested"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/64/body/arguments/1",
+          "value": {
+            "name": "channel",
+            "term": "binding",
+            "value": {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "OrderFlow",
+                  "channel",
+                  "Charges"
+                ]
+              },
+              "term": "reference"
+            }
+          },
+          "node": "Example::OrderFlow::run::Main::Requested"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/64"
+      }
+    },
+    {
+      "id": "L11",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "a binding missing from `Charged`; a surplus binding on `Applied`",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/66/body/arguments/6",
+          "node": "Example::OrderFlow::run::Main::Charged"
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/67/body/arguments/-",
+          "value": {
+            "term": "binding",
+            "name": "surplus",
+            "value": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "x",
+              "value_kind": "text"
+            }
+          },
+          "node": "Example::OrderFlow::run::Main::Applied"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/66"
+      }
+    },
+    {
+      "id": "L12",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`fence` with `ordering: relaxed` (a `fence` node is appended: the base has none)",
+      "edit": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "arguments": [
+                {
+                  "term": "binding",
+                  "name": "ordering",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ]
+                    },
+                    "value": "relaxed",
+                    "value_kind": "text"
+                  }
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.protocol.control",
+                "laws": [
+                  {
+                    "definition": {
+                      "authority": "agent-ix",
+                      "identity": "quire.protocol.finite-global/v1"
+                    },
+                    "role": "protocol_profile"
+                  }
+                ],
+                "leaves": [],
+                "member": {
+                  "kind": "profile_operator",
+                  "operator": "fence"
+                },
+                "mode": null
+              },
+              "operator": "protocol_control",
+              "result_type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              },
+              "term": "application"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Outcome",
+                "Probe"
+              ]
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "query",
+                  {
+                    "node": 27
+                  },
+                  "quire.op.record.project",
+                  {
+                    "node": 12
+                  },
+                  "ok",
+                  "query",
+                  {
+                    "node": 0
+                  }
+                ]
+              }
+            ],
+            "node_id": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "OrderFlow",
+                "run",
+                "Main",
+                "Outcome",
+                "Probe"
+              ]
+            },
+            "node_tag": "protocol",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "control",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          }
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/83"
+      }
+    },
+    {
+      "id": "L13",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`attempt` `ordering: strong`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/66/body/arguments/2/value/members",
+          "value": [
+            {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "strong",
+              "value_kind": "text"
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Charged"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/66"
+      }
+    },
+    {
+      "id": "L14",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`parallel` `memory: pso`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/body/arguments/0/value/members",
+          "value": [
+            {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "pso",
+              "value_kind": "text"
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Shipments"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/70"
+      }
+    },
+    {
+      "id": "L15",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`parallel` `outstanding: abort`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/body/arguments/4/value/members",
+          "value": [
+            {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "abort",
+              "value_kind": "text"
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Shipments"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/70"
+      }
+    },
+    {
+      "id": "L16",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`parallel` `join.policy: majority`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/body/arguments/2/value/members/0/value/value",
+          "value": "majority",
+          "node": "Example::OrderFlow::run::Main::Shipments"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/70"
+      }
+    },
+    {
+      "id": "L17",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "a `join` with `policy: all` carrying a `count`",
+      "edit": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/70/body/arguments/2/value/members/-",
+          "value": {
+            "term": "binding",
+            "name": "count",
+            "value": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "value": "3",
+              "value_kind": "integer"
+            }
+          },
+          "node": "Example::OrderFlow::run::Main::Shipments"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/70"
+      }
+    },
+    {
+      "id": "RL17",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "a role body with an `internality` binding",
+      "edit": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/59/body/arguments/-",
+          "value": {
+            "term": "binding",
+            "name": "internality",
+            "value": {
+              "term": "literal",
+              "type": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "value": "internal",
+              "value_kind": "text"
+            }
+          },
+          "node": "Example::OrderFlow::role::Orders"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/59"
+      }
+    },
+    {
+      "id": "CH4",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`fifo` with no `key`",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/62/body/arguments/3/value/members/2",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `exactly-once`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "exactly-once",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-1",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[0, 3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[0, 3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-2",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[00,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[00,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-3",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[+0,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[+0,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-4",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[-1,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[-1,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-5",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[0.5,3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[0.5,3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-6",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[3]`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[3]",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-7",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `[0,3`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "[0,3",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH14a-8",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` is `0,3`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/62/body/arguments/4/value/value",
+          "value": "0,3",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH15",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`delivery` removed",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/62/body/arguments/4",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "CH16",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`ordering` removed",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/62/body/arguments/3",
+          "node": "Example::OrderFlow::channel::Charges"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/62"
+      }
+    },
+    {
+      "id": "QU6",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`overflow` is `drop`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/63/body/arguments/2/value/value",
+          "value": "drop",
+          "node": null
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/63"
+      }
+    },
+    {
+      "id": "TM3",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`mode: when` with no condition",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/80/body/arguments/0/value/value",
+          "value": "when",
+          "node": "Example::OrderFlow::terminal"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/80"
+      }
+    },
+    {
+      "id": "TM4",
+      "test_case": "TC-947",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`mode: any` with a condition",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/80/body/arguments/1/value/members",
+          "value": [
+            {
+              "target": {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "expression",
+                  "query",
+                  {
+                    "node": 27
+                  },
+                  "quire.op.record.project",
+                  {
+                    "node": 12
+                  },
+                  "ok",
+                  "query",
+                  {
+                    "node": 0
+                  }
+                ]
+              },
+              "term": "reference"
+            }
+          ],
+          "node": "Example::OrderFlow::terminal"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/80"
+      }
+    },
+    {
+      "id": "CE1",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Outcome` with one case",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/73/body/arguments/2/value/members/1",
+          "node": "Example::OrderFlow::run::Main::Outcome"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/73"
+      }
+    },
+    {
+      "id": "PA1",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Shipments` with one branch",
+      "edit": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/70/body/arguments/1/value/members/1",
+          "node": "Example::OrderFlow::run::Main::Shipments"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/70"
+      }
+    },
+    {
+      "id": "RP2",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Poll` with `maximum` and no `exhausted`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/arguments/6/value/members",
+          "value": [],
+          "node": "Example::OrderFlow::run::Main::Poll"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/76"
+      }
+    },
+    {
+      "id": "RP3",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Poll` with `exhausted` and no `maximum`",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/arguments/2/value/members",
+          "value": [],
+          "node": "Example::OrderFlow::run::Main::Poll"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/76"
+      }
+    },
+    {
+      "id": "RP4",
+      "test_case": "TC-948",
+      "class": "refuse",
+      "locus_basis": "schema_error_path",
+      "base": "protocol-node-base.json",
+      "edit_prose": "`Poll` with `proof` of `invariant` only",
+      "edit": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/76/body/arguments/3/value/members",
+          "value": [
+            {
+              "term": "binding",
+              "name": "invariant",
+              "value": {
+                "target": {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "expression",
+                    "query",
+                    {
+                      "node": 27
+                    },
+                    "quire.op.record.project",
+                    {
+                      "node": 12
+                    },
+                    "ok",
+                    "query",
+                    {
+                      "node": 0
+                    }
+                  ]
+                },
+                "term": "reference"
+              }
+            }
+          ],
+          "node": "Example::OrderFlow::run::Main::Poll"
+        }
+      ],
+      "expect": {
+        "decision": "refuse",
+        "stage": "schema",
+        "code": "malformed_wire",
+        "cause": null,
+        "locus": "/semantic_graph/nodes/76"
+      }
+    }
+  ]
+}

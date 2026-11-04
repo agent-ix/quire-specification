@@ -52,7 +52,7 @@ FR-466-AC-18.
 | L16 | `parallel` `join.policy: majority` | refuses `malformed_wire` |
 | L17 | a `join` with `policy: all` carrying a `count` | refuses `malformed_wire` |
 | L18 | a `join` with `policy: quorum` and no `count`; with `policy: predicate` and no `predicate` | refuses `malformed_wire` |
-| L19 | `Requested`'s member operator is `jump` | `invalid_package`/`operation-member-mismatch` |
+| L19 | `Requested`'s member operator is `jump` | `malformed_wire` at the node (schema first; the operation step alone gives `invalid_package`/`operation-member-mismatch`) |
 
 ## Sequence, choice and parallel
 
@@ -241,7 +241,7 @@ FR-466-AC-18.
 
 ## Expected Results
 
-1. L1 to L9 are admitted with the keys stated; L10 to L18 refuse `malformed_wire`; L19 refuses `operation-member-mismatch` (FR-466-AC-1).
+1. L1 to L9 are admitted with the keys stated; L10 to L19 refuse `malformed_wire` at the schema stage (L19 because the schema refuses an operator outside the catalog; the operation step alone gives `operation-member-mismatch`) (FR-466-AC-1).
 2. S1 changes the body stated, not the declared node id, and refuses `definition-cycle`; S2, S3 and S3a
    refuse as listed (FR-466-AC-2).
 3. CE1 to CE11 behave as listed; CE6, CE7 and CE11 are admitted

@@ -27,6 +27,30 @@ no provider present.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| decision | MeasuredDecision | 1..1 |  |
+| estimate | JsonObject | 1..1 |  |
+| interval | JsonObject | 0..1 |  |
+| basis | JsonObject | 1..1 |  |
+| provenance | JsonObject | 1..1 |  |
+| tests | JsonObject | 0..* |  |
+| witnesses | JsonObject | 0..* |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| estimate | JSON object `{value, quantile?}`; `proposals/backend-provider-v1/schema.json` `Estimate` |
+| interval | JSON object `{lower, upper}`; absent only for the sequential method (Absence); `proposals/backend-provider-v1/schema.json` `Interval` |
+| basis | `StatisticalBasis{method, confidence, samples, draws, tests, coverage, grid}` object |
+| provenance | object: seed, sampler identity, per-test entries |
+| tests | one object per test, in test-index order |
+| witnesses | up to `max_witnesses` sampled witness objects |
+
+
 The value has two parts: the `StatisticalVerdict` record and the sampled
 witnesses it holds, each with its replay rule below.
 

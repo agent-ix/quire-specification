@@ -25,6 +25,36 @@ created.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| workflow_identity | String | 1..1 |  |
+| role_identity | String | 1..1 |  |
+| effect_identity | String | 1..1 |  |
+| predicate_identity | String | 1..1 |  |
+| capture_set | ImmutableActivationCapture | 1..1 |  |
+| evaluation_anchor_identity | String | 1..1 |  |
+| clause_subject | String | 1..1 |  |
+| semantic_trigger_event_identity | String | 0..1 |  |
+| activation_state | ObligationActivationState | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| workflow_identity | type not stated in source; see Field sources |
+| role_identity | type not stated in source; see Field sources |
+| effect_identity | type not stated in source; see Field sources |
+| predicate_identity | type not stated in source; see Field sources |
+| evaluation_anchor_identity | type not stated in source; see Field sources |
+| clause_subject | type not stated in source; required key component (Identity and comparison) |
+| semantic_trigger_event_identity | type not stated in source; present only for `trigger_event` origin (Identity and comparison) |
+| activation_state | one of triggered, inactive or activation-unknown (FR-231) |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Workflow identity | FR-055 Description | Exact, part of the obligation's dependency set. |

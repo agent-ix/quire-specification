@@ -26,6 +26,27 @@ reproduce it with no provider present before the item settles `refuted`.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| initial_state | Integer | 1..1 |  |
+| binding | JsonObject | 0..1 |  |
+| bound | JsonObject | 1..1 |  |
+| scheduler | WitnessScheduler | 0..1 |  |
+| evidence | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| initial_state | index of the initial state in the subject |
+| binding | the `over` binding; JSON object, or null (absent); `proposals/backend-provider-v1/schema.json` `ProbabilisticCounterexample.binding` |
+| bound | the claim bound with its threshold; JSON object; `proposals/backend-provider-v1/schema.json` `ProbabilisticCounterexample.bound` |
+| scheduler | WitnessScheduler{entries} as defined in this document; present under every scheduler and under a workload over a timed subject with free delays; absent under a workload that leaves no choice |
+| evidence | exactly one of: path set, subsystem certificate, undefined path; JSON object tagged by `type`; `proposals/backend-provider-v1/schema.json` `ProbabilisticCounterexample.evidence` |
+
+
 The value has two parts: the `WitnessScheduler` and the
 `ProbabilisticCounterexample` that carries it with its evidence.
 

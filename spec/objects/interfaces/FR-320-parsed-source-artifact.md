@@ -18,6 +18,32 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| source | AuthoredSourceDocument | 1..1 |  |
+| edition | String | 1..1 |  |
+| tokens | JsonObject | 0..* |  |
+| trivia | JsonObject | 0..* |  |
+| nodes | JsonObject | 0..* |  |
+| diagnostics | DiagnosticCatalog | 1..1 |  |
+| recoveries | JsonObject | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.parsed-source/v1` |
+| edition | identity string (retained text: selected language edition identity) |
+| tokens | ordered list of token records: kind, byte region, original bytes |
+| trivia | ordered list of byte-region records |
+| nodes | ordered list of CST node records: kind, byte region, child indices, recovery state |
+| diagnostics | multiplicity not stated in source; see Field sources |
+| recoveries | list of recovery records with source loci; multiplicity not stated in source |
+
+
 - `contract_version` — exactly `quire.parsed-source/v1`.
 - `source` — exact FR-202 source-document identity.
 - `edition` — the selected language edition identity.

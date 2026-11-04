@@ -51,6 +51,10 @@ recompilation outcome.
 | BP-17 | A `byte_provision` with two domain-package entries declaring one identity and stating equal `package.version` members | Refused `invalid_package`/`conflicting-definition` naming both entries at decode, before recompilation; not `duplicate_selection` | FR-323-AC-25 |
 | BP-19 | BP-17 with the two documents stating different `package.version` members | The same refusal: the two documents are not told apart by version, which is a member of the document and is never compared | FR-323-AC-25 |
 | BP-18 | BP-01 plus one domain-package entry of an identity no recompiled source selects | Recompilation proceeds; the entry is not read, no refusal is reported | FR-323-AC-26 |
+| BP-60 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
+| BP-61 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
+| BP-62 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
+| BP-63 | **RETIRED (source-byte integrity removed).** | Withdrawn with no replacement | FR-323-AC-29 to FR-323-AC-35, retired |
 
 ## Expected Results
 

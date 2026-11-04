@@ -19,6 +19,28 @@ When a labeled protocol choice is admitted, the protocol linker SHALL require on
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| occurrence | ProtocolNodeOccurrence | 1..1 |  |
+| owning_role | String | 1..1 |  |
+| labeled_branches | String | 1..1 |  |
+| visibility_premises | String | 1..1 |  |
+| distinguishing_fact | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| owning_role | type not stated in source; exactly one (FR-053) |
+| labeled_branches | type not stated in source; multiplicity not stated in source; see Field sources |
+| visibility_premises | type not stated in source; see Field sources |
+| distinguishing_fact | type not stated in source; see Field sources |
+
+
 - **occurrence** ([FR-221](FR-221-protocol-node-occurrence.md)) — a choice is an
   authored control node in the causal control graph
   ([FR-220](FR-220-causal-control-graph.md)).

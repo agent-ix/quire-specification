@@ -185,11 +185,12 @@ names a node of the stated tag and form by node id.
 
 An enumerated text value (`origin`, `each`, `adversarial` and the values
 FR-465 and FR-466 list) has the spellings its layout lists: another spelling
-refuses `malformed_wire` at the term.
+refuses `malformed_wire` at the schema stage, and the recorded locus is the node pointer `/semantic_graph/nodes/{i}` (FR-464-AC-24); a delivery interval's `lo > hi` and u64 range, which no schema keyword expresses, are refused at the same pointer by the reader's wire layout check (FR-465).
 
 **Canonical order.** A set or a sorted-records list that is not in its
 canonical order, or that repeats an entry, refuses `invalid_semantic_graph`
-at the node, as FR-322-AC-10 refuses every noncanonical order. An ordered
+at the node, as FR-322-AC-10 refuses every noncanonical order (a repeated
+declaration node is the Single listing case, at that node). An ordered
 list is in the order its layout states, and reordering it changes the node
 key. So the sets of one protocol (roles, relationships, channels, queues,
 requirements, compensations, `visible`, `contracts`, `related`, cases, branches)
@@ -305,8 +306,9 @@ Every protocol member node belongs to exactly one clause.
   `event`'s compensation, a compensation's forward effect and commit) does
   not hold it.
 - **Single listing.** A role, channel, queue, compensation or obligation
-  node named by two arguments of one clause, or by two clauses, refuses
-  `invalid_semantic_graph` at the node. This rule is about declarations: a
+  node listed twice in one set argument, named by two arguments of one
+  clause, or named by two clauses, refuses `invalid_semantic_graph` at the
+  listed node (the member), not at the clause that lists it. This rule is about declarations: a
   node several nodes share by key (a `visible` entry, a contract, a model
   relationship, a binder) may be named by many.
 - **Channels and queues.** Each channel is named by exactly one queue's
@@ -534,13 +536,20 @@ and never decides it from a binder's runtime value.
 - A `quire.op.protocol.control` application is the body root of a
   `protocol` node whose `semantic_form` the operator's row in the catalog
   names, and stands nowhere else. The application at the body root of a node
-  of another tag or of another form of the same tag refuses
-  `ill_typed`/`operator-ineligible` at that node. A `protocol_reference`
+  of another tag, or of a protocol node whose operation identity is not
+  `quire.op.protocol.control`, refuses `ill_typed`/`operator-ineligible` at
+  that node; a `quire.op.protocol.control` application whose member operator
+  belongs to another protocol form (the operator `channel` on a `role` node, the
+  operator `role` on a `control` node) fails the published schema first and
+  refuses `malformed_wire` at the node pointer `/semantic_graph/nodes/{i}`
+  (FR-464-AC-2), the `ill_typed`/`operator-ineligible` cause being what the
+  protocol step alone returns on that document. A `protocol_reference`
   carrier's body is exactly a `reference` (FR-322): an application there
   refuses `malformed_wire`.
 - The same application nested inside a node body or inside another term is
-  outside FR-322's body grammar and refuses `malformed_wire` at the nested
-  application, at strict wire validation.
+  outside FR-322's body grammar and refuses `malformed_wire` at strict wire
+  validation, at the node pointer `/semantic_graph/nodes/{i}` of the node
+  holding it (the schema's first error path, FR-464-AC-2).
 - A reference to a protocol member node (any form other than
   `protocol_clause` and `protocol_reference`) stands only in the argument
   FR-464, FR-465 or FR-466 places it. A reference from a state clause, a
@@ -549,9 +558,13 @@ and never decides it from a binder's runtime value.
   `/diagnostics/entries/{e}/details/{d}`. A reference to a `protocol_clause`
   node is FR-322's `protocol_reference` carrier and stands wherever that
   requirement places it.
-- An operator the lock's `protocol_profile` definition does not define, or a
-  `member` that is not a `profile_operator`, refuses `invalid_package`/
-  `operation-member-mismatch` at the application. A law that is absent,
+- An operator outside the catalog (`jump`) fails the published schema first and
+  refuses `malformed_wire` at the node pointer `/semantic_graph/nodes/{i}`,
+  `invalid_package`/`operation-member-mismatch` being what the operation step
+  alone returns; a `null` member, a `member` that is not a `profile_operator`, or
+  an operator the schema admits but the lock's `protocol_profile` definition does
+  not define refuses `invalid_package`/`operation-member-mismatch` at the
+  application. A law that is absent,
   of another role or not the lock's row refuses as FR-322 states
   (`operation-law-missing`, `operation-law-mismatch`,
   `operation-law-unselected`).
@@ -578,7 +591,16 @@ and abstraction steps among them), and before any operation refusal
 ([FR-322](FR-322-checked-package-artifact.md)). Strict wire validation, which
 refuses a nested protocol application and, for a protocol application, a
 layout, term shape or enumerated value outside its operator's layout
-(`malformed_wire`), precedes it. The step reports the first defect, in this
+(`malformed_wire`), precedes it. The V2 schema carries that wire layer in its
+`ProtocolNode` body rule, which applies `ProtocolControlApplication` to every
+protocol node except a `protocol_reference` carrier: the operator's argument
+names, order and count, the references the layout names (`over`, a `trigger`,
+a `binder`), the Tuple-of-Groups records (`captures`, `cases`, `branches`,
+`related`, the `compensate` captures), the minimum of two `cases` and
+`branches`, every enumerated text, the exactly-when presence of `count`,
+`predicate`, `key`, `loss`, `condition`, `exhausted` and the `proof` pair, and
+a single `protocol_profile` law. The locus of such a refusal is the first error
+path of the strict schema validator. The step reports the first defect, in this
 order:
 
 1. **Placement** of every `quire.op.protocol.control` application and of
@@ -689,7 +711,7 @@ alternate cycle encoding.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-464-AC-1 | Every protocol node's body is a `quire.op.protocol.control` application with operator class `protocol_control`, one `protocol_profile` law equal to the lock's row, a `profile_operator` member naming an operator of the catalog, `null` mode, empty leaves, `result_type` the Boolean node and `semantic_type` the same node; a body that applies another identity, carries two laws, another member kind or a `null` member, or whose arguments are not the operator's bindings in order, refuses `malformed_wire` or `operation-member-mismatch`. | Test (TC-946) |
-| FR-464-AC-2 | Each operator belongs to the one `semantic_form` the catalog names; an application at the body root of a node of another form or tag refuses `ill_typed`/`operator-ineligible` at that node, and the same application nested in a body or term refuses `malformed_wire` at the nested application. | Test (TC-946) |
+| FR-464-AC-2 | Each operator belongs to the one `semantic_form` the catalog names; an application at the body root of a node of another form or tag refuses `ill_typed`/`operator-ineligible` at that node, and the same application nested in a body or term refuses `malformed_wire` at the schema stage, the recorded locus being the node pointer `/semantic_graph/nodes/{i}` of the node holding it (the first error path of the strict validator). A `quire.op.protocol.control` application whose member operator belongs to another protocol form (an operator the `Orders` role node cannot carry, or a `control` node carrying the `role` operator) or names no operator of the catalog fails the published schema first and refuses `malformed_wire` at the node pointer `/semantic_graph/nodes/{i}`; the `ill_typed`/`operator-ineligible` and `invalid_package`/`operation-member-mismatch` causes remain for the shapes the schema admits (an application of another operation identity at a protocol node's root, a `null` or mismatched member, missing or mismatched laws), and are what the operation step alone returns on the schema-failing documents (FR-464-AC-19). | Test (TC-946) |
 | FR-464-AC-3 | A producer writes no `recursion_group` on an acyclic protocol node (a label there is admitted and means nothing): reformatting the source, a comment, a second reference to the protocol and declaring the roles in another source order leave every node id unchanged; renaming a role, reordering two `children`, changing one literal, retargeting one reference or changing a clause's `owner_model` yields a structurally unequal affected node, and changes a node id only for a rename (a declared node's id is its declaration path and producer-assigned ordinal) or for a node whose id embeds the changed operand ids; a set out of ascending node-id order or repeating an entry refuses `invalid_semantic_graph`. | Test (TC-946) |
 | FR-464-AC-4 | A role, a channel, a template and a control named `X` in one protocol have four distinct declarations; two controls on one path, or two roles of one name, refuse `ambiguous_declaration`/`ambiguous-name` naming both keys; a control whose declaration is not its holder's declaration followed by its name, a control held twice and a control held by nothing refuse `invalid_semantic_graph` at the control. | Test (TC-946) |
 | FR-464-AC-5 | The clause body is thirteen bindings in the order the "Clause body" table lists; `activation` is `origin` with no trigger or `each` with a trigger and an optional guard; a protocol with no relationship, requirement, compensation, `terminal` member or `scheduling` has empty sets and absent optionals and is admitted; a body with arguments reordered, missing or of another term shape refuses `malformed_wire`. | Test (TC-946) |
@@ -706,11 +728,12 @@ alternate cycle encoding.
 | FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation, in the stage and with the code that FR-464-AC-20 states. Retargeting only the edge yields a different clause node. FR-375 includes every clause whose edge is the object-type node of a model owned by the selected concrete declaration in its class catalog, even when no step row names its classes, and excludes a clause whose edge names a model owned by another declaration. | Test (TC-946, TC-310) |
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
-| FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) and a `quire.op.protocol.control` application naming `transition` fail the published schema and a complete reader refuses them `malformed_wire` at the application's `operation/member/operator`; the operation step run alone on the same documents refuses `invalid_package`/`operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
+| FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) and a `quire.op.protocol.control` application naming `transition` fail the published schema and a complete reader refuses them `malformed_wire` with the node pointer `/semantic_graph/nodes/{i}` as the locus and `operation/member/operator` as the `document_pointer` (FR-322-AC-152, FR-464-AC-2); the operation step run alone on the same documents refuses `invalid_package`/`operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
 | FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a model node of a selected declaration of another form, a selected package's `model_root` node, a non-model declared node with a source owner and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. Reader evidence is owned by IR-1053 (IR FR-064-AC-4/TC-048); no QSpec reader test exists, so the vectors TC-946 OM-03, OM-05..OM-11 and O10..O12 are the published oracle. | Analysis |
 | FR-464-AC-21 | Repeat-through-repeat: an outer `repeat` whose body steps only through a nested `repeat` that necessarily steps (a stepping body, `maximum` absent or at least 1) is admitted when the nested guard's exit is infeasible over the independent atoms (the guard `true`, the tautology `a or not a or b or not b`, with or without a `maximum` of at least 1) and refuses `unsupported_construct`/`declaration-form` at the outer `repeat` when the exit is feasible (the guard `a`, `not a`, `a and not a`, `false`, `a or b`) or when the nested `maximum` is 0 whatever its guard is; a nested `repeat` that is the only stepping part of a `choice` case follows the same rule (the `choice` necessarily steps only when the nested `repeat` necessarily steps and every other case steps), and a nested `repeat` whose own body does not step refuses at the first such `repeat` in tree order; a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted whatever the nested guard is. | Test (TC-946) |
 | FR-464-AC-22 | The exit-feasibility derivation adds no field and compares no guard. Atoms: every listed `visible` entry, in set order and read or not, then every other maximal subterm that is neither a Boolean constant (an inline Boolean `literal` or a reference to a Boolean `value`/`literal` node) nor an application of `quire.op.boolean.not`, `.and`, `.or` or `.implies`, by first occurrence in a depth-first walk visiting the last operand first; a node equal to a listed entry is an atom and is not descended into (the entry `E` listing `a and b` with the guard `E or not a or not b` has three atoms and a feasible exit, so the outer `repeat` refuses); equal nodes are one atom and `quire.op.boolean.eq(a, b)` and `quire.op.boolean.eq(b, a)` are two (`eq(a, b) or not eq(a, b)` is infeasible, `eq(a, b) or not eq(b, a)` is feasible); a guard `true` written as a reference to a Boolean literal node is the constant, as an inline literal is. Valuations are enumerated from the all-false valuation as a little-endian counter over the atoms in that order. One `work` unit is charged before each valuation: a two-atom tautology charges four units, a feasible guard stops at its first false valuation (`a or b` charges one), a nested `repeat` is charged whatever its `maximum`, a `repeat` that is not inside another `repeat`'s `body` is charged nothing (its total consumption equals that with the guard `true`) and the collection and comparison of atoms charges nothing. With *V* the total consumption through the nested `repeat`'s last valuation charge and *T* the total for the package, a limit of *V* minus 1 that denies a valuation yields `stage_limit_exceeded`/`work-budget-exceeded` located at the nested `repeat` with no progress refusal for the enclosing `repeat`, and a limit of *T* admits the package. | Test (TC-946) |
 | FR-464-AC-23 | A nested `repeat`'s counter is reset on each entry from outside it, so `repeat max 1 while true { attempt }` with an `exhausted` control, nested as the only body of an outer `repeat`, is admitted: its exit is infeasible, its `maximum` is 1 and its body steps, and the outer `repeat` takes a step on every iteration. A nested `repeat` is never counted through its `exhausted` control: a nested `repeat max 1 while true` whose body is only a `check` and whose `exhausted` control is an `attempt` leaves the outer `repeat` refused (`unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer one). | Test (TC-946) |
+| FR-464-AC-24 | The V2 schema decides a protocol node's layout: every protocol node except a `protocol_reference` carrier must satisfy `ProtocolControlApplication`, so an operator's argument names, order and count, a Tuple-of-Groups record, and an enumerated value outside its set (`delivery`, `overflow`, `loss`, `memory`, `outstanding`, `policy`, `ordering`, `scheduling`, `mode`) each refuse `malformed_wire` at the schema stage, and the recorded locus is the node-level pointer `/semantic_graph/nodes/{i}` (the first error path of the strict validator); every spelling an enumeration admits, and an appended `fence`, `event` and `await` with their layouts, stay schema-valid. | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 

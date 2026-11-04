@@ -26,6 +26,36 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 |  |
+| request_id | String | 1..1 |  |
+| package | JsonObject | 1..1 |  |
+| byte_provision | JsonObject | 0..1 |  |
+| selection | String | 0..* |  |
+| state_environment | JsonObject | 1..1 |  |
+| limits | JsonObject | 1..1 |  |
+| stage_limits | JsonObject | 0..1 |  |
+| results | JsonObject | 0..* |  |
+| replay | JsonObject | 0..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| contract_version | exactly `quire.native-runtime/v1` |
+| package | exact FR-322 checked-package reference |
+| byte_provision | present on a replay request only |
+| selection | ordered clause/function identifiers |
+| state_environment | JSON object: typed anchors, values, object populations, frames and invocation captures (retained bullet) |
+| limits | `quire.value.accounting/v1` limit objects |
+| stage_limits | present on a replay request |
+| results | one ordered typed disposition per selected item |
+| replay | present only on a replay request; carries one of `function`, `frame_operation` or `state_clause` (sub-members, see Field sources) |
+
+
 - `contract_version` — exactly `quire.native-runtime/v1`.
 - `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `package` — exact FR-322 checked-package reference; a non-replay request
@@ -521,6 +551,13 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read: no refusal. | Test (TC-277) |
 | FR-323-AC-27 | The executor reads no recompilation input by path, environment variable or search location: every source, definition and domain-package input comes from `byte_provision`. | Test (TC-277) |
 | FR-323-AC-28 | Withdrawn: the raw-byte digest and digest-domain refusals are removed with the source byte digests. | Withdrawn |
+| FR-323-AC-29 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
+| FR-323-AC-30 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
+| FR-323-AC-31 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
+| FR-323-AC-32 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
+| FR-323-AC-33 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
+| FR-323-AC-34 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
+| FR-323-AC-35 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `sources` entry is `{authority, identity}` and no entry's bytes are digested. | Test (TC-277), retired |
 
 ## Dependencies
 

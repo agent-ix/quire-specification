@@ -20,6 +20,27 @@ identified assessment input".
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| selected_binding_contract_definition_identity | String | 1..1 |  |
+| declared_binding_identity | String | 1..1 |  |
+| field_units | String | 1..1 |  |
+| concrete_mapping | String | 1..1 |  |
+| admitted_record_set | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| selected_binding_contract_definition_identity | type not stated in source; see Field sources |
+| declared_binding_identity | type not stated in source; see Field sources |
+| field_units | type not stated in source; multiplicity not stated in source; see Field sources |
+| concrete_mapping | type not stated in source; see Field sources |
+| admitted_record_set | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Selected binding-contract definition identity | FR-110 Description | Retained exactly. |

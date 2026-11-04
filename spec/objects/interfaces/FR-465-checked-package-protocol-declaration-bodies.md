@@ -43,12 +43,26 @@ checks of the declarations.
 
 ## Role
 
-A `protocol`/`role` node (operator `role`) has two arguments, in this order:
+A `protocol`/`role` node (operator `role`) has two arguments, in this order,
+and a third that only a role on a model member carries:
 
 | # | Binding | Value |
 | --- | --- | --- |
 | 1 | `model` | the model the role is played against: a reference to a `model` node (a role on a model type), or a text, the `identity` of a `model_root` node (a role on a whole model) |
 | 2 | `replication` | a Group; empty for a static role |
+| 3 | `model_member` | optional, present exactly for a role on a Port of a systems model (`role p on M::port`): a Group of the two text bindings `package` and `node`, the identity of the selected Port declaration |
+
+`model_member` is the selected member's identity and not a reference to a
+node: a Port is not a semantic model node, and the role record carries it
+directly. `package` is the identity of the domain package that declares the
+Port and `node` is the Port's declaration identity within that package, the
+two members of the `DeclarationKey` shape `{package, node}` that QSL ADR-013 O-03 defines. A role
+on a model type or a whole model has no third argument, so a role layout
+without it stays valid and its bytes are unchanged. The `model` argument of a
+role on a Port keeps its form: the reference to the model node that owns the
+Port, so the node's dependency on that model is as for any role on a model
+type. The member is part of the role node's key, so roles on two different Ports
+of one model have different keys.
 
 A static role is one responsibility with one role-instance binding per
 assessed workflow. A **role on a whole model** is the form of `role w on M`
@@ -109,6 +123,22 @@ The reader checks, for one role, in this order:
    `ill_typed`/`non-boolean-root` at the role node. Its reads are a slot
    check (FR-464 step 6, stage `role-lifetime`).
 
+5. **Member.** The schema admits an optional third argument on every role and
+   decides only its count and binding name; that it appears only on a role on a
+   Port is this reader step's rule. A `model` text that names no `model_root`
+   node is refused by step 1 (`missing_declaration`/`missing-selection`) before
+   the member is read. A third argument is present only on a role whose
+   `model` is a reference, else `invalid_model_binding`/`malformed-declaration`
+   at the role node. Its Group holds exactly the text bindings `package` and `node`, each
+   non-empty, else `malformed_wire`. `package` equals the package identity
+   the `model` target belongs to, else `invalid_model_binding`/
+   `malformed-declaration` at the role node; `node` names a declaration of the
+   kind Port in that package, read from the declaration kinds of the model
+   package that the reader sees (Contract IR IR-1310), and a declaration of any other kind (a part,
+   a component, a field, a connection) or none refuses `invalid_model_binding`/
+   `malformed-declaration` at the role node, retaining the `package` and
+   `node` texts.
+
 A role has no internality member: neither the source nor this body spells
 `internal` or `external`, so a role carries none.
 
@@ -123,7 +153,7 @@ order:
 | 2 | `to` | a reference to the receiving `protocol`/`role` node |
 | 3 | `carries` | a reference to the message type node |
 | 4 | `ordering` | a Group: `kind`, a text `unordered` or `fifo`; for `fifo`, `binder`, a reference to the `value`/`parameter` node of the message, and `key`, a term: the FIFO key expression |
-| 5 | `delivery` | a text: `unknown`, `at-most-once`, `at-least-once` or `exactly-once-premise` |
+| 5 | `delivery` | a text: one of the four policy words `unknown`, `at-most-once`, `at-least-once` or `exactly-once-premise`, or a delivery count interval `[lo,hi]` |
 
 - **semantic_type** — the Boolean node.
 - **dependencies** — the two roles, the message type node, and for `fifo`
@@ -137,6 +167,33 @@ order:
   `exactly-once-premise` is an authored premise, never a transport
   guarantee, and `unknown` supports none of the delivery conclusions. No
   premise defaults.
+- **Delivery count interval.** The text `[lo,hi]` is `[`, the decimal
+  numeral of `lo`, `,`, the decimal numeral of `hi` and `]`, with no space
+  and no other character. Each numeral is a natural number no greater than
+  18446744073709551615 (the largest unsigned 64-bit integer), written in
+  digits `0` to `9` with no sign and no leading zero (`0` itself is a
+  numeral), and `lo <= hi`; so one interval has one text. The interval is a
+  per-send cardinality: one send produces a number of deliveries `d` with
+  `lo <= d <= hi`, each a queue entry
+  ([FR-170](../../functional/protocol/FR-170-evaluate-channel-queue-semantics.md),
+  [FR-426](../../functional/protocol/FR-426-apply-protocol-steps.md)). It is not elapsed time and reads no clock. It is an
+  authored premise, as a policy word is: no policy word is derived from an
+  interval and no interval from a policy word, so `[1,1]` and
+  `exactly-once-premise` are two different channel bodies, and two intervals
+  that differ in `lo` or `hi` are two different channel bodies. An interval
+  admits no transport duplication or loss beyond its counts, so it enables
+  neither the `duplicate` nor the `lose` step. The interval is carried as
+  this one text, not as FR-464's structured **interval** Group of `lower`
+  and `upper`, because the delivery binding is a single text whose value is
+  either a policy word or an interval, and the producer emits the interval
+  as the delivery text `[lo,hi]`; a Group would give the one binding two
+  term shapes.
+- **Delivery spellings.** The delivery text is an enumerated text value
+  (FR-464 "Term shapes"): a text that is neither a policy word nor an interval
+  text as stated above (a space inside the brackets, a leading zero, a sign,
+  a fraction, a numeral above 18446744073709551615, a missing bound, or
+  `lo > hi`) refuses `malformed_wire` in strict wire validation at the channel node
+  pointer `/semantic_graph/nodes/{i}`, not at the delivery term: the V2 schema refuses a spelling that is not an interval shape (a space, a leading zero, a sign, a fraction, a missing bound, an unclosed or unopened bracket) at the channel node pointer `/semantic_graph/nodes/{i}`, and the reader's strict wire layout check refuses `lo > hi` and a numeral above 18446744073709551615 at the same pointer, because no JSON Schema keyword expresses either.
 
 The reader checks, for one channel, in this order:
 
@@ -286,13 +343,16 @@ runtime dimension of the control's key and are not a member of any node.
 | --- | --- | --- |
 | FR-465-AC-1 | A static role is admitted with an empty `replication` Group and a `model` target that is an object type, process, state machine, systems interface or persistence interface; a role on a `record_value_type`, `event_type`, `variant_type` or non-`model` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a target that names no node `missing_declaration`/`missing-name`; a target absent from `dependencies` refuses `invalid_semantic_graph` at the role's `/dependencies` (graph stage, FR-322-AC-96). | Test (TC-947) |
 | FR-465-AC-2 | A replicated role is admitted with `population`, `max` of at least 1, a `binder` of type `Reference<model>` and each lifetime; `until` is present exactly with `lifetime: until`; `max: 0` refuses `ill_typed`/`type-mismatch`, a binder of another type `ill_typed`/`type-mismatch`, a non-Boolean `until` `ill_typed`/`non-boolean-root`, and an `until` term reading a run-tree binder `missing_declaration`/`missing-name`. | Test (TC-947) |
-| FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery premises; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries` (`ill_typed`/`type-mismatch`), a key that reads a capture (`missing_declaration`/`missing-name`), `over` or model state (`ill_typed`/`operator-ineligible`), a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
-| FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and another delivery spelling refuses `malformed_wire`. | Test (TC-947) |
+| FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery policy words or a delivery count interval; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries` (`ill_typed`/`type-mismatch`), a key that reads a capture (`missing_declaration`/`missing-name`), `over` or model state (`ill_typed`/`operator-ineligible`), a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
+| FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and a delivery text that is neither one of the four policy words nor an FR-465-AC-10 interval text refuses `malformed_wire`. | Test (TC-947) |
 | FR-465-AC-5 | A queue is admitted with a `literal` capacity and a `symbolic` capacity and each overflow policy (with each loss selector), carries occurrences of role `generated` and no `declaration`, and depends only on its channel; a `literal` capacity with `name`, a `symbolic` capacity with `value`, an unknown overflow spelling, a `loss` selector absent for overflow `loss`, present for `reject` or `block`, or spelled other than `head`, `tail` or `new`, refuse `malformed_wire`, and a negative capacity `invalid_package`/`invalid-value`; a `channel` target that is not a channel of the clause refuses as the reader order states. | Test (TC-947) |
 | FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
 | FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
 | FR-465-AC-9 | A static role whose `model` is the text `identity` of a `model_root` node is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node ids. A text naming no `model_root` node refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
+| FR-465-AC-10 | A channel whose `delivery` is `[0,3]`, `[0,0]`, `[2,2]` or `[0,18446744073709551615]` is admitted; `[0,3]` and `[0,4]` give different channel bodies, and `[1,1]` and `exactly-once-premise`, otherwise equal, give different channel bodies; `[4,3]` (`lo > hi`), `[0, 3]`, `[00,3]`, `[+0,3]`, `[-1,3]`, `[0.5,3]`, `[0,18446744073709551616]`, `[3]`, `[0,3` and `0,3` each refuse `malformed_wire` at the channel node pointer `/semantic_graph/nodes/{i}`: the V2 schema refuses a spelling that is not an interval shape (a space, a leading zero, a sign, a fraction, a missing bound, an unclosed or unopened bracket) at the channel node pointer `/semantic_graph/nodes/{i}`, and the reader's strict wire layout check refuses `lo > hi` and a numeral above 18446744073709551615 at the same pointer, because no JSON Schema keyword expresses either. | Test (TC-947) |
+| FR-465-AC-11 | Over the architecture fixture whose component `Sys` owns the Port `pump_out` and the Port `tank_in`, the role `Outlet` on `M::pump_out` carries the `model_member` Group `{package: P, node: N}` with `P` the package identity of `M` and `N` the declaration identity of `pump_out`, and its `model` reference targets `Sys`; the role `Inlet` on `M::tank_in` carries the same `package` and the `node` of `tank_in`, and the two roles have different node ids. The role `Operator` on the type `M::Sys` and a role on the whole model `M` carry no third argument, and a package with only such roles has the bytes it had before the argument existed. | Test (TC-947) |
+| FR-465-AC-12 | Of a role on a Port: a `model_member` whose `package` names a package other than the one the `model` target belongs to, one whose `node` names a declaration that is a part, a component or a connection, and one whose `node` names no declaration each refuse `invalid_model_binding`/`malformed-declaration` at the role node, retaining `package` and `node`; an empty `package` or `node` text, a `model_member` that holds a third binding, and a `model_member` Group that is empty each refuse `malformed_wire`; a `model_member` on a role whose `model` is the text of an existing `model_root` node refuses `invalid_model_binding`/`malformed-declaration`, and on a role whose `model` text names no `model_root` node it refuses `missing_declaration`/`missing-selection`, the selection check coming first. | Test (TC-947) |
 
 ## Dependencies
 
@@ -309,6 +369,11 @@ runtime dimension of the control's key and are not a member of any node.
 - [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
   requires each refusal to carry a stable catalogued cause and an exact
   locus.
+- Contract IR IR-1310: the reader sees the declaration kinds of the selected
+  model package, which step 5 needs to refuse a `model_member` that names no Port.
+  Until it provides them, the kind and existence refusals of FR-465-AC-12 have no
+  reader that can raise them, and TC-947 RL28 to RL31 stay in the manifest's
+  `later` list.
 
 ## Status
 

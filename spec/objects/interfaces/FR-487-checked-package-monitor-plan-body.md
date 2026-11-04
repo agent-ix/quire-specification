@@ -47,12 +47,25 @@ whose rules below do not hold, with the first refusal in the reader order below.
   text of the two integer premises and the canonical text of `max_event_rate`,
   then for each `buffers` entry the index segment of its subformula and the
   decimal text of its capacity, then the `counter` text, the index segment of
-  the `tick_unit` node, the canonical text of `uncertainty` and the index segment of the `on_gap` node, and the decimal text of `activation_capacity` (FR-322 `path`).
+  the `tick_unit` node, the canonical text of `uncertainty` and the index segment of the `on_gap` node, and the decimal text of `activation_capacity`, and last the **call closure**: the
+  index segment of the body-root node of every declared `function` node
+  (a node with a `declaration`) that the entries call, directly or through the
+  body of another closure member, an atom body or the activation guard, in
+  ascending node-id order of the called function nodes, each once (FR-322 `path`). As for every index segment, the segment names the body-root node by graph position, and it is that node's structural `node_id` (its content-bearing key, FR-322 "Structural node identity"), not the position, that distinguishes two keys; reordering the graph rewrites positions and changes no key. Like every derived path this is the producer's duty: the reader recomputes no identifier and refuses no path for differing from the derivation (FR-322 "Declaration-less function nodes"), and the call closure is a rule of the key, not a reader check.
   Every premise of the plan, and so the subject, clock binding, uncertainty,
   gap, rate and capacities of QSL FR-251, is part of the key: changing one
   yields a different root key and so a different plan. Changing an entry body changes that entry's own derived `node_id`
   and so the root's: the plan is identified by the content keys of the root and
   its entries, and no other plan identity exists.
+  A declared helper function keeps its declaration path as its own `node_id`,
+  which is the identity of a call to it (FR-322 "Declaration-less function nodes"; FR-322-AC-309
+  derives a path only for a declaration-less function), so a swapped helper body
+  changes no call identity. The plan is nevertheless identified by what it
+  executes: the call closure puts the body root of every called helper into the
+  root's key, so swapping the body of a helper that an entry, an atom or the
+  guard calls gives a different root key and so a different plan, although the
+  entries' own `node_id`s and the helper's `node_id` are unchanged. A helper stays a declared node
+  and is never inlined into an entry to be keyed.
 - **body** — `{term: "aggregate", members: [binding("clause", …),
   binding("state", …), binding("inputs", …), binding("scope", …),
   binding("results", …), binding("init", …), binding("on_event", …),
@@ -63,9 +76,10 @@ whose rules below do not hold, with the first refusal in the reader order below.
   binding("on_gap", …),
   binding("activation_capacity", …)]}`, in this order:
   - `clause` — a `reference` to the `temporal`/`temporal_clause` node (FR-370)
-    the program monitors. Its `temporal_bindings` row (FR-322 "Temporal clock
-    bindings") is the plan's clock binding: the plan repeats no clock name,
-    kind or profile;
+    the program monitors. Its `temporal_bindings` rows (FR-322 "Temporal clock
+    bindings", one per `claim` occurrence of the clause) are the plan's clock
+    binding: the plan repeats no clock name, kind or profile, and a consumer
+    selects the row of the occurrence it monitors;
   - `state` — a `reference` to the `composite_type`/`record` node of the
     monitor state;
   - `inputs` — a `reference` to the `composite_type`/`record` node of the
@@ -93,7 +107,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
     stay ordinary `composite_type`/`sequence` nodes;
   - `counter` — a `text` literal, non-empty: the counter's name, the first
     component of the plan's tick clock binding key (QSL FR-251
-    `ClockBindingKey`; the clause's `temporal_bindings` row keeps the clause's
+    `ClockBindingKey`; the clause's `temporal_bindings` rows keep the clause's
     own clock name and kind, and the plan's counter is a separate premise);
   - `tick_unit` — a `reference` to the `scalar_type`/`unit` node whose `dimension_node_id` equals, by identity, the
     exact base `Time` dimension node (the test of FR-322-AC-127; this reader's
@@ -148,7 +162,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
   of admitted events (the event position of FR-091 and FR-092; `init` returns 0
   and `on_event` adds 1 per admitted event, the first reading's `on_event(0)`
   included; `on_watermark` and `on_gap` leave it unchanged, since a watermark and
-  a faulting reading are not admitted events, and a clock poll calls no entry). A body keeps each `buffer_<n>` at no more than its capacity and
+  a faulting reading are not admitted events, and a clock poll calls no entry). A body keeps each `buffer_<n>` at no more than its capacity, except that the `buffer_<n>` of an unbounded past operator (`once`, `historically`, `since` or `triggered` with no upper bound: no interval, or `[a, *]`) additionally holds one **summary cell** as its first element, which is not counted in the capacity: the cell stores the accumulator that folds the entries as they age out (QSL FR-251 "Unbounded past operators"), the element type of such a buffer is the producer's and the reader imposes no rule on it, and `State` keeps exactly the fields of this list; and
   `activations` at no more than `activation_capacity`; an event that would
   exceed either returns the `Incomplete` outcome below instead of appending.
   An unbounded operator (root `always`, `eventually`, or a nested future
@@ -277,7 +291,6 @@ run in this order and the first failing check is its defect:
    has exactly the fields `now` and `history_start` (`integer`s), then one `buffer_<n>` sequence field per `buffers` entry, then `activations` (a sequence of records with the fields `subformula`, `origin` and `status`), then `event_position` (an `integer`), in that order and no other field, else
    `invalid_semantic_graph` at the `buffers` binding (order, repeat or
    unreached subformula) or the `state` binding (a missing, mistyped, extra or misordered field).
-
 A `dependencies` list other than the nodes the body references and the
 `semantic_type` is FR-322's graph-shape refusal, `invalid_semantic_graph` at the
 node's `/dependencies`, which precedes this step.
@@ -309,6 +322,8 @@ a body.
 | FR-487-AC-10 | Each interval-operator instance is reported once, on settlement, and each pending instance at every `on_watermark` step and no `on_event` step; an unbounded root `always` or `eventually` reports one folded outcome per activation, `Pending` until resolved (`MP-70` to `MP-72`). | Test (TC-978) |
 | FR-487-AC-11 | The state ends with `event_position`, an `integer` that `init` sets to 0, `on_event` increases by 1 per admitted event (the baseline reading included), and `on_watermark`, `on_gap` and a clock poll leave unchanged (`MP-77`, `MP-57`, `MP-69`); a state lacking `event_position`, with it typed `text` or placed before `activations` refuses `invalid_semantic_graph` at the `state` binding (`MP-74` to `MP-76`). | Test (TC-978) |
 | FR-487-AC-12 | An atom with no admitted projection yields `Incomplete(LimitReached{limit: atom_projection, value: <atom identity>, setting: monitor.atom_projection})` with replayable evidence, not a refusal and not a dropped atom, and an atom with an admitted projection does not; the `limit` kinds of `LimitReached` are exactly `event_buffer`, `activation` and `atom_projection`, each with its own `setting`, and the `Outcome` union and its payload record shapes are unchanged (`MP-78` to `MP-80`). | Test (TC-978) |
+| FR-487-AC-13 | The plan root's key covers the call closure as a producer rule: two plans that differ only in the body of a declared helper function called by an entry, an atom or the activation guard (the helper keeps its declaration path and so its own `node_id`, and the entries keep theirs) have different root keys, a helper called only through another helper's body is covered the same way, equal helper bodies give an equal root key, and a helper is never inlined into an entry to be keyed. The reader recomputes no identifier and refuses nothing for it, so this repository has no reader-visible vector; the verifier is the producer's test, quire-spec-language FR-251-AC-38 (TC-1081), which this criterion cites as its owner. | Inspection |
+| FR-487-AC-14 | The `buffer_<n>` of an unbounded past operator additionally holds one summary cell that is not counted in the capacity, and `State` keeps exactly its fields; the reader imposes no rule on the element type of a buffer (quire-spec-language FR-251, "Unbounded past operators"). | Inspection |
 
 ## Published artifacts
 

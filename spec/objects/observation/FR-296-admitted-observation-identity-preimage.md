@@ -20,6 +20,21 @@ identifiers. No hash of the observation is computed.
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| source_schema_identity_and_version | String | 1..1 |  |
+| selected_subject_identity | AuthorityQualifiedRuntimeSubjectReference | 1..1 |  |
+| source_ordinal | Integer | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| source_schema_identity_and_version | type not stated in source; required key member (FR-296 Absence); see Field sources |
+
+
 The observation key is the tuple `(source schema identity and version, declared
 binding identity and version, selected subject identity, source ordinal)`:
 

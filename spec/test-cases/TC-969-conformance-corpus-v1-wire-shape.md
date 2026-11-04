@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-336
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-336-AC-10
+    type: verifies
 ---
 
 # TC-969: The conformance corpus v1 schema admits the fixture and refuses out-of-domain shapes
@@ -14,7 +16,7 @@ relationships:
 Verify the published structural schema admits its fixture and rejects missing,
 unknown and out-of-domain wire values before consumption.
 
-Scope: FR-336-AC-4, FR-336-AC-5, FR-336-AC-6.
+Scope: FR-336-AC-4, FR-336-AC-5, FR-336-AC-6, FR-336-AC-10 (AC-9 is retired).
 
 ## Test Procedure
 
@@ -34,6 +36,8 @@ Verify that call arguments are a positional array of tagged values and that a
 `{parameter, value}` argument object is refused by the schema.
 
 Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6")]`.
+
+Then compile `$defs.ObjectEnvironmentRef`: an identity of `{authority, identity}` is admitted and one with any other member is refused. Tag that test `#[trace("TC-969", "FR-336-AC-10")]`.
 
 ## Expected Results
 

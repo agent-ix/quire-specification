@@ -21,6 +21,35 @@ membership and closure provenance."
 
 ## Properties
 
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| key | String | 1..1 | identity |
+| population_key | String | 1..1 |  |
+| declared_finite_membership_rule | MembershipRule | 1..1 |  |
+| bounds | EventTimeWindow | 0..1 |  |
+| domain_package_identity_version_and_population_declaration_key | String | 1..1 |  |
+| observation_sources | String | 1..1 |  |
+| configuration_identity_and_version | String | 1..1 |  |
+| closure_identity_and_version | String | 1..1 |  |
+| completeness_and_progress_dependencies | String | 1..1 |  |
+
+## Field sources
+
+Type and Multiplicity above were derived from the retained text below. Where that text does not state a value, or states a form the table cannot hold, the row is listed here.
+
+| Field | Derivation note |
+|---|---|
+| key | type not stated in source; see Field sources |
+| population_key | type not stated in source; see Field sources |
+| declared_finite_membership_rule | exactly one declared rule; an absent rule is refused (FR-264 Absence) |
+| bounds | for a window, the half-open bounds |
+| domain_package_identity_version_and_population_declaration_key | type not stated in source; see Field sources |
+| observation_sources | type not stated in source; see Field sources |
+| configuration_identity_and_version | type not stated in source; multiplicity not stated in source; see Field sources |
+| closure_identity_and_version | type not stated in source; multiplicity not stated in source; see Field sources |
+| completeness_and_progress_dependencies | type not stated in source; see Field sources |
+
+
 | Property | Source | Note |
 | --- | --- | --- |
 | Population key | FR-112 Description | The componentwise key below, retained with the snapshot/window key. |

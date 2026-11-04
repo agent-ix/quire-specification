@@ -20,7 +20,7 @@ cutoff, the observation service SHALL retain exactly one timing classification.
 
 | Value | Description |
 | --- | --- |
-| `on-time` | The observation satisfies the selected cutoff rule. |
+| on_time | Wire spelling `on-time`. The observation satisfies the selected cutoff rule. |
 | `late` | The observation does not satisfy the selected cutoff rule. |
 
 Matching is exact. Aliases, case folding, Boolean coercion and unknown values

@@ -29,6 +29,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-466
     type: references
+  - target: ix://agent-ix/quire-specification/FR-414
+    type: references
 ---
 
 # FR-370: Checked-package temporal clause body and temporal operation identities
@@ -78,6 +80,11 @@ not hold, with the first refusal in the reader order below.
   role `expression`, and FR-322's application-node dependencies.
 - **dependencies** — FR-322's application-node rule: the unique
   node-id-ascending `reference` targets and member declarations of the body.
+- **declared name** — none. The clause's declared name is no argument of the
+  body and no `declaration` of the node, so it is not an input of the node's
+  structural identity, and two structurally equal clauses share one node. The
+  name of each `claim` occurrence is the `name` of its `temporal_clause_names`
+  row ([FR-322](FR-322-checked-package-artifact.md) "Temporal clause names").
 
 ## Operation catalog entries
 
@@ -96,6 +103,7 @@ operand position except a nested temporal operator's.
 | --- | --- | --- | --- | --- |
 | `quire.op.temporal.clause` | `temporal` | `reference`, `text`, `aggregate`, `aggregate`, `aggregate`, `temporal` | `clause` (declared Boolean) | none |
 | `quire.op.temporal.holds` | `temporal_formula` | `boolean` | `temporal` | none |
+| `quire.op.temporal.aggregate` | `temporal_formula` | `aggregate` | `temporal` | none |
 | `quire.op.temporal.true`, `quire.op.temporal.false` | `temporal_formula` | none | `temporal` | none |
 | `quire.op.temporal.not` | `temporal_formula` | `temporal` | `temporal` | none |
 | `quire.op.temporal.and`, `quire.op.temporal.or`, `quire.op.temporal.implies` | `temporal_formula` | `temporal`, `temporal` | `temporal` | none |
@@ -160,6 +168,83 @@ to an identity. The branch label is paired with its parallel node id, since a
 branch position has no semantic graph node of its own. The member holds the
 resolved form, so `fair Op` and
 `fair weak whole Op` encode identically.
+
+## Window aggregate atom
+
+A window aggregate atom ([FR-414](../../functional/temporal/FR-414-evaluate-window-aggregates.md))
+is a `temporal`/`formula` node whose body is a `quire.op.temporal.aggregate`
+application: operator class `temporal_formula`, no law, `member` `null`,
+`mode` `null`, `leaves` empty, `result_type` the package's
+`scalar_type`/`boolean` node, and exactly one argument, an `aggregate` of
+`binding`s. It is an atom of the formula as a `holds` application is, and an
+operand of another temporal operator references its node. The bindings are,
+in this order, with those a row does not require omitted and never `null`:
+
+| Binding | Present | Value |
+| --- | --- | --- |
+| `kind` | always | `text` literal: `count`, `sum`, `min`, `max`, `fraction` or `quantile` |
+| `q` | `quantile` only | `rational` literal, `0 < q < 1` |
+| `predicate` | `fraction` only | the `fraction holds(P)` predicate, a term of family `boolean` |
+| `value` | `sum`, `min`, `max`, `quantile` only | the value expression, a term of family `integer`, `rational` or `quantity` |
+| `filter` | when the source has `where` | the filter predicate, a term of family `boolean` |
+| `window_kind` | always | `text` literal: `positions` or `duration` |
+| `lower`, `upper` | always | the bounds `a` and `b` of `past[a, b]`: for `positions` non-negative `integer` literals; for `duration` non-negative `quantity` literals in the clause's clock unit, converted exactly by the checker (FR-414 "Windows") |
+| `min_count` | always | non-negative `integer` literal; `1` when the source omits `min_count` |
+| `comparison` | always | `text` literal: `<`, `<=`, `=`, `>=` or `>` |
+| `threshold` | always | a term of the aggregate's result family: `integer` for `count`, `rational` for `fraction`, otherwise the family of `value`, and for a `quantity` the unit of `value`, converted exactly by the checker (FR-142) |
+
+A term is a binding value of FR-322's body grammar: a literal, or a
+`reference` to the node of the checked expression. Expression nodes are in
+the clause's binder scope (its `over` parameter and captures), as a `holds`
+operand is. The bindings are inputs of the node's structural identity, so a
+change of any binding changes the formula node, and an omitted `min_count` and
+`min_count 1` give one node. Source spans stay in the source map.
+
+The clause's clock unit is the `scalar_type`/`unit` node whose `node_id.path`
+is `["scalar_type", "unit", T]`, `T` the `timestamp_unit` that the clause's
+`timestamped_event` rows of `temporal_bindings` name (FR-322 "Temporal clock
+bindings"). A `duration` bound in any other unit, whether another unit of
+`Time` or a unit of another dimension, has no encoding: `past[0, 300 s]` under
+a clock in `ms` is `lower` `0` and `upper` `300000` of the `ms` node, and one
+window has one node identity.
+
+For each clause, the reader checks each aggregate application its formula
+reaches, in ascending node-id order, at the pointers `B` = `/semantic_graph/nodes/{n}/body`, `A` = `B/arguments/0`
+and `M` = `A/members/{m}`, and reports the first defect:
+
+1. **Profile.** The clause's `temporal_profile` law names
+   `quire.temporal.event-position.false-extension/v1` or
+   `quire.temporal.timestamped-event.finite-window/v1`, else
+   `invalid_package`/`invalid-value` at `B`.
+2. **Names and order**, in member order. A member that is not a `binding`
+   or whose name is not in the table refuses `invalid_package`/
+   `unknown-member` at `M`; a repeated name `invalid_package`/
+   `duplicate-member` at the second; a binding the table places before a
+   binding an earlier member holds `invalid_package`/`invalid-value` at `M`.
+3. **Kind.** A missing `kind` refuses `invalid_package`/`missing-member` at
+   `A`; a `kind` that is not a `text` literal `invalid_package`/
+   `wrong-value-kind` at `M/value`, and one outside its set
+   `invalid_package`/`invalid-value` at `M/value`.
+4. **Presence.** A binding the kind's row excludes refuses
+   `invalid_package`/`unknown-member` at `M`, in member order; then a
+   binding the kind requires and the argument lacks refuses
+   `invalid_package`/`missing-member` at `A`, in table order.
+5. **Values**, in table order. A binding whose row states a literal and
+   that holds another term or a literal of another `value_kind` refuses
+   `invalid_package`/`wrong-value-kind` at `M/value`; a
+   text outside its set, a negative bound or `min_count`, or `q` outside
+   `0 < q < 1` refuses `invalid_package`/`invalid-value` at `M/value`; a
+   term of another family than its row states refuses `ill_typed`/
+   `type-mismatch` at `M/value`. A `window_kind` the profile does not take
+   (`duration` under event-position, `positions` under timestamped-event)
+   refuses `ill_typed`/`unit-mismatch` at `M/value`. A `duration` `lower` or
+   `upper` whose `type` is not the clause's clock unit node (another unit of
+   `Time`, or a unit of a dimension other than `Time`), checked after its
+   `value_kind` and before its sign, and a `threshold` quantity of another
+   unit than `value`, refuse `ill_typed`/`unit-mismatch` at `M/value`. After `upper`,
+   `lower > upper` refuses `invalid_package`/`invalid-value` at `A`, the
+   whole window. `min_count` `0` on a `min`, `max`, `fraction` or `quantile`
+   aggregate refuses `invalid_package`/`invalid-value` at `M/value`.
 
 ## Fairness resolution
 
@@ -311,8 +396,9 @@ reference targets a declared `value`/`parameter` dependency, else
 `missing_declaration`/`missing-name` or `invalid_model_binding`/
 `malformed-declaration`; then each fairness member, in fairness-argument
 order, by the three steps of "Fairness resolution"; then the profile fit
-of every interval and of the fairness argument; then each interval's bounds.
-It reports the first defect. Operand families and `result_type` are the
+of every interval and of the fairness argument; then each interval's bounds;
+then each window aggregate argument its formula reaches, by "Window
+aggregate atom". It reports the first defect. Operand families and `result_type` are the
 applications' catalog checks at the operation step.
 
 ## Acceptance Criteria
@@ -334,6 +420,9 @@ applications' catalog checks at the operation step.
 | FR-370-AC-13 | A `temporal` clause written with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the token standing where `over` is required, and produces no node; a `quire.op.temporal.clause` application whose argument 1 is absent, `null` or a non-reference term (such as the clause's clock text literal) fails the published schema. | Test (TC-180, TC-303) |
 | FR-370-AC-14 | A fairness member's `target` discriminant and identity fields match exactly one target variant: operation, protocol root, attempt node, parallel branch, compensation template or hybrid transition. The vectors admit one member of every variant and reject an absent or unknown discriminant, a missing operation declaration, a branch label without its parallel identity, an extra target identity field and a negative node ordinal. | Test (TC-303) |
 | FR-370-AC-15 | A protocol-root target resolves to the clause's exact protocol node, an attempt and a compensation target resolve to exact nodes owned by that clause, and a parallel-branch target resolves only when its exact parallel control and branch label both belong to that clause. An absent or foreign-package identity, or an existing same-package target owned by another protocol clause, refuses `missing_declaration`/`missing-name` at `/target/node` or `/target/parallel`; a local target with the wrong protocol family or control operator refuses `invalid_model_binding`/`malformed-declaration` at the same target field; and an absent label on a local parallel refuses `missing_declaration`/`missing-name` at `/target/branch`. The reader checks package identity, clause ownership, target kind and branch-label membership in that order. | Test (TC-303) |
+| FR-370-AC-16 | A `temporal_clause` node's body and `node_id` hold no declared name: two clauses that differ only in declared name encode to one node with two `claim` occurrences, and each occurrence's name is the `name` of its `temporal_clause_names` row and its clock configuration the `clock` of its `temporal_bindings` row (FR-322-AC-343, FR-322-AC-344, FR-322-AC-361). | Test (TC-303; TC-233) |
+| FR-370-AC-17 | `quire.op.temporal.aggregate` is catalogued as a `temporal_formula` with one `aggregate` operand, result `temporal` and no member, and both the catalog and the V2 schema enumerate it. Under event-position false-extension, a `count` with a `filter`, a `sum`, `min` and `max` with a `value`, a `fraction` with a `predicate` and a `quantile` with `q` and a `value`, each over `positions` bounds, are admitted, as is a `quantile` over `duration` quantity bounds under timestamped-event finite-window; each argument holds exactly its kind's bindings in table order. | Test (TC-303) |
+| FR-370-AC-18 | The reader refuses an aggregate argument at the first defect of "Window aggregate atom": an aggregate under infinite-trace `invalid-value` at the body; an unknown and a non-binding member `unknown-member`, a repeated binding `duplicate-member` and a misordered binding `invalid-value`, each at the member; a missing `kind`, `window_kind` or `comparison` and a `quantile` without `q` `missing-member` at the argument; `q` on a `sum` and `value` on a `count` `unknown-member` at the member; a `kind` of `median`, `q` `1`, a negative bound and `min_count` `0` on `max` `invalid-value` at the value; a `positions` window under timestamped-event, a `duration` window under event-position, a `duration` `lower` in `s` or in `m` and an `upper` in `s` under a clock in `ms`, and a `threshold` of another unit than `value` `ill_typed`/`unit-mismatch` at the value; a non-Boolean `filter` and a `rational` threshold on `count` `ill_typed`/`type-mismatch` at the value; and `past[5, 2]` `invalid-value` at the argument. Each value refusal of step 5 is exercised: a `comparison` of `!=` and a `window_kind` of `sliding` `invalid-value` at the value; a `q`, `window_kind`, `comparison`, `lower`, `upper` or `min_count` holding a literal of another `value_kind` or a reference `wrong-value-kind` at the value; a `value` of family `boolean`, a non-Boolean `predicate` and an `integer` threshold on `fraction` `ill_typed`/`type-mismatch` at the value; a `sum` without `value`, a `fraction` without `predicate`, and a missing `lower`, `upper`, `min_count` or `threshold` `missing-member` at the argument; and `min_count` `-1` `invalid-value` at the value. `min_count` `0` on `count` and `sum` is admitted, as is `past[0, 300000]` in `ms` under a clock in `ms`. | Test (TC-303) |
 
 ## Published artifacts and the operation catalog
 
@@ -343,6 +432,9 @@ the `temporal_interval` and `fairness` member kinds, with the `null`, integer
 and timed interval forms and their non-negative bound patterns, and fix the
 `temporal`/`temporal_clause` body. The published clause and all-families
 packages encode their temporal clauses in this form.
+`proposals/checked-package-v2/temporal-aggregate-vectors.json` publishes the
+window aggregate arguments of FR-370-AC-17 and FR-370-AC-18 with their
+expected reader outcomes.
 
 The operation catalog `quire.checked-operation-catalog/v1`, owned by
 quire-verification-contracts, SHALL hold the `temporal` family (a member of
@@ -369,7 +461,12 @@ member.
 - [FR-272](../foundation/FR-272-typed-diagnostic-cause.md) owns the
   `unknown_profile` causes `unsupported-selection` and
   `wrong-selection-role`.
+- [FR-414](../../functional/temporal/FR-414-evaluate-window-aggregates.md)
+  owns the aggregate term, its windows and its check-time refusals, which
+  the window aggregate argument encodes.
 
 ## References
 
 - quire-spec-language ADR-018 QS-11 and ADR-014 §13; Linear STD-99 and STD-131.
+- Window aggregate atom: QSL FR-337-AC-15, FR-515, FR-516 and FR-532 consume
+  it; Linear QSL-1644.

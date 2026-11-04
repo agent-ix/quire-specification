@@ -24,7 +24,7 @@ When a result records whether the requested evaluator ran, the strict reader SHA
 | `completed` | The requested evaluator completed. Required for truth `satisfied`, `violated` or `pending` (FR-061 result-combination rules). Projects to E02 `execution.status` `completed` (FR-062). |
 | `refused` | The evaluator refused the request. Truth and settlement basis are unavailable (FR-061). Projects to E02 `execution.status` `invalid-input` (FR-062). |
 | `unsupported` | The requested capability is unsupported. Truth and settlement basis are unavailable (FR-061). One unsupported request does not remove an independent supported result (FR-061-AC-5). Projects to E02 `unsupported` (FR-062). |
-| `resource-incomplete` | A resource ceiling stopped the assessment. Truth and settlement basis are unavailable (FR-061); an independently settled sibling result is unchanged (FR-094-AC-9). Projects to E02 `exhausted` (FR-062). |
+| resource_incomplete | Wire spelling `resource-incomplete`. A resource ceiling stopped the assessment. Truth and settlement basis are unavailable (FR-061); an independently settled sibling result is unchanged (FR-094-AC-9). Projects to E02 `exhausted` (FR-062). |
 | `failed` | The selected analysis backend failed for this exact claim, without invoking a fallback or changing independent results (FR-060). Truth and settlement basis are unavailable (FR-061). Projects to E02 `failed` (FR-062). |
 
 ## Identity and comparison
