@@ -81,7 +81,7 @@ test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 Cargo metadata records all 114 selected packages, including this crate, with no
 missing declared license. There is no deny.toml; no cargo-deny result is claimed.
-The adopted state-core and LICENSE-DECISION.md have zero diff from e897f81.
+The adopted state-core has zero diff from e897f81.
 No B workspace, hosted workflow or public issue was changed.
 
 The first unrestricted root-review validation also selected the two historical

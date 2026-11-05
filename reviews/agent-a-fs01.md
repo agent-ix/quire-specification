@@ -89,7 +89,7 @@ carry this disposition for B/C.
 | A-D5 | Confirm source/package fixture representation with Agent B before shared schema freeze; method/plan/result envelopes remain B's | Agent B + shared-model owner; FS02/FS05 shared boundary acceptance |
 
 These proposals do not silently resolve themselves by being committed. The
-existing LICENSE-DECISION files remain unchanged pending the applicable decision.
+existing licence files remain unchanged pending the applicable decision.
 Contributor ownership and patent/trademark policy remain release questions;
 approval of the technical profile does not decide them.
 
