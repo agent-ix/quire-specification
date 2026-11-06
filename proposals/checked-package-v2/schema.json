@@ -212,7 +212,10 @@
         "declaration",
         "occurrence",
         "clock",
-        "clock_name"
+        "clock_name",
+        "definition",
+        "revision",
+        "artifact_reference"
       ],
       "properties": {
         "declaration": {
@@ -227,6 +230,15 @@
         },
         "clock_name": {
           "$ref": "#/$defs/Nonempty"
+        },
+        "definition": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "revision": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "artifact_reference": {
+          "$ref": "#/$defs/DefinitionRef"
         }
       },
       "additionalProperties": false
@@ -5397,6 +5409,7 @@
                 "unit",
                 "compound_unit",
                 "carried_quantity",
+                "bounded_quantity",
                 "enum"
               ]
             }
@@ -5421,6 +5434,7 @@
                 "set",
                 "bag",
                 "ordered_set",
+                "map",
                 "record",
                 "tuple",
                 "union",

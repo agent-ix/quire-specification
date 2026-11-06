@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "note": "QSL-1759 / FR-322: anonymous composite_type/map node form, modeled on the existing collection forms. Key and value references are structural node identities; declaration bounds stay in collection_bounds.",
+  "forms": [
+    {"id":"MT-01","description":"Map<Text,Integer>","key":"text","value":"integer","body":[{"term":"binding","name":"key","value":{"term":"reference","target":"text"}},{"term":"binding","name":"value","value":{"term":"reference","target":"integer"}}],"path":["composite_type","map","<text-node>","<integer-node>"],"expected":"admitted"},
+    {"id":"MT-02","description":"same key and value identities through aliases","key":"text","value":"integer","expected":"same-node"},
+    {"id":"MT-03","description":"Map<Text,Boolean>","key":"text","value":"boolean","expected":"distinct-node"},
+    {"id":"MT-04","description":"Map<Sequence<Integer>,Text>","key":"sequence-integer","value":"text","expected":{"code":"invalid_package","cause":"invalid-derived-shape","pointer":"/semantic_graph/nodes/{n}"}},
+    {"id":"MT-05","description":"missing value binding","expected":{"code":"malformed_wire","pointer":"/semantic_graph/nodes/{n}/body"}},
+    {"id":"MT-06","description":"body key target differs from key node in structural path","expected":{"code":"invalid_package","cause":"invalid-derived-shape","pointer":"/semantic_graph/nodes/{n}"}},
+    {"id":"MT-07","description":"Map<Text,Clock> as a clock-bearing model type","expected":"admitted-clock-place-resolution-per-FR-415"}
+  ]
+}

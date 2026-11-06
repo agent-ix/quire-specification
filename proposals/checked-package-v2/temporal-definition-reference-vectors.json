@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "note": "QSL-1596 / FR-322: temporal binding authentication. Each reference is an ordinary immutable DefinitionRef resolved through the selected profile's authored definition closure. No digest, hash, seal, URL, or content-derived package identity is used.",
+  "base_row": {
+    "definition": {
+      "authority": "agent-ix",
+      "identity": "quire.temporal.event-position.false-extension/v1"
+    },
+    "revision": {
+      "authority": "agent-ix",
+      "identity": "quire.temporal.event-position.false-extension/v1"
+    },
+    "artifact_reference": {
+      "authority": "agent-ix",
+      "identity": "quire.temporal.event-position.false-extension/v1"
+    }
+  },
+  "cases": [
+    {
+      "id": "TD-01",
+      "mutation": "none; all three refs resolve through the selected temporal profile and lock",
+      "expected": "admitted"
+    },
+    {
+      "id": "TD-02",
+      "mutation": "definition differs from lock.profile_selections.temporal_profile",
+      "expected": {
+        "code": "invalid_package",
+        "cause": "incompatible-definition",
+        "pointer": "/temporal_bindings/0/definition"
+      }
+    },
+    {
+      "id": "TD-03",
+      "mutation": "revision is unresolved or belongs to a foreign selected-definition closure",
+      "expected": {
+        "code": "invalid_package",
+        "cause": "incompatible-definition",
+        "pointer": "/temporal_bindings/0/revision"
+      }
+    },
+    {
+      "id": "TD-04",
+      "mutation": "artifact_reference is not the artifact named by the selected revision and profile definition",
+      "expected": {
+        "code": "invalid_package",
+        "cause": "incompatible-definition",
+        "pointer": "/temporal_bindings/0/artifact_reference"
+      }
+    },
+    {
+      "id": "TD-05",
+      "mutation": "revision and artifact_reference are substituted together but neither belongs to the selected definition closure",
+      "expected": {
+        "code": "invalid_package",
+        "cause": "incompatible-definition",
+        "pointer": "/temporal_bindings/0/revision"
+      }
+    },
+    {
+      "id": "TD-06",
+      "mutation": "a raw digest scalar is inserted where a DefinitionRef object is required",
+      "expected": {
+        "code": "malformed_wire",
+        "pointer": "/temporal_bindings/0/revision"
+      }
+    },
+    {
+      "id": "TD-07",
+      "mutation": "missing revision member",
+      "expected": {
+        "code": "malformed_wire",
+        "pointer": "/temporal_bindings/0/revision"
+      }
+    },
+    {
+      "id": "TD-08",
+      "mutation": "extra digest member beside a DefinitionRef",
+      "expected": {
+        "code": "malformed_wire",
+        "pointer": "/temporal_bindings/0/revision"
+      }
+    }
+  ]
+}

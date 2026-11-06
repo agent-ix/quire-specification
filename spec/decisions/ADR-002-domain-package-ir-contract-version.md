@@ -34,10 +34,12 @@ already defines.
 
 ## Context
 
-The specification states the shape a domain package carries; the producing
-repository states how that shape is written and read. Quire admits the document
-against a producer-side requirement id rather than against an issue number, so
-one requirement in `filament-core-data` defines each member and Quire cites it.
+The producing repository owns how the Semantic IR 2.0.0 member set is written
+and its producer-side schema. Quire owns the semantics with which it admits
+those members. A Quire rule may constrain the accepted values of a member
+without adding a member or revising the producer-side schema; FR-154's Rational
+bound encoding is such a rule over the existing `Constraint.operands.value`
+member. Quire cites the producer-side requirement that defines each member.
 
 ## Consequences
 
@@ -45,3 +47,6 @@ one requirement in `filament-core-data` defines each member and Quire cites it.
   contract at `2.0.0`, and `FR-154`, `AD-006` and `FR-208` cite that
   requirement id.
 - `FR-051` classifies diffs over the `2.0.0` member set, including the seven.
+- FR-154 owns the accepted Rational bound values inside the existing
+  `Constraint.operands.value` member. The Rational numeric/string choice does
+  not expand or version the producer-owned member set.
