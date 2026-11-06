@@ -152,7 +152,7 @@ order; object maps retain their string keys.
 | `supplied_limits` | `ReplayRequestWire.supplied_limits`: `null` or complete FR-323 `limits.supplied` object `{admission_work_units, conversion_work_units, numeric_magnitude_bits}`. |
 | `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity is the closed two-member `{authority, identity}`, the FR-001 labels. |
 | `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
-| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; the adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
+| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; all three members are required. The adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
 
 #### FR-323 replay source and target
 
@@ -220,7 +220,11 @@ All object and enum forms are closed. `$defs.ReplayRequest` and its referenced
 structural definitions publish these rules in the JSON Schema.
 
 Each adapter `byte_provision` row is exactly
-`{authority, identity, bytes_path}`. `bytes_path` is relative to the
+`{authority, identity, bytes_path}`. `authority` and `identity` are the exact
+source identity pair used for the provided bytes, as in FR-322 `lock.sources`;
+neither field is inferred from the package, path, or another source entry. Both
+are required and non-empty. Omitting `authority` is a schema refusal; it has no
+default or fallback. `bytes_path` is relative to the
 vector directory and SHALL resolve to exactly one `kind: bytes` path listed in the same vector. It SHALL be
 nonempty, relative and contain no parent traversal. The adapter reads raw
 bytes and supplies those bytes for the row's `{authority, identity}` key. The path is not
@@ -246,11 +250,12 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-3 | A producer cannot qualify itself solely with an oracle sharing its implementation. | Analysis |
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
 | FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `population`, `replay-request` and `bytes`, and refuses another kind. | Test |
-| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `authority`, `identity` and `bytes_path` and refuses extra members. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
+| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly the required non-empty `authority`, `identity` and `bytes_path` members and refuses a missing or extra member. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test (TC-969) |
 | FR-336-AC-7 | A `replay-request` file matches the closed `$defs.ReplayRequest`; all 14 top-level fields, `package` (the proved FR-322 checked package, required) among them, map to their `ReplayRequestWire` fields, a request without `package` or with a `package` that is not a checked package is refused, every node id the request names resolves in that package's graph, each nested value follows its FR-323 or structural type mapping, integers use canonical decimal strings, unknown object members and tags are refused, and setting names outside FR-255 are refused by the consumer decoder. The Witness/Input source arms, FR-323 replay target members and one-result envelope retain their stated shapes. | Test (TC-970) |
 | FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies it under the row's `{authority, identity}`. | Test (TC-970) |
 | FR-336-AC-9 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `$defs.ReplayRequest` `dependencies[*].sources[*]` entry is `{authority, identity}`. | Test (TC-969), retired |
 | FR-336-AC-10 | The published schema keeps `object_environment.identity` the closed two-member `{authority, identity}` and refuses any other member. | Test (TC-969) |
+| FR-336-AC-11 | A replay-provision path uses the explicit non-empty `{authority, identity}` source key paired with its `bytes_path`. The present pair is admitted; omission of either member or an empty value for either member is refused by the schema at the row, with no default or inference from the package, path or another source. | Test (TC-969; RP-01..RP-05) |
 
 ## Dependencies
 

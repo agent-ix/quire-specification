@@ -41,6 +41,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-387
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-272
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-273
@@ -302,7 +304,7 @@ declared record without `owner` and with a `ModelOwner`, a model
 declaration node without `owner` and with a `SourceOwner`, an `owner` on the
 `Integer`, nominal enum and application nodes, a `DefinitionOwner`, a
 `SourceOwner` with an extra member and a `ModelOwner` with `version`) and
-read each with the full reader (FR-322-AC-51). Apply each `nominal_body_mutations` case `NB-01`..`NB-06` of `adverse.json` to the nominal-identities fixture (FR-322-AC-269): `NB-01`..`NB-05` fail the V2 schema at the recorded locus in the node's body (`malformed_wire`), and `NB-06`, an enum with `ordered` true, is admitted. Apply each `destination_type_mutations` case `DT-01`..`DT-05` of `adverse.json` to the operation-identities fixture, whose `relationship_end` member names a destination type node absent from the graph (FR-322-AC-270, FR-322-AC-271): the fixture is admitted by the full reader, `DT-01`..`DT-04` fail the V2 schema (`malformed_wire`), and `DT-05`, a destination present in the graph, is admitted. Read the owner-change
+read each with the full reader (FR-322-AC-51). Apply each `nominal_body_mutations` case `NB-01`..`NB-09` of `adverse.json` to the nominal-identities fixture (FR-322-AC-269, AC-387): `NB-01`..`NB-05` and `NB-07`..`NB-09` fail the V2 schema at the recorded locus in the node's body (`malformed_wire`), and `NB-06`, an enum with `ordered` true, is admitted. The positive nominal fixture distinguishes a base dimension `{base: true, terms: []}` from a derived dimensionless declaration `{base: false, terms: []}`; their node ids remain the exact declaration-path identities and do not include the flag. Apply each `destination_type_mutations` case `DT-01`..`DT-05` of `adverse.json` to the operation-identities fixture, whose `relationship_end` member names a destination type node absent from the graph (FR-322-AC-270, FR-322-AC-271): the fixture is admitted by the full reader, `DT-01`..`DT-04` fail the V2 schema (`malformed_wire`), and `DT-05`, a destination present in the graph, is admitted. Read the owner-change
 mutation, whose new source is added to `lock.sources` and receives the
 node's `declaration` occurrence regions, the unjoined
 `SourceOwner` and `ModelOwner` mutations, the unjoined-owner mutation, and the

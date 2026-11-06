@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-336-AC-10
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-336-AC-11
+    type: verifies
 ---
 
 # TC-969: The conformance corpus v1 schema admits the fixture and refuses out-of-domain shapes
@@ -16,7 +18,7 @@ relationships:
 Verify the published structural schema admits its fixture and rejects missing,
 unknown and out-of-domain wire values before consumption.
 
-Scope: FR-336-AC-4, FR-336-AC-5, FR-336-AC-6, FR-336-AC-10 (AC-9 is retired).
+Scope: FR-336-AC-4, FR-336-AC-5, FR-336-AC-6, FR-336-AC-10, FR-336-AC-11 (AC-9 is retired).
 
 ## Test Procedure
 
@@ -35,7 +37,13 @@ decimal, identity, malformed accounting-decimal and replay path mutations.
 Verify that call arguments are a positional array of tagged values and that a
 `{parameter, value}` argument object is refused by the schema.
 
-Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6")]`.
+For the replay path, `RP-01` supplies the exact `{authority, identity,
+bytes_path}` triple and is admitted. `RP-02` and `RP-03` remove `authority`
+and `identity`, respectively; `RP-04` and `RP-05` set each value to the empty
+string. Each negative is refused by the schema at the row, with no default or
+inference for a missing value.
+
+Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6", "FR-336-AC-11")]`.
 
 Then compile `$defs.ObjectEnvironmentRef`: an identity of `{authority, identity}` is admitted and one with any other member is refused. Tag that test `#[trace("TC-969", "FR-336-AC-10")]`.
 
