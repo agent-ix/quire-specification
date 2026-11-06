@@ -144,7 +144,7 @@ order; object maps retain their string keys.
 | `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects, the schema's `$defs.DependencyEntry`: the closed top-level `{identity, sources}` entries plus an optional `refinement_internals` (a non-empty list of the checked-package `RefinementInternal` rows, the dependency lock's value; absent is the empty list), each source an `{authority, identity}` `SourceRef`. |
 | `replay_target` | `ReplayRequestWire.replay_target`: FR-323 target members under `members`, plus request fields `arguments`, `occurrence_key` and `over`. |
 | `source` | `ReplayRequestWire.source`: the FR-323 `ReplaySource`, one `witness` or `input` arm. |
-| `obligation_identity` | `ReplayRequestWire.obligation_identity`: the structural obligation identity `{node_id, model, ordinal}` (FR-479). |
+| `obligation_identity` | `ReplayRequestWire.obligation_identity`: the structural obligation identity `{node_id, model, ordinal}` ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); the required `model` member is `null` for no owning model or the non-empty owning-model identity string. |
 | `backend` | `ReplayRequestWire.backend`: FR-323 backend identity string, unchanged. |
 | `state_environment` | `ReplayRequestWire.state_environment`: ordered `[name, value]` string pairs, preserving the stored tuple order. |
 | `accounting_limits` | `ReplayRequestWire.accounting_limits`: complete FR-255 `ScalarLimitsV1`; every numeric member is an unsigned decimal string. |
@@ -153,6 +153,15 @@ order; object maps retain their string keys.
 | `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity is the closed two-member `{authority, identity}`, the FR-001 labels. |
 | `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
 | `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; all three members are required. The adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
+
+The corpus adapter SHALL map `obligation_identity.model: null` to the existing
+typed obligation identity's absent owning model (`None`). It SHALL map a
+non-empty string to the present owning-model identity (`Some`), preserving
+that string exactly. The member remains required: omission, an empty string
+or any other JSON type is refused. In particular, the adapter SHALL NOT infer
+a model from the package, selected function, dependency or another identity.
+This is a corpus encoding of the existing optional owning-model component;
+it does not change the FR-071 replay request or its product wire.
 
 #### FR-323 replay source and target
 
@@ -256,6 +265,7 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-9 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `$defs.ReplayRequest` `dependencies[*].sources[*]` entry is `{authority, identity}`. | Test (TC-969), retired |
 | FR-336-AC-10 | The published schema keeps `object_environment.identity` the closed two-member `{authority, identity}` and refuses any other member. | Test (TC-969) |
 | FR-336-AC-11 | A replay-provision path uses the explicit non-empty `{authority, identity}` source key paired with its `bytes_path`. The present pair is admitted; omission of either member or an empty value for either member is refused by the schema at the row, with no default or inference from the package, path or another source. | Test (TC-969; RP-01..RP-05) |
+| FR-336-AC-12 | The required `obligation_identity.model` member admits `null` and maps it to no owning model (`None`), or admits a non-empty string and maps it unchanged to the present owning model (`Some`). A missing member, an empty string, another JSON type or an unknown obligation-identity member is refused; no model identity is inferred or fabricated. | Test |
 
 ## Dependencies
 

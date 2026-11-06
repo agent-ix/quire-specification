@@ -1770,7 +1770,10 @@
           "$ref": "#/$defs/NodeId"
         },
         "model": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "minLength": 1
         },
         "ordinal": {
