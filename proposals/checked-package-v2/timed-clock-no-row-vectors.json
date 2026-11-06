@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "note": "QSL-1747 / FR-322: quire.temporal.timed/v1 has no ClockConfiguration row. A timed-model subject takes its time binding from the checked timed_model/time_source graph; a trace subject supplies time-stamped positions and admitted order through the temporal profile input.",
+  "cases": [
+    {"id":"TN-01","subject":"checked timed model with one matching TimedModelNode/time_source","clock_name":"model-time","temporal_bindings":null,"expected":"admitted"},
+    {"id":"TN-02","subject":"timed trace with time-stamped positions and admitted order","clock_name":"model-time","temporal_bindings":null,"expected":"admitted"},
+    {"id":"TN-03","subject":"model-time clause with no matching timed_model/time_source","expected":{"code":"invalid_package","cause":"timed-node-reference","pointer":"/semantic_graph/nodes/{clause-index}/body"}},
+    {"id":"TN-04","subject":"timed-profile clause with an event_position temporal_bindings row","expected":{"code":"invalid_package","cause":"timed-node-reference","pointer":"/temporal_bindings/0"}},
+    {"id":"TN-05","subject":"existing event_position/fixed_sample/timestamped_event rows","expected":"unchanged"}
+  ]
+}

@@ -1822,7 +1822,7 @@ constraints ("Reference conformance" below).
    | a tuple value type `P` of the same domain package, admitted under FR-208 | `P`, an identity-free ordered product of the types of its positions `p0` to `pN-1` | the self-typed `model`/`tuple_value_type` declaration node owned by `P`; no `composite_type`/`tuple` and no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208, none of whose cases carries a `payloadType` | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`, family `enum`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208, at least one of whose cases carries a resolving `payloadType` | `V`, a union whose members are the cases of `V` in ascending UTF-8 byte order of case name, a case with a `payloadType` being a member of one payload position and a case without one a nullary member | the same self-typed `model`/`variant_type` declaration node owned by `V`, family `union` ("Tuple value types and payload-bearing variant types"); no `composite_type`/`union` node is introduced |
-   | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced, and a `min` or `max` constraint on the unit (FR-154 "Unit bounds") adds none: the member's node stays this node, its bounded type `Quantity<u>[min, max]` is the checker's refinement, and the checker reads the bound from the admitted document |
+   | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced, and a `min` or `max` constraint on the unit (FR-154 "Unit bounds") leaves an unbounded use typed by this node; a checked-package type position that must preserve the bounded form uses `scalar_type`/`bounded_quantity` with the same unit and exact inclusive bounds |
    | a `reference` type whose `target` is `ix://quire/native/Clock` or an alias of it | `Reference<Clock>`, a data value naming one clock place (FR-415 "Clock places"); compared by place, never by clock value | none: no node stands for the clock or for the reference; the checker reads `ref` and `deref` over it and the state key holds the place id (FR-415 "Clock places") |
    | an option value type `Q` of the same domain package (FR-154 "Option value types"), whose `inner` names the type `T` | `Option<T>`, where `T` is the element type this table gives `inner` (the unit, native, value type, record, tuple, variant or object type row, `[1, 1]`); a field of `Q` with presence `required` and a field of `T` with presence `optional`, each with multiplicity `[1, 1]`, are the same type, and the multiplicity then applies to `Q` as to any element type (`Sequence<Option<T>>[0, 3]`) | the `composite_type`/`option` node over the node of `T`, the node presence `optional` gives, so the two spellings share one node; intake refused `Option<Option<T>>` and an option value type over `Clock` (FR-154-AC-40; an optional clock place is the presence spelling, FR-415), so the node never wraps an option node |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
@@ -2170,6 +2170,8 @@ literal values" says.
 | `Population<O>[N]`; `Population<O>` with no maximum | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}`; for `Population<O>` with no maximum, `aggregate{[]}`, the `max` member absent | `["bounded_domain", "model_population", S_O's node_id, "N"]` with `N` the maximum's decimal text, and `["bounded_domain", "model_population", S_O's node_id]` for the unbounded population: `Bucket = Population<Order>[3]` and `Population<Order>[5]` name two nodes, and `Open = Population<Order>` a third whose `semantic_type` is the same `S_O` |
 | a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}`. Each `U` is a targetless canonical nominal root (a `scalar_type`/`unit` node with an empty body and `semantic_type` equal to its dimension node). | `["scalar_type", "compound_unit", U_1's node_id, "e_1", ..., U_n's node_id, "e_n"]`, one node id and one exponent string per term, the terms in the body's order: ascending node-id order of their root units, the order of `quire.value.compound-unit/v1` and of FR-201's `UnitId` `terms`. `e_i` is the exponent's canonical decimal-integer text: an optional leading `-`, then ASCII digits with no leading zero, and no `+`. `metre / second` has the path `["scalar_type", "compound_unit", U_metre's node_id, "1", U_second's node_id, "-1"]` when `U_metre` sorts first; `metre^2` has `["scalar_type", "compound_unit", U_metre's node_id, "2"]` and `metre^-1` has `["scalar_type", "compound_unit", U_metre's node_id, "-1"]`, two paths, so neither relies on an `ordinal` to differ; the dimensionless unit has `["scalar_type", "compound_unit"]`. Equal terms give one path and one node, which a producer keys at `ordinal` `0`. |
 | `Quantity<u, C>` | `scalar_type`/`carried_quantity`, self-typed (family `quantity`) | `aggregate` of `binding "unit" = reference(U)`, `binding "carrier" = reference(C)` and `binding "rounding" = literal` of `value_kind` `text` typed by the `scalar_type`/`text` node, whose `value` is a rounding mode name; `U` is a `scalar_type`/`unit` node and `C` a `bounded_domain`/`integer_range`, `bounded_domain`/`decimal_range` or `bounded_domain`/`rational_range` node | `["scalar_type", "carried_quantity", U's node_id, C's node_id, "rounding", T's node_id, "<mode>"]`, `T` the `scalar_type`/`text` node: `Quantity<m, Int[-2, 2]>` and `Quantity<m, Int[-2, 2; nearest-even]>` name two nodes, as do two units, two carriers or a carrier of another bound |
+| `Quantity<u>[min,max]` | `scalar_type`/`bounded_quantity`, self-typed (family `quantity`) | `aggregate` of `binding "unit" = reference(U)`, `binding "min" = literal(R, min)` and `binding "max" = literal(R, max)`; `R` is the `scalar_type`/`rational` node, bounds are inclusive exact magnitudes in `U`, with `min <= max`, and rational literal magnitudes are reduced with positive denominator | `["scalar_type", "bounded_quantity", U's node_id, "min", R's node_id, min, "max", R's node_id, max]`; changing either bound or the unit changes the node. This form carries the magnitude interval directly and does not project it through a numerator/denominator carrier. |
+| `Map<K,V>` | `composite_type`/`map`, self-typed | `aggregate` of exactly `binding "key" = reference(K)` and `binding "value" = reference(V)`, in that order; K is a scalar key type admitted by the model type rules, V is any admitted value type | `["composite_type", "map", K's node_id, V's node_id]`; changing either operand changes the node. Collection bounds, when present at a declaration, remain a separate `bounded_domain`/`collection_bounds` node. |
 
 A `carried_quantity` node's `rounding` literal equals the mode of a
 `decimal_range` carrier's own `rounding` binding, and for an `integer_range`
@@ -2185,6 +2187,44 @@ whose `carrier` is not a `bounded_domain` of form `integer_range`,
 three in that order, or whose path disagrees with its body is refused by the
 semantic shape check (`invalid_package`/`invalid-derived-shape`,
 `RM-CQ-UNIT`, `RM-CQ-CARRIER`, `RM-CQ-MODE`).
+
+A `bounded_quantity` node is the lossless wire form for the source type
+`Quantity<u>[min,max]`. Its `unit` is one nominal `scalar_type`/`unit` node;
+`min` and `max` are reduced exact rational literal magnitudes typed by the
+`scalar_type`/`rational` node, inclusive and ordered numerically, never
+converted to a bounded rational carrier. Its `dependencies` are exactly the
+unit and rational type nodes in ascending node-id order. The node is admitted as a quantity operand to
+`quire.op.quantity.add`, `quire.op.quantity.convert` and
+`quire.op.quantity.lt` under the existing unit/dimension rules. Addition
+produces the ordinary `Quantity<u>` unit type as FR-154 requires; it does not
+claim the input interval is closed under addition. Conversion to a bounded
+quantity result checks the exact converted magnitude against the target's
+inclusive interval and refuses an out-of-range value as
+`rational_out_of_domain`. `lt` compares exact values after existing unit
+conversion and does not erase either operand's bound.
+The form does not make a bare `scalar_type`/unit or a `compound_unit` a bounded
+quantity type; those parameter types continue to refuse `RequiresBound` at
+source admission. A malformed unit, noncanonical exact number, reversed range,
+non-self semantic type, extra/reordered body member, or path/body disagreement
+refuses `invalid_package`/`invalid-derived-shape` at the node.
+
+A `composite_type`/`map` node is anonymous and structural. K and V are the
+exact referenced type nodes; K must be scalar, V must be admitted, and its
+identity is the ordered pair of those node identities. Its `dependencies` are
+exactly K and V in ascending node-id order. A non-scalar key,
+unresolved operand, malformed body or path/body disagreement is refused by
+the owning type reader; a map is never represented as a list/sequence node.
+The checked-package Map form follows the existing collection form's structural
+identity rule and does not copy a source declaration name into the derived
+node.
+
+The repeated-operand rule for bounded numeric forms is uniform: each named
+lower and upper endpoint appears once in the body and once in the structural
+path, including `denominator_min` and `denominator_max` for
+`bounded_domain`/`rational_range`, just as `scale_min` and `scale_max` each
+appear for `decimal_range`. No endpoint may be elided because it equals its
+partner. Thus Braking2's `Rational[0,20;1,1]` carries both denominator
+bindings in the body and both names and values in its path.
 
 A derived shape is identified by its structural path and by nothing else,
 independently of a package version and of a source alias spelling.
@@ -3323,7 +3363,8 @@ configuration (period, epoch, unit, sequence authority or timestamp unit).
 The binding is therefore keyed by occurrence, one row for each occurrence of a
 node, and two occurrences of one node may carry different configurations.
 
-Each row is exactly:
+Each row is exactly the closed object below; the selected profile is not
+repeated in the row:
 
 ```json
 {
@@ -3351,9 +3392,8 @@ structural `NodeRef` and then `occurrence`, and each key occurs at most once.
 argument (the second argument of `quire.op.temporal.clause`, FR-370), or, for a
 compensation row, of the compensation node's `clock` text argument (the fifth
 argument of `compensate`, FR-466); every row of one node carries the same
-`clock_name`. A reader
-uses this typed member directly; it never parses a legacy `clock:` prefix or
-derives the name from the profile identity.
+`clock_name`. A reader uses this typed member directly; it never parses a
+legacy `clock:` prefix or derives the name from the profile identity.
 
 `clock` is exactly one closed alternative, with no omitted or extra members:
 
@@ -3363,6 +3403,18 @@ derives the name from the profile identity.
 | `fixed_sample` | `epoch` and `period`: exact typed numbers; `period` is positive; `unit`: non-empty name | `quire.temporal.fixed-sample.false-extension/v1` |
 | `timestamped_event` | `timestamp_unit`: non-empty name | `quire.temporal.timestamped-event.finite-window/v1` |
 
+The reader resolves `declaration`, reads the clause's `temporal_profile` law,
+and requires that law to equal the matching `lock.profile_selections` entry.
+A compensation node has no `temporal_profile` law of its own (FR-464
+"An `await` or a `compensate` reads a clock role"): its profile is the lock's
+`temporal_profile` selection, and no per-node law is read or required. The
+selected definition determines exactly the `clock.kind` above. The profile's
+trust and identity are provided by that existing lock selection and the
+referenced law; `temporal_bindings` adds no revision, history, artifact
+provenance, or separate authentication record. The reader exposes the admitted
+row by reference as typed clock configuration data, without reparsing the wire
+or rechecking the profile selection during later reads.
+
 `epoch` and `period` use the closed tagged exact-number form `{kind:
 "integer", decimal}` or `{kind: "rational", numerator, denominator}`;
 integer components use canonical decimal strings and rational denominators are
@@ -3370,15 +3422,20 @@ positive. The rational components are in lowest terms. `period` is a strictly
 positive exact number. The authority and unit values are non-empty strings
 compared byte-for-byte; no trimming, normalization or alias resolution occurs.
 
-The profile is not repeated in a row. The reader resolves `declaration`, reads
-the clause's `temporal_profile` law, and requires that law to equal the matching
-`lock.profile_selections` entry. A compensation node has no `temporal_profile`
-law of its own (FR-464 "An `await` or a `compensate` reads a clock role"): its
-profile is the lock's `temporal_profile` selection, and no per-node law is read
-or required. The selected definition determines exactly the
-`clock.kind` above. The reader exposes the admitted
-row by reference as typed clock configuration data, without reparsing the
-wire or rechecking the profile selection during later reads.
+`quire.temporal.timed/v1` is the no-row alternative: it does not select one of
+the three `ClockConfiguration` row kinds and never manufactures a
+`temporal_bindings` row. A timed clause's `clock_name` is `model-time`. For a
+checked timed-model subject, the checked package's `timed_model` root and its
+`time_source` provide the model time binding and exact time unit (FR-415); the
+reader joins that source to the clause's model subject. For a trace subject,
+the time-stamped positions and their admitted order are inputs to the selected
+temporal profile, not configuration copied into the checked package. The
+temporal profile reader admits that runtime binding. A timed clause without a
+matching timed-model source when it names a model subject refuses
+`invalid_package`/`timed-node-reference` at its clause body; supplying any
+`temporal_bindings` row for a timed clause refuses the same code and cause at
+that row. The other three profile kinds retain their existing row requirements
+unchanged.
 
 A row for an absent or wrong-kind declaration, an `occurrence` that is not an
 occurrence of the stated role, a repeated key, a row out of order, a missing row
@@ -4419,7 +4476,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-356 | Within one name row the repeated key is reported before the order: a third row that repeats a key and descends refuses `conflicting-definition` at that row (CN-R10). | Test (TC-233) |
 | FR-322-AC-357 | A descent in the name rows is reported before an uncovered occurrence: rows (clause, 1), (clause, 0) over three occurrences refuse `invalid-value` at row 1, not at `/temporal_clause_names` (CN-R11). | Test (TC-233) |
 | FR-322-AC-358 | A name row's declaration join is reported before the coverage check: an absent declaration with an uncovered occurrence refuses at the row's `declaration` (CN-R8). | Test (TC-233) |
-| FR-322-AC-359 | A `temporal_bindings` row is the closed `{declaration, occurrence, clock, clock_name}`, and a row without `occurrence` is refused by the schema as `malformed_wire` at the row (BO-S1). | Test (TC-233) |
+| FR-322-AC-359 | A `temporal_bindings` row is the closed `{declaration, occurrence, clock, clock_name}`; the selected temporal profile is read from the clause law and matching lock selection, not repeated in the row. A row without `occurrence` or with any extra member is refused by the schema as `malformed_wire` at the row (BO-S1). | Test (TC-233) |
 | FR-322-AC-360 | A `temporal_bindings` `occurrence` that is negative or not an integer is `malformed_wire` at that member (BO-S2, BO-S3). | Test (TC-233) |
 | FR-322-AC-361 | The clock configuration is per occurrence: one shared node with two `claim` occurrences carries two binding rows, which are admitted with different configurations (BO-P1) and with equal ones (BO-P2), and every published positive package has one row per claim occurrence of each clock-configured clause, each with `occurrence` 0 where the clause has one. | Test (TC-233) |
 | FR-322-AC-362 | A `claim` occurrence of a clock-configured clause with no binding row refuses `invalid_package`/`timed-node-reference` at the node's `/semantic_graph/nodes/{N}/body` (BO-R1). | Test (TC-233) |
@@ -4432,10 +4489,14 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-369 | The clock name of the second occurrence's row is compared with the body's clock name: a differing name refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/clock_name` (BO-R8). | Test (TC-233) |
 | FR-322-AC-370 | The configuration kind of the second occurrence's row is compared with the selected profile: a kind the profile does not determine refuses `invalid_package`/`timed-node-reference` at `/temporal_bindings/{i}/clock/kind` (BO-R9). | Test (TC-233) |
 | FR-322-AC-371 | Every refusal in the published tuple/union intake and wire vectors (`model-tuple-union-vectors.json`) carries a `stage` member beside its code, cause and locus, drawn from the closed set `schema` (the V2 closed-schema check; `malformed_wire`), `graph` (the join stages 1 to 4 of FR-322-AC-275, in that order) and `reader` (every declaration, frame, state, operation and later step, including FR-154 intake). The vector's `stage` is the stage that raises the refusal under the order of FR-322-AC-275; it is not the `Diagnostic` `stage` member of a `ReadResult`, which stays `package_read` for the reader. A replay oracle compares admission or refusal, code, cause, RFC 6901 locus and this `stage`; an admitted case is compared by admission, and an omitted case, a refusal without a `stage` or a refusal whose stage differs from the vector's is a replay failure. Admitted-package equality is not part of the oracle: the admitted package is the published fixture itself. The stage applies to every refusal case of every section of the file (`position_cases`, `union_value_cases`, `enum_value_cases`, `equality_cases`, `intake_cases` and `wire_cases`). The `schema` wire cases are `TW-01` to `TW-04`, `TW-10` and `TW-26`; `TW-06` to `TW-09`, `TW-21`, `TW-22`, `TW-27` and `TW-28` (owner join before the dangling edge) are `graph`; the `ill_typed` query cases (`TP-03`, `TP-07`, `TU-04` to `TU-08`, `TQ-02`, `TQ-04`) and every intake refusal are `reader`; `TE-02` to `TE-04` (`invalid_semantic_graph`) are `graph`. | Test (TC-940) |
-| FR-322-AC-380 | A field, an operation parameter, an operation result and a plain alias typed by the Rational value type `Ratio` (FR-154-AC-42: `Rational[-3, 7; 1, 12]`, no `unit`) each have the type `Rational[-3, 7; 1, 12]` and name one `bounded_domain`/`rational_range` node over the `scalar_type`/`rational` node with bindings `numerator_min` `-3`, `numerator_max` `7`, `denominator_min` `1` and `denominator_max` `12`; a second value type of equal bounds names the same node and one with `maxDenominator` 13 names another; `Ratio` as a tuple position `typeRef` and as a variant case `payloadType` is admitted (`TK-36`), while a Rational value type with no `constraints` there is refused as FR-322-AC-181 and FR-322-AC-182 state and a member of it has no type as FR-322-AC-183 states. | Test (TC-981) |
+| FR-322-AC-380 | A field, an operation parameter, an operation result and a plain alias typed by the Rational value type `Ratio` (FR-154-AC-42: `Rational[-3, 7; 1, 12]`, no `unit`) each have the type `Rational[-3, 7; 1, 12]` and name one `bounded_domain`/`rational_range` node over the `scalar_type`/`rational` node with bindings `numerator_min` `-3`, `numerator_max` `7`, `denominator_min` `1` and `denominator_max` `12`; a second value type of equal bounds names the same node and one with `maxDenominator` 13 names another; the accepted FR-154 operand encodings (a JSON integer within `[-2^53, 2^53]` or a canonical signed-64 decimal string) denote exact integer bounds, and the `rational_range` body's `IntegerString` values and structural path retain them exactly, including `i64::MIN`; `Ratio` as a tuple position `typeRef` and as a variant case `payloadType` is admitted (`TK-36`), while a Rational value type with no `constraints` there is refused as FR-322-AC-181 and FR-322-AC-182 state and a member of it has no type as FR-322-AC-183 states. | Test (TC-981) |
 | FR-322-AC-381 | `Ratio` with `unit` `ix://quire/unit/m` types its members `Quantity<m, Rational[-3, 7; 1, 12]>`, the `scalar_type`/`carried_quantity` node over `m`'s unit node, the `rational_range` node of FR-322-AC-380 and `rounding` `exact`; a second value type of equal bounds and unit `m` names that node, and `Ratio` without a unit and a value type of equal bounds with unit `cm` name two other nodes; a `unit` of `ix://quire/unit/nosuch` refuses `missing_declaration`/`missing-name` at the value type node and `TypeDefinition.unit`. | Test (TC-981) |
 | FR-322-AC-382 | A `scalar_type`/`carried_quantity` node whose carrier is a `rational_range` node and whose `rounding` is `exact` is admitted; the same node with `rounding` `nearest-even` and a node whose carrier is the unbounded `scalar_type`/`rational` node each refuse `invalid_package`/`invalid-derived-shape` at the node; a `quire.op.quantity.convert` application into it with `mode` `{kind: rounding, value: exact}` is admitted and one with any other `mode` or `null` refuses `invalid_package`/`operation-mode-type-mismatch` (`CQ-W06`, `CQ-W16` to `CQ-W19`). | Test (TC-981) |
 | FR-322-AC-383 | `quire.op.quantity.pow` (TC-187 QP-01 to QP-10): `2 m ^ 2`, an application of operator `binary` with arguments `[reference(L), reference(N)]`, `L` the `quantity` literal node of `2 m` and `N` the `value`/`literal` node of `value_kind` `integer` and value `"2"` typed by the builtin Integer node, with `result_type` the compound-unit node of `m` to the power 2 (the node `2 m * 2 m` also names), no laws, `mode` `null`, no member and no leaves, is admitted; so are `d ^ 0` over `Quantity<ms>` with the dimensionless compound-unit node, `d ^ 1` over `Quantity<ms>` with the node of `s` to the power 1, `x ^ -1` over `Quantity<m2>` with the node of `m` to the power -2, and `2 m ^ 18446744073709551616` with the node of `m` to that power. A third argument, a missing exponent, an exponent that is an inline literal, a reference to an Integer `value`/`parameter` node or a `decimal` literal, a base typed `integer`, a carried-quantity base, a base of the affine unit `degC`, `d ^ 1` with `result_type` the unit node of `ms`, and `2 m ^ 2` with the node of `m` to the power 3 each refuse `ill_typed`/`operator-ineligible`; a `mode` value refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry `invalid_package`/`operation-law-mismatch`. | Test (TC-187) |
+| FR-322-AC-384 | `bounded_quantity` is the anonymous self-typed `scalar_type` form for `Quantity<u>[min,max]`; it retains the exact unit and inclusive exact magnitudes directly, and its structural path changes with either endpoint or unit. Equal bounds through an alias produce the same node; changing the unit or either bound produces a distinct node. A bounded quantity is admitted by `quantity.add`, `quantity.convert` and `quantity.lt` under their existing dimensional rules; `add` returns the ordinary unit type, while a conversion to a bounded result refuses an out-of-range exact value at the result type. Bare unit and compound-unit parameter forms remain `RequiresBound`. Reversed or noncanonical endpoints refuse `invalid_package`/`invalid-derived-shape`. `bounded-quantity-vectors.json` publishes the accepted, boundary, identity, operator and refusal cases; the `carried_quantity` CQ-W and CQ-E cases remain unchanged. | Test (TC-280; BQ-01..BQ-10) |
+| FR-322-AC-385 | `composite_type`/`map` is the anonymous structural pair of scalar key type node and admitted value type node, with body members `key`, `value` and path operands in that order; bounds remain separate. Equal operand identities produce one node, and changing either produces another. A non-scalar key and body/path disagreement refuse as stated in the derived-type rule. Every bounded numeric endpoint is repeated once in body and once in path: the Braking2 `Rational[0,20;1,1]` vector carries both `denominator_min` and `denominator_max` in each, consistent with decimal `scale_min` and `scale_max`. `map-type-vectors.json` is the Map arm; existing Braking2 vectors are the rational-range control. | Test (TC-233; MT-01..MT-07; TC-966) |
+| FR-322-AC-386 | A clause selected under `quire.temporal.timed/v1` carries no `temporal_bindings` row and uses `clock_name: "model-time"`. A checked timed-model subject gets its exact time binding from the joined `timed_model`/`time_source`; a trace subject supplies time-stamped positions and admitted order to the selected temporal profile. A missing source for a model subject and an extra clock row for a timed clause refuse `invalid_package`/`timed-node-reference` at the published loci. Event-position, fixed-sample and timestamped-event rows and their three profile/configuration pairs remain unchanged. | Test (TC-134; TN-01..TN-05) |
+
 
 ## Dependencies
 

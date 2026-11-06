@@ -5397,6 +5397,7 @@
                 "unit",
                 "compound_unit",
                 "carried_quantity",
+                "bounded_quantity",
                 "enum"
               ]
             }
@@ -5421,6 +5422,7 @@
                 "set",
                 "bag",
                 "ordered_set",
+                "map",
                 "record",
                 "tuple",
                 "union",
