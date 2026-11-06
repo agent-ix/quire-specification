@@ -212,10 +212,7 @@
         "declaration",
         "occurrence",
         "clock",
-        "clock_name",
-        "definition",
-        "revision",
-        "artifact_reference"
+        "clock_name"
       ],
       "properties": {
         "declaration": {
@@ -230,15 +227,6 @@
         },
         "clock_name": {
           "$ref": "#/$defs/Nonempty"
-        },
-        "definition": {
-          "$ref": "#/$defs/DefinitionRef"
-        },
-        "revision": {
-          "$ref": "#/$defs/DefinitionRef"
-        },
-        "artifact_reference": {
-          "$ref": "#/$defs/DefinitionRef"
         }
       },
       "additionalProperties": false

@@ -3363,17 +3363,15 @@ configuration (period, epoch, unit, sequence authority or timestamp unit).
 The binding is therefore keyed by occurrence, one row for each occurrence of a
 node, and two occurrences of one node may carry different configurations.
 
-Each row is exactly:
+Each row is exactly the closed object below; the selected profile is not
+repeated in the row:
 
 ```json
 {
   "declaration": {"package": "<package>", "path": ["<segment>"], "ordinal": 0},
   "occurrence": 0,
   "clock": {"kind": "event_position", "sequence_authority": "<name>"},
-  "clock_name": "<name>",
-  "definition": {"authority": "<authority>", "identity": "<temporal-profile-identity>"},
-  "revision": {"authority": "<authority>", "identity": "<revision-identity>"},
-  "artifact_reference": {"authority": "<authority>", "identity": "<artifact-identity>"}
+  "clock_name": "<name>"
 }
 ```
 
@@ -3394,9 +3392,8 @@ structural `NodeRef` and then `occurrence`, and each key occurs at most once.
 argument (the second argument of `quire.op.temporal.clause`, FR-370), or, for a
 compensation row, of the compensation node's `clock` text argument (the fifth
 argument of `compensate`, FR-466); every row of one node carries the same
-`clock_name`. A reader
-uses this typed member directly; it never parses a legacy `clock:` prefix or
-derives the name from the profile identity.
+`clock_name`. A reader uses this typed member directly; it never parses a
+legacy `clock:` prefix or derives the name from the profile identity.
 
 `clock` is exactly one closed alternative, with no omitted or extra members:
 
@@ -3406,24 +3403,17 @@ derives the name from the profile identity.
 | `fixed_sample` | `epoch` and `period`: exact typed numbers; `period` is positive; `unit`: non-empty name | `quire.temporal.fixed-sample.false-extension/v1` |
 | `timestamped_event` | `timestamp_unit`: non-empty name | `quire.temporal.timestamped-event.finite-window/v1` |
 
-The row's `definition` is the `DefinitionRef` of the selected temporal profile
-and MUST equal the `definition` in the one `lock.profile_selections` entry whose
-role is `temporal_profile`. `revision` and `artifact_reference` are also closed
-`DefinitionRef` values. They identify, respectively, the selected definition's
-authored revision record and the exact temporal-definition artifact that
-provides this configuration. The reader resolves both through that selected
-definition's authored definition closure and requires the revision record to
-name the artifact reference and the artifact to declare the selected
-`definition`; it does not accept caller-supplied values that are not present in
-that closure. This is the independent authentication anchor for a row: the
-profile is selected by the package lock, while the revision and artifact
-references are checked against the selected definition artifacts. These are
-ordinary authority-allocated immutable artifact identities, not identities
-derived from content; the contract carries no digest field, seal, retrieval
-URL or package-content pin.
-When an artifact's meaning changes, its owner publishes a new immutable
-identity and updates the selected definition closure; readers retain old
-identities as historical records.
+The reader resolves `declaration`, reads the clause's `temporal_profile` law,
+and requires that law to equal the matching `lock.profile_selections` entry.
+A compensation node has no `temporal_profile` law of its own (FR-464
+"An `await` or a `compensate` reads a clock role"): its profile is the lock's
+`temporal_profile` selection, and no per-node law is read or required. The
+selected definition determines exactly the `clock.kind` above. The profile's
+trust and identity are provided by that existing lock selection and the
+referenced law; `temporal_bindings` adds no revision, history, artifact
+provenance, or separate authentication record. The reader exposes the admitted
+row by reference as typed clock configuration data, without reparsing the wire
+or rechecking the profile selection during later reads.
 
 `epoch` and `period` use the closed tagged exact-number form `{kind:
 "integer", decimal}` or `{kind: "rational", numerator, denominator}`;
@@ -3431,31 +3421,6 @@ integer components use canonical decimal strings and rational denominators are
 positive. The rational components are in lowest terms. `period` is a strictly
 positive exact number. The authority and unit values are non-empty strings
 compared byte-for-byte; no trimming, normalization or alias resolution occurs.
-
-The profile is not repeated in a row. The reader resolves `declaration`, reads
-the clause's `temporal_profile` law, and requires that law to equal the matching
-`lock.profile_selections` entry. A compensation node has no `temporal_profile`
-law of its own (FR-464 "An `await` or a `compensate` reads a clock role"): its
-profile is the lock's `temporal_profile` selection, and no per-node law is read
-or required. The selected definition determines exactly the
-`clock.kind` above. The reader exposes the admitted
-row by reference as typed clock configuration data, without reparsing the
-wire or rechecking the profile selection during later reads.
-
-After the declaration and occurrence joins, the reader authenticates each
-row's `definition`, `revision`, and `artifact_reference`, in that order and
-before checking `clock_name` or `clock.kind`. A definition that does not equal
-the lock's selected temporal profile refuses
-`invalid_package`/`incompatible-definition` at
-`/temporal_bindings/{i}/definition`; an unresolved or foreign revision refuses
-`invalid_package`/`incompatible-definition` at
-`/temporal_bindings/{i}/revision`; and an artifact reference that is not the
-one named by that revision and selected definition refuses the same code and
-cause at `/temporal_bindings/{i}/artifact_reference`. The closed schema rejects
-a missing or extra member and a malformed reference as `malformed_wire` at the
-member or row. The authenticated values are exposed by reference with the
-clock configuration and remain part of the row's occurrence key; replacing a
-revision or artifact reference cannot silently preserve the admitted meaning.
 
 `quire.temporal.timed/v1` is the no-row alternative: it does not select one of
 the three `ClockConfiguration` row kinds and never manufactures a
@@ -4511,7 +4476,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-356 | Within one name row the repeated key is reported before the order: a third row that repeats a key and descends refuses `conflicting-definition` at that row (CN-R10). | Test (TC-233) |
 | FR-322-AC-357 | A descent in the name rows is reported before an uncovered occurrence: rows (clause, 1), (clause, 0) over three occurrences refuse `invalid-value` at row 1, not at `/temporal_clause_names` (CN-R11). | Test (TC-233) |
 | FR-322-AC-358 | A name row's declaration join is reported before the coverage check: an absent declaration with an uncovered occurrence refuses at the row's `declaration` (CN-R8). | Test (TC-233) |
-| FR-322-AC-359 | A `temporal_bindings` row is the closed `{declaration, occurrence, clock, clock_name}`, and a row without `occurrence` is refused by the schema as `malformed_wire` at the row (BO-S1). | Test (TC-233) |
+| FR-322-AC-359 | A `temporal_bindings` row is the closed `{declaration, occurrence, clock, clock_name}`; the selected temporal profile is read from the clause law and matching lock selection, not repeated in the row. A row without `occurrence` or with any extra member is refused by the schema as `malformed_wire` at the row (BO-S1). | Test (TC-233) |
 | FR-322-AC-360 | A `temporal_bindings` `occurrence` that is negative or not an integer is `malformed_wire` at that member (BO-S2, BO-S3). | Test (TC-233) |
 | FR-322-AC-361 | The clock configuration is per occurrence: one shared node with two `claim` occurrences carries two binding rows, which are admitted with different configurations (BO-P1) and with equal ones (BO-P2), and every published positive package has one row per claim occurrence of each clock-configured clause, each with `occurrence` 0 where the clause has one. | Test (TC-233) |
 | FR-322-AC-362 | A `claim` occurrence of a clock-configured clause with no binding row refuses `invalid_package`/`timed-node-reference` at the node's `/semantic_graph/nodes/{N}/body` (BO-R1). | Test (TC-233) |
@@ -4528,11 +4493,9 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-381 | `Ratio` with `unit` `ix://quire/unit/m` types its members `Quantity<m, Rational[-3, 7; 1, 12]>`, the `scalar_type`/`carried_quantity` node over `m`'s unit node, the `rational_range` node of FR-322-AC-380 and `rounding` `exact`; a second value type of equal bounds and unit `m` names that node, and `Ratio` without a unit and a value type of equal bounds with unit `cm` name two other nodes; a `unit` of `ix://quire/unit/nosuch` refuses `missing_declaration`/`missing-name` at the value type node and `TypeDefinition.unit`. | Test (TC-981) |
 | FR-322-AC-382 | A `scalar_type`/`carried_quantity` node whose carrier is a `rational_range` node and whose `rounding` is `exact` is admitted; the same node with `rounding` `nearest-even` and a node whose carrier is the unbounded `scalar_type`/`rational` node each refuse `invalid_package`/`invalid-derived-shape` at the node; a `quire.op.quantity.convert` application into it with `mode` `{kind: rounding, value: exact}` is admitted and one with any other `mode` or `null` refuses `invalid_package`/`operation-mode-type-mismatch` (`CQ-W06`, `CQ-W16` to `CQ-W19`). | Test (TC-981) |
 | FR-322-AC-383 | `quire.op.quantity.pow` (TC-187 QP-01 to QP-10): `2 m ^ 2`, an application of operator `binary` with arguments `[reference(L), reference(N)]`, `L` the `quantity` literal node of `2 m` and `N` the `value`/`literal` node of `value_kind` `integer` and value `"2"` typed by the builtin Integer node, with `result_type` the compound-unit node of `m` to the power 2 (the node `2 m * 2 m` also names), no laws, `mode` `null`, no member and no leaves, is admitted; so are `d ^ 0` over `Quantity<ms>` with the dimensionless compound-unit node, `d ^ 1` over `Quantity<ms>` with the node of `s` to the power 1, `x ^ -1` over `Quantity<m2>` with the node of `m` to the power -2, and `2 m ^ 18446744073709551616` with the node of `m` to that power. A third argument, a missing exponent, an exponent that is an inline literal, a reference to an Integer `value`/`parameter` node or a `decimal` literal, a base typed `integer`, a carried-quantity base, a base of the affine unit `degC`, `d ^ 1` with `result_type` the unit node of `ms`, and `2 m ^ 2` with the node of `m` to the power 3 each refuse `ill_typed`/`operator-ineligible`; a `mode` value refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry `invalid_package`/`operation-law-mismatch`. | Test (TC-187) |
-
 | FR-322-AC-384 | `bounded_quantity` is the anonymous self-typed `scalar_type` form for `Quantity<u>[min,max]`; it retains the exact unit and inclusive exact magnitudes directly, and its structural path changes with either endpoint or unit. Equal bounds through an alias produce the same node; changing the unit or either bound produces a distinct node. A bounded quantity is admitted by `quantity.add`, `quantity.convert` and `quantity.lt` under their existing dimensional rules; `add` returns the ordinary unit type, while a conversion to a bounded result refuses an out-of-range exact value at the result type. Bare unit and compound-unit parameter forms remain `RequiresBound`. Reversed or noncanonical endpoints refuse `invalid_package`/`invalid-derived-shape`. `bounded-quantity-vectors.json` publishes the accepted, boundary, identity, operator and refusal cases; the `carried_quantity` CQ-W and CQ-E cases remain unchanged. | Test (TC-280; BQ-01..BQ-10) |
 | FR-322-AC-385 | `composite_type`/`map` is the anonymous structural pair of scalar key type node and admitted value type node, with body members `key`, `value` and path operands in that order; bounds remain separate. Equal operand identities produce one node, and changing either produces another. A non-scalar key and body/path disagreement refuse as stated in the derived-type rule. Every bounded numeric endpoint is repeated once in body and once in path: the Braking2 `Rational[0,20;1,1]` vector carries both `denominator_min` and `denominator_max` in each, consistent with decimal `scale_min` and `scale_max`. `map-type-vectors.json` is the Map arm; existing Braking2 vectors are the rational-range control. | Test (TC-233; MT-01..MT-07; TC-966) |
 | FR-322-AC-386 | A clause selected under `quire.temporal.timed/v1` carries no `temporal_bindings` row and uses `clock_name: "model-time"`. A checked timed-model subject gets its exact time binding from the joined `timed_model`/`time_source`; a trace subject supplies time-stamped positions and admitted order to the selected temporal profile. A missing source for a model subject and an extra clock row for a timed clause refuse `invalid_package`/`timed-node-reference` at the published loci. Event-position, fixed-sample and timestamped-event rows and their three profile/configuration pairs remain unchanged. | Test (TC-134; TN-01..TN-05) |
-| FR-322-AC-387 | Every `temporal_bindings` row carries `definition`, `revision` and `artifact_reference` as closed `DefinitionRef` values. `definition` equals the lock's selected temporal profile; `revision` and `artifact_reference` resolve through that definition's authored closure and agree with its revision record and selected artifact. Missing/extra/malformed refs fail the schema; substituted, foreign and unresolved refs refuse `invalid_package`/`incompatible-definition` at the first mismatching member in definition, revision, artifact order. Authenticated references remain authority-allocated artifact identities: no content-derived identity, digest field, seal, retrieval URL or package-content pin is defined or required. `temporal-definition-reference-vectors.json` publishes the valid and adverse substitutions. | Test (TC-134; TD-01..TD-08) |
 
 
 ## Dependencies

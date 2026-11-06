@@ -21,8 +21,10 @@
         "bounded_quantity",
         "<m-node>",
         "min",
+        "<rational-node>",
         "-3/2",
         "max",
+        "<rational-node>",
         "7/4"
       ],
       "expected": "admitted"
