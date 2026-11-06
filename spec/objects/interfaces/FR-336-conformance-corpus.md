@@ -255,7 +255,7 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies it under the row's `{authority, identity}`. | Test (TC-970) |
 | FR-336-AC-9 | **RETIRED (source-byte integrity removed).** Withdrawn with no replacement: a `$defs.ReplayRequest` `dependencies[*].sources[*]` entry is `{authority, identity}`. | Test (TC-969), retired |
 | FR-336-AC-10 | The published schema keeps `object_environment.identity` the closed two-member `{authority, identity}` and refuses any other member. | Test (TC-969) |
-| FR-336-AC-11 | A replay-provision path uses the explicit non-empty `{authority, identity}` source key paired with its `bytes_path`. The present pair is admitted; omission of `authority` is refused by the schema at the row, with no default or inference from the package, path or another source. | Test (TC-969; RP-01, RP-02) |
+| FR-336-AC-11 | A replay-provision path uses the explicit non-empty `{authority, identity}` source key paired with its `bytes_path`. The present pair is admitted; omission of either member or an empty value for either member is refused by the schema at the row, with no default or inference from the package, path or another source. | Test (TC-969; RP-01..RP-05) |
 
 ## Dependencies
 

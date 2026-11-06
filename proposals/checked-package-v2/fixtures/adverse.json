@@ -1963,6 +1963,25 @@
       "note": "a base dimension cannot carry derived terms",
       "locus": "/terms",
       "body_def": "DimensionBody"
+    },
+    {
+      "id": "NB-09",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/base",
+          "value": "true"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a dimension base flag is a boolean",
+      "locus": "/base",
+      "body_def": "DimensionBody"
     }
   ],
   "destination_type_mutations": [

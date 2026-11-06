@@ -168,14 +168,22 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
         .remove("identity");
     assert!(!replay_provision_validator.is_valid(&missing_identity));
 
-    // RP-01 is the positive source-key pair; RP-02 proves omission has no
-    // default or inference from the package or sibling path.
+    // RP-01 is the positive source-key pair; RP-02..RP-05 prove missing or
+    // empty authority/identity has no default or inference.
     let mut missing_authority = valid_provision_path.clone();
     missing_authority
         .as_object_mut()
         .expect("provision path is an object")
         .remove("authority");
     assert!(!replay_provision_validator.is_valid(&missing_authority));
+
+    let mut empty_authority = valid_provision_path.clone();
+    empty_authority["authority"] = json!("");
+    assert!(!replay_provision_validator.is_valid(&empty_authority));
+
+    let mut empty_identity = valid_provision_path.clone();
+    empty_identity["identity"] = json!("");
+    assert!(!replay_provision_validator.is_valid(&empty_identity));
 
     let mut extra_provision_member = valid_provision_path;
     extra_provision_member["bytes"] = json!([1, 2, 3]);

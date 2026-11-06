@@ -20166,19 +20166,7 @@
         "kind": "event_position",
         "sequence_authority": "order-events"
       },
-      "clock_name": "model-steps",
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "quire.temporal.event-position.false-extension/v1"
-      },
-      "revision": {
-        "authority": "agent-ix",
-        "identity": "quire.temporal.event-position.false-extension/v1"
-      },
-      "artifact_reference": {
-        "authority": "agent-ix",
-        "identity": "quire.temporal.event-position.false-extension/v1"
-      }
+      "clock_name": "model-steps"
     }
   ],
   "temporal_clause_names": [

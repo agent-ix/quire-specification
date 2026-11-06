@@ -38,9 +38,10 @@ Verify that call arguments are a positional array of tagged values and that a
 `{parameter, value}` argument object is refused by the schema.
 
 For the replay path, `RP-01` supplies the exact `{authority, identity,
-bytes_path}` triple and is admitted; `RP-02` removes `authority` and is
-refused by the schema at the row. No value is inferred for the missing
-authority.
+bytes_path}` triple and is admitted. `RP-02` and `RP-03` remove `authority`
+and `identity`, respectively; `RP-04` and `RP-05` set each value to the empty
+string. Each negative is refused by the schema at the row, with no default or
+inference for a missing value.
 
 Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6", "FR-336-AC-11")]`.
 
