@@ -421,7 +421,7 @@
       ],
       "ordinal": 0
     },
-    "model": "App",
+    "model": null,
     "ordinal": 0
   },
   "backend": "fixture.backend",

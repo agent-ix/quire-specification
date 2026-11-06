@@ -28,6 +28,10 @@ The corpus has four top-level members:
   FR-323 source, target and result members are reused; other nested types have
   closed structural encodings with `snake_case` Rust fields, tagged variants,
   decimal-string integers and no unknown members.
+  `obligation_identity.model` is required and nullable: `null` preserves the
+  absence of an owning model (`None`), while a non-empty string preserves that
+  exact model identity (`Some`). Missing, empty or differently typed values
+  are refused; the adapter never invents a model identity.
   `$defs.ReplayProvisionPath` rows carry the document's `authority` and
   `identity` and a `bytes_path` to a sibling `bytes` file. The consumer reads
   raw file bytes into its typed provision. These are harness adapters, not
@@ -53,7 +57,8 @@ vector's execution failure, as FR-350 requires; it is not a corpus preflight
 refusal. These checks do not rewrite `results` or `coverage`.
 
 The fixture `fixtures/replay-request.json` is a schema-valid example of the
-closed replay adapter shape. It is not an executable replay vector and makes
+closed replay adapter shape. Its function obligation has `model: null`
+because no model owns that obligation. It is not an executable replay vector and makes
 no qualification claim. The main corpus fixture remains intentionally a small
 wire example rather than a complete qualification claim. FR-336-AC-1 still requires corpus owners to cover every
 inventory capability with positive and adverse or boundary vectors where
