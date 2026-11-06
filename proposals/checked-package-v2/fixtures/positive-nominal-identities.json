@@ -564,6 +564,28 @@
           "end": 6
         }
       ]
+    },
+    {
+      "node_id": {
+        "package": "example",
+        "path": [
+          "Example",
+          "Dimensionless"
+        ],
+        "ordinal": 0
+      },
+      "role": "declaration",
+      "ordinal": 0,
+      "regions": [
+        {
+          "source": {
+            "authority": "agent-ix",
+            "identity": "example"
+          },
+          "start": 6,
+          "end": 7
+        }
+      ]
     }
   ],
   "capability_report": [
