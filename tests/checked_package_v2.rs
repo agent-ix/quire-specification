@@ -16768,7 +16768,11 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
                         .iter()
                         .all(|argument| argument["term"] == "literal")
                     {
-                        assert_eq!(node["dependencies"], json!([]), "{name}: inline operands add no dependencies");
+                        assert_eq!(
+                            node["dependencies"],
+                            json!([]),
+                            "{name}: inline operands add no dependencies"
+                        );
                     }
                 } else if operand["term"] == "reference" {
                     let target = nodes
