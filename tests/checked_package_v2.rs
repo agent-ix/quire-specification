@@ -21549,6 +21549,11 @@ fn tc_280_bounded_quantity_refusal_vector_preserves_target_domain() {
     assert_eq!(case["target"]["min"], "-1/1");
     assert_eq!(case["target"]["max"], "1/1");
     let expected = &case["expected"];
+    let expected_object = expected.as_object().unwrap();
+    assert_eq!(expected_object.len(), 4);
+    for member in ["code", "cause", "payload", "pointer"] {
+        assert!(expected_object.contains_key(member), "{member} is required");
+    }
     assert_eq!(expected["code"], "rational_out_of_domain");
     assert_eq!(expected["cause"], "outside-domain");
     assert_eq!(
