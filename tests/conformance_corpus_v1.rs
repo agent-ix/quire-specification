@@ -43,7 +43,7 @@ fn compile(schema: &Value) -> jsonschema::Validator {
 }
 
 #[test]
-#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6")]
+#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6", "FR-336-AC-11")]
 fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     let schema = parsed(SCHEMA);
     jsonschema::meta::validate(&schema).expect("Draft 2020-12 schema is valid");
@@ -167,6 +167,15 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
         .expect("provision path is an object")
         .remove("identity");
     assert!(!replay_provision_validator.is_valid(&missing_identity));
+
+    // RP-01 is the positive source-key pair; RP-02 proves omission has no
+    // default or inference from the package or sibling path.
+    let mut missing_authority = valid_provision_path.clone();
+    missing_authority
+        .as_object_mut()
+        .expect("provision path is an object")
+        .remove("authority");
+    assert!(!replay_provision_validator.is_valid(&missing_authority));
 
     let mut extra_provision_member = valid_provision_path;
     extra_provision_member["bytes"] = json!([1, 2, 3]);

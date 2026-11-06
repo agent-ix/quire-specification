@@ -3320,7 +3320,8 @@
       {
         "body": {
           "term": "dimension",
-          "terms": []
+          "terms": [],
+          "base": true
         },
         "declaration": {
           "qualified_name": [

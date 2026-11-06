@@ -174,12 +174,13 @@
     "ReplayProvisionPath": {
       "type": "object",
       "required": [
+        "authority",
         "identity",
         "bytes_path"
       ],
       "properties": {
         "authority": {
-          "type": "string"
+          "$ref": "#/$defs/Nonempty"
         },
         "identity": {
           "$ref": "#/$defs/Nonempty"

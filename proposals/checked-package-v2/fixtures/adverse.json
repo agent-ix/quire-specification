@@ -1871,6 +1871,11 @@
       "patch": [
         {
           "op": "replace",
+          "path": "/body/base",
+          "value": false
+        },
+        {
+          "op": "replace",
           "path": "/body/terms",
           "value": [
             {
@@ -1909,6 +1914,55 @@
       "outcome": "admitted",
       "note": "an enum with ordered true is admitted and is an ordered_enum",
       "body_def": "EnumBody"
+    },
+    {
+      "id": "NB-07",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension"
+      },
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/body/base"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a dimension body requires the explicit base flag",
+      "locus": "",
+      "body_def": "DimensionBody"
+    },
+    {
+      "id": "NB-08",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/terms",
+          "value": [
+            {
+              "dimension_node_id": {
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Length"
+                ],
+                "ordinal": 0
+              },
+              "exponent": "1"
+            }
+          ]
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a base dimension cannot carry derived terms",
+      "locus": "/terms",
+      "body_def": "DimensionBody"
     }
   ],
   "destination_type_mutations": [

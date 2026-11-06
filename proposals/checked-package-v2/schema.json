@@ -13475,11 +13475,15 @@
       "type": "object",
       "required": [
         "term",
+        "base",
         "terms"
       ],
       "properties": {
         "term": {
           "const": "dimension"
+        },
+        "base": {
+          "type": "boolean"
         },
         "terms": {
           "type": "array",
@@ -13501,6 +13505,25 @@
           }
         }
       },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "base": {
+                "const": true
+              }
+            },
+            "required": ["base"]
+          },
+          "then": {
+            "properties": {
+              "terms": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "UnitBody": {

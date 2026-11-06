@@ -241,7 +241,8 @@
         },
         "body": {
           "term": "dimension",
-          "terms": []
+          "terms": [],
+          "base": true
         }
       },
       {
@@ -284,6 +285,51 @@
         },
         "body": {
           "term": "dimension",
+          "terms": [],
+          "base": true
+        }
+      },
+      {
+        "node_id": {
+          "package": "example",
+          "path": [
+            "Example",
+            "Dimensionless"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "Example",
+            "Dimensionless"
+          ],
+          "ordinal": 0
+        },
+        "declaration": {
+          "qualified_name": [
+            "Example",
+            "Dimensionless"
+          ]
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "declaration",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "source",
+          "authority": "agent-ix",
+          "identity": "example"
+        },
+        "body": {
+          "term": "dimension",
+          "base": false,
           "terms": []
         }
       },

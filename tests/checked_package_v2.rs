@@ -9774,12 +9774,14 @@ fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires(
     );
 }
 
-/// FR-322-AC-269: a source `enum`, `dimension` and `unit` node carries its
-/// closed body. Each refused mutation (`NB-01`..`NB-05`) fails the V2 schema at
+/// FR-322-AC-269 and FR-322-AC-387: a source `enum`, `dimension` and `unit`
+/// node carries its closed body, with base dimensions distinguished explicitly
+/// from dimensionless derived dimensions. Each refused mutation
+/// (`NB-01`..`NB-05`, `NB-07`, `NB-08`) fails the V2 schema at
 /// the recorded locus inside the node's body, which a reader reports
 /// `malformed_wire`; the code is derived here from the schema result, not read
 /// from the vector. `NB-06` (an enum with `ordered` true) is admitted.
-#[trace("TC-233", "FR-322-AC-269")]
+#[trace("TC-233", "FR-322-AC-269", "FR-322-AC-387")]
 #[test]
 fn tc_233_nominal_body_mutations_fail_the_schema_as_malformed_wire() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
@@ -9790,7 +9792,7 @@ fn tc_233_nominal_body_mutations_fail_the_schema_as_malformed_wire() {
         .as_array()
         .expect("nominal body mutations");
     let ids: Vec<&str> = mutations.iter().map(|m| m["id"].as_str().unwrap()).collect();
-    assert_eq!(ids, ["NB-01", "NB-02", "NB-03", "NB-04", "NB-05", "NB-06"]);
+    assert_eq!(ids, ["NB-01", "NB-02", "NB-03", "NB-04", "NB-05", "NB-06", "NB-07", "NB-08"]);
     for mutation in mutations {
         let id = mutation["id"].as_str().expect("id");
         let index = node_index_where(&base, |node| {
@@ -18630,7 +18632,7 @@ const DIMENSION_EQUIVALENCE_VECTORS: &str =
 /// every equivalence body and every derived dimension body meets the closed V2
 /// schema, every named key resolves, every `at` indexes a refused case's
 /// equivalences, and the dimensions span three packages.
-#[trace("TC-280", "FR-322-AC-268")]
+#[trace("TC-280", "FR-322-AC-268", "FR-322-AC-387")]
 #[test]
 fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
     let root = parsed_fixture(SCHEMA);
@@ -18643,16 +18645,25 @@ fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
     };
     let operand_schema = schema_for_def(&root, "DimensionOperand");
     for (key, entry) in vectors["nodes"].as_object().unwrap() {
-        let Some(terms) = entry.get("terms") else { continue };
+        if entry["form"] != "dimension" { continue; }
+        let terms = entry["terms"].as_array().expect("dimension terms");
         let body = json!({
             "term": "dimension",
-            "terms": terms.as_array().unwrap().iter().map(|term| json!({
+            "base": entry["base"],
+            "terms": terms.iter().map(|term| json!({
                 "dimension_node_id": node(term["node"].as_str().unwrap()),
                 "exponent": term["exponent"]
             })).collect::<Vec<_>>()
         });
         assert!(dimension_schema.is_valid(&body), "{key}: the body meets the closed schema");
     }
+    let base_dimension = &vectors["nodes"]["rpc_time"];
+    let derived_dimensionless = &vectors["nodes"]["rpc_dimensionless"];
+    assert_eq!(base_dimension["base"], true);
+    assert_eq!(derived_dimensionless["base"], false);
+    assert!(base_dimension["terms"].as_array().unwrap().is_empty());
+    assert!(derived_dimensionless["terms"].as_array().unwrap().is_empty());
+    assert_ne!(node("rpc_time"), node("rpc_dimensionless"), "nominal declaration paths preserve distinct identity");
     let cases = vectors["cases"].as_array().unwrap();
     let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
     assert_eq!(
