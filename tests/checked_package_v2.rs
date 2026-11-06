@@ -11461,8 +11461,12 @@ fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
             .as_array()
             .expect("nodes")
             .iter()
-            .find(|node| node["declaration"]["qualified_name"] == json!(["three"]))
-            .expect("the `three` application")
+            .find(|node| {
+                node["node_tag"] == "expression"
+                    && node["semantic_form"] == "binary"
+                    && node["body"]["operation"]["identity"] == "quire.op.integer.add"
+            })
+            .expect("the integer-add expression")
             .clone()
     };
     let referenced = application(&references);
@@ -16758,8 +16762,13 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
                     assert_eq!(operand["value_kind"], "integer", "{name}");
                     assert_eq!(Some(&operand["type"]), integer.as_ref(), "{name}");
                     *inline.entry(name.to_owned()).or_default() += 1;
-                    if node["declaration"]["qualified_name"] == json!(["three"]) {
-                        assert_eq!(node["dependencies"], json!([]), "{name}: no operand node");
+                    if node["body"]["arguments"]
+                        .as_array()
+                        .expect("arguments")
+                        .iter()
+                        .all(|argument| argument["term"] == "literal")
+                    {
+                        assert_eq!(node["dependencies"], json!([]), "{name}: inline operands add no dependencies");
                     }
                 } else if operand["term"] == "reference" {
                     let target = nodes
@@ -17617,13 +17626,29 @@ fn tc_233_two_owners_differ_by_package_in_every_node_id() {
             .map(|node| node["node_id"].clone())
             .collect()
     };
-    for name in ["Point", "List", "three"] {
+    for name in ["Point", "List"] {
         let (left, right) = (declared(&a, name), declared(&b, name));
         assert_eq!(left.len(), 1, "{name} is declared once");
         assert_eq!(right.len(), 1, "{name} is declared once");
         assert_ne!(left, right, "{name} ids differ, since their package differs");
         assert_eq!(left[0]["path"], right[0]["path"], "{name}: the structural path is shared");
     }
+    let application = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| {
+                node["node_tag"] == "expression"
+                    && node["semantic_form"] == "binary"
+                    && node["body"]["operation"]["identity"] == "quire.op.integer.add"
+            })
+            .expect("the `three` integer-add expression")
+            .clone()
+    };
+    let (left, right) = (application(&a), application(&b));
+    assert_ne!(left["node_id"], right["node_id"], "the `three` expression ids differ by package");
+    assert_eq!(left["node_id"]["path"], right["node_id"]["path"], "the structural path is shared");
     assert_ne!(a, b, "the two packages are structurally unequal");
 }
 
