@@ -134,8 +134,17 @@
       "id": "BQ-09",
       "description": "quantity.convert result outside the inclusive target bounds",
       "operation": "quire.op.quantity.convert",
+      "target": {
+        "unit_identity": "ix://acme/rpc/unit/m",
+        "min": "-1/1",
+        "max": "1/1"
+      },
       "expected": {
         "code": "rational_out_of_domain",
+        "cause": "outside-domain",
+        "payload": {
+          "expected": "Quantity<ix://acme/rpc/unit/m>[-1/1, 1/1]"
+        },
         "pointer": "/semantic_graph/nodes/{n}/body/result_type"
       }
     },

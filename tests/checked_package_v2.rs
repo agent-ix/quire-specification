@@ -21527,6 +21527,43 @@ fn schedulability_claim_carrier_vectors_match_the_closed_member_schema() {
     }
 }
 
+const BOUNDED_QUANTITY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/bounded-quantity-vectors.json");
+
+/// FR-142-AC-32, FR-322-AC-384 and FR-272-AC-13 (TC-280 `MU-35`): the
+/// bounded-quantity refusal publishes the exact diagnostic code, cause,
+/// identity-bearing target payload and result-type locus without a value.
+#[trace("TC-280", "FR-142-AC-32", "FR-322-AC-384", "FR-271", "FR-272-AC-13")]
+#[test]
+fn tc_280_bounded_quantity_refusal_vector_preserves_target_domain() {
+    let vectors = parsed_fixture(BOUNDED_QUANTITY_VECTORS);
+    let case = vectors["forms"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["id"] == "BQ-09")
+        .expect("BQ-09 bounded-quantity refusal vector");
+
+    assert_eq!(case["operation"], "quire.op.quantity.convert");
+    assert_eq!(case["target"]["unit_identity"], "ix://acme/rpc/unit/m");
+    assert_eq!(case["target"]["min"], "-1/1");
+    assert_eq!(case["target"]["max"], "1/1");
+    let expected = &case["expected"];
+    assert_eq!(expected["code"], "rational_out_of_domain");
+    assert_eq!(expected["cause"], "outside-domain");
+    assert_eq!(
+        expected["payload"]["expected"],
+        "Quantity<ix://acme/rpc/unit/m>[-1/1, 1/1]"
+    );
+    assert_eq!(
+        expected["pointer"],
+        "/semantic_graph/nodes/{n}/body/result_type"
+    );
+    let payload = expected["payload"].as_object().unwrap();
+    assert_eq!(payload.len(), 1);
+    assert!(payload.contains_key("expected"));
+}
+
 fn carried_rounding_is_exact(node: &Value) -> bool {
     node["rounding"] == "exact"
 }
