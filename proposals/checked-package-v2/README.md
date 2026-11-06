@@ -488,7 +488,7 @@ declaration path; `a::Name` resolves `a` to one selected package and then matche
 part of the node identity. On a source `enum`, `unit` or `dimension` node it equals `node_id.path` (else `declaration-nominal-mismatch`, `invalid_package`),
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
-- `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.
+- `fixtures/positive-integer-literal-references.json` is the reference form of the anonymous `expression`/`binary` `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.
 - `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
   for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
   TC-367 CK-26): positive collection kinds, refused selectors and the guard

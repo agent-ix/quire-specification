@@ -583,7 +583,14 @@ the element of `Option` and of the collection types, and the target of
   bound on the magnitude; `Quantity<u>[min, max]` is not a source type form. A
   domain package's `min` or `max` constraint on a unit gives its members the
   bounded quantity type `Quantity<u>[min, max]`, a subtype of `Quantity<u>`
-  (FR-154 "Unit bounds").
+  (FR-154 "Unit bounds"). A checked-package conversion whose result type is
+  that bounded type checks the exact converted magnitude against the inclusive
+  bounds in the target unit; if outside, it refuses
+  `rational_out_of_domain`/`outside-domain` at the result type and retains the
+  expected bounded domain as `Quantity<unit-identity>[min, max]`, using the
+  unit identity and canonical reduced rational spellings from FR-154 and FR-140.
+  This diagnostic spelling is not source syntax and carries no converted
+  magnitude.
 - The checker SHALL NOT admit `Quantity<D>` over a dimension `D` as a type
   form; a source that wants it declares a unit of `D` and writes `Quantity<u>`.
 - The checker SHALL read `Quantity<u, C>` as the carried quantity type of
@@ -638,6 +645,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-29 | A conversion whose exact value is on the carrier's grid but outside its bounds, after rounding under a non-`exact` mode, refuses `decimal_out_of_domain` (a `Decimal` carrier) or `integer_out_of_domain` (an `Int` carrier) with `outside-domain` after `unit.target-domain` and before `unit.result-retain`, publishing no value (or returns `incomplete` where the charge is denied, as TC-187 U43 lists): U08 (`-2 m` and `2 m` into `Decimal[-2, 2; 0, 0; exact]` succeed, `-3 m` and `3 m` refuse), U17 (`3 m` refuses by membership under work limit two and is `incomplete` at `unit.target-domain` under work limit one), U18 (`1 m` into `Decimal[0, 1; 0, 4294967295; exact]` is `incomplete` at `unit.target-domain` for `decimal_digits` with the retained coefficient never materialized) and U29 (`3 m` into `Int[-2, 2]`). An inexact value that is also out of bounds refuses `inexact_conversion` first (TC-187 U43). | Test (TC-187) |
 | FR-142-AC-30 | The rounding mode of a carried quantity is the mode of its carrier and no operation supplies another: a `Decimal` carrier's mode is its own, an `Int` carrier's is as written (`exact` when omitted), a non-`exact` mode rounds under FR-140 with a `DecimalLoss` record and a conversion never rounds under a mode its target type does not name. The nearest-even outcomes of U07, U16 and U29 are unchanged by this requirement (TC-187 U44); `CQ-E17` to `CQ-E19` (rounding precedes the bounds check) give their carried forms. A record or collection holding a carried quantity compares it by exact value in its identical type like any quantity leaf (FR-149), and `quire.op.collection.sum.quantity` is defined over `Quantity<u>` only. | Test (TC-187) |
 | FR-142-AC-31 | `Quantity<m, Rational[-3, 7; 1, 12]>` is a carried quantity type whose mode is `exact`, distinct from `Quantity<m>`, from `Quantity<m, Rational[-3, 7; 1, 13]>` and from `Quantity<cm, Rational[-3, 7; 1, 12]>`, and refused as an operand of quantity arithmetic, equality and ordering as FR-142-AC-27 states, while `convert<Quantity<m>>` of two of its values compares them by `=` and `<`; `Quantity<m, Rational>` refuses `ill_typed`/`type-mismatch` at the carrier, and `Quantity<m, Rational[8, 7; 1, 12]>` and `Quantity<m, Rational[0, 7; 0, 12]>` refuse `ill_typed` at the carrier (FR-149 "Bounded rationals"). Converting into it, `25 cm` gives `1/4 m` and `-3 m` gives `-3 m`; `1 in`, `8 m` and `-4 m` refuse `rational_out_of_domain`/`outside-domain` after `unit.target-domain` and before `unit.result-retain`, with no value, and `8 m` under work limit one is `incomplete` at `unit.target-domain`; no conversion into it refuses `inexact_conversion`; `convert<Quantity<cm>>` of the `1/4 m` value gives `25 cm` (`CQ-W16` to `CQ-W19`, `CQ-E21` to `CQ-E26`). | Test (TC-981) |
+| FR-142-AC-32 | A checked-package conversion from `3/2 m` to the bounded result `Quantity<m>[-1, 1]` refuses `rational_out_of_domain`/`outside-domain` at `/semantic_graph/nodes/{n}/body/result_type`, with `expected` equal to `Quantity<ix://acme/rpc/unit/m>[-1/1, 1/1]` using the target unit's exact FR-154 identity and canonical reduced rational spellings; no converted magnitude is retained. The source language still has no `Quantity<u>[min,max]` type syntax: FR-154 unit bounds supply the target and FR-322 preserves it as `bounded_quantity`. | Test (TC-280) |
 
 ## Dependencies
 

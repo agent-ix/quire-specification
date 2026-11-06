@@ -11461,8 +11461,12 @@ fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
             .as_array()
             .expect("nodes")
             .iter()
-            .find(|node| node["declaration"]["qualified_name"] == json!(["three"]))
-            .expect("the `three` application")
+            .find(|node| {
+                node["node_tag"] == "expression"
+                    && node["semantic_form"] == "binary"
+                    && node["body"]["operation"]["identity"] == "quire.op.integer.add"
+            })
+            .expect("the integer-add expression")
             .clone()
     };
     let referenced = application(&references);
@@ -16758,8 +16762,17 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
                     assert_eq!(operand["value_kind"], "integer", "{name}");
                     assert_eq!(Some(&operand["type"]), integer.as_ref(), "{name}");
                     *inline.entry(name.to_owned()).or_default() += 1;
-                    if node["declaration"]["qualified_name"] == json!(["three"]) {
-                        assert_eq!(node["dependencies"], json!([]), "{name}: no operand node");
+                    if node["body"]["arguments"]
+                        .as_array()
+                        .expect("arguments")
+                        .iter()
+                        .all(|argument| argument["term"] == "literal")
+                    {
+                        assert_eq!(
+                            node["dependencies"],
+                            json!([]),
+                            "{name}: inline operands add no dependencies"
+                        );
                     }
                 } else if operand["term"] == "reference" {
                     let target = nodes
@@ -17617,13 +17630,29 @@ fn tc_233_two_owners_differ_by_package_in_every_node_id() {
             .map(|node| node["node_id"].clone())
             .collect()
     };
-    for name in ["Point", "List", "three"] {
+    for name in ["Point", "List"] {
         let (left, right) = (declared(&a, name), declared(&b, name));
         assert_eq!(left.len(), 1, "{name} is declared once");
         assert_eq!(right.len(), 1, "{name} is declared once");
         assert_ne!(left, right, "{name} ids differ, since their package differs");
         assert_eq!(left[0]["path"], right[0]["path"], "{name}: the structural path is shared");
     }
+    let application = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| {
+                node["node_tag"] == "expression"
+                    && node["semantic_form"] == "binary"
+                    && node["body"]["operation"]["identity"] == "quire.op.integer.add"
+            })
+            .expect("the `three` integer-add expression")
+            .clone()
+    };
+    let (left, right) = (application(&a), application(&b));
+    assert_ne!(left["node_id"], right["node_id"], "the `three` expression ids differ by package");
+    assert_eq!(left["node_id"]["path"], right["node_id"]["path"], "the structural path is shared");
     assert_ne!(a, b, "the two packages are structurally unequal");
 }
 
@@ -21500,6 +21529,48 @@ fn schedulability_claim_carrier_vectors_match_the_closed_member_schema() {
             );
         }
     }
+}
+
+const BOUNDED_QUANTITY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/bounded-quantity-vectors.json");
+
+/// FR-142-AC-32, FR-322-AC-384 and FR-272-AC-13 (TC-280 `MU-35`): the
+/// bounded-quantity refusal publishes the exact diagnostic code, cause,
+/// identity-bearing target payload and result-type locus without a value.
+#[trace("TC-280", "FR-142-AC-32", "FR-322-AC-384", "FR-271", "FR-272-AC-13")]
+#[test]
+fn tc_280_bounded_quantity_refusal_vector_preserves_target_domain() {
+    let vectors = parsed_fixture(BOUNDED_QUANTITY_VECTORS);
+    let case = vectors["forms"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["id"] == "BQ-09")
+        .expect("BQ-09 bounded-quantity refusal vector");
+
+    assert_eq!(case["operation"], "quire.op.quantity.convert");
+    assert_eq!(case["target"]["unit_identity"], "ix://acme/rpc/unit/m");
+    assert_eq!(case["target"]["min"], "-1/1");
+    assert_eq!(case["target"]["max"], "1/1");
+    let expected = &case["expected"];
+    let expected_object = expected.as_object().unwrap();
+    assert_eq!(expected_object.len(), 4);
+    for member in ["code", "cause", "payload", "pointer"] {
+        assert!(expected_object.contains_key(member), "{member} is required");
+    }
+    assert_eq!(expected["code"], "rational_out_of_domain");
+    assert_eq!(expected["cause"], "outside-domain");
+    assert_eq!(
+        expected["payload"]["expected"],
+        "Quantity<ix://acme/rpc/unit/m>[-1/1, 1/1]"
+    );
+    assert_eq!(
+        expected["pointer"],
+        "/semantic_graph/nodes/{n}/body/result_type"
+    );
+    let payload = expected["payload"].as_object().unwrap();
+    assert_eq!(payload.len(), 1);
+    assert!(payload.contains_key("expected"));
 }
 
 fn carried_rounding_is_exact(node: &Value) -> bool {

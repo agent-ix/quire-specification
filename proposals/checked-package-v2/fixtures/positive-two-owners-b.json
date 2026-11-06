@@ -363,28 +363,31 @@
           },
           "term": "application"
         },
-        "declaration": {
-          "qualified_name": [
-            "three"
-          ]
-        },
         "dependencies": [],
         "node_id": {
           "ordinal": 0,
           "package": "example-b",
           "path": [
-            "three"
+            "expression",
+            "binary",
+            {
+              "node": 2
+            },
+            "1",
+            "2",
+            "quire.op.integer.add",
+            "binary"
           ]
         },
-        "node_tag": "value",
+        "node_tag": "expression",
         "occurrences": [
           {
             "ordinal": 0,
-            "role": "declaration"
+            "role": "expression"
           }
         ],
         "schema_version": "quire.checked-semantic-graph/v2",
-        "semantic_form": "literal",
+        "semantic_form": "binary",
         "semantic_type": {
           "ordinal": 0,
           "package": "example-b",
@@ -487,7 +490,15 @@
         "ordinal": 0,
         "package": "example-b",
         "path": [
-          "three"
+          "expression",
+          "binary",
+          {
+            "node": 2
+          },
+          "1",
+          "2",
+          "quire.op.integer.add",
+          "binary"
         ]
       },
       "ordinal": 0,
@@ -501,7 +512,7 @@
           "start": 6
         }
       ],
-      "role": "declaration"
+      "role": "expression"
     }
   ]
 }
