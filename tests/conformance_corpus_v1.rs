@@ -3,7 +3,7 @@
 
 //! FR-336's closed conformance-corpus v1 structural contract.
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;
@@ -228,6 +228,82 @@ fn object_environment_identity_is_the_closed_two_member_pair() {
 const REPLAY_REQUEST: &str =
     include_str!("../proposals/conformance-corpus-v1/fixtures/replay-request.json");
 
+/// The corpus preserves an absent owning model as `None` and an exact
+/// non-empty model identity as `Some`, without a placeholder identity.
+#[test]
+#[trace("TC-970", "FR-336-AC-12")]
+fn replay_obligation_model_preserves_absence_and_present_identity() {
+    let schema = parsed(SCHEMA);
+    let request = definition_validator(&schema, "ReplayRequest");
+    let fixture = parsed(REPLAY_REQUEST);
+    assert_eq!(fixture["obligation_identity"]["model"], Value::Null);
+    assert!(
+        request.is_valid(&fixture),
+        "the model-independent function fixture admits an explicit null model"
+    );
+    let absent: Option<String> =
+        serde_json::from_value(fixture["obligation_identity"]["model"].clone())
+            .expect("the admitted null model decodes as an optional identity");
+    assert_eq!(absent, None, "null does not invent an owning model");
+
+    for identity in ["example/model", "Model/Cafe\u{301}"] {
+        let mut present = fixture.clone();
+        present["obligation_identity"]["model"] = json!(identity);
+        assert!(
+            request.is_valid(&present),
+            "the non-empty model identity {identity:?} is admitted"
+        );
+        let decoded: Option<String> =
+            serde_json::from_value(present["obligation_identity"]["model"].clone())
+                .expect("an admitted model string decodes as an optional identity");
+        assert_eq!(
+            decoded.as_deref(),
+            Some(identity),
+            "the model string is preserved without normalization or substitution"
+        );
+    }
+}
+
+/// Nullable does not make the model member optional or widen the closed
+/// obligation object to malformed values and unknown members.
+#[test]
+#[trace("TC-970", "FR-336-AC-12")]
+fn replay_obligation_model_refuses_missing_malformed_and_unknown_members() {
+    let schema = parsed(SCHEMA);
+    let request = definition_validator(&schema, "ReplayRequest");
+    let fixture = parsed(REPLAY_REQUEST);
+    assert!(request.is_valid(&fixture));
+
+    let mut missing = fixture.clone();
+    missing["obligation_identity"]
+        .as_object_mut()
+        .expect("the fixture obligation identity is an object")
+        .remove("model");
+    assert!(
+        !request.is_valid(&missing),
+        "model remains required even when no model owns the obligation"
+    );
+
+    for (case, model) in [
+        ("empty string", json!("")),
+        ("Boolean", json!(true)),
+        ("number", json!(0)),
+        ("array", json!([])),
+        ("object", json!({})),
+    ] {
+        let mut malformed = fixture.clone();
+        malformed["obligation_identity"]["model"] = model;
+        assert!(!request.is_valid(&malformed), "a {case} model is refused");
+    }
+
+    let mut unknown = fixture;
+    unknown["obligation_identity"]["invented"] = json!(true);
+    assert!(
+        !request.is_valid(&unknown),
+        "the obligation identity remains closed"
+    );
+}
+
 /// FR-336-AC-7: a replay request carries the proved checked package as its
 /// closed top-level `package` member, so its node ids have a graph to resolve
 /// against; a request without it, or with a package that is not a checked
@@ -272,9 +348,11 @@ fn dependency_entry_carries_optional_refinement_internals() {
     let schema = parsed(SCHEMA);
     let request = definition_validator(&schema, "ReplayRequest");
     let fixture = parsed(REPLAY_REQUEST);
-    assert!(fixture["dependencies"][0]
-        .get("refinement_internals")
-        .is_none());
+    assert!(
+        fixture["dependencies"][0]
+            .get("refinement_internals")
+            .is_none()
+    );
     assert!(request.is_valid(&fixture), "absent member is admitted");
 
     let mut carried = fixture.clone();
