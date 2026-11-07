@@ -1,4 +1,7 @@
 {
+  "canonicalization": {
+    "algorithm": "rfc8785-v1"
+  },
   "constructs": [
     {
       "construct": {

@@ -17451,20 +17451,54 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_derive
 #[test]
 fn shapes_variant_case_identities_preserve_declared_case() {
     let document = parsed_fixture(SHAPES_DOCUMENT);
+    assert_eq!(
+        document["canonicalization"],
+        json!({"algorithm": "rfc8785-v1"}),
+        "the shared Semantic IR reader's canonicalization descriptor is present",
+    );
     let types = document["types"]
         .as_array()
         .expect("the document's type definitions");
     let expected = [
-        ("Shape", "Flag", "ix://acme/shapes/variant/Shape-Flag", Some("ix://quire/native/Boolean")),
-        ("Shape", "Empty", "ix://acme/shapes/variant/Shape-Empty", None),
-        ("Shape", "Both", "ix://acme/shapes/variant/Shape-Both", Some("ix://acme/shapes/Pair")),
+        (
+            "Shape",
+            "Flag",
+            "ix://acme/shapes/variant/Shape-Flag",
+            Some("ix://quire/native/Boolean"),
+        ),
+        (
+            "Shape",
+            "Empty",
+            "ix://acme/shapes/variant/Shape-Empty",
+            None,
+        ),
+        (
+            "Shape",
+            "Both",
+            "ix://acme/shapes/variant/Shape-Both",
+            Some("ix://acme/shapes/Pair"),
+        ),
         ("Color", "Red", "ix://acme/shapes/variant/Color-Red", None),
-        ("Color", "Green", "ix://acme/shapes/variant/Color-Green", None),
+        (
+            "Color",
+            "Green",
+            "ix://acme/shapes/variant/Color-Green",
+            None,
+        ),
         ("List", "Nil", "ix://acme/shapes/variant/List-Nil", None),
-        ("List", "Cons", "ix://acme/shapes/variant/List-Cons", Some("ix://acme/shapes/Cell")),
+        (
+            "List",
+            "Cons",
+            "ix://acme/shapes/variant/List-Cons",
+            Some("ix://acme/shapes/Cell"),
+        ),
     ];
     assert_eq!(
-        types.iter().filter_map(|declared| declared["variants"].as_array()).map(Vec::len).sum::<usize>(),
+        types
+            .iter()
+            .filter_map(|declared| declared["variants"].as_array())
+            .map(Vec::len)
+            .sum::<usize>(),
         expected.len(),
         "every published variant case is checked",
     );
@@ -17482,8 +17516,15 @@ fn shapes_variant_case_identities_preserve_declared_case() {
             .find(|case| case["name"] == name)
             .unwrap_or_else(|| panic!("the {artifact} case {name}"));
         assert_eq!(case["identity"], identity, "the minted slot for {name}");
-        assert_eq!(case["origin"], owner["origin"], "the source origin of {name}");
-        assert_eq!(case.get("payloadType").and_then(Value::as_str), payload, "the payload of {name}");
+        assert_eq!(
+            case["origin"], owner["origin"],
+            "the source origin of {name}"
+        );
+        assert_eq!(
+            case.get("payloadType").and_then(Value::as_str),
+            payload,
+            "the payload of {name}"
+        );
         let projected = projection["variant_types"]
             .as_array()
             .expect("projected variant declarations")
@@ -17496,7 +17537,11 @@ fn shapes_variant_case_identities_preserve_declared_case() {
             .iter()
             .find(|case| case["name"] == name)
             .expect("the original case name remains exposed");
-        assert_eq!(projected_case["payloadType"], json!(payload), "the projected payload of {name}");
+        assert_eq!(
+            projected_case["payloadType"],
+            json!(payload),
+            "the projected payload of {name}"
+        );
     }
 }
 
