@@ -2,6 +2,7 @@
 //! Case-preserving identities in the authored model fixture (FR-154).
 
 use ix_trace_rs::trace;
+use quire_specification::ACME_COLORS_DOMAIN_PACKAGE;
 use serde_json::{Value, json};
 
 const SHAPES_DOCUMENT: &str =
@@ -86,6 +87,56 @@ fn shapes_variant_case_identities_preserve_declared_case() {
             case.get("payloadType"),
             expected_payload.as_ref(),
             "the payload of {name}"
+        );
+    }
+}
+
+/// The standalone comparison model is a complete independent declaration
+/// document with exactly the two nullary cases its native source names.
+#[trace("TC-234", "FR-154-AC-11")]
+#[test]
+fn colors_comparison_model_exposes_two_original_nullary_cases() {
+    let document: Value =
+        serde_json::from_str(ACME_COLORS_DOMAIN_PACKAGE).expect("the authored enum model JSON");
+    assert_eq!(document["contractVersion"], "2.0.0");
+    assert_eq!(document["package"]["identity"], "acme/colors");
+    assert_eq!(document["source"]["identity"], "ix://acme/colors/spec");
+    assert_eq!(
+        document["canonicalization"],
+        json!({"algorithm": "rfc8785-v1"}),
+    );
+    let constructs = document["constructs"]
+        .as_array()
+        .expect("the construct declaration");
+    assert_eq!(constructs.len(), 1);
+    assert_eq!(constructs[0]["construct"]["shape"], "enumeration");
+    assert_eq!(
+        constructs[0]["construct"]["meaning"],
+        "quire.meaning.model.variant-type/v1",
+    );
+    let types = document["types"]
+        .as_array()
+        .expect("the original declarations");
+    assert_eq!(types.len(), 1, "the comparison model declares only Color");
+    let color = &types[0];
+    assert_eq!(color["identity"], "ix://acme/colors/Color");
+    assert_eq!(color["kind"], constructs[0]["kind"]);
+    let cases = color["variants"].as_array().expect("the Color cases");
+    assert_eq!(cases.len(), 2);
+    for (name, identity) in [
+        ("Red", "ix://acme/colors/variant/Color-Red"),
+        ("Green", "ix://acme/colors/variant/Color-Green"),
+    ] {
+        let case = cases
+            .iter()
+            .find(|case| case["name"] == name)
+            .expect("the named case");
+        assert_eq!(case["identity"], identity);
+        assert!(case.get("payloadType").is_none(), "{name} remains nullary");
+        assert_eq!(case["origin"], color["origin"]);
+        assert_eq!(
+            case["origin"]["source"]["sourceIdentity"],
+            document["source"]["identity"]
         );
     }
 }

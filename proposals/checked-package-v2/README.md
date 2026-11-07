@@ -129,6 +129,17 @@ structures, but any external consumer receives only the contract.
   from the document), the declaration node ids and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them.
+- `domain-package-acme-colors.json` is a complete independent Semantic IR
+  2.0.0 model declaring the two nullary `Color` cases `Red` and `Green` under
+  `acme/colors`. `fixtures/model-enum-comparison.native` selects it and
+  declares `isRed` with equality and `notGreen` with inequality. A native
+  compile of this pair is expected to retain one `model_root`, one
+  `model`/`variant_type` declaration, the two `value`/`enum_value` cases and
+  admitted decisions for `quire.op.enum.eq` and `quire.op.enum.ne`. This is
+  a consumer compilation input; it is not a runtime comparison result or
+  generated-code agreement claim. The dependency-free Rust library exposes
+  its exact bytes as `ACME_COLORS_DOMAIN_PACKAGE` and
+  `ACME_COLORS_COMPARISON_SOURCE` (FR-154-AC-11, TC-234).
 - `model-option-type-vectors.json` publishes the `acme/optionals` projection of
   option value types (FR-154 "Option value types"; `kind` `option` with one
   `inner` type reference), the FR-322 step 4 member types of fields typed by

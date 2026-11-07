@@ -1,0 +1,84 @@
+{
+  "canonicalization": {
+    "algorithm": "rfc8785-v1"
+  },
+  "constructs": [
+    {
+      "construct": {
+        "identity": "value",
+        "meaning": "quire.meaning.model.variant-type/v1",
+        "members": {
+          "variants": "required"
+        },
+        "shape": "enumeration"
+      },
+      "kind": {
+        "module": "acme/colors",
+        "name": "variant"
+      },
+      "moduleVersion": "1.0.0"
+    }
+  ],
+  "contractVersion": "2.0.0",
+  "extensions": [],
+  "occurrences": [],
+  "package": {
+    "identity": "acme/colors",
+    "mappingVersions": [],
+    "profileVersions": [],
+    "version": "1.0.0"
+  },
+  "source": {
+    "dialect": "spec-bundle",
+    "identity": "ix://acme/colors/spec",
+    "version": "1.0.0"
+  },
+  "types": [
+    {
+      "constraints": [],
+      "displayName": "Color",
+      "extensions": [],
+      "identity": "ix://acme/colors/Color",
+      "kind": {
+        "module": "acme/colors",
+        "name": "variant"
+      },
+      "origin": {
+        "source": {
+          "path": "colors/Color.md",
+          "sourceIdentity": "ix://acme/colors/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "variants": [
+        {
+          "identity": "ix://acme/colors/variant/Color-Red",
+          "name": "Red",
+          "origin": {
+            "source": {
+              "path": "colors/Color.md",
+              "sourceIdentity": "ix://acme/colors/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/colors/variant/Color-Green",
+          "name": "Green",
+          "origin": {
+            "source": {
+              "path": "colors/Color.md",
+              "sourceIdentity": "ix://acme/colors/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

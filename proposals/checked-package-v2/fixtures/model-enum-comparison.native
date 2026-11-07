@@ -1,0 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+language "ix:native" edition "1-draft";
+profile v = "quire.value.complete/v1";
+model M = "acme/colors";
+function isRed using v(c: M::Color): Boolean pure { c = M::Color::Red }
+function notGreen using v(c: M::Color): Boolean pure { c != M::Color::Green }

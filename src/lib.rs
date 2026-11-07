@@ -19,6 +19,17 @@ pub const COMPLETE_VALUE_SELECTION_VECTORS: &str =
 pub const NATIVE_DIAGNOSTICS: &str =
     include_str!("../proposals/quire-v1/definitions/native-diagnostics.md");
 
+/// The complete `acme/colors` Semantic IR 2.0.0 model with the two nullary
+/// `Color` cases, exposed for consumers' enum-comparison inputs.
+pub const ACME_COLORS_DOMAIN_PACKAGE: &str =
+    include_str!("../proposals/checked-package-v2/domain-package-acme-colors.json");
+
+/// Native source selecting [`ACME_COLORS_DOMAIN_PACKAGE`] and declaring
+/// equality with `Red` and inequality with `Green`. These are authored input
+/// bytes, not a recorded runtime or generated-code agreement result.
+pub const ACME_COLORS_COMPARISON_SOURCE: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/model-enum-comparison.native");
+
 /// `proposals/quire-v1/definitions/value-accounting-charge-point-vectors.json`:
 /// the complete charge-point spelling list of `quire.value.accounting/v1`'s
 /// ordered table, with spellings the table does not declare. A kernel compares
