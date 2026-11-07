@@ -314,7 +314,8 @@ declaration   = dimension-decl | dimension-equivalence | unit-decl | enum-decl |
               | state-clause | temporal-clause | protocol-clause
               | relation-clause | hyper-clause | state-graph-clause
               | hybrid-decl | synthesis-decl | verification-plan
-              | operation-body | abstraction-decl | terminal-decl ;
+              | operation-body | abstraction-decl | terminal-decl
+              | guarantee-decl | composition-decl ;
 
 type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Int', '[', signed-int, ',', signed-int, ']'
@@ -826,6 +827,53 @@ content admits no escape sequence, every Rust segment's byte offsets inside the
 string are source spans. A package that does not select
 `quire.model.complete/v1` receives `unsupported_construct` for an
 `abstraction-decl`.
+
+### Implementation guarantee declaration
+
+A `guarantee-decl` spells the implementation-guarantee item of FR-488 over a
+temporal clause and an `abstraction-decl`. FR-490 owns its static meaning,
+refusals and derived items.
+
+```ebnf
+guarantee-decl      = 'guarantee', ident, 'of', ident, 'using', ident, '{',
+                      initial-binding, { guarantee-member }, '}' ;
+initial-binding     = 'initial', 'to', rust-path, ';' ;
+guarantee-member    = progress-premise | environment-premise ;
+progress-premise    = 'progress', operation-name,
+                      ( 'decreases', rust-path | 'bound', uint ), ';' ;
+environment-premise = 'environment', ident, 'by', string,
+                      ( fairness | 'assumes', qualified-name, ';' ) ;
+```
+
+### Component composition declaration
+
+A `composition-decl` spells the composition request of FR-489 over imported
+checked component packages. FR-491 owns its static meaning, refusals,
+dependency graph and derived slots.
+
+```ebnf
+composition-decl    = 'compose', ident, 'rule', composition-rule, '{',
+                      component-decl, component-decl, { component-decl },
+                      { composition-member }, '}' ;
+composition-rule    = 'assume-guarantee' | 'protocol-refinement'
+                    | 'refinement-transfer' | 'interface' ;
+component-decl      = 'component', ident, 'from', ident, 'using', ident, ';' ;
+composition-member  = 'guarantee', component-clause, ';'
+                    | 'rely', component-clause, 'on', component-clause, ';'
+                    | 'depends', component-clause, 'on', component-clause, ';'
+                    | 'supplies', fairness
+                    | environment-premise ;
+component-clause    = ident, '::', ident ;
+```
+
+The words `guarantee`, `of`, `initial`, `progress`, `decreases`, `bound`,
+`environment`, `by`, `assumes`, `compose`, `rule`, `component`, `from`,
+`rely`, `on`, `depends` and `supplies` are matched as keyword spellings only
+in their `guarantee-decl` and `composition-decl` positions and remain
+identifiers elsewhere; the four rule spellings are hyphenated single
+keyword spellings in the `composition-rule` position. A package that does
+not select `quire.model.complete/v1` receives `unsupported_construct` for
+either declaration.
 
 ### Hyperproperty and state-graph forms over a model
 

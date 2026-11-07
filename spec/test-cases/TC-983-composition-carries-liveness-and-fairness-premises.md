@@ -42,7 +42,7 @@ boundary:
 ## Expected Results
 
 1. `proved`, `decisive-witness`, with the premise discharge record.
-2. The flag refused `invalid_runtime_input`/`invalid-value`; the four lists accepted.
+2. The flag refused `invalid_runtime_input`/`wrong-value-kind`; the four lists accepted.
 3. Each `inconclusive`/`premise-unproved` naming the premise, premise undischarged.
 4. Refused as FR-176-AC-3 refuses circular reasoning; with the lattice accepted and every iteration recorded.
 5. `proved` with certification `trusted` citing the plugin result; `inconclusive`/`premise-unproved` naming the premise and the assumption; `unsupported` naming the capability; `inconclusive`/`premise-unproved`; `incomplete`; five distinct outcomes.

@@ -1551,6 +1551,114 @@
       },
       "additionalProperties": false
     },
+    "GuaranteeScheduling": {
+      "description": "FR-490: a scheduling premise or supplied fairness constraint over a bound operation.",
+      "type": "object",
+      "required": ["kind", "granularity", "context", "operation"],
+      "properties": {
+        "kind": {"enum": ["weak", "strong"]},
+        "granularity": {"enum": ["whole", "each"]},
+        "context": {"$ref": "#/$defs/NodeRef"},
+        "operation": {"$ref": "#/$defs/Identifier"}
+      },
+      "additionalProperties": false
+    },
+    "GuaranteeEnvironmentEntry": {
+      "description": "FR-490: an environment premise; an assumption, with no certification.",
+      "type": "object",
+      "required": ["name", "supplier", "supplies"],
+      "properties": {
+        "name": {"$ref": "#/$defs/Identifier"},
+        "supplier": {"$ref": "#/$defs/Nonempty"},
+        "supplies": {
+          "oneOf": [
+            {"type": "object", "required": ["fairness"], "properties": {"fairness": {"$ref": "#/$defs/GuaranteeScheduling"}}, "additionalProperties": false},
+            {"type": "object", "required": ["assumption"], "properties": {"assumption": {"$ref": "#/$defs/NodeRef"}}, "additionalProperties": false}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ImplementationGuaranteeBody": {
+      "description": "FR-490: the correspondence/implementation_guarantee body.",
+      "type": "object",
+      "required": ["term", "clause", "relation", "initial", "progress", "environment"],
+      "properties": {
+        "term": {"const": "implementation_guarantee"},
+        "clause": {"$ref": "#/$defs/NodeRef"},
+        "relation": {"$ref": "#/$defs/NodeRef"},
+        "initial": {"$ref": "#/$defs/RustPath"},
+        "progress": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["context", "operation", "measure"],
+            "properties": {
+              "context": {"$ref": "#/$defs/NodeRef"},
+              "operation": {"$ref": "#/$defs/Identifier"},
+              "measure": {
+                "oneOf": [
+                  {"type": "object", "required": ["decreases"], "properties": {"decreases": {"$ref": "#/$defs/RustPath"}}, "additionalProperties": false},
+                  {"type": "object", "required": ["bound"], "properties": {"bound": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}}, "additionalProperties": false}
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "environment": {"type": "array", "items": {"$ref": "#/$defs/GuaranteeEnvironmentEntry"}}
+      },
+      "additionalProperties": false
+    },
+    "CompositionClauseRef": {
+      "description": "FR-491: a component's temporal clause.",
+      "type": "object",
+      "required": ["component", "clause"],
+      "properties": {
+        "component": {"$ref": "#/$defs/Identifier"},
+        "clause": {"$ref": "#/$defs/NodeRef"}
+      },
+      "additionalProperties": false
+    },
+    "CompositionPremiseEntry": {
+      "description": "FR-491: a rely or liveness-dependency premise.",
+      "type": "object",
+      "required": ["guarantee", "on"],
+      "properties": {
+        "guarantee": {"$ref": "#/$defs/CompositionClauseRef"},
+        "on": {"$ref": "#/$defs/CompositionClauseRef"}
+      },
+      "additionalProperties": false
+    },
+    "ComponentCompositionBody": {
+      "description": "FR-491: the correspondence/component_composition body; the four premise lists stay separate.",
+      "type": "object",
+      "required": ["term", "rule", "components", "guarantees", "relies", "liveness_dependencies", "supplies", "environment"],
+      "properties": {
+        "term": {"const": "component_composition"},
+        "rule": {"enum": ["assume-guarantee", "protocol-refinement", "refinement-transfer", "interface"]},
+        "components": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["name", "package", "subject"],
+            "properties": {
+              "name": {"$ref": "#/$defs/Identifier"},
+              "package": {"$ref": "#/$defs/Nonempty"},
+              "subject": {"$ref": "#/$defs/NodeRef"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "guarantees": {"type": "array", "items": {"$ref": "#/$defs/CompositionClauseRef"}},
+        "relies": {"type": "array", "items": {"$ref": "#/$defs/CompositionPremiseEntry"}},
+        "liveness_dependencies": {"type": "array", "items": {"$ref": "#/$defs/CompositionPremiseEntry"}},
+        "supplies": {"type": "array", "items": {"$ref": "#/$defs/GuaranteeScheduling"}},
+        "environment": {"type": "array", "items": {"$ref": "#/$defs/GuaranteeEnvironmentEntry"}}
+      },
+      "additionalProperties": false
+    },
     "StateTransitionBody": {
       "type": "object",
       "required": [
@@ -2828,7 +2936,11 @@
                       "const": "correspondence"
                     },
                     "semantic_form": {
-                      "const": "abstraction_relation"
+                      "enum": [
+                        "abstraction_relation",
+                        "implementation_guarantee",
+                        "component_composition"
+                      ]
                     }
                   },
                   "required": [
@@ -2839,7 +2951,12 @@
                 "then": {
                   "properties": {
                     "body": {
-                      "$ref": "#/$defs/AbstractionRelationBody"
+                      "description": "FR-451, FR-490, FR-491: the body whose term equals the semantic_form.",
+                      "oneOf": [
+                        {"$ref": "#/$defs/AbstractionRelationBody"},
+                        {"$ref": "#/$defs/ImplementationGuaranteeBody"},
+                        {"$ref": "#/$defs/ComponentCompositionBody"}
+                      ]
                     },
                     "occurrences": {
                       "items": {
@@ -5814,7 +5931,9 @@
                 "model_correspondence",
                 "binding_role",
                 "profile_correspondence",
-                "abstraction_relation"
+                "abstraction_relation",
+                "implementation_guarantee",
+                "component_composition"
               ]
             }
           }

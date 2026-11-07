@@ -21,6 +21,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
+  - target: ix://agent-ix/quire-specification/FR-490
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-492
+    type: references
 ---
 
 # FR-488: Attach a temporal guarantee to implementation Rust through checked correspondence
@@ -49,7 +53,14 @@ it; and the obligation identities of
 - the **correspondence** items below, one per obligation;
 - the **progress** items below;
 - the **environment premises**, each a typed assumption record with its
-  supplier and trust basis (FR-354).
+  supplier; an assumption carries no FR-354 certification and the conclusion
+  record lists it as an assumption.
+
+The item is authored as an FR-490 `guarantee-decl`, which fixes `P`, the
+relation, the measures and the environment premises and derives every
+premise slot in order. The planner reads the item, every premise result and
+every environment record from one FR-492 settlement request, and refuses a
+malformed, forged or mismatched request there.
 
 ## Outputs
 
@@ -89,7 +100,13 @@ liveness clause also requires, each as its own item:
    constraint is executed by the implementation under the scheduling premise
    the environment records, with the kind and granularity rule of FR-380
    ("Fairness implication"). A scheduling premise stronger than the
-   environment supplies is not assumed.
+   environment supplies is not assumed. The planner settles this item
+   itself, one per constraint of `F_P`, from the scheduling environment
+   premises and the relation's frame bindings: `proved` when a scheduling
+   premise over the constraint's operation, whose operation has a frame
+   binding, implies it; otherwise `inconclusive`, cause
+   `transfer-not-preserving{reason: fairness, constraint}`, naming the
+   constraint.
 
 A safety clause needs the model claim, initialization, transition simulation,
 frame and the environment premises it reads; it needs no progress item.
@@ -156,6 +173,10 @@ invalidates the record.
   this requirement uses and does not replace; real Verus execution stays with
   the FR-350 backend.
 - [FR-354](FR-354-record-proof-trust-basis.md): the trust basis of each premise.
+- [FR-490](FR-490-spell-and-check-an-implementation-guarantee-declaration.md)
+  and [FR-492](../../objects/interfaces/FR-492-planner-settlement-request.md):
+  the authored declaration, its derived slots, and the settlement request and
+  planner result that carry them.
 - [FR-377](../analysis/FR-377-decide-model-refinement.md) and
   [FR-380](../analysis/FR-380-transfer-claims-through-refinement.md): the
   model-to-model refinement and the stuttering and fairness rules this
