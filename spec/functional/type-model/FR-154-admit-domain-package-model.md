@@ -185,8 +185,12 @@ variants refusals name these members:
 - A case with no source span names the type node and `TypeDefinition.variants[i].origin`.
 - A case's identity is the variant slot identity of its owner
   (`ix://<package identity>/variant/<Name>-<value>`) with `<Name>` the owner's
-  artifact id verbatim and `<value>` the case name slugged. A case whose identity is
-  not that identity names the case node, as given, and `Variant.identity`.
+  artifact id verbatim and `<value>` the case name's case-preserving slug under
+  filament-core-data FR-095. Thus artifact `Color` with cases `Red` and `Green`
+  mints `variant/Color-Red` and `variant/Color-Green`, including in the published
+  `domain-package-acme-shapes.json` fixture. Lowercasing either part changes the
+  identity. A case whose identity is not its minted identity names the case node,
+  as given, and `Variant.identity`.
 - A `payloadType` that is unresolved or is not an admitted value type names the
   case node and `Variant.payloadType`, with
   `unsupported_construct`/`declaration-form`.
