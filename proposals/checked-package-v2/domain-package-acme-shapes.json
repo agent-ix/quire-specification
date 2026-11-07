@@ -364,7 +364,7 @@
       "unknownPolicy": "reject",
       "variants": [
         {
-          "identity": "ix://acme/shapes/variant/Shape-flag",
+          "identity": "ix://acme/shapes/variant/Shape-Flag",
           "name": "Flag",
           "origin": {
             "source": {
@@ -377,7 +377,7 @@
           "payloadType": "ix://quire/native/Boolean"
         },
         {
-          "identity": "ix://acme/shapes/variant/Shape-empty",
+          "identity": "ix://acme/shapes/variant/Shape-Empty",
           "name": "Empty",
           "origin": {
             "source": {
@@ -389,7 +389,7 @@
           }
         },
         {
-          "identity": "ix://acme/shapes/variant/Shape-both",
+          "identity": "ix://acme/shapes/variant/Shape-Both",
           "name": "Both",
           "origin": {
             "source": {
@@ -470,7 +470,7 @@
       "unknownPolicy": "reject",
       "variants": [
         {
-          "identity": "ix://acme/shapes/variant/List-nil",
+          "identity": "ix://acme/shapes/variant/List-Nil",
           "name": "Nil",
           "origin": {
             "source": {
@@ -482,7 +482,7 @@
           }
         },
         {
-          "identity": "ix://acme/shapes/variant/List-cons",
+          "identity": "ix://acme/shapes/variant/List-Cons",
           "name": "Cons",
           "origin": {
             "source": {
