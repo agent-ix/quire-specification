@@ -13,7 +13,9 @@ relationships:
 ## Description
 
 Accepted FS04 portable differential and identity-mutation controls for the
-native temporal bridge. Qcir #71 owns execution.
+native temporal bridge. Contract IR FR-350/TC-461 allocate execution to the
+bridge in `quire-integration` (IR-1005); publication of this procedure is not
+runtime or exhaustive-coverage credit.
 
 ## Test Procedure
 
@@ -38,6 +40,31 @@ closure, surrounding-execution progress and closure, settlement basis, one
 decision-support identity, completeness and supersession. Offer numeric,
 nullable, unavailable and pending proposition inputs.
 
+Before each projection, use the actual checked-package/v2 subject and QSL
+classification. Admit the same producer bytes independently a second time and
+cross-wire the original subject/classification with it; separately test an
+unchanged clone of the original admission and the original subject borrow.
+Mutate one public support, premise or retained classification field while
+keeping the sealed selection, then reclassify the original bound subject.
+Require refusal before TL construction for every foreign admission or changed
+classification; keep clone admission membership distinct from view borrow
+membership.
+
+Use two occurrences that share a clause node but have different original
+node/role/ordinal keys and name/clock rows. Select each explicitly; cross-wire
+an occurrence, valuation instance, admitted observation or owner numeric
+anchor. Read selected model package identities in their owner-admitted order,
+and require no caller-authored or inferred source model alias map. Retain the
+actual owner-read formula, trace/history, request and mapped-result values and
+check exposed typed members, public names/versions and definition references
+rather than a content digest or bridge record reference.
+
+For each corrected result, supply the actual complete immutable direct
+predecessor values. Substitute a different complete native or TL owner result
+with the same result identifier; also try a missing, skipped and foreign
+predecessor. Validate lineage through the owners' non-evaluating operations,
+without invoking either evaluator from projection, join or strict reading.
+
 ## Expected Results
 
 Every member of the declared finite population agrees and retains full
@@ -52,3 +79,12 @@ history-cutoff boundary is `incomplete` with cause `missing-history`. Each ident
 native Boolean values enter the TL proposition population. Equal TL truth or
 formula bytes never supply a missing result axis; every valid mapping retains
 the native/shared-result metadata outside the TL formula where necessary.
+
+Foreign admissions, changed classification facts and cross-wired occurrence,
+instance or observation selections refuse before any TL output is admitted.
+Owner-read typed values and selected model package order remain exact; no
+source alias, admission capability or artifact identity is invented. A
+same-identifier but different full predecessor establishes no supersession,
+and every non-final join has no agreement Boolean. These are planned bridge
+acceptance procedures; no test or integration row becomes Passed merely by
+publishing this spec correction.

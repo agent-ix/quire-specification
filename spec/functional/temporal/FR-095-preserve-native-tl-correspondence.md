@@ -17,6 +17,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-contract-ir/FR-350
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-515
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-527
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-052
+    type: references
 ---
 ## Description
 
@@ -26,11 +32,15 @@ native operator, predicate, clock, capture, history and closure meaning.
 
 ## Inputs
 
-An exact native temporal subject from QSL FR-045; total-Boolean predicate
-projections that Contract IR FR-350 builds from the native `holds` leaves and
-the trace's explicit valuation cells; selected observation and clock bindings;
-and an exact bridge-definition identity naming the TL syntax and evaluator
-profiles it targets.
+An admitted `quire.checked-package/v2` package, its QSL FR-515 checked temporal
+subject view and the QSL FR-527 classification of that subject against FR-045's
+support table; the native owner's admitted evaluation evidence and actual
+FR-052 report; total-Boolean predicate projections that Contract IR FR-350
+builds from the native `holds` leaves and explicit valuation cells; selected
+observation and clock bindings; and an exact bridge-definition identity naming
+the TL syntax and evaluator profiles it targets. Occurrence and instance
+selections are independently bound inputs, not consequences of a shared clause
+node, display name or equal formula.
 
 ## Outputs
 
@@ -40,6 +50,35 @@ dimension. The generated TL artifact is internal derived output and never
 editable source.
 
 ## Behavior
+
+### Checked owner inputs and boundary
+
+The bridge shall consume the actual checked package, subject view and
+classification through the public owner APIs, preserving the opaque
+admitted-package binding that QSL retains from the checked-package owner. It
+shall first verify the subject belongs to the supplied borrowed package and
+the classification retains that package's admission, then reclassify the
+subject with the same surrounding-execution closure and compare the complete
+result. Equal bytes, graph contents, package names, profile definitions or
+clause nodes do not authorize a separately admitted package. An unchanged clone
+may retain an admission; a subject view's original borrow and the
+classification's retained admission are distinct checks.
+
+The bridge shall select a declared clause occurrence by its original
+node/role/ordinal key and authenticate its corresponding profile/clock,
+valuation instance, observation and anchor under Contract IR FR-350. The
+classification's sealed definition selection does not select an occurrence or
+supply an evaluation result. A public disposition or retained field changed
+without the owner selection is not an admitted correspondence.
+
+QSL owns classification and native temporal evaluation. The bridge in
+`quire-integration` owns projection, correspondence, strict projection/join
+reading and cross-owner result comparison under Contract IR FR-350. Projection,
+join and strict reading shall invoke neither evaluator and shall accept no
+caller-authored mirror of an owner admission or result. TL owners retain
+formula, trace/history, request and mapped-result admission and evaluation.
+
+### Mapping domain
 
 The correspondence shall use the support table that QSL FR-045 classifies:
 
@@ -66,7 +105,12 @@ identity and exact clause/expression span; clause/requirement identity;
 language and temporal profile definition; model/type/predicate bindings;
 evaluation anchor; immutable capture environment; clock/observation binding;
 interval; closure/history premises; TL formula/profile/proposition identities;
-and bridge definition.
+and bridge definition. Selected model package identities shall come from the
+checked package owner's `selected_model_packages` in its admitted identity
+order. The checked package carries no source model alias map; the bridge shall
+not infer aliases from package names or node order, accept a caller-authored
+alias table as authority, or substitute labels for structural identities. A
+required fact absent from the owner contract remains unestablished.
 
 For every mapped evaluation result, the correspondence record shall also
 preserve assessment-execution state; decision-scope progress/closure;
@@ -75,6 +119,11 @@ decision-support identities; completeness; and any superseded-result relation.
 Those dimensions remain native/shared-result metadata outside the TL formula
 and valuation request when the selected TL profile does not encode them. Equal
 formula bytes or equal TL truth shall not manufacture, erase or merge them.
+A correction shall retain the complete immutable direct predecessor owner
+values. Owner-defined non-evaluating validation shall establish that relation;
+a matching result identifier, truth or label alone is insufficient. A missing,
+foreign, skipped or different full predecessor value shall not establish
+supersession even when its result identifier is equal.
 
 The bridge shall lower only total native Boolean predicates to TL propositions.
 
@@ -86,11 +135,14 @@ predicate, signal and capture identities.
 The bridge shall not treat a formula match without its valuation, capture and
 clock mapping as semantic correspondence.
 
-Generated formula, history/trace, request and
-report identities shall be recomputed by their selected TL public readers.
-The correspondence shall be independently addressable by the bridge-owned
-derived artifact reference over the complete preserved key; it shall not reuse
-a native or TL artifact identity.
+Every generated formula, history/trace, request and mapped result shall pass
+its selected owner's public reader. The bridge shall retain the exact admitted
+owner values, their public names and versions where present, and selected
+definition references. The bridge-owned validated correspondence shall expose
+the complete preserved typed members; changing a member shall change that
+member's exposed value. It shall compute no content hash, digest, synthetic
+owner identity or derived record reference. A correspondence value is not a
+native or TL owner identity, and label equality is not owner-value equality.
 
 For an event-position or fixed-sample future mapping, the temporal bridge shall
 preserve the exact TL lower-bound convention and false-extension rule in
@@ -111,17 +163,22 @@ correspondence.
 | FR-095-AC-5 | A numeric, nullable, unavailable or pending native value cannot enter the TL proposition population. | Test (TC-117) |
 | FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
 | FR-095-AC-7 | A supported TL result is accepted only when the correspondence record preserves assessment execution, both progress/closure axes, settlement basis, exact decision support, completeness and supersession; mutating or omitting one axis cannot yield a healthy native result. | Test (TC-117) |
-| FR-095-AC-8 | Every generated artifact identity is accepted by its target owner reader; the bridge-owned correspondence reference changes with every preserved-key mutation and never substitutes for an owner identity. | Test (TC-117) |
+| FR-095-AC-8 | Every generated formula, trace/history, request and mapped result passes its target owner's public reader and is retained as the exact admitted typed value with its public name/version and selected definition references. Mutating a preserved typed key changes the corresponding exposed member and cannot pass strict rereading; no content hash or synthetic record reference substitutes for an owner value. | Test (TC-117) |
 | FR-095-AC-9 | An infinite-trace unbounded-property request returns a typed unsupported mapping naming the absent TL target without emitting a substitute formula. | Test (TC-200) |
+| FR-095-AC-10 | Independently admit identical producer bytes twice and obtain a subject/classification from the first admission: projection with the second admission refuses before TL construction. Original admission membership survives an unchanged package clone, but a subject borrowed from one package cannot authorize another borrow. Changing a public classification disposition, premise or retained fact while keeping its sealed selection refuses on complete reclassification. | Test (TC-117) |
+| FR-095-AC-11 | Two occurrences sharing a temporal clause node retain distinct node/role/ordinal selections and their original name/clock rows; selected model package identities retain their checked-owner order and no source alias is inferred. Missing or substituted occurrence/instance/observation selections refuse before TL construction. For a correction, substituting a different complete prior owner result with the same result identifier fails non-evaluating predecessor validation and yields no final agreement Boolean. | Test (TC-117) |
 
 ## Dependencies
 
 - Contract IR FR-350 implements this correspondence: it constructs and
   validates the formula and valuation projection, correspondence record and
   result join. This requirement supplies the temporal meaning.
-- QSL FR-045 supplies the `mapping_support_v2` classification and retained
-  subject; QSL FR-050 supplies the strict `/2` package and QSL FR-043 supplies
-  the native `evaluate_v2` report. QSL does not construct the TL correspondence.
+- QSL FR-045 owns the support table; FR-515 supplies the checked temporal
+  subject of the admitted checked-package/v2 and FR-527 supplies its
+  authenticated classification and owner-issued package binding. FR-052/FR-043
+  supply the actual native evaluation report and complete predecessor
+  validation. QSL does not construct the TL correspondence. FR-050's legacy
+  compiled-protocol `/2` classifier is not this checked-view bridge input.
 - tl-syntax FR-011 (past-operator semantics; FR-011-AC-4 admits no future or
   mixed node under `tl-syntax.past-operators/v1`), FR-013 and FR-014 (the
   formula editions), tl-mltl FR-018 (trace and history wire) and quire-mltl
