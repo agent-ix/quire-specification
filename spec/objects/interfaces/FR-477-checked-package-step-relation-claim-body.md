@@ -142,13 +142,18 @@ terminal step and before the protocol step. It visits every
 first failing check is its defect:
 
 1. **Shape.** The body is an aggregate of exactly the seven bindings in
-   order; each `executions` member is an execution Group whose bindings are
+   order; each `subjects` member is a `binding(alias, reference)`; each
+   `executions` member is an execution Group whose bindings are
    `variable`, `alias`, `operation` and, optionally, `implementation`, in
-   that order and nothing else; `parameters`, `preconditions` and
-   `postconditions` each hold exactly as many Groups as `executions`, and
-   `invariants` exactly as many as `subjects`, each Group holding
-   `reference`s only; else `invalid_semantic_graph` at the first member
-   that breaks the layout.
+   that order and nothing else, with `variable` and `alias` text literals
+   and no two execution Groups holding one `variable` text; each
+   `parameters`, `preconditions`, `postconditions` and `invariants` Group
+   holds `reference`s only; else `invalid_semantic_graph` at the first
+   member that breaks the layout. A `parameters`, `preconditions` or
+   `postconditions` Tuple whose Group count is not the number of execution
+   Groups, or an `invariants` Tuple whose Group count is not the number of
+   `subjects` bindings, refuses `invalid_semantic_graph` at that Tuple's
+   binding, `B/members/{i}`.
 2. **Aliases.** Each execution Group's `alias` names a `subjects`
    binding, and each `subjects` binding is named by some execution Group,
    else `missing_declaration`/`missing-name` at the `alias` binding, or
@@ -167,7 +172,12 @@ first failing check is its defect:
    execution's as the Properties state, a `preconditions` or
    `postconditions` Group, or an `invariants` Group, that is not exactly
    the set the Properties define over the package, refuses
-   `invalid_model_binding`/`malformed-declaration` at that Group.
+   `invalid_model_binding`/`malformed-declaration` at that Group. An
+   execution Group with no `implementation` binding while the package holds
+   a `correspondence`/`abstraction_relation` node with a `frames` entry
+   keyed by its operation refuses `invalid_model_binding`/
+   `malformed-declaration` at that execution Group, so a bound operation's
+   code claim is never dropped silently.
 5. **Body.** A `body` target that is not an `expression` node whose
    `semantic_type` is the `scalar_type`/`boolean` node refuses
    `ill_typed`/`non-boolean-root` at the target.
@@ -185,7 +195,7 @@ With `B` = `/semantic_graph/nodes/{n}/body`, the execution Group `k` is at
 | FR-477-AC-1 | A determinism relation `x: V::Vault::step, y: V::Vault::step` over a vault whose `step` is bound by an abstraction relation produces one `claim`/`step_relation` node whose body has `subjects`, `executions`, `parameters`, `preconditions`, `postconditions`, `invariants` and `body` in order; `subjects` holds `V` once; `executions` holds two execution Groups, `x`'s then `y`'s, each binding `variable`, alias `V`, a reference to `step`'s `state`/`operation_anchor` node and a reference to the abstraction relation node; Group `k` of `parameters` holds execution `k`'s own `self` and `i` parameter nodes in FR-341 order (`step` has no result), `x`'s at levels 0 and 1 and `y`'s at levels 2 and 3; Group `k` of `preconditions` and of `postconditions` holds `step`'s precondition and postcondition nodes; `invariants` holds one Group with `Vault`'s invariant nodes; the node carries `declaration` `Det`, its `owner`, and one `declaration` and one `claim` occurrence. | Test (TC-962) |
 | FR-477-AC-2 | The same relation over a vault whose `step` has no binding has execution Groups with no `implementation` binding and yields the model claim alone; with the binding it yields both claims, with different obligation identities (FR-402-AC-4). | Test (TC-962) |
 | FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the relation's body, so the package is structurally unequal, and no node id changes; renaming the relation or changing its owner changes the node id; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
-| FR-477-AC-4 | An execution Group with `operation` before `alias`, and a `parameters` Tuple holding one Group for two executions, each refuse `invalid_semantic_graph`; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; a `subjects` target that is a `model`/`object_type` node, an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` Group missing `step`'s precondition and an `invariants` Group missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration` at that Group; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
+| FR-477-AC-4 | An execution Group with `operation` before `alias` refuses `invalid_semantic_graph` at that Group, and a `parameters` Tuple holding one Group for two executions refuses `invalid_semantic_graph` at `B/members/2`; an execution Group missing `implementation` while the package's abstraction relation has a `frames` entry for `step` refuses `invalid_model_binding`/`malformed-declaration` at that Group; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; a `subjects` target that is a `model`/`object_type` node, an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` Group missing `step`'s precondition and an `invariants` Group missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration` at that Group; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
 | FR-477-AC-5 | In AC-1's node, `x`'s and `y`'s `self` nodes are different nodes, as are their `i` nodes, and the body's `pre(x.self.l) = pre(y.self.l)` reads both; a `parameters` Group for `y` that references `x`'s `self` and `i` nodes refuses `invalid_model_binding`/`malformed-declaration` at `y`'s `parameters` Group, `B/members/2/value/members/1`. | Test (TC-962) |
 | FR-477-AC-6 | AC-1's body passes strict wire validation of FR-322 "Body grammar" with no `malformed_wire`: `subjects` is a Group, `executions` a Tuple of execution Groups whose members are `binding`s to Leaves, and `parameters`, `preconditions`, `postconditions` and `invariants` Tuples of Groups of `reference`s; no Group holds an aggregate and no Tuple holds a `binding`; and the reader admits the package. A body whose execution Group nests a `parameters` aggregate inside it, the shape before QSL-1093, refuses `malformed_wire`. | Test (TC-962) |
 
