@@ -94,7 +94,10 @@ liveness clause also requires, each as its own item:
    premise names a well-founded measure that every stutter step strictly
    decreases, or a bound on consecutive stutter steps; an implementation
    behaviour with infinitely many consecutive allowed-stutter steps
-   (divergence) defeats the premise.
+   (divergence) defeats the premise. Per-operation measures are ordered
+   lexicographically (FR-490 "Declaration form"), so a stutter of one
+   function that raises an earlier function's measure defeats the premise
+   too.
 2. *Fairness correspondence*: every constraint of `F_P` is implied by the
    fairness the implementation actually has: each model operation named by a
    constraint is executed by the implementation under the scheduling premise
@@ -117,6 +120,7 @@ frame and the environment premises it reads; it needs no progress item.
 | --- | --- | --- | --- |
 | A liveness clause with every premise and every correspondence and progress item `proved` | `proved` | `decisive-witness` | none; the witness is the set of premise records |
 | A safety clause with the model claim, initialization, transition simulation, frame and environment premises `proved` or supplied | `proved` | `decisive-witness` | none; no progress item is read |
+| `P` outside FR-380's stuttering-invariant fragment (an interval operator nested under an unbounded one, or previous) | `inconclusive` | `unsettled` | `transfer-not-preserving`, reason `fragment`, naming the operator: an allowed stutter changes its truth |
 | The model claim not `proved` | `inconclusive` | `unsettled` | `premise-unproved`, naming the model claim and its result |
 | A correspondence item not `proved` (a violating step included) | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise and its result |
 | A progress item not `proved` (an infinite stutter behaviour, an absent measure, a fairness premise stronger than the environment's, or no progress item for a liveness clause) | `inconclusive` | `unsettled` | `premise-unproved`, naming the progress item and its result |
@@ -165,6 +169,8 @@ invalidates the record.
 | FR-488-AC-10 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles `incomplete`; the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
 | FR-488-AC-11 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
 | FR-488-AC-12 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
+| FR-488-AC-13 | A clause with an interval operator nested under an unbounded one, and a clause using previous, each settle `inconclusive`, cause `transfer-not-preserving` with reason `fragment` naming the operator, although every premise is `proved`. | Test (TC-982) |
+| FR-488-AC-14 | Two operations whose `progress` measures each decrease on their own stutters, where one operation's stutter increases the other's earlier-declared measure, leave the no-divergence premise of the stutter that increases it not `proved`, and the item `inconclusive`, cause `premise-unproved`. | Test (TC-982) |
 
 ## Dependencies
 

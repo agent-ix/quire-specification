@@ -14,7 +14,7 @@ relationships:
 Settle an implementation-guarantee item over the compare-and-set counter
 implementation, and show which premise each defect defeats.
 
-Scope: FR-488-AC-1 to FR-488-AC-12.
+Scope: FR-488-AC-1 to FR-488-AC-14.
 
 ## Test Procedure
 
@@ -42,6 +42,8 @@ Rust boundary and compare the complete typed result.
 8. Supply a finite 10000-step implementation trace over which the clause
    holds and request the item.
 9. Rebind the model to a new relation revision; then change an environment premise.
+10. Request `always (holds(c.value >= 0) implies eventually always[0,1] holds(c.value = 2))` with every premise proved.
+11. Add an operation `reset_retry` whose stutter step raises `inc_cas`'s retry measure, both with `progress` members, `inc` declared first.
 
 ## Expected Results
 
@@ -54,3 +56,5 @@ Rust boundary and compare the complete typed result.
 7. Refused `missing_declaration`/`missing-name`; `unsupported` naming the capability; `incomplete` naming the limit; the three are distinct and sibling items settle independently.
 8. Not `proved`; no item settles `refuted`.
 9. Each invalidates the record and the item is settled again.
+10. `inconclusive`/`transfer-not-preserving` reason `fragment` naming `always[0,1]`.
+11. The `reset_retry` no-divergence premise not proved; the item `inconclusive`/`premise-unproved` naming it.

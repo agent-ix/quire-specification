@@ -126,7 +126,7 @@ FR-176-AC-4's iterations.
 | --- | --- | --- | --- |
 | Every premise discharged under a supported rule | `proved` | `decisive-witness` | none; the witness is the premise discharge record |
 | A premise discharged by an accepted plugin result that itself carries certification `trusted` (FR-354) | `proved` with certification `trusted` | `decisive-witness` | none; the discharge record cites that plugin result |
-| A premise supplied only as an assumption, with no plugin result behind it | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise and the assumption |
+| A `rely` or liveness-dependency premise supplied only as an assumption (an environment record offered as its only discharger, FR-492), with no plugin result behind it | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise, with `result` `assumption`; an `environment` premise itself is discharged by its record and listed as an assumption |
 | A premise no supplied guarantee discharges (absent, weaker, of another kind or over another subject) | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise |
 | A failed component check | `inconclusive` | `unsettled` | `premise-unproved`, naming the component's premise |
 | An unsupported composition rule | `unsupported` | `unavailable` | the missing capability (FR-348-AC-4) |

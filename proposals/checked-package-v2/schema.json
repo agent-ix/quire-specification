@@ -2949,15 +2949,13 @@
                   ]
                 },
                 "then": {
+                  "description": "FR-451, FR-490, FR-491: each semantic_form takes its own body.",
+                  "allOf": [
+                    {"if": {"properties": {"semantic_form": {"const": "abstraction_relation"}}}, "then": {"properties": {"body": {"$ref": "#/$defs/AbstractionRelationBody"}}}},
+                    {"if": {"properties": {"semantic_form": {"const": "implementation_guarantee"}}}, "then": {"properties": {"body": {"$ref": "#/$defs/ImplementationGuaranteeBody"}}}},
+                    {"if": {"properties": {"semantic_form": {"const": "component_composition"}}}, "then": {"properties": {"body": {"$ref": "#/$defs/ComponentCompositionBody"}}}}
+                  ],
                   "properties": {
-                    "body": {
-                      "description": "FR-451, FR-490, FR-491: the body whose term equals the semantic_form.",
-                      "oneOf": [
-                        {"$ref": "#/$defs/AbstractionRelationBody"},
-                        {"$ref": "#/$defs/ImplementationGuaranteeBody"},
-                        {"$ref": "#/$defs/ComponentCompositionBody"}
-                      ]
-                    },
                     "occurrences": {
                       "items": {
                         "properties": {

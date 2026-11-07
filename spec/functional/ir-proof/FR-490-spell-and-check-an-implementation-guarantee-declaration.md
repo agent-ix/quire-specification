@@ -77,6 +77,14 @@ observable implementation states: one iteration of a loop, or the whole body
 when it has no loop. A step is a **stutter** when the relation maps its pre
 and post states to one abstract state.
 
+The `progress` members order the measures lexicographically, in member
+order, so divergence that interleaves stutters of several functions is
+excluded too: a `bound N` member's measure is `N` minus the stutter steps of
+its function since the last non-stutter step of any bound function, and
+each `progress` member's no-divergence item also requires that a stutter
+step of any other bound function leaves the measure of every earlier
+`progress` member unchanged or decreased.
+
 ### Static checks
 
 The compiler SHALL refuse, in source order, naming the member:
@@ -126,7 +134,7 @@ constraint:
 | `transition-simulation` | one `operation-contract` item per operation of the model subject over its bound function: every step maps to a step of the operation with the pre and post abstract states the relation gives, or is a stutter | as above | the FR-350 backend |
 | `frame` | one `operation-contract` item per operation of the model subject: no step changes abstract state outside the operation's frame (FR-013) | as above | the FR-350 backend |
 | `environment` | one slot per `environment` member, in member order; then, for a `liveness` `P`, one **unfilled** slot per constraint of `F_P` whose operation no scheduling `environment` member names (a required premise the declaration does not list) | none: an FR-492 environment record fills a listed slot | the planner |
-| `no-divergence` | for a `liveness` `P` only, one slot per operation of the model subject: an `operation-contract` item when the operation has a `progress` member (every stutter step decreases the measure, or no run of the bound function has more than `N` consecutive stutter steps), and an **unfilled** slot when it has none | as above | the FR-350 backend |
+| `no-divergence` | for a `liveness` `P` only, one slot per operation of the model subject: an `operation-contract` item when the operation has a `progress` member (every stutter step of its function decreases its measure, and every stutter step of another bound function leaves each earlier member's measure unchanged or decreased), and an **unfilled** slot when it has none | as above | the FR-350 backend |
 | `fairness-correspondence` | for a `liveness` `P` only, one planner-local slot per constraint of `F_P` | planner-local | the planner, by FR-488 "Fairness correspondence" |
 
 An unfilled slot has no item; FR-492 settles it `absent`, and FR-488 settles
@@ -168,7 +176,8 @@ derives neither progress role and no unfilled `environment` slot.
 
 The reader runs this step after FR-451's abstraction step, node by node in
 ascending node-id order, and reports the first defect: identity and
-dependencies, else `invalid_semantic_graph`; canonical order, else
+dependencies, else `invalid_semantic_graph`; a body `term` that is not the node's
+`semantic_form`, `invalid_semantic_graph`; canonical order, else
 `invalid_semantic_graph`; a target that is not a declared dependency,
 `missing_declaration`/`missing-name`; a `clause` target that is not an
 infinite-trace temporal claim, a `relation` target that is not an

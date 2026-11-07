@@ -132,8 +132,26 @@ The premise slots are, in this order: one `component-guarantee` slot per
 declared guarantee, one `rely` slot per `rely`, one `liveness-dependency`
 slot per `depends`, one `fairness` slot per derived fairness premise, one
 `environment` slot per `environment` member, and one `fixed-point` slot per
-admitted cycle. A slot's identity binds its role and the members that
-produced it.
+admitted cycle. Their items and slot keys (FR-492) are:
+
+- **component-guarantee** — item-backed: the item of `G` over `C`'s
+  subject, checked under exactly the assumptions FR-176 gives `G` from its
+  declared `rely` and `depends` members (the peer guarantees `G` may assume,
+  each restricted to the shared interface), produced by `C`'s provider. The
+  assumption set is part of the slot key, so a result for `G` checked under
+  other assumptions, or under none, is another key. This is what makes the
+  conjunction sound: each `G` holds of the composition once every
+  assumption it was proved under is itself discharged (FR-176 "Discharge
+  fixed point").
+- **rely** and **liveness-dependency** — not item-backed: discharged from
+  the `guarantees` pool or a `discharges` entry (FR-489 "Implication").
+- **fairness** and **environment** — not item-backed: discharged by a
+  `supplies` constraint, and filled by an environment record.
+- **fixed-point** — item-backed: one FR-331 `composition` item anchored at
+  `S`'s node, whose `premises` member names the cycle's component-guarantee
+  slot keys and whose `options` name the declaring profile; its slot key
+  binds those, so only FR-176's result over exactly this cycle under this
+  profile fills it.
 
 ### Checked-package node
 
@@ -171,7 +189,7 @@ separate lists and the same slots with the same identities.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-491-AC-1 | A `Producer`/`Consumer` declaration with two guarantees, one `rely`, one `depends` and one `supplies` member checks and derives the composition item and, in order, two component-guarantee slots, one rely slot, one liveness-dependency slot and one fairness slot per resolved constraint, the four lists kept separate. | Test (TC-985) |
+| FR-491-AC-1 | A `Producer`/`Consumer` declaration with three guarantees, one `rely`, one `depends` and one `supplies` member checks and derives the composition item and, in order, three component-guarantee slots (each keyed with its FR-176 assumption set), one rely slot, one liveness-dependency slot and one fairness slot per resolved constraint, the four lists kept separate. | Test (TC-985) |
 | FR-491-AC-2 | One `component` member, an unknown rule spelling and a member of another form refuse `invalid_syntax`; an unknown import alias, subject or clause refuses `missing_declaration`/`missing-name`; two components of one name refuse `invalid_model_binding`/`conflicting-binding`. | Test (TC-985) |
 | FR-491-AC-3 | A `rely` on a liveness guarantee, a `depends` on a safety guarantee, a `rely` whose guarantee is undeclared, and a `rely` of a component on itself each refuse `invalid_model_binding`/`malformed-declaration` naming the member. | Test (TC-985) |
 | FR-491-AC-4 | A mutual `depends` pair, with no selected profile declaring FR-176's lattice, checks; its composition item refuses `invalid_model_binding`/`malformed-declaration` naming both guarantees, and the unit's other items are derived unchanged. Under a profile declaring the lattice, the pair derives one fixed-point slot. | Test (TC-985) |
