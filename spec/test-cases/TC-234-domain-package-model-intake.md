@@ -81,7 +81,7 @@ The standalone positive input
 package identity `acme/colors`. I34's case-preserving identity rule gives
 `ix://acme/colors/variant/Color-Red` and
 `ix://acme/colors/variant/Color-Green`. Its companion source
-`proposals/checked-package-v2/fixtures/model-enum-comparison.native` supplies
+`proposals/checked-package-v2/model-enum-comparison.native` supplies
 enum equality and inequality for a consumer compilation check; the expected
 native artifacts are described in the proposal README. Producer fixture
 checks and successful compilation do not establish runtime comparison or

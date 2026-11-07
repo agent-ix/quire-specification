@@ -131,7 +131,7 @@ structures, but any external consumer receives only the contract.
   them.
 - `domain-package-acme-colors.json` is a complete independent Semantic IR
   2.0.0 model declaring the two nullary `Color` cases `Red` and `Green` under
-  `acme/colors`. `fixtures/model-enum-comparison.native` selects it and
+  `acme/colors`. `model-enum-comparison.native` selects it and
   declares four no-argument Boolean functions: `redEqualsRed` expects `true`,
   `redEqualsGreen` expects `false`, `redDiffersFromRed` expects `false`, and
   `redDiffersFromGreen` expects `true`. A native

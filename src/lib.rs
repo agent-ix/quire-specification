@@ -28,7 +28,7 @@ pub const ACME_COLORS_DOMAIN_PACKAGE: &str =
 /// truth arms of equality and inequality over `Red` and `Green`. These are
 /// authored input bytes, not a recorded runtime or generated-code agreement.
 pub const ACME_COLORS_COMPARISON_SOURCE: &str =
-    include_str!("../proposals/checked-package-v2/fixtures/model-enum-comparison.native");
+    include_str!("../proposals/checked-package-v2/model-enum-comparison.native");
 
 /// `proposals/quire-v1/definitions/value-accounting-charge-point-vectors.json`:
 /// the complete charge-point spelling list of `quire.value.accounting/v1`'s
