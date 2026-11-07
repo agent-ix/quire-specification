@@ -48,8 +48,10 @@ The ContractPackage is a closed object with exactly six required members:
   requirements described below. It is distinct from, and does not duplicate or
   amend, the source-language `profile_selections` in `source.lock`. It SHALL be
   explicit; no default profile is inferred. Neither value replaces the other.
-- `semantic_graph`: the closed object `{graph_version, nodes}` with exactly
-  one `nodes` array. `graph_version` is exactly
+- `semantic_graph`: the closed object `{graph_version, nodes, operand_rows}`
+  with exactly one `nodes` array and its FR-322 `operand_rows`, one row per
+  node; the nodes' own ids and body references hold operand slots into those
+  rows (FR-322 "Operand index segments"). `graph_version` is exactly
   `quire.checked-semantic-graph/v2`. The node array uses FR-322's closed
   node-tag vocabulary, producer-chosen node order (FR-322-AC-95), stable references,
   dependency-reference and recursion-group rules. Each node occurs once.
@@ -262,7 +264,9 @@ payload ids `unsupported_node_id`, `unbounded_type`, `body_node_id` and
 `refusal.locus`, and every source-map `SourceMapEntry`/occurrence `node_id`.
 Output-frame ids (output graph nodes, body references, the protocol binding by
 exact local node_id, and `source_map.nodes[].node_id`) stay FR-322 node ids
-indexed into this package's `semantic_graph`. Equality across the frames, and
+that name nodes of this package's `semantic_graph`: node-held ones through
+operand slots into its `operand_rows`, document-held ones (`source_map`)
+through index segments. Equality across the frames, and
 every comparison of two source-frame ids, is by rebuilt structural key
 ([FR-322](FR-322-checked-package-artifact.md) "Rebuilding the key"), never by
 table index or by comparing an index segment with a graph index.
@@ -324,7 +328,7 @@ exact requested id" and the accounting/request bijection compare rebuilt
 structural keys.
 
 An absent requested key keeps its exact structural key in `source_keys`, written
-as the source wrote it, with its index segments naming other `source_keys`
+as a document-held id, with its index segments naming other `source_keys`
 entries; the package is valid with `invalid_input` and an empty output graph.
 It has an explicit requested-item entry with an empty
 `occurrences` array and exact requested-id subject; it MUST NOT be given a
@@ -398,10 +402,14 @@ then source-key references. Each applies FR-322's index-segment rules, an
 out-of-range index first and otherwise a cycle, in FR-322's order, and refuses
 `malformed_wire` with no cause at the segment's member:
 
-1. Output graph: an index segment `{"node": i}` in an output node id or body
-   reference, `i` not below the length of `semantic_graph.nodes`, or a cycle
-   through own-path index segments, at `/semantic_graph/nodes/{k}/node_id/path/{s}/node`
-   (or the pointer of the referencing member).
+1. Output graph: FR-322's operand checks ("Operand index segments", "Reader
+   checks") over the output `semantic_graph`, in FR-322's step order (rows,
+   placement, range, numbering, cycle), at the member FR-322 names, for
+   example an operand slot not below its holding node's row length or a cycle
+   through own-path operand slots at
+   `/semantic_graph/nodes/{k}/node_id/path/{s}/operand`, and an index segment
+   of a document-held output id not below the length of
+   `semantic_graph.nodes` at its `node` member.
 2. `source_keys`: an index segment `{"node": i}` inside an entry, `i` not below
    the length of `source_keys`, or a cycle (a self-naming entry included), at
    `/source_keys/{k}/path/{s}/node`.
@@ -505,8 +513,8 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, every returned code having an FR-271 row and the category its code and cause map to; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A wrong outer contract version is `unknown_contract_version` and bytes that are not well-formed JSON are `malformed_wire`; a member outside the closed schema is `invalid_package`. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`, and the reader never returns `unknown_required_capability`. | Test (TC-937) |
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
 | FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two structurally unequal packages as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
-| FR-330-AC-14 | A ContractPackage whose requested key is absent and derived (its structural key holds at least one index segment) carries that key in `source_keys` exactly as the source wrote it, with its index segments naming other `source_keys` entries; the requested id is the source-key reference to it, and the package is admitted with `invalid_input` and an empty output graph. No source-frame id resolves against the output graph or a source package graph. | Test (TC-934) |
-| FR-330-AC-15 | The reader runs the index checks once before any stage that rebuilds a structural key, in one order: output `semantic_graph` index segments, then `source_keys` index segments, then source-key references. An out-of-range index, then a cycle (a self-naming entry included), refuses `malformed_wire` with no cause at the segment's `node` pointer (output graph, `source_keys`) or the reference's `source_key` pointer. A wrong-shape `{"source_key": i}` is a closed-shape defect: `invalid_package` with `unknown-member`, `missing-member`, `wrong-value-kind` or `invalid-value` per AC-11. Two `source_keys` entries with one rebuilt structural key refuse `invalid_package`/`invalid-value` at the later entry. | Test (TC-937) |
+| FR-330-AC-14 | A ContractPackage whose requested key is absent and derived (its structural key holds at least one operand) carries that key in `source_keys` as a document-held id, with its index segments naming other `source_keys` entries; the requested id is the source-key reference to it, and the package is admitted with `invalid_input` and an empty output graph. No source-frame id resolves against the output graph or a source package graph. | Test (TC-934) |
+| FR-330-AC-15 | The reader runs the index checks once before any stage that rebuilds a structural key, in one order: the output `semantic_graph`'s FR-322 operand checks, then `source_keys` index segments, then source-key references. In the output graph the FR-322 steps refuse `malformed_wire` with no cause at the member FR-322 names (an out-of-range operand slot or a slot on a cycle at its `operand` pointer); in `source_keys` an out-of-range index, then a cycle (a self-naming entry included), refuses `malformed_wire` with no cause at the segment's `node` pointer; and an out-of-range reference at its `source_key` pointer. A wrong-shape `{"source_key": i}` is a closed-shape defect: `invalid_package` with `unknown-member`, `missing-member`, `wrong-value-kind` or `invalid-value` per AC-11. Two `source_keys` entries with one rebuilt structural key refuse `invalid_package`/`invalid-value` at the later entry. | Test (TC-937) |
 | FR-330-AC-16 | A `lowered` record's source key and its output root node's id rebuild to the same structural key, and the accounting/request bijection and the refusal's requested-id pointer compare rebuilt structural keys, not table or graph indexes: a package that reorders `source_keys` or the output graph without changing any key is equal in every such comparison. | Test (TC-934) |
 
 ## Dependencies

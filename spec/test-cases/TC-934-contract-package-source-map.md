@@ -54,9 +54,9 @@ as canonical RFC 8785 bytes before reading.
 
 Lower a package whose only requested key is absent from the checked graph and
 derived: its structural key `{package, path, ordinal}` holds at least one
-operand, which the source wrote as an index segment. The output `semantic_graph`
+operand, which the source wrote as an operand segment. The output `semantic_graph`
 is empty. Require `source_keys` to carry the operand's key and the requested
-key exactly as the source wrote them, the requested key's index segment
+key as document-held ids, the requested key's index segment
 `{"node": i}` naming another `source_keys` entry, and the requested item,
 accounting `node_id` and source-map `requested_items` entry to be the source-key
 reference to the requested key. Require the package to be admitted with

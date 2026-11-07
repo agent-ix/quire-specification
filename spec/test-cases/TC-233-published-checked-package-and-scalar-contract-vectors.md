@@ -59,6 +59,14 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-282
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-392
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-393
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-394
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-395
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-274
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-55
@@ -629,22 +637,32 @@ through XT-20 do not close the QSL-authored part of IR-1052 AC-7.
 
 ### Operand index segment vectors
 
-`NI-01` to `NI-12` are the `cases` of `node-index-vectors.json`, each an RFC 6902 patch over `fixtures/positive-dependency-call.json`, whose nodes are `0` Integer, `1` Boolean, `2` `Int[0, 9]` (path `["bounded_domain", "integer_range", "min", {"node": 0}, "0", "max", "9"]`) and `3` `App::check` (FR-322 "Operand index segments"). A case of `schema` `invalid` fails the V2 schema; a case of `schema` `valid` passes it and the reader's index check refuses it before every `semantic_graph` check. Also scan every published fixture and vector file: no `node_id.path` holds a `node_id` object (FR-322-AC-278).
+`NI-01` to `NI-12` and `NI-15` to `NI-24` are the `cases` of `node-index-vectors.json`, each an RFC 6902 patch over `fixtures/positive-dependency-call.json`, whose nodes are `0` Integer, `1` Boolean, `2` `Int[0, 9]` (path `["bounded_domain", "integer_range", "min", {"operand": 0}, "0", "max", "9"]`, operand row `[0]`) and `3` `App::check` (operand row `[0]`, the one slot of its literal `type`), with the operand rows `[[], [], [0], [0]]` (FR-322 "Operand index segments"). A case of `schema` `invalid` fails the V2 schema; a case of `schema` `valid` passes it and the reader's operand checks refuse it before every `semantic_graph` check, unless its expected result says otherwise. Also scan every published fixture and vector file: no `node_id.path` holds a `node_id` object, every node-held id holds only operand slots, every document-held id only index segments, and every operand row is numbered by first occurrence (FR-322-AC-278, FR-322-AC-392).
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
 | NI-01 | node `2`'s path segment `3` written as the nested `node_id` of node `0` | Fails the V2 schema: `malformed_wire` | FR-322-AC-278 |
-| NI-02..NI-06 | that segment as `{"node": -1}`, `{"node": "0"}`, `{"node": 1.5}`, `{"node": 0, "ordinal": 0}` and `{}` | Each fails the V2 schema: `malformed_wire` | FR-322-AC-278 |
-| NI-07 | the `dependency_reference` `node` path segment `1` as `{"node": 0}` | Fails the V2 schema: `malformed_wire` | FR-322-AC-36, FR-322-AC-278 |
-| NI-08 | node `2`'s segment as `{"node": 4}`, one past the last node | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/node` | FR-322-AC-279 |
-| NI-09 | the literal `type` of node `3`'s argument `1` naming `{"node": 9007199254740991}` | `malformed_wire` at `/semantic_graph/nodes/3/body/arguments/1/type/path/3/node` | FR-322-AC-279 |
+| NI-02..NI-06 | that segment as `{"operand": -1}`, `{"operand": "0"}`, `{"operand": 1.5}`, `{"operand": 0, "ordinal": 0}` and `{}` | Each fails the V2 schema: `malformed_wire` | FR-322-AC-278 |
+| NI-07 | the `dependency_reference` `node` path segment `1` as `{"operand": 0}` | Fails the V2 schema: `malformed_wire` | FR-322-AC-36, FR-322-AC-278 |
+| NI-08 | node `2`'s segment as `{"operand": 1}`, one past its one-entry row | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/operand` | FR-322-AC-279 |
+| NI-09 | the literal `type` of node `3`'s argument `1` holding `{"operand": 9007199254740991}` | `malformed_wire` at `/semantic_graph/nodes/3/body/arguments/1/type/path/3/operand` | FR-322-AC-279 |
 | NI-10 | `source_map` entry `2`'s `node_id` naming `{"node": 4}` | `malformed_wire` at `/source_map/2/node_id/path/3/node` | FR-322-AC-279 |
-| NI-11 | node `2`'s segment as `{"node": 2}`, itself | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/node` | FR-322-AC-280 |
-| NI-12 | node `0`'s path extended with `{"node": 2}`, so `0` and `2` name each other | `malformed_wire` at `/semantic_graph/nodes/0/node_id/path/2/node`, the first segment on the cycle by holding node | FR-322-AC-280 |
-| NI-13 | built by the test: a `semantic_graph.nodes` array of the Integer node and a chain of `n` derived `expression`/`application` nodes, chain node `k + 1` having the path `["expression", "application", "quire.op.integer.negate", {"node": k}]`, for `n` = 100 and `n` = 100,000 | Node ids of at most 200 bytes per node and one maximum JSON nesting depth for both lengths; the 100,000-node text parses under a nesting limit of 128; the index checks admit it, and the 100,001 rebuilt keys are distinct, each chain node's key ending with its predecessor's key | FR-322-AC-281 |
-| NI-14 | built by the test: `positive-dependency-call.json` reversed with its index segments rewritten; the id of its imported `Int[0, 9]` (`package` `test/predicates`, operand `{"node": 3}`) copied into a request-style document whose package is that reversed importer | Rebuilt against the importer's graph, the key equals `positive-dependency-library.json`'s `Int[0, 9]` key; index `3` of the library's graph is `Int[0, 9]` itself, so resolving by the id's `package` would be a self-cycle | FR-322-AC-282 |
+| NI-11 | node `2`'s row as `[2]`, itself | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/operand` | FR-322-AC-280 |
+| NI-12 | node `0`'s path extended with `{"operand": 0}` and its row as `[2]`, so `0` and `2` name each other | `malformed_wire` at `/semantic_graph/nodes/0/node_id/path/2/operand`, the first slot on the cycle by holding node | FR-322-AC-280 |
+| NI-13 | built by the test: a `semantic_graph.nodes` array of the Integer node and a chain of `n` derived `expression`/`application` nodes, chain node `k + 1` having the path `["expression", "application", "quire.op.integer.negate", {"operand": 0}]` and the row `[k]`, for `n` = 100 and `n` = 100,000 | Node ids of at most 200 bytes per node and one maximum JSON nesting depth for both lengths; the 100,000-node text parses under a nesting limit of 128; the operand checks admit it, every chain node has the same bytes, and the 100,001 rebuilt keys are distinct, each chain node's key ending with its predecessor's key | FR-322-AC-281 |
+| NI-14 | built by the test: `positive-dependency-call.json` reversed with its operand rows and document-held index segments rewritten; the id of its imported `Int[0, 9]` (`package` `test/predicates`) written as a document-held id, operand `{"node": 3}`, into a request-style document whose package is that reversed importer | Rebuilt against the importer's graph, the key equals `positive-dependency-library.json`'s `Int[0, 9]` key; index `3` of the library's graph is `Int[0, 9]` itself, so resolving by the id's `package` would be a self-cycle | FR-322-AC-282 |
+| NI-15 | `operand_rows` entry `3` removed | `malformed_wire` at `/semantic_graph/operand_rows` | FR-322-AC-393 |
+| NI-16 | node `2`'s segment as the index segment `{"node": 0}` | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/node` | FR-322-AC-393 |
+| NI-17 | `source_map` entry `2`'s segment as the operand slot `{"operand": 0}` | `malformed_wire` at `/source_map/2/node_id/path/3/operand` | FR-322-AC-393 |
+| NI-18 | node `2`'s row entry as `4`, one past the last node | `malformed_wire` at `/semantic_graph/operand_rows/2/0` | FR-322-AC-279 |
+| NI-19 | node `2`'s segment as `{"operand": 1}` and its row as `[1, 0]` | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/operand` | FR-322-AC-394 |
+| NI-20 | node `2`'s path extended with `{"operand": 1}` and its row as `[0, 0]` | `malformed_wire` at `/semantic_graph/operand_rows/2/1` | FR-322-AC-394 |
+| NI-21 | node `2`'s row as `[0, 1]` | `malformed_wire` at `/semantic_graph/operand_rows/2/1` | FR-322-AC-394 |
+| NI-22 | a copy of node `2`'s bytes appended with the row `[1]` | Passes the operand checks and the duplicate-`node_id` check: its key, over Boolean, differs from node `2`'s | FR-322-AC-395 |
+| NI-23 | a copy of node `2`'s bytes appended with the row `[0]` | `invalid_semantic_graph` at `/semantic_graph/nodes/4/node_id`: its key is node `2`'s | FR-322-AC-395 |
+| NI-24 | a `scalar_type`/`text` node inserted at graph index `0` and a `scalar_type`/`rational` node appended, each with an empty row and a `source_map` entry; every row entry and document-held index segment rewritten to the new indexes | Passes the operand checks; each original node, now at its index plus one, has its published bytes and structural key; only `operand_rows`, the two new nodes, `source_map` and its index segments differ | FR-322-AC-392 |
 
-For FR-322-AC-95, rewrite each index segment of the reordered document to its node's new graph index, and check that each node's rebuilt structural key is unchanged by the reorder.
+For FR-322-AC-95, reorder `operand_rows` with the nodes and rewrite each row entry and document-held index segment of the reordered document to its node's new graph index, and check that each node's bytes and rebuilt structural key are unchanged by the reorder. For FR-322-AC-395, also resolve node `3`'s literal `type` through node `3`'s row and check it names node `2`.
 
 ### Structural identity member vectors
 

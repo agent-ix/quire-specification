@@ -190,9 +190,10 @@ input yields a `diagnostics` stop.
 
 Apply one mutation per case to an otherwise admitted value. Index defects
 refuse `malformed_wire` with no cause at the named pointer: an output graph
-`{"node": i}` with `i` equal to the length of `semantic_graph.nodes`
-(`/semantic_graph/nodes/{k}/node_id/path/{s}/node`); an output node that names
-itself, and two output nodes that name each other; a `source_keys` index
+operand slot `{"operand": k}` with `k` equal to the length of its holding
+node's operand row (`/semantic_graph/nodes/{n}/node_id/path/{s}/operand`); an
+output node whose row names itself, and two output nodes that name each other
+(at the first slot on the cycle, FR-322 "Reader checks"); a `source_keys` index
 segment out of range; a `source_keys` entry that names itself, and two that
 name each other; a `feature_accounting` `node_id` `{"source_key": n}` with `n`
 equal to the length of `source_keys`. Require that when an output graph index

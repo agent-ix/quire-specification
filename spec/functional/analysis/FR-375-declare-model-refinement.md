@@ -418,8 +418,9 @@ node id (below), so two declarations never share a node. A `NodeRef` has
 FR-322's `node_id` shape and names a node of this graph. A `{package, node}` key
 is the closed `{package: identity, node: node_id}` shape, `identity` being the
 dependency package's identity string, and names a node of a directly
-selected dependency package. Its `node` is that node's `node_id` as the
-dependency package writes it: each index segment `{"node": i}` of `node.path`
+selected dependency package. Its `node` is that node's `node_id` written
+as a document-held id of the dependency package's graph, with index segments
+even though the key sits inside a node of this graph: each index segment `{"node": i}` of `node.path`
 names `semantic_graph.nodes[i]` of the dependency package the key's `package`
 names (not `node.package`, which names the node's owner), never a node of this graph (FR-322 "Operand index segments"), so a key
 naming a derived node, such as the no-point `operation_anchor` of an abstract
