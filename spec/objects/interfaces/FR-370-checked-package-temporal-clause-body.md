@@ -185,7 +185,7 @@ in this order, with those a row does not require omitted and never `null`:
 | `kind` | always | `text` literal: `count`, `sum`, `min`, `max`, `fraction` or `quantile` |
 | `q` | `quantile` only | `rational` literal, `0 < q < 1` |
 | `predicate` | `fraction` only | the `fraction holds(P)` predicate, a term of family `boolean` |
-| `value` | `sum`, `min`, `max`, `quantile` only | the value expression, a term of family `integer`, `rational` or `quantity` |
+| `value` | `sum`, `min`, `max`, `quantile` only | the value expression, a term of family `integer`, `rational` or `quantity` whose type is not a `scalar_type`/`carried_quantity` node |
 | `filter` | when the source has `where` | the filter predicate, a term of family `boolean` |
 | `window_kind` | always | `text` literal: `positions` or `duration` |
 | `lower`, `upper` | always | the bounds `a` and `b` of `past[a, b]`: for `positions` non-negative `integer` literals; for `duration` non-negative `quantity` literals in the clause's clock unit, converted exactly by the checker (FR-414 "Windows") |
@@ -235,7 +235,10 @@ and `M` = `A/members/{m}`, and reports the first defect:
    text outside its set, a negative bound or `min_count`, or `q` outside
    `0 < q < 1` refuses `invalid_package`/`invalid-value` at `M/value`; a
    term of another family than its row states refuses `ill_typed`/
-   `type-mismatch` at `M/value`. A `window_kind` the profile does not take
+   `type-mismatch` at `M/value`. A `value` or `threshold` term whose type is
+   a `scalar_type`/`carried_quantity` node, of family `quantity`, refuses
+   `ill_typed`/`type-mismatch` at `M/value`: a carried quantity is not an
+   operand of the comparison (FR-414 "Values"). A `window_kind` the profile does not take
    (`duration` under event-position, `positions` under timestamped-event)
    refuses `ill_typed`/`unit-mismatch` at `M/value`. A `duration` `lower` or
    `upper` whose `type` is not the clause's clock unit node (another unit of
@@ -423,6 +426,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-16 | A `temporal_clause` node's body and `node_id` hold no declared name: two clauses that differ only in declared name encode to one node with two `claim` occurrences, and each occurrence's name is the `name` of its `temporal_clause_names` row and its clock configuration the `clock` of its `temporal_bindings` row (FR-322-AC-343, FR-322-AC-344, FR-322-AC-361). | Test (TC-303; TC-233) |
 | FR-370-AC-17 | `quire.op.temporal.aggregate` is catalogued as a `temporal_formula` with one `aggregate` operand, result `temporal` and no member, and both the catalog and the V2 schema enumerate it. Under event-position false-extension, a `count` with a `filter`, a `sum`, `min` and `max` with a `value`, a `fraction` with a `predicate` and a `quantile` with `q` and a `value`, each over `positions` bounds, are admitted, as is a `quantile` over `duration` quantity bounds under timestamped-event finite-window; each argument holds exactly its kind's bindings in table order. | Test (TC-303) |
 | FR-370-AC-18 | The reader refuses an aggregate argument at the first defect of "Window aggregate atom": an aggregate under infinite-trace `invalid-value` at the body; an unknown and a non-binding member `unknown-member`, a repeated binding `duplicate-member` and a misordered binding `invalid-value`, each at the member; a missing `kind`, `window_kind` or `comparison` and a `quantile` without `q` `missing-member` at the argument; `q` on a `sum` and `value` on a `count` `unknown-member` at the member; a `kind` of `median`, `q` `1`, a negative bound and `min_count` `0` on `max` `invalid-value` at the value; a `positions` window under timestamped-event, a `duration` window under event-position, a `duration` `lower` in `s` or in `m` and an `upper` in `s` under a clock in `ms`, and a `threshold` of another unit than `value` `ill_typed`/`unit-mismatch` at the value; a non-Boolean `filter` and a `rational` threshold on `count` `ill_typed`/`type-mismatch` at the value; and `past[5, 2]` `invalid-value` at the argument. Each value refusal of step 5 is exercised: a `comparison` of `!=` and a `window_kind` of `sliding` `invalid-value` at the value; a `q`, `window_kind`, `comparison`, `lower`, `upper` or `min_count` holding a literal of another `value_kind` or a reference `wrong-value-kind` at the value; a `value` of family `boolean`, a non-Boolean `predicate` and an `integer` threshold on `fraction` `ill_typed`/`type-mismatch` at the value; a `sum` without `value`, a `fraction` without `predicate`, and a missing `lower`, `upper`, `min_count` or `threshold` `missing-member` at the argument; and `min_count` `-1` `invalid-value` at the value. `min_count` `0` on `count` and `sum` is admitted, as is `past[0, 300000]` in `ms` under a clock in `ms`. | Test (TC-303) |
+| FR-370-AC-19 | Over the positive `sum` argument of FR-370-AC-18 under event-position, a `value` term whose type is the `scalar_type`/`carried_quantity` node of `Quantity<m, Int[-5, 5]>`, with a `threshold` literal of `m`'s unit node, refuses `ill_typed`/`type-mismatch` at the `value` member's value; the same over the `min`, `max` and `quantile` positives; a `threshold` term of that carried node beside a `value` of `m`'s unit node refuses the same at the `threshold` member's value; and a `value` and `threshold` of the package unit node `ix://acme/rpc/unit/ms` (FR-414-AC-13) are admitted. | Test (TC-303) |
 
 ## Published artifacts and the operation catalog
 
