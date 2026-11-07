@@ -38,7 +38,7 @@ for its patched vectors, and feed the package to the reader. The vault declares
 | RN-06 | RN-01 with different whitespace and comments | RN-01's node id |
 | RN-07 | RN-01 with `x`'s `implementation` binding removed | `invalid_semantic_graph` at `x`'s entry |
 | RN-08 | RN-01 with `x`'s `alias` `W` | `missing_declaration`/`missing-name` at the `alias` binding |
-| RN-09 | RN-01 with `x`'s `operation` a reference to the `Vault` object type node | `invalid_model_binding`/`malformed-declaration` at the target |
+| RN-09 | RN-01 with `x`'s `operation` a reference to the `Vault` object type node; RN-01 with `subjects.V` a reference to the `Vault` object type node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RN-10 | RN-01 with `implementation` naming an added abstraction relation with no `frames` entry for `step` | `invalid_model_binding`/`malformed-declaration` at the target |
 | RN-11 | RN-01 with `StepOk` removed from `x`'s `preconditions`; RN-01 with the invariant removed from `invariants` | `invalid_model_binding`/`malformed-declaration` at that aggregate, each |
 | RN-12 | RN-01 with `body` a reference to the `expression` node of `x.self.l` | `ill_typed`/`non-boolean-root` at the target |

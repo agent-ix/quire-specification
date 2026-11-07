@@ -244,7 +244,7 @@ reaches this step.
 
 The hybrid step is a body step of
 [FR-322](FR-322-checked-package-artifact.md) "Body steps": it runs after the
-step-relation step and before the timed-model step; the timed-model step runs
+hyperproperty step (FR-402) and before the timed-model step; the timed-model step runs
 before the protocol step. Mode names are declared names, so FR-322's name
 rules have already refused a second mode of one name
 in one model (`ambiguous_declaration`/`ambiguous-name`). The step visits

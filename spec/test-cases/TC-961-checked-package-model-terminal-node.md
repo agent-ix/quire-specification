@@ -39,7 +39,7 @@ vectors, and feed the package to the reader.
 | MT-07 | MT-01 with `mode` and `condition` swapped in order | `invalid_semantic_graph` at the body |
 | MT-08 | MT-01 with `mode` `some` | `invalid_package`/`invalid-value` at `/semantic_graph/nodes/{n}/body/members/1` |
 | MT-09 | MT-02 with `condition` a reference to the added `expression` node of `self.value = 3`; MT-01 with `condition` the empty aggregate | `invalid_semantic_graph` at the `condition` binding, each |
-| MT-10 | MT-01 with `model` a reference to the `self` parameter node | `invalid_model_binding`/`malformed-declaration` at the target |
+| MT-10 | MT-01 with `model` a reference to the `self` parameter node; MT-01 with `model` a reference to the `C` `model`/`object_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | MT-11 | MT-01 with `condition` a reference to the added integer-typed `expression` node of `self.value + 1` | `ill_typed`/`non-boolean-root` at the target |
 | MT-12 | a package holding MT-01's and MT-02's nodes for `M` | `ambiguous_declaration`/`ambiguous-name` at the second node in ascending node-id order, naming both |
 | MT-13 | MT-01 with `parameters` holding the `self` node twice | `invalid_semantic_graph` at the `parameters` binding |
