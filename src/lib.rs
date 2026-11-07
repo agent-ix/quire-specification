@@ -24,9 +24,9 @@ pub const NATIVE_DIAGNOSTICS: &str =
 pub const ACME_COLORS_DOMAIN_PACKAGE: &str =
     include_str!("../proposals/checked-package-v2/domain-package-acme-colors.json");
 
-/// Native source selecting [`ACME_COLORS_DOMAIN_PACKAGE`] and declaring
-/// equality with `Red` and inequality with `Green`. These are authored input
-/// bytes, not a recorded runtime or generated-code agreement result.
+/// Native source selecting [`ACME_COLORS_DOMAIN_PACKAGE`] and declaring both
+/// truth arms of equality and inequality over `Red` and `Green`. These are
+/// authored input bytes, not a recorded runtime or generated-code agreement.
 pub const ACME_COLORS_COMPARISON_SOURCE: &str =
     include_str!("../proposals/checked-package-v2/fixtures/model-enum-comparison.native");
 
