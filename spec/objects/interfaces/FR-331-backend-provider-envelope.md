@@ -549,6 +549,20 @@ in milliseconds (FR-462).
   `{type: "unknown-backend", backend}`.
 - `options` is a map of backend option names to string values (FR-196).
 - `check` is carried only by a `value-validity` or `operation-contract` item and holds `limits.max_cases`, a `PositiveCount`, the case budget of its check arm (FR-483, FR-461); an item that carries it with another kind refuses before consumption.
+- `correspondence` is carried only by an `operation-contract` item an
+  implementation guarantee derives ([FR-490](../../functional/ir-proof/FR-490-spell-and-check-an-implementation-guarantee-declaration.md)
+  "Derived items"): `{role, operation}`, `role` one of `initialization`,
+  `transition-simulation`, `frame` and `no-divergence`, and `operation`
+  `{context, operation}` present exactly when `role` is not
+  `initialization`; it is part of request identity, and an item that breaks
+  either rule refuses before consumption.
+- `premises` is carried only by a `composition` item a composition
+  declaration derives ([FR-491](../../functional/analysis/FR-491-spell-and-check-a-component-composition-declaration.md)):
+  the ordered array of its premise slots, each `{role, key}`, `role` one of
+  `component-guarantee`, `rely`, `liveness-dependency`, `fairness` and
+  `environment`, and `key` the slot key of [FR-492](FR-492-planner-settlement-request.md);
+  it is part of request identity, and an item of another kind that carries
+  it refuses before consumption.
 - `requirements` is the nonempty, repeat-free set of the item's routing requirements, from the closed vocabulary {`hybrid-dynamics`}, carried only by a `temporal-satisfaction` item and by every item that carries `hybrid` (FR-193 "Routing a hybrid item"); an item that breaks either rule refuses before consumption.
 - An item with an absent `kind`, a `kind` outside the vocabulary, an absent
   `extent`, or an absent or unknown probabilistic evidence kind is admitted on
@@ -714,6 +728,14 @@ certificate checker and makes its counterexample canonical assignments, so:
   replay or Kani run settles: `replay-parity` (AD-016 arrow 7), `replay-refused`
   (FR-399, and a bound `contract-counterexample` a reader cannot re-execute, FR-485) and `kani_vacuous_proof` (AD-016; a plugin's entry for a `value-validity` or `operation-contract` item may carry `kani_vacuous_proof`, FR-483). A plugin's
   entry carries none.
+- A **planner-only cause** is an inconclusive cause that only the
+  verification planner settles, for a planner-local item that never reaches a
+  provider: `transfer-not-preserving` and `premise-unproved` (FR-380, and
+  FR-488 and FR-489 through [FR-492](FR-492-planner-settlement-request.md)'s
+  planner result, where `premise` is the premise slot index and `result` is
+  the slot's result value, `absent` for an unfilled slot, or `assumption`
+  for a premise supplied only as an assumption). No provider's
+  entry, plugin or in-process, carries one.
 - A plugin's `counterexamples` entry carries a `counterexample` whose `type`
   is `assignments`, `contract-counterexample` on the entry of an
   `operation-contract` item, or `hybrid-counterexample` on the entry of a hybrid
@@ -734,7 +756,7 @@ This table lists the same closed causes as FR-272's `invalid_result` row:
 | `wrong-value-kind` | A member's JSON kind is not the kind its domain takes, such as a `certification` that is not a string, or an entry that is not an object | The member |
 | `invalid-value` | A member of the right JSON kind lies outside its domain here, such as a `certification` other than `certified`, `uncertified` and `trusted`, a count outside 0 to 2^53 − 1, or a plugin's counterexample `type` other than `assignments` and, on a hybrid item, `hybrid-counterexample` | The member |
 | `certification-mismatch` | A `proved` entry's `certification` is one of the three values but not the one the Certification table fixes for that proof | `/certification`; `expected` the fixed value, when there is one, and `actual` the received one |
-| `unknown-cause` | A result cause or proof basis spelling outside the closed set ("Wire spellings of result causes and proof bases"), or outside the subset its backend may send: a core-only basis or core-only cause in a plugin's entry | The `type` member; the received spelling |
+| `unknown-cause` | A result cause or proof basis spelling outside the closed set ("Wire spellings of result causes and proof bases"), or outside the subset its backend may send: a core-only basis or core-only cause in a plugin's entry, or a planner-only cause in any provider's entry | The `type` member; the received spelling |
 | `measured-with-truth` | A `measured` entry carries a truth or a basis (FR-409) | The truth or `basis` member |
 
 The reader reads an entry in this order and reports the first defect:
@@ -856,7 +878,7 @@ probabilistic engine's is `exact_prob`.
 
 ## Identity and validation
 
-Request identity includes the capability vocabulary, manifest, package, the request's `memory` selections ([FR-434](../../functional/memory/FR-434-select-memory-models-for-parallel.md)), each item's claim, extent with its proof bounds, options and limits (a `value-validity` or `operation-contract` item's `check.limits`, FR-483), each item's kind, extent classification, `requirements`, named backend and candidates, each temporal item's subject, `abstract_subject`, item kind, fairness set, `max_depth`, `limits` and `smt_encoding` (FR-368), the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or deterministic budget can produce a different result, so a result belongs to exactly one request identity; a wall-clock setting, a hybrid item's `hybrid.limits.max_solver_time` or a temporal item's `temporal.limits.max_solver_time` (FR-368 "SMT solver budgets"), is outside it. Result identity includes artifacts and results.
+Request identity includes the capability vocabulary, manifest, package, the request's `memory` selections ([FR-434](../../functional/memory/FR-434-select-memory-models-for-parallel.md)), each item's claim, extent with its proof bounds, options and limits (a `value-validity` or `operation-contract` item's `check.limits`, FR-483), each item's kind, extent classification, `requirements`, named backend and candidates, each `operation-contract` item's `correspondence` (FR-490), each `composition` item's `premises` (FR-491), each temporal item's subject, `abstract_subject`, item kind, `stutter_closure`, fairness set, `max_depth`, `limits` and `smt_encoding` (FR-368), the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or deterministic budget can produce a different result, so a result belongs to exactly one request identity; a wall-clock setting, a hybrid item's `hybrid.limits.max_solver_time` or a temporal item's `temporal.limits.max_solver_time` (FR-368 "SMT solver budgets"), is outside it. Result identity includes artifacts and results.
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption; in a result entry or a `counterexamples` entry, a missing or unknown member and a value of the wrong kind or outside its domain refuse with the `invalid_result` causes of "Result entries". A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 

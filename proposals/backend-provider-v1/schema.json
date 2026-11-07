@@ -307,9 +307,13 @@
         "probabilistic": {"$ref": "#/$defs/Probabilistic"},
         "requirements": {"description": "FR-193 Routing a hybrid item, FR-290: the item's routing requirements; hybrid-dynamics on the item of every hybrid claim. Part of request identity (FR-306).", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["hybrid-dynamics"]}},
         "hybrid": {"$ref": "#/$defs/Hybrid"},
-        "check": {"$ref": "#/$defs/Check"}
+        "check": {"$ref": "#/$defs/Check"},
+        "correspondence": {"description": "FR-490 Derived items: the correspondence or progress role of an operation-contract item an implementation guarantee derives; operation absent for initialization. Part of request identity.", "type": "object", "required": ["role"], "properties": {"role": {"enum": ["initialization", "transition-simulation", "frame", "no-divergence"]}, "operation": {"type": "object", "required": ["context", "operation"], "properties": {"context": {"$ref": "#/$defs/NodeId"}, "operation": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}}, "additionalProperties": false},
+        "premises": {"description": "FR-491, FR-492: the premise slots of a composition item a composition declaration derives, in derived order. Part of request identity.", "type": "array", "items": {"type": "object", "required": ["role", "key"], "properties": {"role": {"enum": ["component-guarantee", "rely", "liveness-dependency", "fairness", "environment"]}, "key": {"type": "object"}}, "additionalProperties": false}}
       },
       "allOf": [
+        {"description": "FR-491: premises belongs to a composition item only.", "if": {"required": ["premises"]}, "then": {"required": ["kind"], "properties": {"kind": {"const": "composition"}}}},
+        {"description": "FR-490: correspondence belongs to an operation-contract item only, and names an operation exactly when its role is not initialization.", "if": {"required": ["correspondence"]}, "then": {"required": ["kind"], "properties": {"kind": {"const": "operation-contract"}, "correspondence": {"if": {"properties": {"role": {"const": "initialization"}}}, "then": {"not": {"required": ["operation"]}}, "else": {"required": ["operation"]}}}}},
         {"description": "FR-368 Extent and domains of a derived or refinement item: unbounded, with an infinite-trace domain. That the domain's node is the claim's node is a producer obligation.", "if": {"properties": {"temporal": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"]}}, "required": ["item_kind"]}}, "required": ["temporal"]}, "then": {"properties": {"extent": {"properties": {"classification": {"const": "unbounded"}, "domains": {"contains": {"properties": {"kind": {"const": "infinite-trace"}}, "required": ["kind"]}}}}}}},
         {"description": "FR-193: requirements belong to a temporal-satisfaction item only.", "if": {"required": ["requirements"]}, "then": {"required": ["kind"], "properties": {"kind": {"const": "temporal-satisfaction"}}}},
         {"description": "FR-193: an item carrying hybrid solver budgets carries the hybrid-dynamics requirement.", "if": {"required": ["hybrid"]}, "then": {"required": ["requirements"], "properties": {"requirements": {"contains": {"const": "hybrid-dynamics"}}}}},
@@ -454,6 +458,7 @@
           "additionalProperties": false
         },
         "item_kind": {"description": "FR-368 \"Item kinds\": an authored clause, the derived items of FR-366/FR-429, FR-417 and FR-438, and the refinement item of FR-377.", "enum": ["formula", "deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"]},
+        "stutter_closure": {"description": "FR-368, FR-380, FR-488: the clause is checked over the subject's stutter closure; present only on a formula item.", "const": true},
         "fairness": {"description": "FR-368, FR-362: the resolved fairness set, empty for deadlock-freedom, time-lock-freedom and race-freedom.", "type": "array", "items": {"$ref": "#/$defs/Fairness"}},
         "max_depth": {"description": "FR-368, FR-363: the bounded-search horizon; absent for an exhaustive search.", "$ref": "#/$defs/Count"},
         "limits": {"$ref": "#/$defs/TemporalLimits"},
@@ -462,6 +467,7 @@
         "seed": {"description": "FR-392: absent takes the provider's published default.", "$ref": "#/$defs/Decimal"}
       },
       "allOf": [
+        {"description": "FR-368: stutter_closure is present only on a formula item.", "if": {"required": ["stutter_closure"]}, "then": {"properties": {"item_kind": {"const": "formula"}}}},
         {"description": "FR-368, FR-377: abstract_subject is present exactly on a refinement item.", "if": {"properties": {"item_kind": {"const": "refinement"}}, "required": ["item_kind"]}, "then": {"required": ["abstract_subject"]}, "else": {"not": {"required": ["abstract_subject"]}}},
         {"description": "FR-368 Item kinds and Negotiation: a derived item has no authored clause, so its fairness set is empty, it carries no max_depth (the provider default, an exhaustive search, applies), and its limits are only those meaningful for an exhaustive check (FR-368 Negotiation): max_automaton_states, max_walk_steps, max_witness_set and max_relation_tuples are unknown members of it.", "if": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom"]}}, "required": ["item_kind"]}, "then": {"properties": {"fairness": {"maxItems": 0}, "limits": {"propertyNames": {"enum": ["max_states", "max_transitions", "max_clocks", "max_store_buffer", "max_messages", "max_live_instances", "max_solver_steps", "max_solver_time"]}}}, "not": {"required": ["max_depth"]}}}
       ],

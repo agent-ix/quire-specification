@@ -19,6 +19,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-360
     type: references
+  - target: ix://agent-ix/quire-specification/FR-491
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-492
+    type: references
 ---
 
 # FR-489: Carry liveness dependencies and fairness premises through component composition
@@ -48,6 +52,13 @@ premise lists, none collapsed into a flag:
   under, and the fairness the composition supplies.
 
 And the obligation identity of each supplied component guarantee.
+
+The request is authored as an FR-491 `composition-decl`, which fixes the
+components, the rule and the premises and derives the four lists as premise
+slots. Under the rule `assume-guarantee` the composition item is
+planner-local, and the planner reads the slots, the supplied guarantees and
+any discharge records from one FR-492 settlement request; under any other
+rule it is FR-348's `composition` request item, unchanged.
 
 ## Outputs
 
@@ -80,6 +91,17 @@ guarantee implies the premise. Two input shapes are distinguished:
   malformed request, refused `invalid_runtime_input`/`invalid-value` naming the
   member (FR-380).
 
+**Implication.** A supplied guarantee implies a `rely` or
+`liveness_dependencies` premise exactly when its FR-331 request item's
+subject is the premise's peer subject, its claim node is the premise's peer
+guarantee clause, FR-363 gives it the premise's form, and every constraint
+of its fairness set is implied, under FR-380 "Fairness implication", by a
+constraint the composition supplies. The planner decides no other
+entailment: a different clause, however strong, does not discharge the
+premise. A `fairness` premise is discharged by a supplied constraint that
+implies it under the same rule, and a component-guarantee slot by a `proved`
+result of that guarantee's own item.
+
 A result that merely references another result is not evidence of the
 premise's validity (FR-354); the referenced result is read.
 
@@ -91,7 +113,12 @@ rule declared by the selected profile), with every iteration recorded
 (FR-176-AC-4). Otherwise it is refused as circular reasoning exactly as
 FR-176-AC-3 refuses it: no guarantee in the cycle is available as an
 assumption and no discharge is granted. This requirement defines no other
-route for a cycle.
+route for a cycle. The planner computes no fixed point: an accepted cycle's
+`fixed-point` slot (FR-491) is filled by the FR-331 `composition` result of
+FR-176's item over exactly the cycle's guarantees under the declaring
+profile, run by its provider; the cycle's premises are discharged only when
+that result is `proved`, and the discharge record carries its entry, with
+FR-176-AC-4's iterations.
 
 **Settlement.**
 
@@ -99,11 +126,11 @@ route for a cycle.
 | --- | --- | --- | --- |
 | Every premise discharged under a supported rule | `proved` | `decisive-witness` | none; the witness is the premise discharge record |
 | A premise discharged by an accepted plugin result that itself carries certification `trusted` (FR-354) | `proved` with certification `trusted` | `decisive-witness` | none; the discharge record cites that plugin result |
-| A premise supplied only as an assumption, with no plugin result behind it | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise and the assumption |
+| A `rely` or liveness-dependency premise supplied only as an assumption (an environment record offered as its only discharger, FR-492), with no plugin result behind it | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise, with `result` `assumption`; an `environment` premise itself is discharged by its record and listed as an assumption |
 | A premise no supplied guarantee discharges (absent, weaker, of another kind or over another subject) | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise |
 | A failed component check | `inconclusive` | `unsettled` | `premise-unproved`, naming the component's premise |
 | An unsupported composition rule | `unsupported` | `unavailable` | the missing capability (FR-348-AC-4) |
-| A liveness cycle outside FR-176's fixed-point rule | -- | -- | refused as FR-176-AC-3 refuses circular reasoning |
+| A liveness cycle outside FR-176's fixed-point rule | -- | -- | refused as FR-176-AC-3 refuses circular reasoning: `invalid_model_binding`/`malformed-declaration`, naming the cycle's guarantees (FR-491), scoped to the composition item |
 | A discharge record whose subject differs, or whose identity names no settled result | -- | -- | refused `invalid_runtime_input`/`invalid-value`, naming the member |
 | Work or resource bound reached | `incomplete` | `unavailable` | the reached limit |
 
@@ -115,7 +142,7 @@ Unrelated supported claims in the request continue.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-489-AC-1 | A composition request names the component subjects, the composition rule, the environmental assumptions, the relied-on peer guarantees, the liveness dependencies and the fairness premises as separate lists, and a request that supplies them as one success flag is refused `invalid_runtime_input`/`invalid-value`. | Test (TC-983) |
+| FR-489-AC-1 | A composition request names the component subjects, the composition rule, the environmental assumptions, the relied-on peer guarantees, the liveness dependencies and the fairness premises as separate lists, and a request that supplies them as one success flag is refused `invalid_runtime_input`/`wrong-value-kind` (FR-492 "Admission"). | Test (TC-983) |
 | FR-489-AC-2 | The premise discharge record names, for each required premise, the proved guarantee that discharges it; a supplied guarantee over another subject, a weaker guarantee and a guarantee of another kind each leave the premise undischarged and the composition `inconclusive`, cause `premise-unproved`, naming the premise. | Test (TC-983) |
 | FR-489-AC-3 | A two-component fixture whose safety relies and liveness dependencies are all discharged under a supported rule settles `proved`, `decisive-witness`, with the discharge record. | Test (TC-983) |
 | FR-489-AC-4 | Two components each depending on the other's progress, under a rule with no declared fixed-point lattice, are refused as FR-176-AC-3 refuses circular reasoning and no guarantee of the pair is available as an assumption. | Test (TC-983) |
@@ -131,6 +158,10 @@ Unrelated supported claims in the request continue.
 
 - [FR-348](FR-348-admit-compositional-verification.md): composition negotiation;
   this requirement adds only the typed premise transport and its discharge record.
+- [FR-491](FR-491-spell-and-check-a-component-composition-declaration.md) and
+  [FR-492](../../objects/interfaces/FR-492-planner-settlement-request.md):
+  the authored declaration, its slots, and the settlement request and planner
+  result.
 - [FR-176](../protocol/FR-176-compose-assume-guarantee-contracts.md) and
   [FR-177](../protocol/FR-177-check-protocol-refinement.md):
   the assume-guarantee algorithm and fixed-point rule (FR-176) and protocol refinement (FR-177).
