@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-142
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: verifies
 ---
 
 # TC-187: Quantity and unit conversion
@@ -120,6 +122,52 @@ inputs are the cases of
 | U42 | Execute the exact halves of U07, U16 and U29 as `convert<Quantity<m, Decimal[-100, 100; 2, 2; exact]>>(1 in)`, `convert<Quantity<m, Decimal[-100, 100; 2, 2; exact]>>(25 cm)` and `convert<Quantity<m, Int[-2, 2]>>` of `1 in` and of `2 m`, with the limits of U16 and U29, from [`quantity-carrier-vectors.json`](../../proposals/checked-package-v2/quantity-carrier-vectors.json) `CQ-E01`, `CQ-E02`, `CQ-E07`, `CQ-E08`, `CQ-E12` and `CQ-E13`, and `CQ-E20` for a carrier with `smin < smax`, whose grid is `10^-smax` (FR-142-AC-28) | `1 in` refuses `inexact_conversion`/`inexact-conversion` at the `convert` node with `expected` the carrier, before `unit.target-domain` and, under U16's two tuples and U29's, after exactly one read, one edge and two rational events (four work units), never `incomplete`; `25 cm` is `(25, 2) m` and `2 m` is `2 m`, each with no loss record |
 | U43 | Execute `CQ-E03` to `CQ-E06`, `CQ-E09` to `CQ-E11`, `CQ-E14` to `CQ-E16`: U08's members and the one-below and one-over values, U17, U18, U29's `3 m` and `250 cm` (`5/2 m`) into `Decimal[-2, 2; 0, 0; exact]` (FR-142-AC-29) | `-2 m` and `2 m` succeed; `-3 m`, `3 m` and (U29) `3 m` into `Int[-2, 2]` refuse `decimal_out_of_domain` or `integer_out_of_domain`/`outside-domain` after `unit.target-domain` and before `unit.result-retain`, atomically; U17 and U29 then `incomplete` at `unit.target-domain` with limit one; U18 `incomplete` for `decimal_digits` with the coefficient never materialized; `250 cm` is both inexact and out of bounds and refuses `inexact_conversion` first |
 | U44 | Execute `CQ-E17` to `CQ-E19`: convert `1 in` into `Quantity<m, Decimal[-100, 100; 2, 2; nearest-even]>`, `25 cm` into `Quantity<m, Int[-2, 2; nearest-even]>` and `13/5 m` into the same integer carrier, and `1 in` into `Quantity<m, Decimal[-100, 100; 2, 2; exact]>` naming mode `exact` (FR-142-AC-30) | `(3, 2) m` with U07's `DecimalLoss`; `25 cm` is `0 m` with its loss; `13/5 m` rounds to `3` and then refuses `integer_out_of_domain`; the conversion into the `exact`-moded carrier is the `exact` one of U42 and never rounds; the nearest-even outcomes of U07, U16 and U29 are unchanged, and `CQ-E17` to `CQ-E19` fix the carried forms |
+
+Carried quantity sum cases. The following rows execute `sum<N>` over carried
+quantities (FR-142 "Carried quantity sum", FR-142-AC-33 to FR-142-AC-38) over
+the unit graph above, outside the `Vector` table as the carried quantity cases
+are. They declare `type Li = Quantity<m, Int[-5, 5]>;`,
+`type Lp = Quantity<m, Int[1, 5]>;`,
+`type Ld = Quantity<m, Decimal[-500, 500; 2, 2; nearest-even]>;`,
+`type Lx = Quantity<m, Decimal[-500, 500; 2, 2; exact]>;`,
+`type Lr = Quantity<m, Rational[-3, 7; 1, 12]>;` and `type Lm = Quantity<m>;`.
+A value row is direct kernel evaluation of `sum<N>(x in q: x)` for a parameter
+`q` of `Sequence<N>[0,3]` holding the values shown, under limits large enough
+that no charge is denied unless the row states limits, and `x` and `q` make no
+charge.
+
+| Case | Operation | Expected value/disposition |
+| --- | --- | --- |
+| U45 | Check `sum<Li>(x in q: x)` for `q` of `Sequence<Li>[0,3]`; then for `q` of `Sequence<Quantity<m, Int[-5, 5; nearest-even]>>[0,3]`, `Sequence<Quantity<m, Int[-4, 4]>>[0,3]`, `Sequence<Quantity<cm, Int[-5, 5]>>[0,3]`, `Sequence<Lm>[0,3]` and `Sequence<Int[-5, 5]>[0,3]`; then `sum<Lm>(x in q: x)` and `sum<Lm>(x in q: convert<Quantity<m>>(x))` for `q` of `Sequence<Li>[0,3]`; then `sum<Li>(x in p: convert<Quantity<m, Int[-5, 5]>>(x))` for `p` of `Sequence<Quantity<m, Int[-2, 2]>>[0,3]` (FR-142-AC-33) | the first admitted with result type `Li`, lowered to `quire.op.collection.sum.carried_quantity`; each of the next five refuses `ill_typed`/`type-mismatch` at the summand `x` before any charge; `sum<Lm>(x in q: x)` refuses the same; the converted `Lm` sum is admitted as `quire.op.collection.sum.quantity`; the converted `Li` sum is admitted |
+| U46 | Over `Li`, `q` holding `2 m, -1 m, 3 m`: first under `L(4,0,0,2,14,3)`; then with `work_units: 13`; then with `integer_bits: 3`, the other counters as in the first (FR-142-AC-34) | `4 m` of type `Li` after `collection.visit` and the seed `2 m`; `collection.visit`, two `unit.identity-read` (`integer_bits = 2`), `unit.rational-arithmetic` (`integer_bits = 4`), `unit.target-domain` (`integer_bits = 1`), the uncharged decision `1` in `[-5, 5]` and `unit.result-retain`; `collection.visit` and the same five charges for `1 m + 3 m` (the identity reads `1` then `2`, then `4` and `3`); then a scalar `collection.result-retain`: fourteen work units and three result units, no loss record; then `incomplete { limit_kind: work_units, limit: 13, consumed: 13, next_charge: 1, charge_point: collection.result-retain }` with no total; then `incomplete { limit_kind: integer_bits, limit: 3, consumed: 2, next_charge: 4, charge_point: unit.rational-arithmetic }` at the first addition |
+| U47 | Over `Li`, `q` holding `3 m, 3 m, -2 m`; then `5 m, 0 m`; then `-3 m, -2 m`; then link `function s using V(q: Sequence<Li>[0,3]): Li pure { sum<Li>(x in q: x) }` and the same with `q: Sequence<Li>[0,1]` (FR-142-AC-35) | a located undefined outcome at the second summand's addition after `unit.target-domain`, because `6 m` is outside `Int[-5, 5]`, although the final `4 m` would be inside: six work units, no result unit, no third visit and never `integer_out_of_domain`; `5 m`; `-5 m`; `refused { code: undefined_expression, cause: unproved-range }` at the `sum`, because the prefix `5 m + 5 m` is not proved inside `Li`; admitted |
+| U48 | Over `Li`, `q` empty; over `Lp`, `q` of `Sequence<Lp>[0,3]` empty; then link `function z using V(q: Sequence<Lp>[0,1]): Lp pure { sum<Lp>(x in q: x) }` and the same with `q: Sequence<Lp>[1,1]` (FR-142-AC-36) | `0 m` of type `Li` after one scalar `collection.result-retain` (one work unit, one result unit, no addition); a located undefined outcome at the `sum` with no charge, because `0` is not a member of `Int[1, 5]`; `refused { code: undefined_expression, cause: unproved-range }` at the `sum`, the source not proved nonempty; admitted |
+| U49 | Over `Ld`, `q` holding `(125, 2) m, (250, 2) m`; the same over `Lx`; over `Ld`, `q` holding `(400, 2) m, (200, 2) m`; over `Ld`, `q` empty (FR-142-AC-37) | `(375, 2) m` of type `Ld` after eight work units and two result units, with no `DecimalLoss`, no `decimal.*` charge and no `decimal.rounding`; `(375, 2) m` of type `Lx`, the same value; a located undefined outcome at the addition, the coefficient `600` being above `500`, never `decimal_out_of_domain`; `(0, 2) m` after one scalar retain |
+| U50 | Over `Lr`, `q` holding `1/4 m, 1/3 m`; then `1/2 m, 1/2 m`; then `1/4 m, 1/5 m`; then `6 m, 2 m`; then empty (FR-142-AC-38) | `7/12 m`; `1 m` (reduced `1/1`); a located undefined outcome at the addition, `9/20 m` having a denominator above `12`, never rounded and never `rational_out_of_domain`; the same for `8 m`, its numerator above `7`; `0 m` (`0/1`) after one scalar retain |
+
+Carried quantity sum wire cases. The following rows read the checked-package
+wire of `quire.op.collection.sum.carried_quantity` (FR-322 "Carried-quantity
+sum", FR-322-AC-389 to FR-322-AC-391). `Q` is the `scalar_type`/`carried_quantity` node of
+`Li` (unit `m`, carrier `Int[-5, 5]`, `rounding` `exact`), `Qd` that of `Ld`,
+`Qn` that of `Quantity<m, Int[-5, 5; nearest-even]>`, `Q4` that of
+`Quantity<m, Int[-4, 4]>`, `Qc` that of `Quantity<cm, Int[-5, 5]>`, `Qr` that
+of `Lr`, `Qk` that of `Quantity<m, Decimal[-5, 5; 0, 0; exact]>` (another
+carrier kind, mode `exact`), `Um` the unit node of `m`, `Cm` the
+`scalar_type`/`compound_unit` node of `m` to the power 1 and `Bm` the
+`scalar_type`/`bounded_quantity` node of `Quantity<m>[-5, 5]`. A row not stated otherwise is the application of operator
+`collection` with arguments `[reference(q), binder x bounded by Q whose value is reference(x)]`,
+`q` a parameter of `Sequence<Li>[0,3]`, `type_argument` member `Q`,
+`result_type` `Q`, `mode` `{kind: rounding, value: exact}`, no laws and no
+leaves. Every refusal is located at the application.
+
+| Case | Wire | Expected disposition |
+| --- | --- | --- |
+| CS-01 | The row as stated; the same with `Qd` for `Q` throughout, `q` of `Sequence<Ld>[0,3]` and `mode` `{kind: rounding, value: nearest-even}`; the same with `Qr` for `Q` throughout, `q` of `Sequence<Lr>[0,3]` and `mode` `exact` | each admitted |
+| CS-02 | CS-01 with `mode` `{kind: rounding, value: nearest-even}`; the `Qd` row of CS-01 with `mode` `{kind: rounding, value: exact}`; CS-01 with the binder bounded by `Qn`; CS-01 with `result_type` `Qn`; the `Qd` row of CS-01 with the binder bounded by `Um` | each `invalid_package`/`operation-mode-type-mismatch` |
+| CS-03 | CS-01 with `mode` `null`; CS-01 with a `laws` entry | `invalid_package`/`operation-mode-mismatch`; `invalid_package`/`operation-law-mismatch` |
+| CS-04 | CS-01 with the binder bounded by `Q4`, by `Qc`, by `Qk` and by `Um`; CS-01 with the binder bounded by `Qn`, `result_type` `Qn` and `mode` `{kind: rounding, value: nearest-even}`, the `type_argument` still `Q` | each `ill_typed`/`operator-ineligible` |
+| CS-05 | CS-01 with `result_type` `Q4`; with `result_type` `Um` | each `ill_typed`/`operator-ineligible` |
+| CS-06 | CS-01 with `type_argument`, binder bound and `result_type` each `Um`, then each `Cm`, then each `Bm`; CS-01 with identity `quire.op.collection.sum.quantity` | each `ill_typed`/`operator-ineligible` |
 
 Quantity power wire cases. The following rows read the checked-package wire of
 `quire.op.quantity.pow` (FR-322 "Quantity integer power", FR-322-AC-383) over

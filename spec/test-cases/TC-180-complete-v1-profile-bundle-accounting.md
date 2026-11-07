@@ -27,9 +27,12 @@ the two checked packages and check outcomes (FR-339-AC-3).
 
 Compile `temporal T using inf clock "c" on origin { always holds(true) }`, a temporal clause with no `over` parameter (FR-370-AC-13).
 
+Compile each of FR-339-AC-5's `1-draft` units for each of `helper`, `rec`, `cast` and `Tuple`, and evaluate each `c()`; compile `record tuple { a: Integer; }`; and parse `0-draft` state-core clauses whose expressions are `helper(x)`, `rec(x)` and `cast(x)` (FR-339-AC-5).
+
 ## Expected Results
 
 Every positive and boundary result matches FR-131; each invalid, unsupported or exhausted mutation returns its exact typed disposition with source/provenance, emits no approximation, and preserves independent sibling results.
 The two registry runs give byte-equal checked packages and the same check
 outcome.
 The clause with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the `clock` token and produces no node.
+Each `1-draft` unit checks with no `invalid_syntax` and no `unsupported_construct`, and each `c()` is `1`; `record tuple` refuses `invalid_syntax`/`unexpected-token` at `tuple`; each `0-draft` clause keeps its `unsupported_construct` refusal at its introducing token.

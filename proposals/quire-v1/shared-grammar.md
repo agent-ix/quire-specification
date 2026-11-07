@@ -71,6 +71,21 @@ does not admit (`invalid_syntax`/`unexpected-token`). Common reserved words for 
 `attempt`, `contracts`, `effect`, `event`, `related`, `check` and `finish`.
 This candidate inventory is edition-owned, not an extensible runtime registry.
 
+The balanced reserved forms of the `0-draft` state-core profile
+(`proposals/state-core/profile.md`) are not reserved by `1-draft`: a spelling
+that neither the common inventory above nor the complete-V1 inventory below
+lists is an ordinary `ident` in every `1-draft` position. In particular the
+exact spellings `helper`, `rec`, `cast` and `Tuple` are ordinary identifiers
+under `1-draft` in every native declaration and binder name position (a
+function or predicate name, the `using` profile alias, a parameter, a `let`
+binder, a record, enum, tuple, union or type-alias name, a field, an enum or
+union member, and a profile, import or model selection alias) and in every
+reference to such a name, exactly as `helperz` is. A recognizer SHALL NOT
+classify them as unsupported constructs under `1-draft`. Lowercase `tuple`
+stays a complete-V1 reserved word, so `Tuple` and `tuple` differ. Under
+`0-draft`, `helper`, `rec` and `cast` keep the `unsupported_construct`
+classification the state-core profile gives them.
+
 The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `ordered`, `enum`, `record`, `tuple`, `union`, `type`, `function`, `pure`, `decreases`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,

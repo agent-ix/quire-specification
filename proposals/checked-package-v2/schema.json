@@ -4366,6 +4366,7 @@
         "quire.op.collection.sum.float32",
         "quire.op.collection.sum.float64",
         "quire.op.collection.sum.quantity",
+        "quire.op.collection.sum.carried_quantity",
         "quire.op.collection.size",
         "quire.op.collection.contains",
         "quire.op.collection.forall",
