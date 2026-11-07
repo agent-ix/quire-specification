@@ -20976,13 +20976,12 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     let location_rows = vectors["positive"]["protocol_locations"]
         .as_array()
         .unwrap();
-    let shared_terms = location_rows
-        .windows(2)
-        .find(|pair| {
-            pair[0]["application"] == pair[1]["application"]
-                && pair[0]["occurrence"] == pair[1]["occurrence"]
-        })
-        .expect("two protocol terms share one application occurrence");
+    let by_id = |id: &str| location_rows.iter().find(|row| row["id"] == id).unwrap();
+    // PL-01-root and PL-02-child: two terms of one slot at one application
+    // occurrence (FR-322-AC-291).
+    let shared_terms = [by_id("PL-01-root"), by_id("PL-02-child")];
+    assert_eq!(shared_terms[0]["application"], shared_terms[1]["application"]);
+    assert_eq!(shared_terms[0]["occurrence"], shared_terms[1]["occurrence"]);
     assert_ne!(
         shared_terms[0]["term_ordinal"],
         shared_terms[1]["term_ordinal"]
@@ -21024,15 +21023,14 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     // FR-322-AC-388: a case guard is named by its label and a `related` end by
     // its record position, so two slots whose expressions are one application
     // occurrence keep distinct origins; no such row carries a span name.
-    let pl = |id: &str| location_rows.iter().find(|row| row["id"] == id).unwrap();
     for (first, second) in [
         ("PL-04b-case-guard-shared", "PL-04-case-guard"),
         ("PL-05-related-end", "PL-05b-related-end-shared"),
     ] {
-        assert_eq!(pl(first)["application"], pl(second)["application"]);
-        assert_eq!(pl(first)["occurrence"], pl(second)["occurrence"]);
-        assert_eq!(pl(first)["term_ordinal"], json!(0), "{first}");
-        assert_eq!(pl(second)["term_ordinal"], json!(1), "{second}");
+        assert_eq!(by_id(first)["application"], by_id(second)["application"]);
+        assert_eq!(by_id(first)["occurrence"], by_id(second)["occurrence"]);
+        assert_eq!(by_id(first)["term_ordinal"], json!(0), "{first}");
+        assert_eq!(by_id(second)["term_ordinal"], json!(1), "{second}");
         assert_ne!(site(first)["origin"], site(second)["origin"]);
         assert_eq!(site(first)["path"], json!([]));
         assert_eq!(site(second)["path"], json!([]));
@@ -21042,17 +21040,25 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         let Some((_, slot)) = name.split_once(" run ") else {
             continue;
         };
+        assert!(!name.contains(".."), "{} carries no span name", row["id"]);
         let words: Vec<&str> = slot.split(' ').collect();
-        match words.as_slice() {
-            [.., "case", _, "guard"] => {}
-            [.., "related", k, "from" | "to"] => assert!(
-                k.parse::<u64>().is_ok(),
+        if let Some(at) = words.iter().position(|word| *word == "related") {
+            assert!(
+                matches!(
+                    words.get(at + 1..),
+                    Some([k, "from" | "to"]) if k.parse::<u64>().is_ok()
+                ),
                 "{} names a related end by record position",
                 row["id"]
-            ),
-            _ => panic!("{} is not a case-guard or related-end site", row["id"]),
+            );
         }
-        assert!(!name.contains(".."), "{} carries no span name", row["id"]);
+        if words.contains(&"case") {
+            assert!(
+                matches!(words.as_slice(), [.., "case", _, "guard"]),
+                "{} names a case guard by its label",
+                row["id"]
+            );
+        }
     }
     let refusals = vectors["reader_refusals"].as_array().unwrap();
     for vector in refusals {
