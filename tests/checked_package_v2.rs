@@ -19709,6 +19709,9 @@ fn selected_timed_slot_defect(vectors: &Value, document: &Value, package: &Value
         positioned.push((format!("place {name}"), place["package_node"].as_u64().unwrap() as usize, place["node"].clone()));
     }
     for (name, parameter) in vectors["presence"]["parameters"].as_object().unwrap() {
+        if name.ends_with("_operand_row") {
+            continue;
+        }
         let at = vectors["presence"]["parameter_package_nodes"][name].as_u64().unwrap() as usize;
         positioned.push((format!("parameter {name}"), at, parameter.clone()));
     }
