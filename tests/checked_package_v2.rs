@@ -17445,6 +17445,48 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_derive
     assert_ne!(shapes_project_document(&reordered), projection);
 }
 
+/// The authored Color cases retain their names and source origins while their
+/// identities use the case-preserving variant slots specified by FR-154.
+#[trace("TC-234", "FR-154-AC-11")]
+#[test]
+fn shapes_color_case_identities_preserve_declared_case() {
+    let document = parsed_fixture(SHAPES_DOCUMENT);
+    let color = document["types"]
+        .as_array()
+        .expect("the document's type definitions")
+        .iter()
+        .find(|declared| declared["identity"] == "ix://acme/shapes/Color")
+        .expect("the Color declaration");
+    let cases = color["variants"].as_array().expect("the Color cases");
+    assert_eq!(cases.len(), 2, "the fixture exposes both enum cases");
+    for (name, identity) in [
+        ("Red", "ix://acme/shapes/variant/Color-Red"),
+        ("Green", "ix://acme/shapes/variant/Color-Green"),
+    ] {
+        let case = cases
+            .iter()
+            .find(|case| case["name"] == name)
+            .unwrap_or_else(|| panic!("the Color case {name}"));
+        assert_eq!(case["identity"], identity, "the minted slot for {name}");
+        assert_eq!(case["origin"], color["origin"], "the source origin of {name}");
+        assert!(case.get("payloadType").is_none(), "{name} remains nullary");
+    }
+    let projection = shapes_project_document(&document);
+    let projected_color = projection["variant_types"]
+        .as_array()
+        .expect("projected variant declarations")
+        .iter()
+        .find(|declared| declared["node"] == "ix://acme/shapes/Color")
+        .expect("Color remains exposed to the checked-package vectors");
+    assert_eq!(
+        projected_color["cases"],
+        json!([
+            {"name": "Red", "payloadType": null},
+            {"name": "Green", "payloadType": null},
+        ]),
+    );
+}
+
 /// FR-322-AC-261, FR-322-AC-266: the clause fixture meets the V2 schema, is
 /// admitted by the clause oracle, every clause node carries exactly the
 /// binding names the published `forms` give, and every guard, reset,
