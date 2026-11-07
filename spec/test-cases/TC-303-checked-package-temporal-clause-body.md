@@ -72,6 +72,7 @@ Encode as V2 packages:
 14. `temporal-clause-name-vectors.json`: a clause renamed with the graph unchanged, and two structurally equal clauses declared under two names.
 15. `temporal-aggregate-vectors.json`: one positive window aggregate argument per kind under event-position false-extension, a `duration` `quantile` under timestamped-event finite-window with its bounds in the clause's clock unit `ms` (`clock_unit`), and `min_count 0` on `count` and `sum`; and the reader cases of FR-370-AC-18, each its `base` positive with one member replaced, added, removed or moved, or with only the profile changed.
 16. FR-370-AC-19's arguments: the `sum`, `min`, `max` and `quantile` positives under event-position with the `value` term retyped by the `scalar_type`/`carried_quantity` node of `Quantity<m, Int[-5, 5]>` and the `threshold` a literal of `m`'s unit node; the `sum` positive with the `threshold` term retyped by that carried node and the `value` of `m`'s unit node; and the `sum` positive with `value` and `threshold` of the package unit node `ix://acme/rpc/unit/ms`.
+17. FR-370-AC-20's clause: a package named `acme/orders` selecting `acme/rpc`, a timestamped-event `count` aggregate under a clock in `ix://acme/rpc/unit/ms` with both `duration` bounds typed by the `acme/rpc` package's own `ms` node; and the same clause with `upper` typed by the `acme/rpc` `s` node.
 
 ## Expected Results
 
@@ -135,3 +136,4 @@ Encode as V2 packages:
 14. The rename changes no node and no `node_id`; the two clauses are one node with two `claim` occurrences and two `temporal_clause_names` rows, one name each (FR-370-AC-16, FR-322-AC-343, FR-322-AC-344).
 15. The catalog and the schema enumerate `quire.op.temporal.aggregate` with one `aggregate` operand; each argument satisfies the schema's application argument shape; each reader case differs from its `base` positive by exactly one member, or by its profile alone; every positive is admitted and every reader case refuses with its listed code, cause and pointer (FR-370-AC-17, FR-370-AC-18).
 16. Each carried-value and carried-threshold argument refuses `ill_typed`/`type-mismatch` at the retyped member's value; the package-unit argument is admitted (FR-370-AC-19).
+17. The clause whose bounds name the domain package's `ms` node is admitted, its clause node's `node_id.package` being `acme/orders`, and the package holds one node with path `["scalar_type", "unit", "ix://acme/rpc/unit/ms"]`; the clause with `upper` in `s` refuses `ill_typed`/`unit-mismatch` at `upper`'s value (FR-370-AC-20).
