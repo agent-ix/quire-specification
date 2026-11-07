@@ -40,8 +40,8 @@ claim, and the body, through the node's references, and from nothing else.
   in this order:
   - `subjects` — an aggregate of one `binding(alias, reference(M))` per
     distinct model alias the execution variables name, in order of first
-    naming, each referencing the alias's `model` node, as FR-402's
-    `subjects` does;
+    naming, each referencing the `model`/`model_root` node of the domain
+    package the alias selects, as FR-402's `subjects` does;
   - `executions` — an aggregate of one `binding(variable, aggregate)` per
     execution variable, in source order, whose aggregate holds, in this
     order:
@@ -134,7 +134,7 @@ first failing check is its defect:
    `missing_declaration`/`missing-name` at the `alias` binding, or
    `invalid_semantic_graph` at the unnamed `subjects` binding.
 3. **Targets**, entry by entry in body order: a `subjects` target that is
-   not a `model` node, an `operation` target that is not a
+   not a `model`/`model_root` node, an `operation` target that is not a
    `state`/`operation_anchor` node whose `context` is a declaration of the
    alias's model, or an `implementation` target that is not a
    `correspondence`/`abstraction_relation` node holding a `frames` entry
@@ -158,7 +158,7 @@ first failing check is its defect:
 | FR-477-AC-1 | A determinism relation `x: V::Vault::step, y: V::Vault::step` over a vault whose `step` is bound by an abstraction relation produces one `claim`/`step_relation` node whose body has `subjects`, `executions`, `invariants` and `body` in order; `subjects` holds `V` once; each of the two `executions` entries holds alias `V`, a reference to `step`'s `state`/`operation_anchor` node, its own `self` and `i` parameter nodes in FR-341 order (`step` has no result), `x`'s at levels 0 and 1 and `y`'s at levels 2 and 3, `step`'s precondition and postcondition nodes and a reference to the abstraction relation node; `invariants` holds `Vault`'s invariant nodes; the node carries `declaration` `Det`, its `owner`, and one `declaration` and one `claim` occurrence. | Test (TC-962) |
 | FR-477-AC-2 | The same relation over a vault whose `step` has no binding has empty `implementation` members and yields the model claim alone; with the binding it yields both claims, with different obligation identities (FR-402-AC-4). | Test (TC-962) |
 | FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the relation's body, so the package is structurally unequal, and no node id changes; renaming the relation or changing its owner changes the node id; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
-| FR-477-AC-4 | An `executions` entry missing `implementation` refuses `invalid_semantic_graph`; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` aggregate missing `step`'s precondition and an `invariants` aggregate missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration`; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
+| FR-477-AC-4 | An `executions` entry missing `implementation` refuses `invalid_semantic_graph`; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; a `subjects` target that is a `model`/`object_type` node, an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` aggregate missing `step`'s precondition and an `invariants` aggregate missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration`; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
 | FR-477-AC-5 | In AC-1's node, `x`'s and `y`'s `self` nodes are different nodes, as are their `i` nodes, and the body's `pre(x.self.l) = pre(y.self.l)` reads both; an `executions` entry for `y` that references `x`'s `self` and `i` nodes refuses `invalid_model_binding`/`malformed-declaration` at `y`'s `parameters`. | Test (TC-962) |
 
 ## Published artifacts
