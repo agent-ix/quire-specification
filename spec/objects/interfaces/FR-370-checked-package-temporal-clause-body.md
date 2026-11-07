@@ -191,7 +191,7 @@ in this order, with those a row does not require omitted and never `null`:
 | `lower`, `upper` | always | the bounds `a` and `b` of `past[a, b]`: for `positions` non-negative `integer` literals; for `duration` non-negative `quantity` literals in the clause's clock unit, converted exactly by the checker (FR-414 "Windows") |
 | `min_count` | always | non-negative `integer` literal; `1` when the source omits `min_count` |
 | `comparison` | always | `text` literal: `<`, `<=`, `=`, `>=` or `>` |
-| `threshold` | always | a term of the aggregate's result family: `integer` for `count`, `rational` for `fraction`, otherwise the family of `value`, and for a `quantity` the unit of `value`, converted exactly by the checker (FR-142) |
+| `threshold` | always | a term, whose type is not a `scalar_type`/`carried_quantity` node, of the aggregate's result family: `integer` for `count`, `rational` for `fraction`, otherwise the family of `value`, and for a `quantity` the unit of `value`, converted exactly by the checker (FR-142) |
 
 A term is a binding value of FR-322's body grammar: a literal, or a
 `reference` to the node of the checked expression. Expression nodes are in
@@ -238,7 +238,9 @@ and `M` = `A/members/{m}`, and reports the first defect:
    `type-mismatch` at `M/value`. A `value` or `threshold` term whose type is
    a `scalar_type`/`carried_quantity` node, of family `quantity`, refuses
    `ill_typed`/`type-mismatch` at `M/value`: a carried quantity is not an
-   operand of the comparison (FR-414 "Values"). A `window_kind` the profile does not take
+   operand of the comparison (FR-414 "Values"). This check runs before the
+   member's unit check, so a carried `threshold` reports this refusal and
+   no `unit-mismatch`. A `window_kind` the profile does not take
    (`duration` under event-position, `positions` under timestamped-event)
    refuses `ill_typed`/`unit-mismatch` at `M/value`. A `duration` `lower` or
    `upper` whose `type` is not the clause's clock unit node (another unit of

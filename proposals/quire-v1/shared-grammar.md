@@ -83,8 +83,8 @@ union member, and a profile, import or model selection alias) and in every
 reference to such a name, exactly as `helperz` is. A recognizer SHALL NOT
 classify them as unsupported constructs under `1-draft`. Lowercase `tuple`
 stays a complete-V1 reserved word, so `Tuple` and `tuple` differ. Under
-`0-draft` the four spellings keep their `unsupported_construct`
-classification.
+`0-draft`, `helper`, `rec` and `cast` keep the `unsupported_construct`
+classification the state-core profile gives them.
 
 The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `ordered`, `enum`, `record`, `tuple`, `union`, `type`, `function`, `pure`, `decreases`,
