@@ -586,6 +586,7 @@ A frame body refusal, meaning-join or canonical-order
   refusal, the reader runs the body steps in this one order, each over its
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
+  the implementation-guarantee step (FR-490), the composition step (FR-491),
   the refinement step (FR-375), the terminal step (FR-476),
   the step-relation step (FR-477), the hybrid
   step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
@@ -1621,7 +1622,7 @@ of every V2 package is fixed by the schema, whatever the model's size.
 | Group | `aggregate` whose members are each a Leaf or a `binding` whose value is a Leaf |
 | Tuple | `aggregate` whose members are each a Leaf or a Group |
 | Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
-| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); a `refinement` body with the closed row and target grammar of [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
+| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); an `implementation_guarantee` or `component_composition` body ([FR-490](../../functional/ir-proof/FR-490-spell-and-check-an-implementation-guarantee-declaration.md), [FR-491](../../functional/analysis/FR-491-spell-and-check-a-component-composition-declaration.md)); a `refinement` body with the closed row and target grammar of [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
 
 **Integer literal operands.** The producer SHALL write an integer literal
 operand of `quire.op.integer.add`, `quire.op.integer.sub`,

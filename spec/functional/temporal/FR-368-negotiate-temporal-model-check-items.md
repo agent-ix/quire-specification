@@ -71,6 +71,14 @@ request:
   subject's initial-state snapshots as byte-provision references, spelled as
   `subject.initial_states` is ([FR-377](../analysis/FR-377-decide-model-refinement.md)
   "Inputs"). Its universes are fixed by FR-377 and it has no proof bounds;
+- `stutter_closure` — `true`, present only on a `formula` item requested as
+  the liveness premise of a transfer or implementation-guarantee item
+  ([FR-380](../analysis/FR-380-transfer-claims-through-refinement.md) "Safety
+  and liveness premises", FR-488): the clause is checked over the subject
+  with a stutter step added at every state, belonging to no fairness
+  constraint. It is part of the subject, so an item with it and one without
+  it are different obligations; a provider that does not implement it
+  settles the item `unsupported` naming `stutter_closure`;
 - `fairness` — the resolved fairness set
   ([FR-362](FR-362-apply-fairness-constraints.md)), empty for a
   `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item;
@@ -90,7 +98,7 @@ request:
   limits" below), present only when the caller sets one.
 
 The request identity and the item's obligation identity include `subject`,
-`abstract_subject`, `item_kind` and `fairness`. Two items that differ in any of them are different
+`abstract_subject`, `item_kind`, `stutter_closure` and `fairness`. Two items that differ in any of them are different
 obligations, and a verdict on one never settles the other.
 
 The request identity also includes `max_depth`, `limits`, except the
@@ -135,7 +143,13 @@ of kind `temporal-satisfaction` only as the verification planner's own
 classification; the planner evaluates it from its two premises, "no backend is
 negotiated for it, and no exploration of the concrete subject runs", so it
 never reaches a provider and no sixth spelling exists. Its two premises are
-request items of kind `formula` and `refinement`.
+request items of kind `formula` and `refinement`. An implementation-guarantee
+item ([FR-488](../ir-proof/FR-488-attach-a-temporal-guarantee-to-implementation-rust.md))
+and an `assume-guarantee` composition item
+([FR-489](../analysis/FR-489-carry-liveness-and-fairness-premises-through-composition.md))
+are planner-local in the same way and have no `item_kind`; their premises
+that are request items are the items their declarations derive (FR-490,
+FR-491), and the planner reads them through FR-492.
 
 ### Claim and anchor of a derived or refinement item
 

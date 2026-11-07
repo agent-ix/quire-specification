@@ -21,6 +21,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
+  - target: ix://agent-ix/quire-specification/FR-490
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-492
+    type: references
 ---
 
 # FR-488: Attach a temporal guarantee to implementation Rust through checked correspondence
@@ -49,7 +53,14 @@ it; and the obligation identities of
 - the **correspondence** items below, one per obligation;
 - the **progress** items below;
 - the **environment premises**, each a typed assumption record with its
-  supplier and trust basis (FR-354).
+  supplier; an assumption carries no FR-354 certification and the conclusion
+  record lists it as an assumption.
+
+The item is authored as an FR-490 `guarantee-decl`, which fixes `P`, the
+relation, the measures and the environment premises and derives every
+premise slot in order. The planner reads the item, every premise result and
+every environment record from one FR-492 settlement request, and refuses a
+malformed, forged or mismatched request there.
 
 ## Outputs
 
@@ -83,13 +94,22 @@ liveness clause also requires, each as its own item:
    premise names a well-founded measure that every stutter step strictly
    decreases, or a bound on consecutive stutter steps; an implementation
    behaviour with infinitely many consecutive allowed-stutter steps
-   (divergence) defeats the premise.
+   (divergence) defeats the premise. Per-operation measures are ordered
+   lexicographically (FR-490 "Declaration form"), so a stutter of one
+   function that raises an earlier function's measure defeats the premise
+   too.
 2. *Fairness correspondence*: every constraint of `F_P` is implied by the
    fairness the implementation actually has: each model operation named by a
    constraint is executed by the implementation under the scheduling premise
    the environment records, with the kind and granularity rule of FR-380
    ("Fairness implication"). A scheduling premise stronger than the
-   environment supplies is not assumed.
+   environment supplies is not assumed. The planner settles this item
+   itself, one per constraint of `F_P`, from the scheduling environment
+   premises and the relation's frame bindings: `proved` when a scheduling
+   premise over the constraint's operation, whose operation has a frame
+   binding, implies it; otherwise `inconclusive`, cause
+   `transfer-not-preserving{reason: fairness, constraint}`, naming the
+   constraint.
 
 A safety clause needs the model claim, initialization, transition simulation,
 frame and the environment premises it reads; it needs no progress item.
@@ -100,6 +120,7 @@ frame and the environment premises it reads; it needs no progress item.
 | --- | --- | --- | --- |
 | A liveness clause with every premise and every correspondence and progress item `proved` | `proved` | `decisive-witness` | none; the witness is the set of premise records |
 | A safety clause with the model claim, initialization, transition simulation, frame and environment premises `proved` or supplied | `proved` | `decisive-witness` | none; no progress item is read |
+| `P` outside FR-380's stuttering-invariant fragment (an interval operator nested under an unbounded one, or previous) | `inconclusive` | `unsettled` | `transfer-not-preserving`, reason `fragment`, naming the operator: an allowed stutter changes its truth |
 | The model claim not `proved` | `inconclusive` | `unsettled` | `premise-unproved`, naming the model claim and its result |
 | A correspondence item not `proved` (a violating step included) | `inconclusive` | `unsettled` | `premise-unproved`, naming the premise and its result |
 | A progress item not `proved` (an infinite stutter behaviour, an absent measure, a fairness premise stronger than the environment's, or no progress item for a liveness clause) | `inconclusive` | `unsettled` | `premise-unproved`, naming the progress item and its result |
@@ -148,6 +169,8 @@ invalidates the record.
 | FR-488-AC-10 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles `incomplete`; the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
 | FR-488-AC-11 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
 | FR-488-AC-12 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
+| FR-488-AC-13 | A clause with an interval operator nested under an unbounded one, and a clause using previous, each settle `inconclusive`, cause `transfer-not-preserving` with reason `fragment` naming the operator, although every premise is `proved`. | Test (TC-982) |
+| FR-488-AC-14 | Two operations whose `progress` measures each decrease on their own stutters, where one operation's stutter increases the other's earlier-declared measure, leave the no-divergence premise of the stutter that increases it not `proved`, and the item `inconclusive`, cause `premise-unproved`. | Test (TC-982) |
 
 ## Dependencies
 
@@ -156,6 +179,10 @@ invalidates the record.
   this requirement uses and does not replace; real Verus execution stays with
   the FR-350 backend.
 - [FR-354](FR-354-record-proof-trust-basis.md): the trust basis of each premise.
+- [FR-490](FR-490-spell-and-check-an-implementation-guarantee-declaration.md)
+  and [FR-492](../../objects/interfaces/FR-492-planner-settlement-request.md):
+  the authored declaration, its derived slots, and the settlement request and
+  planner result that carry them.
 - [FR-377](../analysis/FR-377-decide-model-refinement.md) and
   [FR-380](../analysis/FR-380-transfer-claims-through-refinement.md): the
   model-to-model refinement and the stuttering and fairness rules this
