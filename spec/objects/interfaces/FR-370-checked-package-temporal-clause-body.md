@@ -31,6 +31,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-414
     type: references
+  - target: ix://agent-ix/quire-specification/FR-402
+    type: references
 ---
 
 # FR-370: Checked-package temporal clause body and temporal operation identities
@@ -321,11 +323,16 @@ upper: "1"}`; it has no identity of its own.
   formula argument or as an operand of another `temporal_formula` application.
   A `quire.op.temporal.fair` application stands only as the body root of a
   `temporal`/`fairness` node, referenced only from a clause's fairness
-  argument.
+  argument or as a `reference` member of a quantifier Group of a
+  `claim`/`hyperproperty` node's `quantifiers` binding
+  ([FR-402](FR-402-hyperproperty-obligation-identity.md)).
 - A reference to a `temporal`/`formula` or `temporal`/`fairness` node
-  stands only where the rule above places it. A misplaced reference is
-  located at the node whose body holds the reference, not at the formula or
-  fairness node it names.
+  stands only where the rule above places it. In a `claim`/`hyperproperty`
+  body, a fairness reference anywhere but a quantifier Group's `reference`
+  members (in `match`, in `align_skip`, as `body`, or as the value of a
+  Group's `binding`) and every formula reference are misplaced. A
+  misplaced reference is located at the node whose body holds the
+  reference, not at the formula or fairness node it names.
 - A diagnostic's `details` never reference a `temporal`/`formula`,
   `temporal`/`fairness` or `expression`/`case` node, and never hold an
   application of the `temporal_formula`, `temporal_fairness` or `case`
@@ -418,7 +425,10 @@ order, by the three steps of "Fairness resolution"; then the profile fit
 of every interval and of the fairness argument; then each interval's bounds;
 then each window aggregate argument its formula reaches, by "Window
 aggregate atom". It reports the first defect. Operand families and `result_type` are the
-applications' catalog checks at the operation step.
+applications' catalog checks at the operation step. A `temporal`/`fairness`
+node referenced from a hyperproperty quantifier Group is resolved, and its
+Group's fairness checked against the profile, by FR-402's hyperproperty step,
+not here.
 
 ## Acceptance Criteria
 
@@ -444,6 +454,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-18 | The reader refuses an aggregate argument at the first defect of "Window aggregate atom": an aggregate under infinite-trace `invalid-value` at the body; an unknown and a non-binding member `unknown-member`, a repeated binding `duplicate-member` and a misordered binding `invalid-value`, each at the member; a missing `kind`, `window_kind` or `comparison` and a `quantile` without `q` `missing-member` at the argument; `q` on a `sum` and `value` on a `count` `unknown-member` at the member; a `kind` of `median`, `q` `1`, a negative bound and `min_count` `0` on `max` `invalid-value` at the value; a `positions` window under timestamped-event, a `duration` window under event-position, a `duration` `lower` in `s` or in `m` and an `upper` in `s` under a clock in `ms`, and a `threshold` of another unit than `value` `ill_typed`/`unit-mismatch` at the value; a non-Boolean `filter` and a `rational` threshold on `count` `ill_typed`/`type-mismatch` at the value; and `past[5, 2]` `invalid-value` at the argument. Each value refusal of step 5 is exercised: a `comparison` of `!=` and a `window_kind` of `sliding` `invalid-value` at the value; a `q`, `window_kind`, `comparison`, `lower`, `upper` or `min_count` holding a literal of another `value_kind` or a reference `wrong-value-kind` at the value; a `value` of family `boolean`, a non-Boolean `predicate` and an `integer` threshold on `fraction` `ill_typed`/`type-mismatch` at the value; a `sum` without `value`, a `fraction` without `predicate`, and a missing `lower`, `upper`, `min_count` or `threshold` `missing-member` at the argument; and `min_count` `-1` `invalid-value` at the value. `min_count` `0` on `count` and `sum` is admitted, as is `past[0, 300000]` in `ms` under a clock in `ms`. | Test (TC-303) |
 | FR-370-AC-19 | Over the positive `sum` argument of FR-370-AC-18 under event-position, a `value` term whose type is the `scalar_type`/`carried_quantity` node of `Quantity<m, Int[-5, 5]>`, with a `threshold` literal of `m`'s unit node, refuses `ill_typed`/`type-mismatch` at the `value` member's value; the same over the `min`, `max` and `quantile` positives; a `threshold` term of that carried node beside a `value` of `m`'s unit node refuses the same at the `threshold` member's value; and a `value` and `threshold` of the package unit node `ix://acme/rpc/unit/ms` (FR-414-AC-13) are admitted. | Test (TC-303) |
 | FR-370-AC-20 | In a checked package named `acme/orders` that selects the domain package `acme/rpc` (base dimension `Time`, units `s` and `ms`), a timestamped-event clause whose `temporal_bindings` row names `timestamp_unit` `ix://acme/rpc/unit/ms`, with a `duration` `count` aggregate whose `lower` and `upper` are quantity literals typed by the model-owned node `{package: "acme/rpc", path: ["scalar_type", "unit", "ix://acme/rpc/unit/ms"], ordinal: 0}`, is admitted although the clause node's `node_id.package` is `acme/orders`; the package holds exactly one node with that path; and the same clause with `upper` typed by `ix://acme/rpc/unit/s`'s node refuses `ill_typed`/`unit-mismatch` at `upper`'s value. | Test (TC-303) |
+| FR-370-AC-21 | A reference to a `temporal`/`fairness` node as a `reference` member of a `claim`/`hyperproperty` node's quantifier Group is admitted by the temporal step; the same reference in that node's `match` aggregate, as its `body` target, or as the value of a quantifier Group's `binding`, and a reference to a `temporal`/`formula` node anywhere in that node's body, each refuse `ill_typed`/`operator-ineligible` at the hyperproperty node. | Test (TC-346) |
 
 ## Published artifacts and the operation catalog
 

@@ -590,8 +590,8 @@ A frame body refusal, meaning-join or canonical-order
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
   the implementation-guarantee step (FR-490), the composition step (FR-491),
   the refinement step (FR-375), the terminal step (FR-476),
-  the step-relation step (FR-477), the hybrid
-  step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
+  the step-relation step (FR-477), the hyperproperty step (FR-402), the
+  hybrid step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
   and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
 - **One total order of the join stages** (FR-322-AC-275). Before
