@@ -15,6 +15,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-149
     type: references
+  - target: ix://agent-ix/quire-specification/FR-145
+    type: references
 ---
 
 # FR-142: Evaluate dimensions, quantities and exact unit conversions
@@ -266,10 +268,11 @@ them is implicit. A carried quantity is produced only by
 `convert<Quantity<u, C>>(e)`, where `e` has type `Quantity<u'>` or
 `Quantity<u', C'>` with `u'` and `u` of the same dimension (FR-142-AC-2 decides
 incompatible dimensions); it is consumed by being stored, passed, returned or
-converted back with `convert<Quantity<u''>>(e)`. A carried quantity is not an
-operand of quantity addition, subtraction, negation, multiplication, division,
-power, equality or ordering, which refuse `ill_typed`/`type-mismatch` at the
-operand before any charge.
+converted back with `convert<Quantity<u''>>(e)`, and it is summed by
+`sum<N>` whose `N` is its own carried type ("Carried quantity sum" below). A
+carried quantity is not an operand of quantity addition, subtraction,
+negation, multiplication, division, power, equality or ordering, which refuse
+`ill_typed`/`type-mismatch` at the operand before any charge.
 
 The rounding mode of `Quantity<u, C>` is the mode of `C`: for a `Decimal`
 carrier the mode of its `Decimal[..]` (FR-322 "Derived type forms and
@@ -310,12 +313,79 @@ atomically, retaining the carrier as `expected` and no value. Into
 `rational_out_of_domain`; so does `-4 m` (numerator below `-3`). Arithmetic,
 equality and ordering on a carried rational quantity follow the rule for every
 carried quantity: a carried rational quantity is not an operand of `=`, `!=`,
-`<` or any other quantity operation, so two such values, including two members
+`<` or any other quantity operation, the carried quantity sum excepted, so two such values, including two members
 of one unit-bearing Rational value type (FR-154 "Rational value types"), are
 compared or combined by converting each with `convert<Quantity<u''>>(e)`, which
 is exact, and operating on the `Quantity<u''>` values; a result is stored back
 by converting into a carried type again. `x.r = y.r` over such members is
 written `convert<Quantity<m>>(x.r) = convert<Quantity<m>>(y.r)`.
+
+**Carried quantity sum.** A `sum<N>(x in c: e)` (FR-145) whose type argument
+`N` names a carried type `Quantity<u, C>` sums carried quantities, and its
+result type is `N`.
+
+- When the summand `e` has the type `N` itself (the unit `u`, the carrier `C`
+  with the same bounds, and the same mode), the checker SHALL admit the sum
+  with result type `N` and SHALL lower it to
+  `quire.op.collection.sum.carried_quantity` (FR-322 "Carried-quantity sum").
+- When `e` has any other type, the checker SHALL refuse
+  `ill_typed`/`type-mismatch` at `e` before any charge: `Quantity<u>`, a carried
+  type of another unit, of another carrier bound or of another mode, and a bare
+  `Int[..]`, `Decimal[..]` or `Rational[..]` value are each refused, and no
+  summand is widened, narrowed or converted implicitly. Summands of another
+  carried type are summed into `N` by converting each one,
+  `sum<N>(x in c: convert<Quantity<u, C>>(x))`, which "Carried quantity" above
+  decides per summand.
+- When `N` names `Quantity<u>`, the sum is `quire.op.collection.sum.quantity`,
+  and the checker SHALL refuse a carried summand `ill_typed`/`type-mismatch` at
+  `e`; the sum of the exact magnitudes is written
+  `sum<N>(x in c: convert<Quantity<u>>(x))`.
+
+The evaluator SHALL evaluate an admitted carried sum as FR-145's left fold
+over the magnitudes in the unit `u`, with no unit edge, in these steps:
+
+1. An empty source has the result zero of `C` in `u`: the integer `0` for an
+   `Int` carrier, the retained `(0, smax)` for a `Decimal` carrier, whose
+   target scale is `smax` (FR-140), and `0/1` for a `Rational` carrier. When
+   zero is not a member of `C` (`Int[1, 5]`, a `Decimal[..]` carrier with `0`
+   outside `[lo, hi]`, or a `Rational[n1, n2; d1, d2]` carrier with `0` outside
+   `[n1, n2]` or `d1` above one), the empty sum has no value in `N`, as FR-145
+   step 1 decides.
+2. The first summand seeds the running total with no addition, as FR-145 step
+   2 decides.
+3. Each later summand is added to the running total by one exact rational
+   addition of the two magnitudes, in `u`. Because both operands are members
+   of `C`, they lie on its grid (an integer for an `Int` carrier, an integer
+   multiple of `10^-smax` for a `Decimal` carrier), and the grid is closed
+   under addition, so FR-140 meets no rounding step under any mode, and a
+   `Rational[..]` carrier has no grid. The evaluator SHALL therefore never
+   round a carried sum: the carrier's mode is pinned and recorded on the
+   application (FR-322) but selects no value, so one sum under `nearest-even`
+   and under `exact` has one value, records no `DecimalLoss`, charges no
+   `decimal.rounding` and never refuses `inexact_conversion` or
+   `inexact_decimal`. The total is retained in `C`'s representation: an
+   integer, `(v × 10^smax, smax)`, or a rational reduced to lowest terms with a
+   positive denominator.
+4. After each addition, and without a charge, the evaluator SHALL decide that
+   the running total is a member of `C`: an `Int` carrier by its inclusive
+   bounds, a `Decimal` carrier by FR-140 membership and a `Rational` carrier
+   by FR-149 "Bounded rationals" membership of the reduced numerator and
+   denominator. The bound is checked at every step, not at the end: a running
+   total outside `C` ends the sum with FR-145's located undefined outcome at
+   that addition, even when a later summand would bring the total back
+   inside; it makes no later charge, exposes no total and is never
+   `integer_out_of_domain`, `decimal_out_of_domain` or
+   `rational_out_of_domain`. A linked carried sum whose running totals, and
+   for a source that can be empty its zero result, are not all proved members
+   of `C` refuses `undefined_expression`/`unproved-range` (FR-145).
+5. The final total, or the zero of step 1, is returned with type `N` and unit
+   `u`.
+
+Each addition charges the unit addition schedule with the carrier as its
+target (`quire.value.accounting/v1` "Collection sum schedule"): two
+`unit.identity-read`, no `unit.edge`, one `unit.rational-arithmetic`,
+`unit.target-domain` sized for `C` as a conversion into `C` is sized, the
+uncharged membership decision, then `unit.result-retain`.
 
 Multiplication, division and integer power first convert every non-affine
 operand to its dimension's canonical root, perform exact value arithmetic and
@@ -643,9 +713,11 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-27 | `Quantity<u, C>` is a distinct type from `Quantity<u>` and from every carried type of another unit, carrier bound or mode: a `Quantity<u, C>` where `Quantity<u>` is required, the reverse, and a carried quantity as an operand of quantity addition, subtraction, negation, multiplication, division, power, equality or ordering each refuse `ill_typed`/`type-mismatch` at the expression before any charge, while `convert<Quantity<u'>>(e)` of a carried quantity of the same dimension is admitted and of another dimension refuses `ill_typed` by incompatible dimensions (TC-187 U41). A carrier that is not a bounded `Int[..]`, `Decimal[..]` or `Rational[..]` (`Integer`, `Decimal`, `Rational`, `Text[..]`, a record) refuses `ill_typed`/`type-mismatch` at the carrier. | Test (TC-187) |
 | FR-142-AC-28 | Converting into a `Quantity<u, C>` under mode `exact` admits exactly the values the carrier holds and refuses every other exact value `refused { code: inexact_conversion, cause: inexact-conversion }` at the `convert` node, retaining the carrier as `expected`, before `unit.target-domain` and with no value: U07 (`1 in` into `Decimal[-100, 100; 2, 2; exact]` at scale two refuses, `25 cm` converts to `(25, 2) m`), U16 (the same refusal after one read, one edge and two rational events, four work units, under work limit six and under work limit four, where it is still refused and not incomplete) and U29 (`1 in` into `Int[-2, 2]` refuses likewise, `2 m` converts). The vectors are `quantity-carrier-vectors.json` `CQ-E01`, `CQ-E02`, `CQ-E07`, `CQ-E08`, `CQ-E12` and `CQ-E13`, with `CQ-E20` for a carrier whose `smin` is below `smax` (TC-187 U42). | Test (TC-187) |
 | FR-142-AC-29 | A conversion whose exact value is on the carrier's grid but outside its bounds, after rounding under a non-`exact` mode, refuses `decimal_out_of_domain` (a `Decimal` carrier) or `integer_out_of_domain` (an `Int` carrier) with `outside-domain` after `unit.target-domain` and before `unit.result-retain`, publishing no value (or returns `incomplete` where the charge is denied, as TC-187 U43 lists): U08 (`-2 m` and `2 m` into `Decimal[-2, 2; 0, 0; exact]` succeed, `-3 m` and `3 m` refuse), U17 (`3 m` refuses by membership under work limit two and is `incomplete` at `unit.target-domain` under work limit one), U18 (`1 m` into `Decimal[0, 1; 0, 4294967295; exact]` is `incomplete` at `unit.target-domain` for `decimal_digits` with the retained coefficient never materialized) and U29 (`3 m` into `Int[-2, 2]`). An inexact value that is also out of bounds refuses `inexact_conversion` first (TC-187 U43). | Test (TC-187) |
-| FR-142-AC-30 | The rounding mode of a carried quantity is the mode of its carrier and no operation supplies another: a `Decimal` carrier's mode is its own, an `Int` carrier's is as written (`exact` when omitted), a non-`exact` mode rounds under FR-140 with a `DecimalLoss` record and a conversion never rounds under a mode its target type does not name. The nearest-even outcomes of U07, U16 and U29 are unchanged by this requirement (TC-187 U44); `CQ-E17` to `CQ-E19` (rounding precedes the bounds check) give their carried forms. A record or collection holding a carried quantity compares it by exact value in its identical type like any quantity leaf (FR-149), and `quire.op.collection.sum.quantity` is defined over `Quantity<u>` only. | Test (TC-187) |
+| FR-142-AC-30 | The rounding mode of a carried quantity is the mode of its carrier and no operation supplies another: a `Decimal` carrier's mode is its own, an `Int` carrier's is as written (`exact` when omitted), a non-`exact` mode rounds under FR-140 with a `DecimalLoss` record and a conversion never rounds under a mode its target type does not name. The nearest-even outcomes of U07, U16 and U29 are unchanged by this requirement (TC-187 U44); `CQ-E17` to `CQ-E19` (rounding precedes the bounds check) give their carried forms. A record or collection holding a carried quantity compares it by exact value in its identical type like any quantity leaf (FR-149); `quire.op.collection.sum.quantity` is defined over `Quantity<u>` only, and a carried summand is summed only by `quire.op.collection.sum.carried_quantity`, whose mode is its carrier's and which never rounds (FR-142-AC-33, FR-142-AC-34). | Test (TC-187) |
 | FR-142-AC-31 | `Quantity<m, Rational[-3, 7; 1, 12]>` is a carried quantity type whose mode is `exact`, distinct from `Quantity<m>`, from `Quantity<m, Rational[-3, 7; 1, 13]>` and from `Quantity<cm, Rational[-3, 7; 1, 12]>`, and refused as an operand of quantity arithmetic, equality and ordering as FR-142-AC-27 states, while `convert<Quantity<m>>` of two of its values compares them by `=` and `<`; `Quantity<m, Rational>` refuses `ill_typed`/`type-mismatch` at the carrier, and `Quantity<m, Rational[8, 7; 1, 12]>` and `Quantity<m, Rational[0, 7; 0, 12]>` refuse `ill_typed` at the carrier (FR-149 "Bounded rationals"). Converting into it, `25 cm` gives `1/4 m` and `-3 m` gives `-3 m`; `1 in`, `8 m` and `-4 m` refuse `rational_out_of_domain`/`outside-domain` after `unit.target-domain` and before `unit.result-retain`, with no value, and `8 m` under work limit one is `incomplete` at `unit.target-domain`; no conversion into it refuses `inexact_conversion`; `convert<Quantity<cm>>` of the `1/4 m` value gives `25 cm` (`CQ-W16` to `CQ-W19`, `CQ-E21` to `CQ-E26`). | Test (TC-981) |
 | FR-142-AC-32 | A checked-package conversion from `3/2 m` to the bounded result `Quantity<m>[-1, 1]` refuses `rational_out_of_domain`/`outside-domain` at `/semantic_graph/nodes/{n}/body/result_type`, with `expected` equal to `Quantity<ix://acme/rpc/unit/m>[-1/1, 1/1]` using the target unit's exact FR-154 identity and canonical reduced rational spellings; no converted magnitude is retained. The source language still has no `Quantity<u>[min,max]` type syntax: FR-154 unit bounds supply the target and FR-322 preserves it as `bounded_quantity`. | Test (TC-280) |
+| FR-142-AC-33 | With `type Li = Quantity<m, Int[-5, 5]>;`, `sum<Li>(x in q: x)` over `q: Sequence<Li>[0,3]` is admitted with result type `Li` and lowers to `quire.op.collection.sum.carried_quantity`; the same sum over a `Sequence` of `Quantity<m, Int[-5, 5; nearest-even]>`, of `Quantity<m, Int[-4, 4]>`, of `Quantity<cm, Int[-5, 5]>`, of `Quantity<m>` and of `Int[-5, 5]` each refuses `ill_typed`/`type-mismatch` at the summand before any charge; with `type Lm = Quantity<m>;`, `sum<Lm>(x in q: x)` over `Sequence<Li>[0,3]` refuses the same, while `sum<Lm>(x in q: convert<Quantity<m>>(x))` is admitted as `quire.op.collection.sum.quantity` and `sum<Li>(x in p: convert<Quantity<m, Int[-5, 5]>>(x))` over `p: Sequence<Quantity<m, Int[-2, 2]>>[0,3]` is admitted (TC-187 U45). | Test (TC-187) |
+| FR-142-AC-34 | A carried sum is FR-145's left fold over exact magnitudes in the summand's unit, never rounded and bounded at every step: over `Li`, `2 m, -1 m, 3 m` is `4 m` after fourteen work units and three result units, and is `incomplete` at `collection.result-retain` under thirteen work units and at `unit.rational-arithmetic` under `integer_bits` three (U46); `3 m, 3 m, -2 m` is a located undefined outcome at the second summand's addition with no later charge, never `integer_out_of_domain`, `5 m, 0 m` is `5 m`, and a linked sum over `Sequence<Li>[0,3]` refuses `undefined_expression`/`unproved-range` while one over `Sequence<Li>[0,1]` is admitted (U47); an empty source is `0 m` after one scalar retain, and over `Quantity<m, Int[1, 5]>` is a located undefined outcome, its linked sum over a source that can be empty refusing `unproved-range` (U48); over `Decimal[-500, 500; 2, 2; nearest-even]` and its `exact` twin, `1.25 m` and `2.50 m` are `(375, 2) m` with no `DecimalLoss` and no `decimal.rounding` charge, `4.00 m` and `2.00 m` are a located undefined outcome, never `decimal_out_of_domain`, and the empty sum is `(0, 2) m` (U49); over `Rational[-3, 7; 1, 12]`, `1/4 m` and `1/3 m` are `7/12 m`, `1/4 m` and `1/5 m` (`9/20 m`) and `6 m` and `2 m` are each a located undefined outcome, never rounded and never `rational_out_of_domain` (U50). | Test (TC-187) |
 
 ## Dependencies
 

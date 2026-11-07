@@ -546,7 +546,8 @@ type (FR-322 "Model-owned members" step 4). A member of a unit-bearing
 Rational value type is a carried quantity, so it is not an operand of `=`,
 `!=`, `<` or any other quantity operation (FR-142 "Carried quantity"): two such
 members are compared, and combined, through the exact conversion
-`convert<Quantity<u>>(e)` of each.
+`convert<Quantity<u>>(e)` of each. Members of its carried type are summed by
+`sum<N>` whose `N` is that carried type (FR-142 "Carried quantity sum").
 
 A Rational value type is named by `ix://<package identity>/<artifact id>` and
 is admitted at every position that takes a package type: a field, parameter

@@ -366,9 +366,11 @@ meaning and no type is inferred. The identity is a member of the
   `profile_selections` row of that role;
 - `mode` is `null` when the entry names no mode kind, and otherwise one of that
   kind's values; for `rounding` and `text_profile` the operand and result types
-  are authoritative and must pin exactly that value. `quire.op.quantity.convert`
-  and `quire.op.collection.sum.quantity` carry a `rounding` mode checked this
-  way;
+  are authoritative and must pin exactly that value. `quire.op.quantity.convert`,
+  `quire.op.collection.sum.quantity` and
+  `quire.op.collection.sum.carried_quantity` carry a `rounding` mode checked
+  this way; the carried sum's binder bound, `type_argument` and `result_type`
+  are one `carried_quantity` node (FR-322 "Carried-quantity sum");
 - `member` is `null` or the entry's member kind naming its declaring node
   (record field, tuple position, element, relationship end, dispatched
   operation or type argument), or for a clause

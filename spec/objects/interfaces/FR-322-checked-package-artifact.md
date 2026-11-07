@@ -3238,8 +3238,9 @@ A mode kind in `type_pinned_modes` (`rounding` for `decimal`, `float32`,
 type (a binder's bound) and the result type, or by the result type alone for a
 `convert`; a type without a `rounding` binding pins `exact`. The pins must be
 one value equal to `mode.value`, else `operation-mode-type-mismatch`. So
-`quire.op.quantity.convert` and `quire.op.collection.sum.quantity` carry a
-`rounding` mode that must agree with the quantity types, and
+`quire.op.quantity.convert`, `quire.op.collection.sum.quantity` and
+`quire.op.collection.sum.carried_quantity` carry a `rounding` mode that must
+agree with the quantity types, and
 `quire.op.collection.set`, `bag`, `ordered_set`, `map`, `flat_map`, `flatten`
 and `quire.op.collection.convert` carry the text leaves of a keyed result's
 element type.
@@ -3254,12 +3255,56 @@ node's `rounding`. A `mode` that differs from that value, or is `null`, refuses
 another dimension, which refuses `ill_typed`/`operator-ineligible`. The application
 publishes no rounding other than the node's: the node pins the mode, so a
 conversion to a unit node pins `exact`. A carried quantity is not an operand
-of any other quantity operation, which refuses `ill_typed`/`operator-ineligible`.
+of any other quantity operation, `quire.op.collection.sum.carried_quantity`
+below excepted, which refuses `ill_typed`/`operator-ineligible`.
 At evaluation, under mode `exact`, a value off the carrier's grid refuses
 `inexact_conversion`/`inexact-conversion` at the application (FR-142 "Carried
 quantity"); a `rational_range` carrier has no grid, so a conversion into it
 never refuses `inexact_conversion` and a value outside its numerator or
 denominator bounds refuses `rational_out_of_domain`/`outside-domain`.
+
+**Carried-quantity sum.** `quire.op.collection.sum.carried_quantity` is the
+`sum<N>` of FR-142 "Carried quantity sum", whose `N` is a carried type. Its
+catalog entry has the shape of `quire.op.collection.sum.quantity`'s: operator
+`collection`; operands `collection_kind` then `binder`, with no rest; result
+`member`; no law; mode kind `rounding`; member `type_argument`; the
+constraints `member_family` `quantity` and `bound_is_member` over operand 1;
+and no leaves. A reader SHALL admit an application of it when all of the
+following hold:
+
+- its `type_argument` member names a `scalar_type`/`carried_quantity` node
+  `Q`;
+- the bound of its binder operand is the node `Q` itself, so that the summand
+  has the unit, carrier, carrier bounds and mode of `Q`;
+- its `result_type` is `Q`; and
+- its `mode` is `{kind: rounding, value: m}` with `m` the `rounding` of `Q`.
+
+A reader SHALL refuse such an application as follows, in the reader order
+above:
+
+- a `laws` entry: `invalid_package`/`operation-law-mismatch`;
+- a `null` mode: `invalid_package`/`operation-mode-mismatch`, the entry naming
+  the mode kind `rounding`;
+- a `rounding` mode other than `Q`'s `rounding`, and a binder bound
+  or `result_type` whose pinned `rounding` differs from `Q`'s (a carried
+  quantity of another mode, or a unit node, which pins `exact`, beside a
+  non-`exact` `Q`): `invalid_package`/`operation-mode-type-mismatch`, the
+  binder bound and the result type pinning the mode;
+- a `type_argument` that names no `carried_quantity` node (a unit, compound
+  unit or bounded quantity node included): `ill_typed`/`operator-ineligible`;
+- a binder bound that is another node pinning the same mode (a carried
+  quantity of another unit, of another carrier or of another carrier bound,
+  or a unit node beside an `exact` `Q`): `ill_typed`/`operator-ineligible`,
+  the `bound_is_member` constraint failing; and
+- a `result_type` other than `Q` pinning the same mode:
+  `ill_typed`/`operator-ineligible`.
+
+`quire.op.collection.sum.quantity` whose `type_argument` names a
+`carried_quantity` node refuses `ill_typed`/`operator-ineligible`, so each
+carried sum has exactly one identity. Evaluation is FR-142's: the exact sum of
+the magnitudes, never rounded under any `rounding`, with the carrier's bounds
+decided after each addition and FR-145's located undefined outcome for a
+running total outside them. The wire carries no evaluation result.
 
 `quire.op.quantity.negate` is the unary quantity negation of FR-142 "Quantity
 negation": one `quantity` operand, result `operand:0` (the operand's own unit
@@ -4505,6 +4550,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-385 | `composite_type`/`map` is the anonymous structural pair of scalar key type node and admitted value type node, with body members `key`, `value` and path operands in that order; bounds remain separate. Equal operand identities produce one node, and changing either produces another. A non-scalar key and body/path disagreement refuse as stated in the derived-type rule. Every bounded numeric endpoint is repeated once in body and once in path: the Braking2 `Rational[0,20;1,1]` vector carries both `denominator_min` and `denominator_max` in each, consistent with decimal `scale_min` and `scale_max`. `map-type-vectors.json` is the Map arm; existing Braking2 vectors are the rational-range control. | Test (TC-233; MT-01..MT-07; TC-966) |
 | FR-322-AC-386 | A clause selected under `quire.temporal.timed/v1` carries no `temporal_bindings` row and uses `clock_name: "model-time"`. A checked timed-model subject gets its exact time binding from the joined `timed_model`/`time_source`; a trace subject supplies time-stamped positions and admitted order to the selected temporal profile. A missing source for a model subject and an extra clock row for a timed clause refuse `invalid_package`/`timed-node-reference` at the published loci. Event-position, fixed-sample and timestamped-event rows and their three profile/configuration pairs remain unchanged. | Test (TC-134; TN-01..TN-05) |
 | FR-322-AC-387 | A source dimension body is the closed `{term: "dimension", base, terms}` form with a boolean `base` copied from the source declaration: `true` requires `terms: []`; `false` admits both a non-empty derived term vector and an empty vector for a dimensionless derived dimension. The positive nominal fixture and dimension-form vectors distinguish `{base: true, terms: []}` from `{base: false, terms: []}`. Both keep their declaration-path `node_id`; `base` is neither an identity operand nor a hash input. The schema refuses a missing or non-boolean flag and a base dimension with terms (`NB-07`..`NB-09`). | Test (TC-233) |
+| FR-322-AC-388 | `quire.op.collection.sum.carried_quantity` (TC-187 CS-01 to CS-06): `sum<Li>(x in q: x)` with `Li` the `scalar_type`/`carried_quantity` node `Q` over `m`'s unit node, an `integer_range` carrier `Int[-5, 5]` and `rounding` `exact`, an application of operator `collection` with arguments `[reference(q), binder x bounded by Q]`, `type_argument` member `Q`, `result_type` `Q`, `mode` `{kind: rounding, value: exact}`, no laws and no leaves, is admitted, and so is the same sum over a carried node with the carrier `Decimal[-500, 500; 2, 2; nearest-even]` and mode `nearest-even`; the V2 schema enumerates the identity in `OperationIdentity`. A `rounding` mode other than the node's, and a binder bound of another `rounding`, refuse `invalid_package`/`operation-mode-type-mismatch`; a `null` mode refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry `invalid_package`/`operation-law-mismatch`; a binder bound of another carrier bound, of another unit, or the unit node of `m`, a `result_type` other than `Q`, and a `type_argument` that is a unit node each refuse `ill_typed`/`operator-ineligible`; `quire.op.collection.sum.quantity` over `Q` refuses `ill_typed`/`operator-ineligible`. | Test (TC-187) |
 
 
 ## Dependencies

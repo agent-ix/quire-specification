@@ -93,7 +93,11 @@ evaluates as follows, equal in value to the `state-contract` left fold from
 zero because `0 + e_1 = e_1` is exact:
 
 1. When `n = 0`, the result is `0`, which `N`'s domain must admit; no addition
-   occurs.
+   occurs. When `N`'s domain does not admit `0`, an empty source leaves the
+   `sum` with no value: a linked `sum` whose source is not proved nonempty
+   (`size(c) >= 1`) is refused as an unproved prefix is, below, and direct
+   kernel evaluation of an empty source is a located undefined outcome at the
+   `sum` with no charge.
 2. Otherwise the first summand `e_1` seeds the running total `t_1 = e_1` with no
    addition; `t_1` must be a member of `N`'s domain.
 3. For each `k` from 2 to `n`, in visiting order, one addition
@@ -103,7 +107,9 @@ zero because `0 + e_1 = e_1` is exact:
 4. The final total `t_n` (or `0`) is returned with one scalar retain.
 
 A linked `sum` whose prefixes are not all proved members is
-`refused { code: undefined_expression, cause: unproved-range }`. Under direct
+`refused { code: undefined_expression, cause: unproved-range }`. A carried
+quantity summand (FR-142 "Carried quantity sum") follows these steps over its
+exact magnitudes, its `N` being the summand's own carried type. Under direct
 kernel evaluation, a non-member seed or prefix is a located undefined outcome
 at that summand or addition; it makes no later charge and exposes no total.
 
