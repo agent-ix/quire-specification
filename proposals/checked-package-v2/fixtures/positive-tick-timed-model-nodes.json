@@ -242,7 +242,7 @@
             "integer_range",
             "min",
             {
-              "node": 24
+              "operand": 0
             },
             "0",
             "max",
@@ -348,10 +348,10 @@
             "expression",
             "reference",
             {
-              "node": 3
+              "operand": 0
             },
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -542,16 +542,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 23
+                    "operand": 0
                   },
                   "self",
                   "level",
                   {
-                    "node": 24
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 26
+                    "operand": 2
                   }
                 ]
               },
@@ -608,12 +608,12 @@
                   "temporal",
                   "formula",
                   {
-                    "node": 28
+                    "operand": 3
                   },
                   "quire.op.temporal.eventually",
                   "temporal_formula",
                   {
-                    "node": 0
+                    "operand": 4
                   }
                 ]
               },
@@ -654,12 +654,12 @@
               "temporal",
               "formula",
               {
-                "node": 28
+                "operand": 3
               },
               "quire.op.temporal.eventually",
               "temporal_formula",
               {
-                "node": 0
+                "operand": 4
               }
             ]
           },
@@ -671,16 +671,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "self",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               {
-                "node": 26
+                "operand": 2
               }
             ]
           }
@@ -692,22 +692,22 @@
             "temporal",
             "temporal_clause",
             {
-              "node": 27
+              "operand": 5
             },
             {
-              "node": 23
+              "operand": 0
             },
             "model-steps",
             "kind",
             "origin",
             {
-              "node": 29
+              "operand": 6
             },
             "quire.op.temporal.clause",
             "quire.temporal.event-position.false-extension/v1",
             "temporal",
             {
-              "node": 0
+              "operand": 4
             }
           ]
         },
@@ -744,16 +744,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "self",
                     "level",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 2
                     }
                   ]
                 },
@@ -966,16 +966,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "self",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               {
-                "node": 26
+                "operand": 2
               }
             ]
           }
@@ -1109,10 +1109,10 @@
             "correspondence",
             "source_locus",
             {
-              "node": 3
+              "operand": 0
             },
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -1349,13 +1349,13 @@
             "state",
             "frame",
             {
-              "node": 13
+              "operand": 0
             },
             {
-              "node": 14
+              "operand": 1
             },
             {
-              "node": 7
+              "operand": 2
             },
             "balance"
           ]
@@ -1822,7 +1822,7 @@
             "composite_type",
             "reference",
             {
-              "node": 47
+              "operand": 0
             }
           ]
         },
@@ -1842,7 +1842,7 @@
             "composite_type",
             "reference",
             {
-              "node": 47
+              "operand": 0
             }
           ]
         }
@@ -1896,16 +1896,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "self",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             {
-              "node": 26
+              "operand": 2
             }
           ]
         },
@@ -1925,7 +1925,7 @@
             "composite_type",
             "reference",
             {
-              "node": 47
+              "operand": 3
             }
           ]
         }
@@ -1980,12 +1980,12 @@
             "temporal",
             "formula",
             {
-              "node": 3
+              "operand": 0
             },
             "quire.op.temporal.holds",
             "temporal_formula",
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -2018,12 +2018,12 @@
                   "temporal",
                   "formula",
                   {
-                    "node": 3
+                    "operand": 0
                   },
                   "quire.op.temporal.holds",
                   "temporal_formula",
                   {
-                    "node": 0
+                    "operand": 1
                   }
                 ]
               },
@@ -2062,12 +2062,12 @@
               "temporal",
               "formula",
               {
-                "node": 3
+                "operand": 0
               },
               "quire.op.temporal.holds",
               "temporal_formula",
               {
-                "node": 0
+                "operand": 1
               }
             ]
           }
@@ -2079,12 +2079,12 @@
             "temporal",
             "formula",
             {
-              "node": 28
+              "operand": 2
             },
             "quire.op.temporal.eventually",
             "temporal_formula",
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -2220,7 +2220,7 @@
             "integer_range",
             "min",
             {
-              "node": 24
+              "operand": 0
             },
             "1",
             "max",
@@ -2267,7 +2267,7 @@
             "value",
             "literal",
             {
-              "node": 23
+              "operand": 0
             },
             "audit"
           ]
@@ -2312,11 +2312,11 @@
             "value",
             "literal",
             {
-              "node": 24
+              "operand": 0
             },
             "30",
             {
-              "node": 31
+              "operand": 1
             }
           ]
         },
@@ -2337,7 +2337,7 @@
             "integer_range",
             "min",
             {
-              "node": 24
+              "operand": 0
             },
             "1",
             "max",
@@ -2359,7 +2359,7 @@
                     "value",
                     "literal",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "audit"
                   ]
@@ -2378,11 +2378,11 @@
                     "value",
                     "literal",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "30",
                     {
-                      "node": 31
+                      "operand": 2
                     }
                   ]
                 },
@@ -2410,11 +2410,11 @@
               "value",
               "literal",
               {
-                "node": 24
+                "operand": 1
               },
               "30",
               {
-                "node": 31
+                "operand": 2
               }
             ]
           },
@@ -2425,7 +2425,7 @@
               "value",
               "literal",
               {
-                "node": 23
+                "operand": 0
               },
               "audit"
             ]
@@ -2541,16 +2541,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "x",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             {
-              "node": 35
+              "operand": 2
             }
           ]
         },
@@ -2621,16 +2621,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "y",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "1",
             {
-              "node": 35
+              "operand": 2
             }
           ]
         },
@@ -2674,7 +2674,7 @@
             "value",
             "literal",
             {
-              "node": 35
+              "operand": 0
             },
             "1"
           ]
@@ -2768,16 +2768,16 @@
                               "parameter",
                               "name",
                               {
-                                "node": 23
+                                "operand": 0
                               },
                               "y",
                               "level",
                               {
-                                "node": 24
+                                "operand": 1
                               },
                               "1",
                               {
-                                "node": 35
+                                "operand": 2
                               }
                             ]
                           },
@@ -2811,16 +2811,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "y",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           }
@@ -2833,18 +2833,18 @@
             "hybrid_transition",
             "target",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             "guard",
             {
-              "node": 3
+              "operand": 3
             },
             "resets",
             "variable",
             "value",
             {
-              "node": 37
+              "operand": 4
             }
           ]
         },
@@ -2865,18 +2865,18 @@
             "hybrid_transition",
             "target",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             "guard",
             {
-              "node": 3
+              "operand": 3
             },
             "resets",
             "variable",
             "value",
             {
-              "node": 37
+              "operand": 4
             }
           ]
         }
@@ -2913,16 +2913,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "y",
                         "level",
                         {
-                          "node": 24
+                          "operand": 1
                         },
                         "1",
                         {
-                          "node": 35
+                          "operand": 2
                         }
                       ]
                     },
@@ -2936,7 +2936,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 35
+                          "operand": 2
                         },
                         "1"
                       ]
@@ -2961,18 +2961,18 @@
                         "hybrid_transition",
                         "target",
                         {
-                          "node": 24
+                          "operand": 1
                         },
                         "0",
                         "guard",
                         {
-                          "node": 3
+                          "operand": 3
                         },
                         "resets",
                         "variable",
                         "value",
                         {
-                          "node": 37
+                          "operand": 4
                         }
                       ]
                     },
@@ -3009,18 +3009,18 @@
               "hybrid_transition",
               "target",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               "guard",
               {
-                "node": 3
+                "operand": 3
               },
               "resets",
               "variable",
               "value",
               {
-                "node": 37
+                "operand": 4
               }
             ]
           },
@@ -3031,7 +3031,7 @@
               "value",
               "literal",
               {
-                "node": 35
+                "operand": 2
               },
               "1"
             ]
@@ -3044,16 +3044,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "y",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           }
@@ -3113,16 +3113,16 @@
                               "parameter",
                               "name",
                               {
-                                "node": 23
+                                "operand": 0
                               },
                               "x",
                               "level",
                               {
-                                "node": 24
+                                "operand": 1
                               },
                               "0",
                               {
-                                "node": 35
+                                "operand": 2
                               }
                             ]
                           },
@@ -3163,16 +3163,16 @@
                               "parameter",
                               "name",
                               {
-                                "node": 23
+                                "operand": 0
                               },
                               "y",
                               "level",
                               {
-                                "node": 24
+                                "operand": 1
                               },
                               "1",
                               {
-                                "node": 35
+                                "operand": 2
                               }
                             ]
                           },
@@ -3251,16 +3251,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "x",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           },
@@ -3272,16 +3272,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "y",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           }
@@ -3492,16 +3492,16 @@
                     "operation_anchor",
                     "context",
                     {
-                      "node": 47
+                      "operand": 0
                     },
                     "operation",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "size",
                     "frame",
                     {
-                      "node": 48
+                      "operand": 2
                     }
                   ]
                 },
@@ -3554,16 +3554,16 @@
               "operation_anchor",
               "context",
               {
-                "node": 47
+                "operand": 0
               },
               "operation",
               {
-                "node": 23
+                "operand": 1
               },
               "size",
               "frame",
               {
-                "node": 48
+                "operand": 2
               }
             ]
           }
@@ -3576,24 +3576,24 @@
             "time_source",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "tick",
             "unit",
             {
-              "node": 43
+              "operand": 3
             },
             "model",
             {
-              "node": 47
+              "operand": 0
             },
             "operation",
             {
-              "node": 46
+              "operand": 4
             },
             "period",
             {
-              "node": 35
+              "operand": 5
             },
             "1/2"
           ]
@@ -3615,24 +3615,24 @@
             "time_source",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "tick",
             "unit",
             {
-              "node": 43
+              "operand": 3
             },
             "model",
             {
-              "node": 47
+              "operand": 0
             },
             "operation",
             {
-              "node": 46
+              "operand": 4
             },
             "period",
             {
-              "node": 35
+              "operand": 5
             },
             "1/2"
           ]
@@ -3684,24 +3684,24 @@
                     "time_source",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "tick",
                     "unit",
                     {
-                      "node": 43
+                      "operand": 1
                     },
                     "model",
                     {
-                      "node": 47
+                      "operand": 2
                     },
                     "operation",
                     {
-                      "node": 46
+                      "operand": 3
                     },
                     "period",
                     {
-                      "node": 35
+                      "operand": 4
                     },
                     "1/2"
                   ]
@@ -3792,24 +3792,24 @@
               "time_source",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "tick",
               "unit",
               {
-                "node": 43
+                "operand": 1
               },
               "model",
               {
-                "node": 47
+                "operand": 2
               },
               "operation",
               {
-                "node": 46
+                "operand": 3
               },
               "period",
               {
-                "node": 35
+                "operand": 4
               },
               "1/2"
             ]
@@ -3893,7 +3893,7 @@
                     "state",
                     "frame",
                     {
-                      "node": 47
+                      "operand": 0
                     }
                   ]
                 },
@@ -3920,7 +3920,7 @@
               "state",
               "frame",
               {
-                "node": 47
+                "operand": 0
               }
             ]
           }
@@ -3933,16 +3933,16 @@
             "operation_anchor",
             "context",
             {
-              "node": 47
+              "operand": 0
             },
             "operation",
             {
-              "node": 23
+              "operand": 1
             },
             "size",
             "frame",
             {
-              "node": 48
+              "operand": 2
             }
           ]
         },
@@ -4020,7 +4020,7 @@
             "state",
             "frame",
             {
-              "node": 47
+              "operand": 0
             }
           ]
         },
@@ -4136,16 +4136,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "closing",
                     "level",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "1",
                     {
-                      "node": 26
+                      "operand": 2
                     }
                   ]
                 },
@@ -4222,16 +4222,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "closing",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 26
+                "operand": 2
               }
             ]
           }
@@ -4313,16 +4313,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "closing",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "1",
             {
-              "node": 26
+              "operand": 2
             }
           ]
         },
@@ -4342,7 +4342,7 @@
             "composite_type",
             "reference",
             {
-              "node": 47
+              "operand": 3
             }
           ]
         }
@@ -4383,6 +4383,164 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [
+        24
+      ],
+      [],
+      [
+        3,
+        0
+      ],
+      [],
+      [],
+      [],
+      [
+        23,
+        24,
+        26,
+        28,
+        0,
+        27,
+        29
+      ],
+      [
+        23,
+        24,
+        26
+      ],
+      [],
+      [
+        3,
+        0
+      ],
+      [],
+      [],
+      [],
+      [
+        13,
+        14,
+        7
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [
+        47
+      ],
+      [
+        23,
+        24,
+        26,
+        47
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        0,
+        28
+      ],
+      [],
+      [
+        24
+      ],
+      [
+        23
+      ],
+      [
+        24,
+        31
+      ],
+      [
+        23,
+        24,
+        31
+      ],
+      [],
+      [
+        23,
+        24,
+        35
+      ],
+      [
+        23,
+        24,
+        35
+      ],
+      [
+        35
+      ],
+      [
+        23,
+        24,
+        35,
+        3,
+        37
+      ],
+      [
+        23,
+        24,
+        35,
+        3,
+        37
+      ],
+      [
+        23,
+        24,
+        35
+      ],
+      [],
+      [],
+      [
+        47,
+        23,
+        48,
+        43,
+        46,
+        35
+      ],
+      [
+        23,
+        43,
+        47,
+        46,
+        35
+      ],
+      [
+        47,
+        23,
+        48
+      ],
+      [],
+      [
+        47
+      ],
+      [],
+      [
+        23,
+        24,
+        26
+      ],
+      [
+        23,
+        24,
+        26,
+        47
+      ],
+      []
     ]
   },
   "source_map": [

@@ -1,6 +1,6 @@
 {
   "version": "quire.checked-node-index-vectors/v1",
-  "note": "TC-233 NI-01..NI-12 (FR-322 \"Operand index segments\"). Each case is an RFC 6902 patch over the base package. A schema of invalid fails the V2 schema and is malformed_wire at the patched member (locus); a schema of valid passes it and the reader's index check refuses malformed_wire, with no cause, at locus, before every semantic_graph check. NI-13 (the deep chain) is built by the test, not published.",
+  "note": "TC-233 NI-01..NI-12 and NI-15..NI-24 (FR-322 \"Operand index segments\"). Each case is an RFC 6902 patch over the base package, whose operand rows are [[], [], [0], [0]]. A schema of invalid fails the V2 schema and is malformed_wire at the patched member (locus); a schema of valid passes it and the reader's operand checks refuse malformed_wire, with no cause, at locus, before every semantic_graph check, unless expected names another outcome: passes_operand_checks (NI-24), passes_operand_and_duplicate_checks (NI-22), or a later refusal at locus (NI-23). NI-13 (the deep chain) and NI-14 (the copied id) are built by the test, not published.",
   "base": "fixtures/positive-dependency-call.json",
   "cases": [
     {
@@ -33,14 +33,14 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/2/node_id/path/3",
           "value": {
-            "node": -1
+            "operand": -1
           }
         }
       ],
       "schema": "invalid",
       "expected": "malformed_wire",
       "locus": "/semantic_graph/nodes/2/node_id/path/3",
-      "note": "a negative index"
+      "note": "a negative slot"
     },
     {
       "id": "NI-03",
@@ -50,14 +50,14 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/2/node_id/path/3",
           "value": {
-            "node": "0"
+            "operand": "0"
           }
         }
       ],
       "schema": "invalid",
       "expected": "malformed_wire",
       "locus": "/semantic_graph/nodes/2/node_id/path/3",
-      "note": "a string index"
+      "note": "a string slot"
     },
     {
       "id": "NI-04",
@@ -67,14 +67,14 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/2/node_id/path/3",
           "value": {
-            "node": 1.5
+            "operand": 1.5
           }
         }
       ],
       "schema": "invalid",
       "expected": "malformed_wire",
       "locus": "/semantic_graph/nodes/2/node_id/path/3",
-      "note": "a fractional index"
+      "note": "a fractional slot"
     },
     {
       "id": "NI-05",
@@ -84,7 +84,7 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/2/node_id/path/3",
           "value": {
-            "node": 0,
+            "operand": 0,
             "ordinal": 0
           }
         }
@@ -107,7 +107,7 @@
       "schema": "invalid",
       "expected": "malformed_wire",
       "locus": "/semantic_graph/nodes/2/node_id/path/3",
-      "note": "no node member"
+      "note": "no operand member"
     },
     {
       "id": "NI-07",
@@ -117,14 +117,14 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/3/body/arguments/0/node/path/1",
           "value": {
-            "node": 0
+            "operand": 0
           }
         }
       ],
       "schema": "invalid",
       "expected": "malformed_wire",
       "locus": "/semantic_graph/nodes/3/body/arguments/0/node/path/1",
-      "note": "an index segment in a dependency_reference node"
+      "note": "an operand slot in a dependency_reference node"
     },
     {
       "id": "NI-08",
@@ -134,14 +134,14 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/2/node_id/path/3",
           "value": {
-            "node": 4
+            "operand": 1
           }
         }
       ],
       "schema": "valid",
       "expected": "malformed_wire",
-      "locus": "/semantic_graph/nodes/2/node_id/path/3/node",
-      "note": "an own-path index equal to the node count"
+      "locus": "/semantic_graph/nodes/2/node_id/path/3/operand",
+      "note": "an own-path slot equal to its one-entry row length"
     },
     {
       "id": "NI-09",
@@ -151,14 +151,14 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/3/body/arguments/1/type/path/3",
           "value": {
-            "node": 9007199254740991
+            "operand": 9007199254740991
           }
         }
       ],
       "schema": "valid",
       "expected": "malformed_wire",
-      "locus": "/semantic_graph/nodes/3/body/arguments/1/type/path/3/node",
-      "note": "an out-of-range index in a literal's type"
+      "locus": "/semantic_graph/nodes/3/body/arguments/1/type/path/3/operand",
+      "note": "an out-of-range slot in a literal type"
     },
     {
       "id": "NI-10",
@@ -183,16 +183,14 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/2/node_id/path/3",
-          "value": {
-            "node": 2
-          }
+          "path": "/semantic_graph/operand_rows/2/0",
+          "value": 2
         }
       ],
       "schema": "valid",
       "expected": "malformed_wire",
-      "locus": "/semantic_graph/nodes/2/node_id/path/3/node",
-      "note": "a node that names itself"
+      "locus": "/semantic_graph/nodes/2/node_id/path/3/operand",
+      "note": "a node whose row names itself"
     },
     {
       "id": "NI-12",
@@ -202,14 +200,523 @@
           "op": "add",
           "path": "/semantic_graph/nodes/0/node_id/path/2",
           "value": {
-            "node": 2
+            "operand": 0
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/0",
+          "value": [
+            2
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/0/node_id/path/2/operand",
+      "note": "two nodes that name each other; the first slot on the cycle by holding node"
+    },
+    {
+      "id": "NI-15",
+      "criterion": "FR-322-AC-393",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/operand_rows/3"
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/operand_rows",
+      "note": "one operand row fewer than the nodes"
+    },
+    {
+      "id": "NI-16",
+      "criterion": "FR-322-AC-393",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": 0
           }
         }
       ],
       "schema": "valid",
       "expected": "malformed_wire",
-      "locus": "/semantic_graph/nodes/0/node_id/path/2/node",
-      "note": "nodes 0 and 2 name each other; node 0's segment is the first by graph index"
+      "locus": "/semantic_graph/nodes/2/node_id/path/3/node",
+      "note": "an index segment in a node-held id"
+    },
+    {
+      "id": "NI-17",
+      "criterion": "FR-322-AC-393",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/source_map/2/node_id/path/3",
+          "value": {
+            "operand": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/source_map/2/node_id/path/3/operand",
+      "note": "an operand slot in a document-held id"
+    },
+    {
+      "id": "NI-18",
+      "criterion": "FR-322-AC-279",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/2/0",
+          "value": 4
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/operand_rows/2/0",
+      "note": "a row entry equal to the node count"
+    },
+    {
+      "id": "NI-19",
+      "criterion": "FR-322-AC-394",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "operand": 1
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/2",
+          "value": [
+            1,
+            0
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3/operand",
+      "note": "slot 1 read before slot 0 first occurs"
+    },
+    {
+      "id": "NI-20",
+      "criterion": "FR-322-AC-394",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/2/node_id/path/-",
+          "value": {
+            "operand": 1
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/2",
+          "value": [
+            0,
+            0
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/operand_rows/2/1",
+      "note": "a repeated row entry"
+    },
+    {
+      "id": "NI-21",
+      "criterion": "FR-322-AC-394",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/2",
+          "value": [
+            0,
+            1
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/operand_rows/2/1",
+      "note": "a row entry no slot of the node names"
+    },
+    {
+      "id": "NI-22",
+      "criterion": "FR-322-AC-395",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [
+                {
+                  "name": "min",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "test/predicates",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "value": "0",
+                    "value_kind": "integer"
+                  }
+                },
+                {
+                  "name": "max",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "test/predicates",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "value": "9",
+                    "value_kind": "integer"
+                  }
+                }
+              ],
+              "term": "aggregate"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "test/predicates",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              }
+            ],
+            "node_id": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "bounded_domain",
+                "integer_range",
+                "min",
+                {
+                  "operand": 0
+                },
+                "0",
+                "max",
+                "9"
+              ]
+            },
+            "node_tag": "bounded_domain",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "type"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "integer_range",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/operand_rows/-",
+          "value": [
+            1
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected": "passes_operand_and_duplicate_checks",
+      "note": "equal bytes to node 2, a different operand (Boolean): a different structural key"
+    },
+    {
+      "id": "NI-23",
+      "criterion": "FR-322-AC-395",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [
+                {
+                  "name": "min",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "test/predicates",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "value": "0",
+                    "value_kind": "integer"
+                  }
+                },
+                {
+                  "name": "max",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "ordinal": 0,
+                      "package": "test/predicates",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "value": "9",
+                    "value_kind": "integer"
+                  }
+                }
+              ],
+              "term": "aggregate"
+            },
+            "dependencies": [
+              {
+                "ordinal": 0,
+                "package": "test/predicates",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              }
+            ],
+            "node_id": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "bounded_domain",
+                "integer_range",
+                "min",
+                {
+                  "operand": 0
+                },
+                "0",
+                "max",
+                "9"
+              ]
+            },
+            "node_tag": "bounded_domain",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "type"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "integer_range",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/operand_rows/-",
+          "value": [
+            0
+          ]
+        }
+      ],
+      "schema": "valid",
+      "expected": "invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/4/node_id",
+      "note": "equal bytes and the same operand as node 2: node 2's structural key, a duplicate node_id"
+    },
+    {
+      "id": "NI-24",
+      "criterion": "FR-322-AC-392",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "node_tag": "scalar_type",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "type"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "text",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/operand_rows/0",
+          "value": []
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "rational"
+              ]
+            },
+            "node_tag": "scalar_type",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "type"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "rational",
+            "semantic_type": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "rational"
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/operand_rows/-",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/3",
+          "value": [
+            1
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/4",
+          "value": [
+            1
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/2/node_id/path/3",
+          "value": {
+            "node": 1
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 5,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example"
+                },
+                "start": 4
+              }
+            ],
+            "role": "type"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "ordinal": 0,
+              "package": "test/predicates",
+              "path": [
+                "scalar_type",
+                "rational"
+              ]
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 6,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example"
+                },
+                "start": 5
+              }
+            ],
+            "role": "type"
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "passes_operand_checks",
+      "note": "an unrelated node inserted at index 0 and one appended: each original node keeps its bytes and key at its index plus one; only operand_rows, the new nodes and source_map differ"
     }
   ]
 }

@@ -13,6 +13,9 @@ use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
+#[path = "support/operand_slots.rs"]
+mod operand_slots;
+
 const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 /// The catalog lives only in `quire-verification-contracts`; it is read from there.
 const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
@@ -104,8 +107,11 @@ const REQUIRED_NODE_TAGS: [&str; 15] = [
     "hybrid",
 ];
 
+/// A published file read as the oracles reason over it: every operand slot of
+/// a node written as the index segment its operand row names
+/// ([`operand_slots::index_view`]).
 fn parsed_fixture(bytes: &str) -> Value {
-    serde_json::from_str(bytes).expect("authored fixture is valid JSON")
+    operand_slots::index_view(&serde_json::from_str(bytes).expect("authored fixture is valid JSON"))
 }
 
 /// Whether `value` is a structural `NodeId`: exactly `package`, `path`, `ordinal`.
@@ -184,8 +190,10 @@ fn index_segment(segment: &Value) -> Option<&Value> {
         .and_then(|object| object.get("node"))
 }
 
-/// FR-322 "Operand index segments": the reader's index checks, run after the
-/// schema and before every `semantic_graph` check. Returns the `node` member
+/// The range and cycle steps of FR-322's operand checks over a package's
+/// index view (every operand an index segment, [`operand_slots::index_view`]),
+/// for packages the oracles rewrite in that view; [`operand_refusal`] runs the
+/// checks over the published form. Returns the `node` member
 /// pointer of the first out-of-range index segment in canonical byte order,
 /// else of the first own-path segment (by holding node, then path position)
 /// whose named node reaches the holding node; `None` when every index is in
@@ -6091,10 +6099,8 @@ fn tc_233_a_dependency_call_is_admitted_and_its_mutations_refuse_at_their_loci()
     assert_eq!(mutations.len(), 11);
     for mutation in mutations {
         let id = mutation["id"].as_str().expect("mutation id");
-        let mut candidate = base.clone();
-        for patch in mutation["patch"].as_array().expect("patch") {
-            apply_authored_patch(&mut candidate, patch);
-        }
+        let candidate =
+            operand_slots::patched(&base, mutation["patch"].as_array().expect("patch"), apply_authored_patch);
         let errors: Vec<String> = v2
             .iter_errors(&candidate)
             .map(|error| format!("{error} at {}", error.instance_path()))
@@ -12919,9 +12925,9 @@ fn tc_966_restored_hybrid_shapes_meet_or_fail_the_published_schema() {
 #[trace("TC-367", "FR-322-AC-123", "FR-322-AC-124", "FR-322-AC-125")]
 #[test]
 fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
-    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let package: Value = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
-    let tick_package: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
+    let tick_package: Value = parsed_fixture(POSITIVE_TICK_TIMED_MODEL_NODES);
     let tick_nodes = tick_package["semantic_graph"]["nodes"].as_array().unwrap();
     let id = |node: &Value| node["node_id"].clone();
     let target = |node: &Value, member: usize| node["body"]["members"][member]["value"]["target"].clone();
@@ -13226,10 +13232,7 @@ fn tc_310_root_owner_schema_and_reader_stages_run_from_the_published_vectors() {
     for vector in vectors["vectors"].as_array().expect("vectors") {
         let id = vector["id"].as_str().expect("vector id");
         assert!(ids.insert(id), "vector ids are unique");
-        let mut package = base.clone();
-        for patch in vector["patch"].as_array().expect("patch") {
-            apply_json_patch(&mut package, patch);
-        }
+        let package = operand_slots::patched(&base, vector["patch"].as_array().expect("patch"), apply_json_patch);
         let schema_valid = schema.is_valid(&package);
         assert_eq!(schema_valid, vector["schema"] == "valid", "{id}: schema");
         let observed = if schema_valid {
@@ -14423,8 +14426,8 @@ fn presence_type_nodes(vectors: &Value, nodes: &[Value]) -> Result<(), String> {
 #[trace("TC-367", "FR-322-AC-155", "FR-322-AC-156", "FR-322-AC-157")]
 #[test]
 fn tc_367_presence_vector_assertions_each_fail_on_their_mutation() {
-    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).unwrap();
-    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let vectors: Value = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let package: Value = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
     let mutate = |edit: &dyn Fn(&mut Value)| {
         let mut copy = vectors.clone();
@@ -15078,11 +15081,8 @@ fn timed_clause_refusal(
 /// The package a clause vector describes: the clause fixture with the case's
 /// RFC 6902 patch applied.
 fn timed_clause_case_package(case: &Value) -> Value {
-    let mut package = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
-    for operation in case.get("patch").and_then(Value::as_array).into_iter().flatten() {
-        apply_json_patch(&mut package, operation);
-    }
-    package
+    let patch = case.get("patch").and_then(Value::as_array).cloned().unwrap_or_default();
+    operand_slots::patched(&parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES), &patch, apply_json_patch)
 }
 
 /// Replays every case of the clause vectors: the patch applied to the clause
@@ -15201,10 +15201,7 @@ fn tc_367_place_path_key_decides_a_shared_region() {
     let selected = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
     let case_package = |id: &str| {
         let case = vectors["aggregate_order"]["cases"].as_array().unwrap().iter().find(|c| c["id"] == id).unwrap();
-        let mut package = selected.clone();
-        for operation in case["patch"].as_array().unwrap() {
-            apply_json_patch(&mut package, operation);
-        }
+        let package = operand_slots::patched(&selected, case["patch"].as_array().unwrap(), apply_json_patch);
         (package, case["locus"].as_str().map(str::to_owned))
     };
     let (ordered, _) = case_package("AO-08");
@@ -15278,7 +15275,7 @@ fn place_selectors_are_symbolic(place: &Value, nodes: &[Value]) -> bool {
 
 /// Index of the node a vectors file names, looked up by role in `node_indexes`.
 fn timed_node_index(role: &str) -> usize {
-    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
+    let vectors: Value = parsed_fixture(TIMED_MODEL_NODE_VECTORS);
     vectors["node_indexes"][role].as_u64().unwrap_or_else(|| panic!("node role {role}")) as usize
 }
 
@@ -15651,10 +15648,7 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
     for vector in vectors["wire_cases"].as_array().expect("wire cases") {
         let id = vector["id"].as_str().expect("id");
         assert!(ids.insert(id), "vector ids are unique");
-        let mut package = base.clone();
-        for patch in vector["patch"].as_array().expect("patch") {
-            apply_json_patch(&mut package, patch);
-        }
+        let package = operand_slots::patched(&base, vector["patch"].as_array().expect("patch"), apply_json_patch);
         let schema_valid = schema.is_valid(&package);
         assert_eq!(schema_valid, vector["schema"] == "valid", "{id}: schema");
         let position_of = |locus: &str| {
@@ -15773,10 +15767,7 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
     assert_ne!(control, by_id, "the published order is not the node-id order");
     // GD-02 appends its second place last: in order, so it refuses only as a repeated place.
     for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g["id"] == "GD-02") {
-        let mut adverse = selected.clone();
-        for operation in gd["patch"].as_array().unwrap() {
-            apply_json_patch(&mut adverse, operation);
-        }
+        let adverse = operand_slots::patched(&selected, gd["patch"].as_array().unwrap(), apply_json_patch);
         assert_eq!(timed_aggregate_order_refusal(&adverse), None, "GD-02 appends in order");
     }
     let cases = section["cases"].as_array().unwrap();
@@ -15791,19 +15782,13 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
             continue;
         };
         if case["expected"] == "admitted" {
-            let mut admitted = selected.clone();
-            for operation in patch.as_array().unwrap() {
-                apply_json_patch(&mut admitted, operation);
-            }
+            let admitted = operand_slots::patched(&selected, patch.as_array().unwrap(), apply_json_patch);
             assert!(validator.is_valid(&admitted), "{id} is schema-valid");
             assert_eq!(timed_aggregate_order_refusal(&admitted), None, "{id} is in order");
             admitted_patched += 1;
             continue;
         }
-        let mut adverse = selected.clone();
-        for operation in patch.as_array().unwrap() {
-            apply_json_patch(&mut adverse, operation);
-        }
+        let adverse = operand_slots::patched(&selected, patch.as_array().unwrap(), apply_json_patch);
         assert_eq!(case["schema"], "valid");
         assert!(validator.is_valid(&adverse), "{id} is schema-valid");
         assert_eq!(case["expected"], "refused");
@@ -15817,10 +15802,7 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
     assert_eq!((refused, admitted_patched), (7, 2));
     // AO-03 is exactly the node-id-ordered listing.
     let id_case = cases.iter().find(|case| case["id"] == "AO-03").unwrap();
-    let mut listed = selected.clone();
-    for operation in id_case["patch"].as_array().unwrap() {
-        apply_json_patch(&mut listed, operation);
-    }
+    let listed = operand_slots::patched(&selected, id_case["patch"].as_array().unwrap(), apply_json_patch);
     assert_eq!(places_of(&listed), by_id);
 }
 
@@ -15828,8 +15810,8 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
 #[trace("TC-367", "FR-322-AC-148", "FR-322-AC-149", "FR-322-AC-150")]
 #[test]
 fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
-    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).expect("vectors JSON");
-    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("fixture JSON");
+    let vectors: Value = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let package: Value = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
     let schema = parsed_fixture(SCHEMA);
     let timed_schema = schema_for_def(&schema, "TimedModelNode");
@@ -15880,7 +15862,7 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
     }
 
     // GD-01: the published tick root has empty clock aggregates.
-    let tick: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
+    let tick: Value = parsed_fixture(POSITIVE_TICK_TIMED_MODEL_NODES);
     let tick_root = &tick["semantic_graph"]["nodes"][timed_node_index_of(&tick, "timed_model")];
     for member in tick_root["body"]["members"].as_array().unwrap().iter().skip(3) {
         assert!(member["value"]["members"].as_array().unwrap().is_empty(), "{}", member["name"]);
@@ -15888,16 +15870,13 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
     assert_eq!(timed_guard_and_place_cause(&tick), None);
 
     // GD-02 and GD-03 replay from their published RFC 6902 patches (FR-322-AC-242).
-    let selected: Value = serde_json::from_str(POSITIVE_TIMED_SLOT_NODES).expect("selected package JSON");
+    let selected: Value = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
     assert_eq!(vectors["selected_package"], "fixtures/positive-timed-slot-nodes.json");
     assert_eq!(timed_guard_and_place_refusal(&selected), None, "the selected package is the control");
     let validator = jsonschema::validator_for(&schema).unwrap();
     let mut replayed = 0;
     for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g.get("patch").is_some()) {
-        let mut adverse = selected.clone();
-        for operation in gd["patch"].as_array().unwrap() {
-            apply_json_patch(&mut adverse, operation);
-        }
+        let adverse = operand_slots::patched(&selected, gd["patch"].as_array().unwrap(), apply_json_patch);
         assert_eq!(gd["fixture"], vectors["selected_package"], "{} patches the selected package", gd["id"]);
         assert_eq!(gd["schema"], "valid");
         assert!(validator.is_valid(&adverse), "{} is a schema-valid semantic control", gd["id"]);
@@ -15923,8 +15902,8 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
 #[trace("TC-367", "FR-322-AC-126", "FR-322-AC-127", "FR-322-AC-120")]
 #[test]
 fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
-    let positive: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
-    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
+    let positive: Value = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
+    let vectors: Value = parsed_fixture(TIMED_MODEL_NODE_VECTORS);
     let schema = parsed_fixture(SCHEMA);
     let validator = jsonschema::validator_for(&schema).unwrap();
     let rows = vectors["semantic_refusals"].as_array().unwrap();
@@ -15942,7 +15921,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
     for row in rows {
         let is_tick = row["fixture"] == "tick";
         let mut adverse = if is_tick {
-            serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap()
+            parsed_fixture(POSITIVE_TICK_TIMED_MODEL_NODES)
         } else {
             positive.clone()
         };
@@ -16164,7 +16143,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
 #[test]
 fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
     let package: Value =
-        serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+        parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
     let schema = parsed_fixture(SCHEMA);
     let package_validator = jsonschema::validator_for(&schema).expect("checked package schema");
     assert!(
@@ -16175,8 +16154,7 @@ fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
             .map(|error| error.to_string())
             .collect::<Vec<_>>()
     );
-    let tick_package: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES)
-        .expect("tick timed fixture JSON");
+    let tick_package: Value = parsed_fixture(POSITIVE_TICK_TIMED_MODEL_NODES);
     assert!(package_validator.is_valid(&tick_package));
     let tick_nodes = tick_package["semantic_graph"]["nodes"].as_array().unwrap();
     assert_semantic_node_refs_resolve(tick_nodes, "tick timed checked-package fixture");
@@ -16187,7 +16165,7 @@ fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
     }
 
     let vectors: Value =
-        serde_json::from_str(TIMED_MODEL_NODE_VECTORS).expect("timed vectors JSON");
+        parsed_fixture(TIMED_MODEL_NODE_VECTORS);
     let indexes = vectors["node_indexes"].as_object().expect("node indexes");
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
@@ -18170,10 +18148,7 @@ fn tc_233_every_vector_patch_keeps_dependencies_equal_to_its_body_references() {
                 continue;
             };
             let id = case["id"].as_str().expect("case id");
-            let mut package = base.clone();
-            for operation in patch {
-                apply_json_patch(&mut package, operation);
-            }
+            let package = operand_slots::patched(base, patch, apply_json_patch);
             patched += 1;
             failures.extend(dependency_defects(
                 &format!("{group} {id}"),
@@ -18219,10 +18194,7 @@ fn tc_233_descending_structural_dependencies_refuse_at_the_dependency_list() {
         let id = case["id"].as_str().expect("case id");
         let position = usize::try_from(case["node"].as_u64().expect("node index"))
             .expect("node index fits usize");
-        let mut malformed = base.clone();
-        for patch in case["patch"].as_array().expect("case patch") {
-            apply_json_patch(&mut malformed, patch);
-        }
+        let malformed = operand_slots::patched(&base, case["patch"].as_array().expect("case patch"), apply_json_patch);
         let malformed = structural_package(&malformed);
         let dependencies = malformed["semantic_graph"]["nodes"][position]["dependencies"]
             .as_array()
@@ -20240,7 +20212,8 @@ fn tc_303_window_aggregate_arguments_admit_each_kind_and_refuse_at_the_first_def
     }
 }
 
-/// Every published JSON file under `proposals/checked-package-v2`, recursively.
+/// Every published JSON file under `proposals/checked-package-v2`, recursively,
+/// as published (operand slots and rows as written).
 fn published_checked_package_files() -> Vec<(String, Value)> {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("proposals/checked-package-v2");
     let mut pending = vec![root.clone()];
@@ -20253,7 +20226,7 @@ fn published_checked_package_files() -> Vec<(String, Value)> {
             } else if path.extension().is_some_and(|extension| extension == "json") {
                 let text = std::fs::read_to_string(&path).expect("file is readable");
                 let name = path.strip_prefix(&root).expect("under the root").display().to_string();
-                files.push((name, parsed_fixture(&text)));
+                files.push((name, serde_json::from_str(&text).expect("published file is valid JSON")));
             }
         }
     }
@@ -20261,13 +20234,185 @@ fn published_checked_package_files() -> Vec<(String, Value)> {
     files
 }
 
-/// FR-322-AC-278: no published package, fixture or vector nests a `node_id`
-/// object inside a `node_id.path`; every object segment is an index segment.
-#[trace("TC-233", "FR-322-AC-278")]
+/// One operand segment or operand-row entry of a package, in the order of its
+/// canonical (RFC 8785) bytes.
+enum OperandEvent {
+    /// A segment object at `pointer`; `holder` is the graph index of the node
+    /// whose node-held id holds it, `None` for a document-held id (outside the
+    /// nodes, or the `node` of a foreign `{package, node}` key).
+    Segment { pointer: String, segment: Value, holder: Option<usize> },
+    /// `semantic_graph.operand_rows[row][entry]`.
+    Row { row: usize, entry: usize, value: Value },
+}
+
+/// The `{package, node}` of a `PackageNodeRef` or an FR-375 external key.
+fn is_foreign_key(value: &Value) -> bool {
+    value.as_object().is_some_and(|object| {
+        object.len() == 2 && object.contains_key("package") && object.get("node").is_some_and(is_node_id)
+    })
+}
+
+fn operand_events(package: &Value) -> Vec<OperandEvent> {
+    fn walk(value: &Value, pointer: String, holder: Option<usize>, events: &mut Vec<OperandEvent>) {
+        let Value::Object(members) = value else {
+            if let Value::Array(items) = value {
+                for (at, item) in items.iter().enumerate() {
+                    walk(item, format!("{pointer}/{at}"), holder, events);
+                }
+            }
+            return;
+        };
+        if is_node_id(value) {
+            for (position, segment) in value["path"].as_array().into_iter().flatten().enumerate() {
+                if segment.is_object() {
+                    events.push(OperandEvent::Segment {
+                        pointer: format!("{pointer}/path/{position}"),
+                        segment: segment.clone(),
+                        holder,
+                    });
+                }
+            }
+        }
+        let foreign = is_foreign_key(value);
+        let mut keys: Vec<&String> = members.keys().collect();
+        keys.sort_by(|left, right| left.encode_utf16().cmp(right.encode_utf16()));
+        for key in keys {
+            let member = &members[key.as_str()];
+            let at = format!("{pointer}/{}", key.replace('~', "~0").replace('/', "~1"));
+            if is_node_id(value) && key == "path" {
+                continue;
+            }
+            match (pointer.as_str(), key.as_str()) {
+                ("/semantic_graph", "nodes") => {
+                    for (index, node) in member.as_array().into_iter().flatten().enumerate() {
+                        walk(node, format!("{at}/{index}"), Some(index), events);
+                    }
+                }
+                ("/semantic_graph", "operand_rows") => {
+                    for (row, entries) in member.as_array().into_iter().flatten().enumerate() {
+                        for (entry, value) in entries.as_array().into_iter().flatten().enumerate() {
+                            events.push(OperandEvent::Row { row, entry, value: value.clone() });
+                        }
+                    }
+                }
+                _ => walk(member, at, if foreign && key == "node" { None } else { holder }, events),
+            }
+        }
+    }
+    let mut events = Vec::new();
+    walk(package, String::new(), None, &mut events);
+    events
+}
+
+/// FR-322 "Operand index segments", "Reader checks": the reader's operand
+/// checks over a package as published, run after the schema and before every
+/// `semantic_graph` check. Returns the pointer of the first defect of the first
+/// step that has one (rows, placement, range, numbering, cycle), `None` when
+/// the package passes them.
+fn operand_refusal(package: &Value) -> Option<String> {
+    let nodes = package["semantic_graph"]["nodes"].as_array()?;
+    let rows = match package["semantic_graph"]["operand_rows"].as_array() {
+        Some(rows) if rows.len() == nodes.len() => rows,
+        _ => return Some("/semantic_graph/operand_rows".to_owned()),
+    };
+    let events = operand_events(package);
+    let row_length = |holder: usize| rows[holder].as_array().map_or(0, Vec::len) as u64;
+    // 2. Placement.
+    for event in &events {
+        if let OperandEvent::Segment { pointer, segment, holder } = event {
+            match (holder, operand_slots::index_segment(segment), operand_slots::operand_slot(segment)) {
+                (Some(_), Some(_), _) => return Some(format!("{pointer}/node")),
+                (None, _, Some(_)) => return Some(format!("{pointer}/operand")),
+                _ => {}
+            }
+        }
+    }
+    // 3. Range, in canonical order (every node precedes `operand_rows`).
+    for event in &events {
+        match event {
+            OperandEvent::Segment { pointer, segment, holder: Some(holder) } => {
+                if operand_slots::operand_slot(segment).is_some_and(|slot| slot >= row_length(*holder)) {
+                    return Some(format!("{pointer}/operand"));
+                }
+            }
+            OperandEvent::Segment { pointer, segment, holder: None } => {
+                if operand_slots::index_segment(segment).is_some_and(|index| index >= nodes.len() as u64) {
+                    return Some(format!("{pointer}/node"));
+                }
+            }
+            OperandEvent::Row { row, entry, value } => {
+                if value.as_u64().is_none_or(|index| index >= nodes.len() as u64) {
+                    return Some(format!("/semantic_graph/operand_rows/{row}/{entry}"));
+                }
+            }
+        }
+    }
+    // 4. Numbering: each row by first occurrence, its entries distinct and used.
+    for (index, row) in rows.iter().enumerate() {
+        let mut highest: Option<u64> = None;
+        let mut used = BTreeSet::new();
+        for event in &events {
+            if let OperandEvent::Segment { pointer, segment, holder: Some(holder) } = event
+                && *holder == index
+                && let Some(slot) = operand_slots::operand_slot(segment)
+            {
+                if slot > highest.map_or(0, |highest| highest + 1) {
+                    return Some(format!("{pointer}/operand"));
+                }
+                highest = Some(highest.map_or(slot, |highest| highest.max(slot)));
+                used.insert(slot);
+            }
+        }
+        let entries = row.as_array().expect("an operand row is an array");
+        for (entry, value) in entries.iter().enumerate() {
+            if entries[..entry].contains(value) || !used.contains(&(entry as u64)) {
+                return Some(format!("/semantic_graph/operand_rows/{index}/{entry}"));
+            }
+        }
+    }
+    // 5. Cycle through own-path operand slots.
+    let edges: Vec<Vec<(usize, usize)>> = nodes
+        .iter()
+        .enumerate()
+        .map(|(index, node)| {
+            node["node_id"]["path"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .enumerate()
+                .filter_map(|(position, segment)| {
+                    let slot = usize::try_from(operand_slots::operand_slot(segment)?).ok()?;
+                    let target = rows[index][slot].as_u64()?;
+                    Some((position, usize::try_from(target).expect("an in-range index fits usize")))
+                })
+                .collect()
+        })
+        .collect();
+    let component = strongly_connected_components(&edges);
+    edges.iter().enumerate().find_map(|(holder, targets)| {
+        targets
+            .iter()
+            .find(|(_, target)| component[*target] == component[holder])
+            .map(|(position, _)| format!("/semantic_graph/nodes/{holder}/node_id/path/{position}/operand"))
+    })
+}
+
+/// The interned structural key of every node of a published package.
+fn published_keys(package: &Value) -> Vec<usize> {
+    let viewed = operand_slots::index_view(package);
+    KeyInterner::default().graph_keys(viewed["semantic_graph"]["nodes"].as_array().expect("nodes"))
+}
+
+/// FR-322-AC-278 and FR-322-AC-392: no published package, fixture or vector
+/// nests a `node_id` object inside a `node_id.path`; every node-held id names
+/// its operands by operand slots and every document-held id by index segments;
+/// and every operand row is numbered by first occurrence, so writing the
+/// published nodes back from their index view reproduces them byte for byte.
+#[trace("TC-233", "FR-322-AC-278", "FR-322-AC-392")]
 #[test]
 fn tc_233_no_published_node_id_nests_an_operand_node_id() {
     let mut nested = Vec::new();
-    let mut index_segments = 0;
+    let (mut slots, mut index_segments, mut packages) = (0, 0, 0);
     for (name, document) in published_checked_package_files() {
         let mut pending = vec![(&document, String::new())];
         while let Some((value, pointer)) = pending.pop() {
@@ -20275,12 +20420,18 @@ fn tc_233_no_published_node_id_nests_an_operand_node_id() {
                 Value::Object(members) => {
                     if is_node_id(value) {
                         for (position, segment) in value["path"].as_array().into_iter().flatten().enumerate() {
-                            if index_segment(segment).is_some() {
+                            if operand_slots::operand_slot(segment).is_some() {
+                                slots += 1;
+                            } else if operand_slots::index_segment(segment).is_some() {
                                 index_segments += 1;
                             } else if !segment.is_string() {
                                 nested.push(format!("{name}{pointer}/path/{position}"));
                             }
                         }
+                    }
+                    if members.get("semantic_graph").is_some_and(|graph| graph.get("operand_rows").is_some()) {
+                        packages += 1;
+                        assert_eq!(operand_refusal(value), None, "{name}{pointer}: the published package passes the operand checks");
                     }
                     pending.extend(members.iter().map(|(key, member)| (member, format!("{pointer}/{key}"))));
                 }
@@ -20290,50 +20441,113 @@ fn tc_233_no_published_node_id_nests_an_operand_node_id() {
                 _ => {}
             }
         }
+        assert_eq!(
+            operand_slots::slot_view(&operand_slots::index_view(&document)),
+            document,
+            "{name}: every operand row is numbered by first occurrence"
+        );
     }
     assert!(nested.is_empty(), "{nested:#?}");
-    assert!(index_segments > 0, "the published packages hold index segments");
+    assert!(slots > 0 && index_segments > 0, "the published files hold operand slots and index segments");
+    assert!(packages >= 20, "every published package carries operand rows");
 }
 
-/// FR-322-AC-36 and FR-322-AC-278..AC-280 (TC-233 `NI-01`..`NI-12`): each case
-/// patches `positive-dependency-call.json`. A `schema: invalid` case fails the
-/// V2 schema; a `schema: valid` case passes it and the reader's index check
-/// refuses it at exactly its locus.
-#[trace("TC-233", "FR-322-AC-36", "FR-322-AC-278", "FR-322-AC-279", "FR-322-AC-280")]
+/// FR-322-AC-36, FR-322-AC-278..AC-280 and FR-322-AC-392..AC-395 (TC-233
+/// `NI-01`..`NI-12`, `NI-15`..`NI-24`): each case patches
+/// `positive-dependency-call.json` as published. A `schema: invalid` case
+/// fails the V2 schema; a `schema: valid` case passes it and the operand
+/// checks refuse it at exactly its locus, or pass it with the outcome named.
+#[trace(
+    "TC-233",
+    "FR-322-AC-36",
+    "FR-322-AC-278",
+    "FR-322-AC-279",
+    "FR-322-AC-280",
+    "FR-322-AC-392",
+    "FR-322-AC-393",
+    "FR-322-AC-394",
+    "FR-322-AC-395"
+)]
 #[test]
 fn tc_233_node_index_vectors_refuse_at_their_loci() {
-    let vectors = parsed_fixture(NODE_INDEX_VECTORS);
+    let vectors: Value = serde_json::from_str(NODE_INDEX_VECTORS).expect("vectors are valid JSON");
     assert_eq!(vectors["base"], "fixtures/positive-dependency-call.json");
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    let base = parsed_fixture(POSITIVE_DEPENDENCY_CALL);
+    let base: Value = parsed_fixture(POSITIVE_DEPENDENCY_CALL);
     assert!(schema.is_valid(&base));
-    assert_eq!(node_index_refusal(&base), None, "the base passes the index checks");
+    assert_eq!(operand_refusal(&base), None, "the base passes the operand checks");
+    assert_eq!(base["semantic_graph"]["operand_rows"], json!([[], [], [0], [0]]));
+    let base_nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+    // FR-322-AC-395: node 3's literal type and node 2's own id have equal bytes
+    // and, each resolved through its own holder's row, one key.
+    assert_eq!(base_nodes[3]["body"]["arguments"][1]["type"], base_nodes[2]["node_id"]);
+    let viewed = operand_slots::index_view(&base);
+    assert_eq!(viewed["semantic_graph"]["nodes"][3]["body"]["arguments"][1]["type"], viewed["semantic_graph"]["nodes"][2]["node_id"]);
+    let base_keys = published_keys(&base);
     let cases = vectors["cases"].as_array().expect("cases");
     let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
-    assert_eq!(ids, (1..=12).map(|n| format!("NI-{n:02}")).collect::<Vec<_>>());
+    let expected_ids: Vec<String> = (1..=12).chain(15..=24).map(|n| format!("NI-{n:02}")).collect();
+    assert_eq!(ids, expected_ids);
     for case in cases {
         let id = case["id"].as_str().unwrap();
         let mut package = base.clone();
         for operation in case["patch"].as_array().unwrap() {
             apply_json_patch(&mut package, operation);
         }
-        assert_eq!(case["expected"], "malformed_wire", "{id}");
         match case["schema"].as_str().unwrap() {
-            "invalid" => assert!(!schema.is_valid(&package), "{id} fails the V2 schema"),
-            "valid" => {
-                assert!(schema.is_valid(&package), "{id} passes the V2 schema");
-                assert_eq!(node_index_refusal(&package).as_deref(), case["locus"].as_str(), "{id}");
+            "invalid" => {
+                assert_eq!(case["expected"], "malformed_wire", "{id}");
+                assert!(!schema.is_valid(&package), "{id} fails the V2 schema");
+                continue;
             }
+            "valid" => assert!(schema.is_valid(&package), "{id} passes the V2 schema"),
             other => panic!("{id}: unknown schema expectation {other}"),
+        }
+        match case["expected"].as_str().unwrap() {
+            "malformed_wire" => {
+                assert_eq!(operand_refusal(&package).as_deref(), case["locus"].as_str(), "{id}");
+            }
+            "passes_operand_and_duplicate_checks" => {
+                assert_eq!(operand_refusal(&package), None, "{id}");
+                let keys = published_keys(&package);
+                assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), keys.len(), "{id}: no duplicate key");
+                let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+                assert_eq!(nodes[4], nodes[2], "{id}: equal bytes");
+                assert_ne!(keys[4], keys[2], "{id}: different keys");
+            }
+            "invalid_semantic_graph" => {
+                assert_eq!(operand_refusal(&package), None, "{id}");
+                let keys = published_keys(&package);
+                let duplicate = (1..keys.len()).find(|at| keys[..*at].contains(&keys[*at])).expect("a duplicate key");
+                assert_eq!(case["locus"], format!("/semantic_graph/nodes/{duplicate}/node_id"), "{id}");
+            }
+            "passes_operand_checks" => {
+                assert_eq!(operand_refusal(&package), None, "{id}");
+                let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+                let keys = published_keys(&package);
+                for (old, node) in base_nodes.iter().enumerate() {
+                    assert_eq!(&nodes[old + 1], node, "{id}: node {old} keeps its bytes");
+                }
+                // One interner, so equal keys across the two graphs are equal ids.
+                let mut interner = KeyInterner::default();
+                let before = interner.graph_keys(viewed["semantic_graph"]["nodes"].as_array().unwrap());
+                let after_view = operand_slots::index_view(&package);
+                let after = interner.graph_keys(after_view["semantic_graph"]["nodes"].as_array().unwrap());
+                for (old, key) in before.iter().enumerate() {
+                    assert_eq!(*key, after[old + 1], "{id}: node {old} keeps its key");
+                }
+                assert_eq!(keys.len(), base_keys.len() + 2, "{id}: two nodes added");
+            }
+            other => panic!("{id}: unknown expectation {other}"),
         }
     }
 }
 
 /// FR-322-AC-281 (TC-233 `NI-13`): a chain of derived nodes, each naming its
-/// predecessor through one index segment, has node ids of bounded size and a
-/// JSON depth that does not grow with the chain, parses under serde_json's
-/// default nesting limit of 128, passes the index checks and rebuilds to
-/// distinct keys, each ending with its predecessor's key.
+/// predecessor through one operand slot, has node ids of bounded size and
+/// equal bytes, a JSON depth that does not grow with the chain, parses under
+/// serde_json's default nesting limit of 128, passes the operand checks and
+/// rebuilds to distinct keys, each ending with its predecessor's key.
 #[trace("TC-233", "FR-322-AC-281")]
 #[test]
 fn tc_233_a_deep_chain_has_linear_wire_and_fixed_depth() {
@@ -20353,13 +20567,15 @@ fn tc_233_a_deep_chain_has_linear_wire_and_fixed_depth() {
     let chain = |length: usize| {
         let mut nodes = vec![json!({"node_tag": "scalar_type", "semantic_form": "integer",
             "node_id": {"package": "example", "path": ["scalar_type", "integer"], "ordinal": 0}})];
+        let mut rows = vec![json!([])];
         for previous in 0..length {
             nodes.push(json!({"node_tag": "expression", "semantic_form": "application",
                 "node_id": {"package": "example",
-                    "path": ["expression", "application", "quire.op.integer.negate", {"node": previous}],
+                    "path": ["expression", "application", "quire.op.integer.negate", {"operand": 0}],
                     "ordinal": 0}}));
+            rows.push(json!([previous]));
         }
-        json!({"semantic_graph": {"nodes": nodes}})
+        json!({"semantic_graph": {"nodes": nodes, "operand_rows": rows}})
     };
     let short = chain(100);
     let long = chain(100_000);
@@ -20371,9 +20587,11 @@ fn tc_233_a_deep_chain_has_linear_wire_and_fixed_depth() {
         let bytes = serde_json::to_string(&node["node_id"]).unwrap().len();
         assert!(bytes <= 200, "a node id of {bytes} bytes");
     }
-    assert_eq!(node_index_refusal(&long), None, "the index checks admit the chain");
+    assert!(nodes[2..].iter().all(|node| *node == nodes[1]), "every chain node has the same bytes");
+    assert_eq!(operand_refusal(&long), None, "the operand checks admit the chain");
+    let viewed = operand_slots::index_view(&long);
     let mut interner = KeyInterner::default();
-    let keys = interner.graph_keys(nodes);
+    let keys = interner.graph_keys(viewed["semantic_graph"]["nodes"].as_array().unwrap());
     assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 100_001, "every rebuilt key is distinct");
     let mut operands = BTreeMap::new();
     for (shape, id) in &interner.ids {
@@ -20478,6 +20696,17 @@ fn tc_233_a_reordered_graph_keeps_every_structural_key() {
             let after = interner.graph_keys(candidate_nodes);
             for old in 0..count {
                 assert_eq!(before[old], after[new_index[old]], "{name} {label}: node {old} keeps its structural key");
+            }
+            // FR-322 "Locality": written back in slot form, the reorder changes
+            // the operand rows and no node's bytes.
+            let published = operand_slots::slot_view(&package);
+            let written = operand_slots::slot_view(&candidate);
+            for old in 0..count {
+                assert_eq!(
+                    written["semantic_graph"]["nodes"][new_index[old]],
+                    published["semantic_graph"]["nodes"][old],
+                    "{name} {label}: node {old} keeps its bytes"
+                );
             }
             if order.iter().enumerate().any(|(new, old)| new != *old) {
                 assert_ne!(candidate, package, "{name} {label}: the reorder is a structurally unequal package");

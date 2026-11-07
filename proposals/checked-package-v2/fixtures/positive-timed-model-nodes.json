@@ -242,7 +242,7 @@
             "integer_range",
             "min",
             {
-              "node": 24
+              "operand": 0
             },
             "0",
             "max",
@@ -348,10 +348,10 @@
             "expression",
             "reference",
             {
-              "node": 3
+              "operand": 0
             },
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -542,16 +542,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 23
+                    "operand": 0
                   },
                   "self",
                   "level",
                   {
-                    "node": 24
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 26
+                    "operand": 2
                   }
                 ]
               },
@@ -608,12 +608,12 @@
                   "temporal",
                   "formula",
                   {
-                    "node": 28
+                    "operand": 3
                   },
                   "quire.op.temporal.eventually",
                   "temporal_formula",
                   {
-                    "node": 0
+                    "operand": 4
                   }
                 ]
               },
@@ -654,12 +654,12 @@
               "temporal",
               "formula",
               {
-                "node": 28
+                "operand": 3
               },
               "quire.op.temporal.eventually",
               "temporal_formula",
               {
-                "node": 0
+                "operand": 4
               }
             ]
           },
@@ -671,16 +671,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "self",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               {
-                "node": 26
+                "operand": 2
               }
             ]
           }
@@ -692,22 +692,22 @@
             "temporal",
             "temporal_clause",
             {
-              "node": 27
+              "operand": 5
             },
             {
-              "node": 23
+              "operand": 0
             },
             "model-steps",
             "kind",
             "origin",
             {
-              "node": 29
+              "operand": 6
             },
             "quire.op.temporal.clause",
             "quire.temporal.event-position.false-extension/v1",
             "temporal",
             {
-              "node": 0
+              "operand": 4
             }
           ]
         },
@@ -744,16 +744,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "self",
                     "level",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 2
                     }
                   ]
                 },
@@ -966,16 +966,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "self",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               {
-                "node": 26
+                "operand": 2
               }
             ]
           }
@@ -1109,10 +1109,10 @@
             "correspondence",
             "source_locus",
             {
-              "node": 3
+              "operand": 0
             },
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -1349,13 +1349,13 @@
             "state",
             "frame",
             {
-              "node": 13
+              "operand": 0
             },
             {
-              "node": 14
+              "operand": 1
             },
             {
-              "node": 7
+              "operand": 2
             },
             "balance"
           ]
@@ -1822,7 +1822,7 @@
             "composite_type",
             "reference",
             {
-              "node": 53
+              "operand": 0
             }
           ]
         },
@@ -1842,7 +1842,7 @@
             "composite_type",
             "reference",
             {
-              "node": 53
+              "operand": 0
             }
           ]
         }
@@ -1896,16 +1896,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "self",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             {
-              "node": 26
+              "operand": 2
             }
           ]
         },
@@ -1925,7 +1925,7 @@
             "composite_type",
             "reference",
             {
-              "node": 53
+              "operand": 3
             }
           ]
         }
@@ -1980,12 +1980,12 @@
             "temporal",
             "formula",
             {
-              "node": 3
+              "operand": 0
             },
             "quire.op.temporal.holds",
             "temporal_formula",
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -2018,12 +2018,12 @@
                   "temporal",
                   "formula",
                   {
-                    "node": 3
+                    "operand": 0
                   },
                   "quire.op.temporal.holds",
                   "temporal_formula",
                   {
-                    "node": 0
+                    "operand": 1
                   }
                 ]
               },
@@ -2062,12 +2062,12 @@
               "temporal",
               "formula",
               {
-                "node": 3
+                "operand": 0
               },
               "quire.op.temporal.holds",
               "temporal_formula",
               {
-                "node": 0
+                "operand": 1
               }
             ]
           }
@@ -2079,12 +2079,12 @@
             "temporal",
             "formula",
             {
-              "node": 28
+              "operand": 2
             },
             "quire.op.temporal.eventually",
             "temporal_formula",
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -2220,7 +2220,7 @@
             "integer_range",
             "min",
             {
-              "node": 24
+              "operand": 0
             },
             "1",
             "max",
@@ -2267,7 +2267,7 @@
             "value",
             "literal",
             {
-              "node": 23
+              "operand": 0
             },
             "audit"
           ]
@@ -2312,11 +2312,11 @@
             "value",
             "literal",
             {
-              "node": 24
+              "operand": 0
             },
             "30",
             {
-              "node": 31
+              "operand": 1
             }
           ]
         },
@@ -2337,7 +2337,7 @@
             "integer_range",
             "min",
             {
-              "node": 24
+              "operand": 0
             },
             "1",
             "max",
@@ -2359,7 +2359,7 @@
                     "value",
                     "literal",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "audit"
                   ]
@@ -2378,11 +2378,11 @@
                     "value",
                     "literal",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "30",
                     {
-                      "node": 31
+                      "operand": 2
                     }
                   ]
                 },
@@ -2410,11 +2410,11 @@
               "value",
               "literal",
               {
-                "node": 24
+                "operand": 1
               },
               "30",
               {
-                "node": 31
+                "operand": 2
               }
             ]
           },
@@ -2425,7 +2425,7 @@
               "value",
               "literal",
               {
-                "node": 23
+                "operand": 0
               },
               "audit"
             ]
@@ -2541,16 +2541,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "x",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             {
-              "node": 35
+              "operand": 2
             }
           ]
         },
@@ -2621,16 +2621,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "y",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "1",
             {
-              "node": 35
+              "operand": 2
             }
           ]
         },
@@ -2674,7 +2674,7 @@
             "value",
             "literal",
             {
-              "node": 35
+              "operand": 0
             },
             "1"
           ]
@@ -2768,16 +2768,16 @@
                               "parameter",
                               "name",
                               {
-                                "node": 23
+                                "operand": 0
                               },
                               "y",
                               "level",
                               {
-                                "node": 24
+                                "operand": 1
                               },
                               "1",
                               {
-                                "node": 35
+                                "operand": 2
                               }
                             ]
                           },
@@ -2811,16 +2811,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "y",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           }
@@ -2833,18 +2833,18 @@
             "hybrid_transition",
             "target",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             "guard",
             {
-              "node": 3
+              "operand": 3
             },
             "resets",
             "variable",
             "value",
             {
-              "node": 37
+              "operand": 4
             }
           ]
         },
@@ -2865,18 +2865,18 @@
             "hybrid_transition",
             "target",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             "guard",
             {
-              "node": 3
+              "operand": 3
             },
             "resets",
             "variable",
             "value",
             {
-              "node": 37
+              "operand": 4
             }
           ]
         }
@@ -2913,16 +2913,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "y",
                         "level",
                         {
-                          "node": 24
+                          "operand": 1
                         },
                         "1",
                         {
-                          "node": 35
+                          "operand": 2
                         }
                       ]
                     },
@@ -2936,7 +2936,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 35
+                          "operand": 2
                         },
                         "1"
                       ]
@@ -2961,18 +2961,18 @@
                         "hybrid_transition",
                         "target",
                         {
-                          "node": 24
+                          "operand": 1
                         },
                         "0",
                         "guard",
                         {
-                          "node": 3
+                          "operand": 3
                         },
                         "resets",
                         "variable",
                         "value",
                         {
-                          "node": 37
+                          "operand": 4
                         }
                       ]
                     },
@@ -3009,18 +3009,18 @@
               "hybrid_transition",
               "target",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               "guard",
               {
-                "node": 3
+                "operand": 3
               },
               "resets",
               "variable",
               "value",
               {
-                "node": 37
+                "operand": 4
               }
             ]
           },
@@ -3031,7 +3031,7 @@
               "value",
               "literal",
               {
-                "node": 35
+                "operand": 2
               },
               "1"
             ]
@@ -3044,16 +3044,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "y",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           }
@@ -3113,16 +3113,16 @@
                               "parameter",
                               "name",
                               {
-                                "node": 23
+                                "operand": 0
                               },
                               "x",
                               "level",
                               {
-                                "node": 24
+                                "operand": 1
                               },
                               "0",
                               {
-                                "node": 35
+                                "operand": 2
                               }
                             ]
                           },
@@ -3163,16 +3163,16 @@
                               "parameter",
                               "name",
                               {
-                                "node": 23
+                                "operand": 0
                               },
                               "y",
                               "level",
                               {
-                                "node": 24
+                                "operand": 1
                               },
                               "1",
                               {
-                                "node": 35
+                                "operand": 2
                               }
                             ]
                           },
@@ -3251,16 +3251,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "x",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "0",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           },
@@ -3272,16 +3272,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "y",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 35
+                "operand": 2
               }
             ]
           }
@@ -3485,12 +3485,12 @@
             "time_source",
             "kind",
             {
-              "node": 23
+              "operand": 0
             },
             "dense",
             "unit",
             {
-              "node": 43
+              "operand": 1
             }
           ]
         },
@@ -3511,12 +3511,12 @@
             "time_source",
             "kind",
             {
-              "node": 23
+              "operand": 0
             },
             "dense",
             "unit",
             {
-              "node": 43
+              "operand": 1
             }
           ]
         }
@@ -3963,12 +3963,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -3979,7 +3979,7 @@
             "selector",
             "minimum",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "maximum",
@@ -4017,12 +4017,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -4033,7 +4033,7 @@
             "selector",
             "minimum",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "maximum",
@@ -4087,16 +4087,16 @@
                     "operation_anchor",
                     "context",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "operation",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "size",
                     "frame",
                     {
-                      "node": 58
+                      "operand": 2
                     }
                   ]
                 },
@@ -4115,12 +4115,12 @@
                     "clock_place",
                     "model",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "path",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "field",
                     "name",
@@ -4131,7 +4131,7 @@
                     "selector",
                     "minimum",
                     {
-                      "node": 24
+                      "operand": 3
                     },
                     "0",
                     "maximum",
@@ -4167,16 +4167,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "self",
                     "level",
                     {
-                      "node": 24
+                      "operand": 3
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 4
                     }
                   ]
                 },
@@ -4196,7 +4196,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 23
+                          "operand": 1
                         },
                         "audit"
                       ]
@@ -4226,10 +4226,10 @@
                     "expression",
                     "reference",
                     {
-                      "node": 3
+                      "operand": 5
                     },
                     {
-                      "node": 0
+                      "operand": 6
                     }
                   ]
                 },
@@ -4264,10 +4264,10 @@
               "expression",
               "reference",
               {
-                "node": 3
+                "operand": 5
               },
               {
-                "node": 0
+                "operand": 6
               }
             ]
           },
@@ -4279,16 +4279,16 @@
               "operation_anchor",
               "context",
               {
-                "node": 53
+                "operand": 0
               },
               "operation",
               {
-                "node": 23
+                "operand": 1
               },
               "size",
               "frame",
               {
-                "node": 58
+                "operand": 2
               }
             ]
           },
@@ -4300,12 +4300,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 0
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "field",
               "name",
@@ -4316,7 +4316,7 @@
               "selector",
               "minimum",
               {
-                "node": 24
+                "operand": 3
               },
               "0",
               "maximum",
@@ -4344,7 +4344,7 @@
               "value",
               "literal",
               {
-                "node": 23
+                "operand": 1
               },
               "audit"
             ]
@@ -4357,16 +4357,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 1
               },
               "self",
               "level",
               {
-                "node": 24
+                "operand": 3
               },
               "0",
               {
-                "node": 26
+                "operand": 4
               }
             ]
           }
@@ -4379,32 +4379,32 @@
             "clock_reset",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "place",
             "operation",
             {
-              "node": 57
+              "operand": 7
             },
             {
-              "node": 45
+              "operand": 8
             },
             "owner",
             {
-              "node": 27
+              "operand": 9
             },
             "slots",
             {
-              "node": 32
+              "operand": 10
             },
             "binders",
             "condition",
             {
-              "node": 4
+              "operand": 11
             },
             "value",
             {
-              "node": 43
+              "operand": 12
             },
             "0/1"
           ]
@@ -4426,32 +4426,32 @@
             "clock_reset",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "place",
             "operation",
             {
-              "node": 57
+              "operand": 7
             },
             {
-              "node": 45
+              "operand": 8
             },
             "owner",
             {
-              "node": 27
+              "operand": 9
             },
             "slots",
             {
-              "node": 32
+              "operand": 10
             },
             "binders",
             "condition",
             {
-              "node": 4
+              "operand": 11
             },
             "value",
             {
-              "node": 43
+              "operand": 12
             },
             "0/1"
           ]
@@ -4472,16 +4472,16 @@
                     "operation_anchor",
                     "context",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "operation",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "size",
                     "frame",
                     {
-                      "node": 58
+                      "operand": 2
                     }
                   ]
                 },
@@ -4506,10 +4506,10 @@
                               "expression",
                               "reference",
                               {
-                                "node": 3
+                                "operand": 3
                               },
                               {
-                                "node": 0
+                                "operand": 4
                               }
                             ]
                           },
@@ -4525,25 +4525,25 @@
                             "clock_constraint",
                             "kind",
                             {
-                              "node": 23
+                              "operand": 1
                             },
                             "place",
                             {
-                              "node": 45
+                              "operand": 5
                             },
                             "owner",
                             {
-                              "node": 27
+                              "operand": 6
                             },
                             "slots",
                             {
-                              "node": 32
+                              "operand": 7
                             },
                             "comparison",
                             "le",
                             "bound",
                             {
-                              "node": 43
+                              "operand": 8
                             },
                             "3/1"
                           ]
@@ -4568,10 +4568,10 @@
               "expression",
               "reference",
               {
-                "node": 3
+                "operand": 3
               },
               {
-                "node": 0
+                "operand": 4
               }
             ]
           },
@@ -4583,16 +4583,16 @@
               "operation_anchor",
               "context",
               {
-                "node": 53
+                "operand": 0
               },
               "operation",
               {
-                "node": 23
+                "operand": 1
               },
               "size",
               "frame",
               {
-                "node": 58
+                "operand": 2
               }
             ]
           },
@@ -4604,25 +4604,25 @@
               "clock_constraint",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "place",
               {
-                "node": 45
+                "operand": 5
               },
               "owner",
               {
-                "node": 27
+                "operand": 6
               },
               "slots",
               {
-                "node": 32
+                "operand": 7
               },
               "comparison",
               "le",
               "bound",
               {
-                "node": 43
+                "operand": 8
               },
               "3/1"
             ]
@@ -4636,15 +4636,15 @@
             "clock_guard",
             "operation",
             {
-              "node": 57
+              "operand": 9
             },
             "parts",
             "predicate",
             {
-              "node": 4
+              "operand": 10
             },
             {
-              "node": 51
+              "operand": 11
             }
           ]
         },
@@ -4665,15 +4665,15 @@
             "clock_guard",
             "operation",
             {
-              "node": 57
+              "operand": 9
             },
             "parts",
             "predicate",
             {
-              "node": 4
+              "operand": 10
             },
             {
-              "node": 51
+              "operand": 11
             }
           ]
         }
@@ -4692,10 +4692,10 @@
                     "expression",
                     "reference",
                     {
-                      "node": 3
+                      "operand": 0
                     },
                     {
-                      "node": 0
+                      "operand": 1
                     }
                   ]
                 },
@@ -4716,25 +4716,25 @@
                         "clock_constraint",
                         "kind",
                         {
-                          "node": 23
+                          "operand": 2
                         },
                         "place",
                         {
-                          "node": 45
+                          "operand": 3
                         },
                         "owner",
                         {
-                          "node": 27
+                          "operand": 4
                         },
                         "slots",
                         {
-                          "node": 32
+                          "operand": 5
                         },
                         "comparison",
                         "le",
                         "bound",
                         {
-                          "node": 43
+                          "operand": 6
                         },
                         "3/1"
                       ]
@@ -4756,10 +4756,10 @@
               "expression",
               "reference",
               {
-                "node": 3
+                "operand": 0
               },
               {
-                "node": 0
+                "operand": 1
               }
             ]
           },
@@ -4771,25 +4771,25 @@
               "clock_constraint",
               "kind",
               {
-                "node": 23
+                "operand": 2
               },
               "place",
               {
-                "node": 45
+                "operand": 3
               },
               "owner",
               {
-                "node": 27
+                "operand": 4
               },
               "slots",
               {
-                "node": 32
+                "operand": 5
               },
               "comparison",
               "le",
               "bound",
               {
-                "node": 43
+                "operand": 6
               },
               "3/1"
             ]
@@ -4803,11 +4803,11 @@
             "time_invariant",
             "predicate",
             {
-              "node": 4
+              "operand": 7
             },
             "bounds",
             {
-              "node": 51
+              "operand": 8
             }
           ]
         },
@@ -4828,11 +4828,11 @@
             "time_invariant",
             "predicate",
             {
-              "node": 4
+              "operand": 7
             },
             "bounds",
             {
-              "node": 51
+              "operand": 8
             }
           ]
         }
@@ -4868,10 +4868,10 @@
                     "expression",
                     "reference",
                     {
-                      "node": 3
+                      "operand": 0
                     },
                     {
-                      "node": 0
+                      "operand": 1
                     }
                   ]
                 },
@@ -4889,10 +4889,10 @@
               "expression",
               "reference",
               {
-                "node": 3
+                "operand": 0
               },
               {
-                "node": 0
+                "operand": 1
               }
             ]
           }
@@ -4905,12 +4905,12 @@
             "urgency",
             "kind",
             {
-              "node": 23
+              "operand": 2
             },
             "when",
             "predicate",
             {
-              "node": 4
+              "operand": 3
             }
           ]
         },
@@ -4931,12 +4931,12 @@
             "urgency",
             "kind",
             {
-              "node": 23
+              "operand": 2
             },
             "when",
             "predicate",
             {
-              "node": 4
+              "operand": 3
             }
           ]
         }
@@ -5016,12 +5016,12 @@
             "urgency",
             "kind",
             {
-              "node": 23
+              "operand": 0
             },
             "operation",
             "model",
             {
-              "node": 53
+              "operand": 1
             },
             "operation_name",
             "size"
@@ -5044,12 +5044,12 @@
             "urgency",
             "kind",
             {
-              "node": 23
+              "operand": 0
             },
             "operation",
             "model",
             {
-              "node": 53
+              "operand": 1
             },
             "operation_name",
             "size"
@@ -5088,12 +5088,12 @@
                     "clock_place",
                     "model",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "path",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "field",
                     "name",
@@ -5104,7 +5104,7 @@
                     "selector",
                     "minimum",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     "maximum",
@@ -5140,16 +5140,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "self",
                     "level",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 3
                     }
                   ]
                 },
@@ -5169,7 +5169,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 23
+                          "operand": 1
                         },
                         "audit"
                       ]
@@ -5226,12 +5226,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 0
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "field",
               "name",
@@ -5242,7 +5242,7 @@
               "selector",
               "minimum",
               {
-                "node": 24
+                "operand": 2
               },
               "0",
               "maximum",
@@ -5270,7 +5270,7 @@
               "value",
               "literal",
               {
-                "node": 23
+                "operand": 1
               },
               "audit"
             ]
@@ -5283,16 +5283,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 1
               },
               "self",
               "level",
               {
-                "node": 24
+                "operand": 2
               },
               "0",
               {
-                "node": 26
+                "operand": 3
               }
             ]
           }
@@ -5305,25 +5305,25 @@
             "clock_constraint",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "place",
             {
-              "node": 45
+              "operand": 4
             },
             "owner",
             {
-              "node": 27
+              "operand": 5
             },
             "slots",
             {
-              "node": 32
+              "operand": 6
             },
             "comparison",
             "le",
             "bound",
             {
-              "node": 43
+              "operand": 7
             },
             "3/1"
           ]
@@ -5345,25 +5345,25 @@
             "clock_constraint",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "place",
             {
-              "node": 45
+              "operand": 4
             },
             "owner",
             {
-              "node": 27
+              "operand": 5
             },
             "slots",
             {
-              "node": 32
+              "operand": 6
             },
             "comparison",
             "le",
             "bound",
             {
-              "node": 43
+              "operand": 7
             },
             "3/1"
           ]
@@ -5415,12 +5415,12 @@
                     "time_source",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "dense",
                     "unit",
                     {
-                      "node": 43
+                      "operand": 1
                     }
                   ]
                 },
@@ -5441,12 +5441,12 @@
                         "clock_place",
                         "model",
                         {
-                          "node": 53
+                          "operand": 2
                         },
                         "path",
                         "kind",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "field",
                         "name",
@@ -5457,7 +5457,7 @@
                         "selector",
                         "minimum",
                         {
-                          "node": 24
+                          "operand": 3
                         },
                         "0",
                         "maximum",
@@ -5498,32 +5498,32 @@
                         "clock_reset",
                         "kind",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "place",
                         "operation",
                         {
-                          "node": 57
+                          "operand": 4
                         },
                         {
-                          "node": 45
+                          "operand": 5
                         },
                         "owner",
                         {
-                          "node": 27
+                          "operand": 6
                         },
                         "slots",
                         {
-                          "node": 32
+                          "operand": 7
                         },
                         "binders",
                         "condition",
                         {
-                          "node": 4
+                          "operand": 8
                         },
                         "value",
                         {
-                          "node": 43
+                          "operand": 1
                         },
                         "0/1"
                       ]
@@ -5548,15 +5548,15 @@
                         "clock_guard",
                         "operation",
                         {
-                          "node": 57
+                          "operand": 4
                         },
                         "parts",
                         "predicate",
                         {
-                          "node": 4
+                          "operand": 8
                         },
                         {
-                          "node": 51
+                          "operand": 9
                         }
                       ]
                     },
@@ -5580,11 +5580,11 @@
                         "time_invariant",
                         "predicate",
                         {
-                          "node": 4
+                          "operand": 8
                         },
                         "bounds",
                         {
-                          "node": 51
+                          "operand": 9
                         }
                       ]
                     },
@@ -5608,12 +5608,12 @@
                         "urgency",
                         "kind",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "when",
                         "predicate",
                         {
-                          "node": 4
+                          "operand": 8
                         }
                       ]
                     },
@@ -5628,12 +5628,12 @@
                         "urgency",
                         "kind",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "operation",
                         "model",
                         {
-                          "node": 53
+                          "operand": 2
                         },
                         "operation_name",
                         "size"
@@ -5659,25 +5659,25 @@
                         "clock_constraint",
                         "kind",
                         {
-                          "node": 23
+                          "operand": 0
                         },
                         "place",
                         {
-                          "node": 45
+                          "operand": 5
                         },
                         "owner",
                         {
-                          "node": 27
+                          "operand": 6
                         },
                         "slots",
                         {
-                          "node": 32
+                          "operand": 7
                         },
                         "comparison",
                         "le",
                         "bound",
                         {
-                          "node": 43
+                          "operand": 1
                         },
                         "3/1"
                       ]
@@ -5723,25 +5723,25 @@
               "clock_constraint",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "place",
               {
-                "node": 45
+                "operand": 5
               },
               "owner",
               {
-                "node": 27
+                "operand": 6
               },
               "slots",
               {
-                "node": 32
+                "operand": 7
               },
               "comparison",
               "le",
               "bound",
               {
-                "node": 43
+                "operand": 1
               },
               "3/1"
             ]
@@ -5754,15 +5754,15 @@
               "clock_guard",
               "operation",
               {
-                "node": 57
+                "operand": 4
               },
               "parts",
               "predicate",
               {
-                "node": 4
+                "operand": 8
               },
               {
-                "node": 51
+                "operand": 9
               }
             ]
           },
@@ -5774,12 +5774,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 2
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "field",
               "name",
@@ -5790,7 +5790,7 @@
               "selector",
               "minimum",
               {
-                "node": 24
+                "operand": 3
               },
               "0",
               "maximum",
@@ -5819,32 +5819,32 @@
               "clock_reset",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "place",
               "operation",
               {
-                "node": 57
+                "operand": 4
               },
               {
-                "node": 45
+                "operand": 5
               },
               "owner",
               {
-                "node": 27
+                "operand": 6
               },
               "slots",
               {
-                "node": 32
+                "operand": 7
               },
               "binders",
               "condition",
               {
-                "node": 4
+                "operand": 8
               },
               "value",
               {
-                "node": 43
+                "operand": 1
               },
               "0/1"
             ]
@@ -5857,11 +5857,11 @@
               "time_invariant",
               "predicate",
               {
-                "node": 4
+                "operand": 8
               },
               "bounds",
               {
-                "node": 51
+                "operand": 9
               }
             ]
           },
@@ -5873,12 +5873,12 @@
               "time_source",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "dense",
               "unit",
               {
-                "node": 43
+                "operand": 1
               }
             ]
           },
@@ -5890,12 +5890,12 @@
               "urgency",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "operation",
               "model",
               {
-                "node": 53
+                "operand": 2
               },
               "operation_name",
               "size"
@@ -5909,12 +5909,12 @@
               "urgency",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "when",
               "predicate",
               {
-                "node": 4
+                "operand": 8
               }
             ]
           }
@@ -6082,16 +6082,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "closing",
                     "level",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "1",
                     {
-                      "node": 26
+                      "operand": 2
                     }
                   ]
                 },
@@ -6168,16 +6168,16 @@
               "parameter",
               "name",
               {
-                "node": 23
+                "operand": 0
               },
               "closing",
               "level",
               {
-                "node": 24
+                "operand": 1
               },
               "1",
               {
-                "node": 26
+                "operand": 2
               }
             ]
           }
@@ -6259,16 +6259,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "closing",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "1",
             {
-              "node": 26
+              "operand": 2
             }
           ]
         },
@@ -6288,7 +6288,7 @@
             "composite_type",
             "reference",
             {
-              "node": 53
+              "operand": 3
             }
           ]
         }
@@ -6340,7 +6340,7 @@
                     "state",
                     "frame",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "clock"
                   ]
@@ -6368,7 +6368,7 @@
               "state",
               "frame",
               {
-                "node": 53
+                "operand": 0
               },
               "clock"
             ]
@@ -6382,16 +6382,16 @@
             "operation_anchor",
             "context",
             {
-              "node": 53
+              "operand": 0
             },
             "operation",
             {
-              "node": 23
+              "operand": 1
             },
             "size",
             "frame",
             {
-              "node": 58
+              "operand": 2
             }
           ]
         },
@@ -6455,7 +6455,7 @@
             "state",
             "frame",
             {
-              "node": 53
+              "operand": 0
             },
             "clock"
           ]
@@ -6515,6 +6515,230 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [
+        24
+      ],
+      [],
+      [
+        3,
+        0
+      ],
+      [],
+      [],
+      [],
+      [
+        23,
+        24,
+        26,
+        28,
+        0,
+        27,
+        29
+      ],
+      [
+        23,
+        24,
+        26
+      ],
+      [],
+      [
+        3,
+        0
+      ],
+      [],
+      [],
+      [],
+      [
+        13,
+        14,
+        7
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [
+        53
+      ],
+      [
+        23,
+        24,
+        26,
+        53
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        0,
+        28
+      ],
+      [],
+      [
+        24
+      ],
+      [
+        23
+      ],
+      [
+        24,
+        31
+      ],
+      [
+        23,
+        24,
+        31
+      ],
+      [],
+      [
+        23,
+        24,
+        35
+      ],
+      [
+        23,
+        24,
+        35
+      ],
+      [
+        35
+      ],
+      [
+        23,
+        24,
+        35,
+        3,
+        37
+      ],
+      [
+        23,
+        24,
+        35,
+        3,
+        37
+      ],
+      [
+        23,
+        24,
+        35
+      ],
+      [],
+      [],
+      [
+        23,
+        43
+      ],
+      [
+        53,
+        23,
+        24
+      ],
+      [
+        53,
+        23,
+        58,
+        24,
+        26,
+        3,
+        0,
+        57,
+        45,
+        27,
+        32,
+        4,
+        43
+      ],
+      [
+        53,
+        23,
+        58,
+        3,
+        0,
+        45,
+        27,
+        32,
+        43,
+        57,
+        4,
+        51
+      ],
+      [
+        3,
+        0,
+        23,
+        45,
+        27,
+        32,
+        43,
+        4,
+        51
+      ],
+      [
+        3,
+        0,
+        23,
+        4
+      ],
+      [
+        23,
+        53
+      ],
+      [
+        53,
+        23,
+        24,
+        26,
+        45,
+        27,
+        32,
+        43
+      ],
+      [
+        23,
+        43,
+        53,
+        24,
+        57,
+        45,
+        27,
+        32,
+        4,
+        51
+      ],
+      [],
+      [],
+      [
+        23,
+        24,
+        26
+      ],
+      [
+        23,
+        24,
+        26,
+        53
+      ],
+      [
+        53,
+        23,
+        58
+      ],
+      [
+        53
+      ],
+      []
     ]
   },
   "source_map": [

@@ -1744,7 +1744,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 8
+                              "operand": 0
                             },
                             "1"
                           ],
@@ -1763,7 +1763,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 8
+                    "operand": 0
                   },
                   "1"
                 ],
@@ -1777,10 +1777,10 @@
                 "union_value",
                 "Flag",
                 {
-                  "node": 12
+                  "operand": 1
                 },
                 {
-                  "node": 3
+                  "operand": 2
                 }
               ],
               "ordinal": 0
@@ -1823,6 +1823,15 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/26",
+          "value": [
+            8,
+            12,
+            3
+          ]
         }
       ],
       "schema": "valid",
@@ -1860,7 +1869,7 @@
                 "union_value",
                 "Flag",
                 {
-                  "node": 3
+                  "operand": 0
                 }
               ],
               "ordinal": 0
@@ -1900,6 +1909,13 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/26",
+          "value": [
+            3
+          ]
         }
       ],
       "schema": "valid",
@@ -1933,7 +1949,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 7
+                              "operand": 0
                             }
                           ],
                           "ordinal": 0
@@ -1951,7 +1967,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 7
+                    "operand": 0
                   }
                 ],
                 "ordinal": 0
@@ -1964,10 +1980,10 @@
                 "union_value",
                 "Empty",
                 {
-                  "node": 10
+                  "operand": 1
                 },
                 {
-                  "node": 3
+                  "operand": 2
                 }
               ],
               "ordinal": 0
@@ -2010,6 +2026,15 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/25",
+          "value": [
+            7,
+            10,
+            3
+          ]
         }
       ],
       "schema": "valid",
@@ -2047,7 +2072,7 @@
                 "union_value",
                 "Missing",
                 {
-                  "node": 3
+                  "operand": 0
                 }
               ],
               "ordinal": 0
@@ -2124,7 +2149,7 @@
                 "union_value",
                 "Red",
                 {
-                  "node": 4
+                  "operand": 0
                 }
               ],
               "ordinal": 0
@@ -2164,6 +2189,13 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/25",
+          "value": [
+            4
+          ]
         }
       ],
       "schema": "valid",
@@ -2200,16 +2232,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "ps",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "1",
                       {
-                        "node": 3
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -2233,16 +2265,16 @@
                                 "parameter",
                                 "name",
                                 {
-                                  "node": 9
+                                  "operand": 0
                                 },
                                 "bq",
                                 "level",
                                 {
-                                  "node": 8
+                                  "operand": 1
                                 },
                                 "2",
                                 {
-                                  "node": 0
+                                  "operand": 3
                                 }
                               ],
                               "ordinal": 0
@@ -2258,7 +2290,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 8
+                              "operand": 1
                             },
                             "1"
                           ],
@@ -2286,7 +2318,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 8
+                              "operand": 1
                             },
                             "0"
                           ],
@@ -2313,7 +2345,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0"
                 ],
@@ -2325,7 +2357,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1"
                 ],
@@ -2338,16 +2370,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "bq",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "2",
                   {
-                    "node": 0
+                    "operand": 3
                   }
                 ],
                 "ordinal": 0
@@ -2359,16 +2391,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "ps",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1",
                   {
-                    "node": 3
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -2382,21 +2414,21 @@
                 "case",
                 "quire.op.control.case",
                 {
-                  "node": 15
+                  "operand": 4
                 },
                 "Both",
                 {
-                  "node": 17
+                  "operand": 5
                 },
                 {
-                  "node": 12
+                  "operand": 6
                 },
                 "Empty",
                 {
-                  "node": 11
+                  "operand": 7
                 },
                 {
-                  "node": 8
+                  "operand": 1
                 }
               ],
               "ordinal": 0
@@ -2450,6 +2482,20 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/33",
+          "value": [
+            9,
+            8,
+            3,
+            0,
+            15,
+            17,
+            12,
+            11
+          ]
         }
       ],
       "schema": "valid",
@@ -2486,16 +2532,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "ps",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "1",
                       {
-                        "node": 3
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -2519,16 +2565,16 @@
                                 "parameter",
                                 "name",
                                 {
-                                  "node": 9
+                                  "operand": 0
                                 },
                                 "bf",
                                 "level",
                                 {
-                                  "node": 8
+                                  "operand": 1
                                 },
                                 "2",
                                 {
-                                  "node": 7
+                                  "operand": 3
                                 }
                               ],
                               "ordinal": 0
@@ -2544,7 +2590,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 8
+                              "operand": 1
                             },
                             "2"
                           ],
@@ -2572,7 +2618,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 8
+                              "operand": 1
                             },
                             "0"
                           ],
@@ -2600,16 +2646,16 @@
                                 "parameter",
                                 "name",
                                 {
-                                  "node": 9
+                                  "operand": 0
                                 },
                                 "bq",
                                 "level",
                                 {
-                                  "node": 8
+                                  "operand": 1
                                 },
                                 "2",
                                 {
-                                  "node": 0
+                                  "operand": 4
                                 }
                               ],
                               "ordinal": 0
@@ -2625,7 +2671,7 @@
                             "value",
                             "literal",
                             {
-                              "node": 8
+                              "operand": 1
                             },
                             "1"
                           ],
@@ -2652,7 +2698,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0"
                 ],
@@ -2664,7 +2710,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1"
                 ],
@@ -2676,7 +2722,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "2"
                 ],
@@ -2689,16 +2735,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "bf",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "2",
                   {
-                    "node": 7
+                    "operand": 3
                   }
                 ],
                 "ordinal": 0
@@ -2710,16 +2756,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "bq",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "2",
                   {
-                    "node": 0
+                    "operand": 4
                   }
                 ],
                 "ordinal": 0
@@ -2731,16 +2777,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "ps",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1",
                   {
-                    "node": 3
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -2754,28 +2800,28 @@
                 "case",
                 "quire.op.control.case",
                 {
-                  "node": 15
+                  "operand": 5
                 },
                 "Flag",
                 {
-                  "node": 16
+                  "operand": 6
                 },
                 {
-                  "node": 13
+                  "operand": 7
                 },
                 "Empty",
                 {
-                  "node": 11
+                  "operand": 8
                 },
                 "Both",
                 {
-                  "node": 17
+                  "operand": 9
                 },
                 {
-                  "node": 12
+                  "operand": 10
                 },
                 {
-                  "node": 8
+                  "operand": 1
                 }
               ],
               "ordinal": 0
@@ -2836,6 +2882,23 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/33",
+          "value": [
+            9,
+            8,
+            3,
+            7,
+            0,
+            15,
+            16,
+            13,
+            11,
+            17,
+            12
+          ]
         }
       ],
       "schema": "valid",
@@ -2884,16 +2947,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pp",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "0",
                       {
-                        "node": 0
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -2926,16 +2989,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pp",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 0
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -2949,13 +3012,13 @@
                 "query",
                 "quire.op.tuple.project",
                 {
-                  "node": 0
+                  "operand": 2
                 },
                 {
-                  "node": 14
+                  "operand": 3
                 },
                 {
-                  "node": 8
+                  "operand": 1
                 }
               ],
               "ordinal": 0
@@ -3001,6 +3064,16 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/31",
+          "value": [
+            9,
+            8,
+            0,
+            14
+          ]
         }
       ],
       "schema": "valid",
@@ -3049,16 +3122,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pp",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "0",
                       {
-                        "node": 0
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3091,16 +3164,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pp",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 0
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -3114,13 +3187,13 @@
                 "query",
                 "quire.op.tuple.project",
                 {
-                  "node": 1
+                  "operand": 3
                 },
                 {
-                  "node": 14
+                  "operand": 4
                 },
                 {
-                  "node": 8
+                  "operand": 1
                 }
               ],
               "ordinal": 0
@@ -3166,6 +3239,17 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/31",
+          "value": [
+            9,
+            8,
+            0,
+            1,
+            14
+          ]
         }
       ],
       "schema": "valid",
@@ -3214,16 +3298,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pp",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "0",
                       {
-                        "node": 0
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3256,16 +3340,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pp",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 0
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -3279,13 +3363,13 @@
                 "query",
                 "quire.op.tuple.project",
                 {
-                  "node": 0
+                  "operand": 2
                 },
                 {
-                  "node": 14
+                  "operand": 3
                 },
                 {
-                  "node": 8
+                  "operand": 1
                 }
               ],
               "ordinal": 1
@@ -3331,6 +3415,16 @@
             ],
             "ordinal": 1
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/31",
+          "value": [
+            9,
+            8,
+            0,
+            14
+          ]
         }
       ],
       "schema": "valid",
@@ -3378,7 +3472,7 @@
                 "value",
                 "enum_value",
                 {
-                  "node": 4
+                  "operand": 0
                 },
                 "Blue"
               ],
@@ -3465,7 +3559,7 @@
                 "value",
                 "enum_value",
                 {
-                  "node": 3
+                  "operand": 0
                 },
                 "Empty"
               ],
@@ -3506,6 +3600,13 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/30",
+          "value": [
+            3
+          ]
         }
       ],
       "schema": "valid",
@@ -3541,16 +3642,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pshape1",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "0",
                       {
-                        "node": 3
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3565,16 +3666,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pshape2",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "1",
                       {
-                        "node": 3
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3598,16 +3699,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pshape1",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 3
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -3619,16 +3720,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pshape2",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1",
                   {
-                    "node": 3
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -3642,13 +3743,13 @@
                 "binary",
                 "quire.op.enum.eq",
                 {
-                  "node": 23
+                  "operand": 3
                 },
                 {
-                  "node": 24
+                  "operand": 4
                 },
                 {
-                  "node": 7
+                  "operand": 5
                 }
               ],
               "ordinal": 0
@@ -3730,16 +3831,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pc1",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "0",
                       {
-                        "node": 4
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3754,16 +3855,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pc2",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "1",
                       {
-                        "node": 4
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3787,16 +3888,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pc1",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 4
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -3808,16 +3909,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pc2",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1",
                   {
-                    "node": 4
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -3831,13 +3932,13 @@
                 "binary",
                 "quire.op.structural.eq",
                 {
-                  "node": 21
+                  "operand": 3
                 },
                 {
-                  "node": 22
+                  "operand": 4
                 },
                 {
-                  "node": 7
+                  "operand": 5
                 }
               ],
               "ordinal": 0
@@ -3927,16 +4028,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pl1",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "0",
                       {
-                        "node": 6
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3951,16 +4052,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 9
+                        "operand": 0
                       },
                       "pl2",
                       "level",
                       {
-                        "node": 8
+                        "operand": 1
                       },
                       "1",
                       {
-                        "node": 6
+                        "operand": 2
                       }
                     ],
                     "ordinal": 0
@@ -3984,16 +4085,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pl1",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 6
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -4005,16 +4106,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 9
+                    "operand": 0
                   },
                   "pl2",
                   "level",
                   {
-                    "node": 8
+                    "operand": 1
                   },
                   "1",
                   {
-                    "node": 6
+                    "operand": 2
                   }
                 ],
                 "ordinal": 0
@@ -4028,13 +4129,13 @@
                 "binary",
                 "quire.op.structural.eq",
                 {
-                  "node": 19
+                  "operand": 3
                 },
                 {
-                  "node": 20
+                  "operand": 4
                 },
                 {
-                  "node": 7
+                  "operand": 5
                 }
               ],
               "ordinal": 0

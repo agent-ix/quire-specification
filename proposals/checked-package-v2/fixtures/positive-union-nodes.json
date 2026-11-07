@@ -260,16 +260,16 @@
             "parameter",
             "name",
             {
-              "node": 1
+              "operand": 0
             },
             "s",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "0",
             {
-              "node": 2
+              "operand": 2
             }
           ]
         },
@@ -339,12 +339,12 @@
             "parameter",
             "name",
             {
-              "node": 1
+              "operand": 0
             },
             "r",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "1"
           ]
@@ -416,12 +416,12 @@
             "parameter",
             "name",
             {
-              "node": 1
+              "operand": 0
             },
             "w",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "1"
           ]
@@ -493,12 +493,12 @@
             "parameter",
             "name",
             {
-              "node": 1
+              "operand": 0
             },
             "h",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "2"
           ]
@@ -543,7 +543,7 @@
             "value",
             "literal",
             {
-              "node": 0
+              "operand": 0
             },
             "0"
           ]
@@ -588,7 +588,7 @@
             "value",
             "literal",
             {
-              "node": 0
+              "operand": 0
             },
             "2"
           ]
@@ -633,7 +633,7 @@
             "value",
             "literal",
             {
-              "node": 0
+              "operand": 0
             },
             "3"
           ]
@@ -672,7 +672,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 0
+                          "operand": 0
                         },
                         "2"
                       ]
@@ -687,7 +687,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 0
+                          "operand": 0
                         },
                         "3"
                       ]
@@ -709,7 +709,7 @@
               "value",
               "literal",
               {
-                "node": 0
+                "operand": 0
               },
               "2"
             ]
@@ -721,7 +721,7 @@
               "value",
               "literal",
               {
-                "node": 0
+                "operand": 0
               },
               "3"
             ]
@@ -735,13 +735,13 @@
             "union_value",
             "Rect",
             {
-              "node": 8
+              "operand": 1
             },
             {
-              "node": 9
+              "operand": 2
             },
             {
-              "node": 2
+              "operand": 3
             }
           ]
         },
@@ -785,7 +785,7 @@
             "union_value",
             "Empty",
             {
-              "node": 2
+              "operand": 0
             }
           ]
         },
@@ -818,12 +818,12 @@
                   "parameter",
                   "name",
                   {
-                    "node": 1
+                    "operand": 0
                   },
                   "w",
                   "level",
                   {
-                    "node": 0
+                    "operand": 1
                   },
                   "1"
                 ]
@@ -839,12 +839,12 @@
                   "parameter",
                   "name",
                   {
-                    "node": 1
+                    "operand": 0
                   },
                   "h",
                   "level",
                   {
-                    "node": 0
+                    "operand": 1
                   },
                   "2"
                 ]
@@ -879,12 +879,12 @@
               "parameter",
               "name",
               {
-                "node": 1
+                "operand": 0
               },
               "h",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "2"
             ]
@@ -897,12 +897,12 @@
               "parameter",
               "name",
               {
-                "node": 1
+                "operand": 0
               },
               "w",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "1"
             ]
@@ -915,15 +915,15 @@
             "expression",
             "binary",
             {
-              "node": 5
+              "operand": 2
             },
             {
-              "node": 6
+              "operand": 3
             },
             "quire.op.integer.mul",
             "binary",
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -957,16 +957,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 1
+                    "operand": 0
                   },
                   "s",
                   "level",
                   {
-                    "node": 0
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 2
+                    "operand": 2
                   }
                 ]
               },
@@ -988,12 +988,12 @@
                             "parameter",
                             "name",
                             {
-                              "node": 1
+                              "operand": 0
                             },
                             "r",
                             "level",
                             {
-                              "node": 0
+                              "operand": 1
                             },
                             "1"
                           ]
@@ -1012,12 +1012,12 @@
                         "parameter",
                         "name",
                         {
-                          "node": 1
+                          "operand": 0
                         },
                         "r",
                         "level",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "1"
                       ]
@@ -1044,12 +1044,12 @@
                             "parameter",
                             "name",
                             {
-                              "node": 1
+                              "operand": 0
                             },
                             "w",
                             "level",
                             {
-                              "node": 0
+                              "operand": 1
                             },
                             "1"
                           ]
@@ -1065,12 +1065,12 @@
                             "parameter",
                             "name",
                             {
-                              "node": 1
+                              "operand": 0
                             },
                             "h",
                             "level",
                             {
-                              "node": 0
+                              "operand": 1
                             },
                             "2"
                           ]
@@ -1088,15 +1088,15 @@
                         "expression",
                         "binary",
                         {
-                          "node": 5
+                          "operand": 3
                         },
                         {
-                          "node": 6
+                          "operand": 4
                         },
                         "quire.op.integer.mul",
                         "binary",
                         {
-                          "node": 0
+                          "operand": 1
                         }
                       ]
                     },
@@ -1123,7 +1123,7 @@
                         "value",
                         "literal",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "0"
                       ]
@@ -1161,15 +1161,15 @@
               "expression",
               "binary",
               {
-                "node": 5
+                "operand": 3
               },
               {
-                "node": 6
+                "operand": 4
               },
               "quire.op.integer.mul",
               "binary",
               {
-                "node": 0
+                "operand": 1
               }
             ]
           },
@@ -1180,7 +1180,7 @@
               "value",
               "literal",
               {
-                "node": 0
+                "operand": 1
               },
               "0"
             ]
@@ -1193,12 +1193,12 @@
               "parameter",
               "name",
               {
-                "node": 1
+                "operand": 0
               },
               "h",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "2"
             ]
@@ -1211,12 +1211,12 @@
               "parameter",
               "name",
               {
-                "node": 1
+                "operand": 0
               },
               "r",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "1"
             ]
@@ -1229,16 +1229,16 @@
               "parameter",
               "name",
               {
-                "node": 1
+                "operand": 0
               },
               "s",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "0",
               {
-                "node": 2
+                "operand": 2
               }
             ]
           },
@@ -1250,12 +1250,12 @@
               "parameter",
               "name",
               {
-                "node": 1
+                "operand": 0
               },
               "w",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "1"
             ]
@@ -1268,30 +1268,30 @@
             "expression",
             "case",
             {
-              "node": 3
+              "operand": 5
             },
             "Circle",
             {
-              "node": 4
+              "operand": 6
             },
             "Rect",
             {
-              "node": 5
+              "operand": 3
             },
             {
-              "node": 6
+              "operand": 4
             },
             {
-              "node": 12
+              "operand": 7
             },
             "Empty",
             {
-              "node": 7
+              "operand": 8
             },
             "quire.op.control.case",
             "case",
             {
-              "node": 0
+              "operand": 1
             }
           ]
         },
@@ -1313,6 +1313,63 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [],
+      [
+        1,
+        0,
+        2
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0,
+        8,
+        9,
+        2
+      ],
+      [
+        2
+      ],
+      [
+        1,
+        0,
+        5,
+        6
+      ],
+      [
+        1,
+        0,
+        2,
+        5,
+        6,
+        3,
+        4,
+        12,
+        7
+      ]
     ]
   },
   "source_map": [

@@ -779,12 +779,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -794,7 +794,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -828,12 +828,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -843,7 +843,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -871,6 +871,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "ts: Sequence<Timer>[0, 3], Timer { x: Clock; n: Int }",
       "expected": "admitted",
       "instances": [
@@ -1346,12 +1351,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -1361,7 +1366,7 @@
             "set",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -1391,12 +1396,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -1406,7 +1411,7 @@
             "set",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -1430,6 +1435,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "c: Set<Clock>[0, 5]",
       "expected": "admitted",
       "field": "ix://acme/orders/Order/c",
@@ -1887,12 +1897,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -1902,7 +1912,7 @@
             "bag",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -1932,12 +1942,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -1947,7 +1957,7 @@
             "bag",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -1971,6 +1981,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "b: Bag<Clock>[0, 2]",
       "expected": "admitted",
       "field": "ix://acme/orders/Order/b",
@@ -2428,12 +2443,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -2443,7 +2458,7 @@
             "ordered_set",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -2473,12 +2488,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -2488,7 +2503,7 @@
             "ordered_set",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -2512,6 +2527,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "o: OrderedSet<Clock>[0, 5]",
       "expected": "admitted",
       "field": "ix://acme/orders/Order/o",
@@ -3181,12 +3201,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -3196,7 +3216,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -3229,12 +3249,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -3244,7 +3264,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -3271,6 +3291,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "g: Sequence<Sequence<Clock>>",
       "expected": "admitted",
       "instances": [
@@ -3743,12 +3768,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -3759,7 +3784,7 @@
             "selector",
             "minimum",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "maximum",
@@ -3788,12 +3813,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -3804,7 +3829,7 @@
             "selector",
             "minimum",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "maximum",
@@ -3827,6 +3852,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "clock: Map<Text, Clock>",
       "expected": "admitted",
       "published_node": "clock_place",
@@ -4286,12 +4316,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -4301,7 +4331,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -4331,12 +4361,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -4346,7 +4376,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -4370,6 +4400,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "s: Sequence<Clock>",
       "expected": "admitted",
       "note": "a clock place is exactly model, path and resolved_path; the guards that constrain it are reached through the clock_guard nodes of the root",
@@ -4822,12 +4857,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -4837,7 +4872,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "minimum",
@@ -4867,12 +4902,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -4882,7 +4917,7 @@
             "sequence",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "minimum",
@@ -4906,6 +4941,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "s: Sequence<Clock> with selector literal 0",
       "expected": "refused",
       "expected_code": "invalid_package",
@@ -5366,12 +5406,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -5382,7 +5422,7 @@
             "selector",
             "minimum",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "maximum",
@@ -5411,12 +5451,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -5427,7 +5467,7 @@
             "selector",
             "minimum",
             {
-              "node": 24
+              "operand": 2
             },
             "0",
             "maximum",
@@ -5450,6 +5490,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "s: Sequence<Clock> with the Text type node selector",
       "expected": "refused",
       "expected_code": "invalid_package",
@@ -5570,10 +5615,10 @@
                               "expression",
                               "reference",
                               {
-                                "node": 3
+                                "operand": 0
                               },
                               {
-                                "node": 0
+                                "operand": 1
                               }
                             ],
                             "ordinal": 0
@@ -5906,10 +5951,10 @@
               "expression",
               "reference",
               {
-                "node": 3
+                "operand": 0
               },
               {
-                "node": 0
+                "operand": 1
               }
             ],
             "ordinal": 0
@@ -5922,12 +5967,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 2
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 3
             },
             "field",
             "name",
@@ -5937,11 +5982,11 @@
             "sequence",
             "selector",
             {
-              "node": 4
+              "operand": 4
             },
             "minimum",
             {
-              "node": 24
+              "operand": 5
             },
             "0",
             "maximum",
@@ -5970,12 +6015,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 2
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 3
             },
             "field",
             "name",
@@ -5985,11 +6030,11 @@
             "sequence",
             "selector",
             {
-              "node": 4
+              "operand": 4
             },
             "minimum",
             {
-              "node": 24
+              "operand": 5
             },
             "0",
             "maximum",
@@ -6012,6 +6057,14 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        3,
+        0,
+        53,
+        23,
+        4,
+        24
+      ],
       "declared": "s: Sequence<Clock> with an expression-node selector",
       "expected": "refused",
       "expected_code": "invalid_package",
@@ -6472,12 +6525,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -6487,7 +6540,7 @@
             "map",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -6517,12 +6570,12 @@
             "clock_place",
             "model",
             {
-              "node": 53
+              "operand": 0
             },
             "path",
             "kind",
             {
-              "node": 23
+              "operand": 1
             },
             "field",
             "name",
@@ -6532,7 +6585,7 @@
             "map",
             "selector",
             {
-              "node": 24
+              "operand": 2
             },
             "minimum",
             "0",
@@ -6556,6 +6609,11 @@
           "ordinal": 0
         }
       },
+      "node_operand_row": [
+        53,
+        23,
+        24
+      ],
       "declared": "clock: Map<Text, Clock> with the Integer type node selector",
       "expected": "refused",
       "expected_code": "invalid_package",
@@ -6799,12 +6857,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 0
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "field",
               "name",
@@ -6812,7 +6870,7 @@
               "resolved_path",
               "path_step",
               {
-                "node": 24
+                "operand": 2
               },
               "0",
               "declaring_type",
@@ -6836,12 +6894,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 0
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "field",
               "name",
@@ -6849,7 +6907,7 @@
               "resolved_path",
               "path_step",
               {
-                "node": 24
+                "operand": 2
               },
               "0",
               "declaring_type",
@@ -6867,6 +6925,11 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          53,
+          23,
+          24
+        ],
         "package_node": 63
       },
       "q": {
@@ -7321,12 +7384,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 0
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "field",
               "name",
@@ -7336,7 +7399,7 @@
               "sequence",
               "selector",
               {
-                "node": 24
+                "operand": 2
               },
               "minimum",
               "0",
@@ -7366,12 +7429,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 0
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 1
               },
               "field",
               "name",
@@ -7381,7 +7444,7 @@
               "sequence",
               "selector",
               {
-                "node": 24
+                "operand": 2
               },
               "minimum",
               "0",
@@ -7405,6 +7468,11 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          53,
+          23,
+          24
+        ],
         "package_node": 64
       }
     },
@@ -7457,16 +7525,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "self",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             {
-              "node": 26
+              "operand": 2
             }
           ],
           "ordinal": 0
@@ -7486,12 +7554,18 @@
             "composite_type",
             "reference",
             {
-              "node": 53
+              "operand": 3
             }
           ],
           "ordinal": 0
         }
       },
+      "self_operand_row": [
+        23,
+        24,
+        26,
+        53
+      ],
       "other": {
         "body": {
           "members": [
@@ -7549,16 +7623,16 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "other",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0",
             {
-              "node": 26
+              "operand": 2
             }
           ],
           "ordinal": 0
@@ -7569,12 +7643,18 @@
             "composite_type",
             "reference",
             {
-              "node": 53
+              "operand": 3
             }
           ],
           "ordinal": 0
         }
       },
+      "other_operand_row": [
+        23,
+        24,
+        26,
+        53
+      ],
       "i": {
         "body": {
           "members": [
@@ -7632,12 +7712,12 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "i",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0"
           ],
@@ -7652,6 +7732,10 @@
           "ordinal": 0
         }
       },
+      "i_operand_row": [
+        23,
+        24
+      ],
       "e": {
         "body": {
           "members": [
@@ -7709,12 +7793,12 @@
             "parameter",
             "name",
             {
-              "node": 23
+              "operand": 0
             },
             "e",
             "level",
             {
-              "node": 24
+              "operand": 1
             },
             "0"
           ],
@@ -7728,7 +7812,11 @@
           ],
           "ordinal": 0
         }
-      }
+      },
+      "e_operand_row": [
+        23,
+        24
+      ]
     },
     "parameter_package_nodes": {
       "self": 27,
@@ -7752,12 +7840,12 @@
                     "clock_place",
                     "model",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "path",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "field",
                     "name",
@@ -7765,7 +7853,7 @@
                     "resolved_path",
                     "path_step",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     "declaring_type",
@@ -7792,16 +7880,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "other",
                     "level",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 3
                     }
                   ],
                   "ordinal": 0
@@ -7834,12 +7922,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 0
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "field",
                 "name",
@@ -7847,7 +7935,7 @@
                 "resolved_path",
                 "path_step",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0",
                 "declaring_type",
@@ -7871,16 +7959,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "other",
                 "level",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0",
                 {
-                  "node": 26
+                  "operand": 3
                 }
               ],
               "ordinal": 0
@@ -7901,15 +7989,15 @@
               "expression",
               "presence_read",
               {
-                "node": 63
+                "operand": 4
               },
               {
-                "node": 65
+                "operand": 5
               },
               "quire.op.option.present",
               "present",
               {
-                "node": 0
+                "operand": 6
               }
             ],
             "ordinal": 0
@@ -7923,6 +8011,15 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          53,
+          23,
+          24,
+          26,
+          63,
+          65,
+          0
+        ],
         "expected": "admitted",
         "arguments": [
           "place v",
@@ -7946,12 +8043,12 @@
                     "clock_place",
                     "model",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "path",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "field",
                     "name",
@@ -7961,7 +8058,7 @@
                     "sequence",
                     "selector",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "minimum",
                     "0",
@@ -7994,16 +8091,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "self",
                     "level",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 3
                     }
                   ],
                   "ordinal": 0
@@ -8018,12 +8115,12 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "e",
                     "level",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0"
                   ],
@@ -8057,12 +8154,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 0
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "field",
                 "name",
@@ -8072,7 +8169,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "minimum",
                 "0",
@@ -8102,12 +8199,12 @@
                 "parameter",
                 "name",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "e",
                 "level",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0"
               ],
@@ -8120,16 +8217,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "self",
                 "level",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0",
                 {
-                  "node": 26
+                  "operand": 3
                 }
               ],
               "ordinal": 0
@@ -8150,18 +8247,18 @@
               "expression",
               "presence_read",
               {
-                "node": 64
+                "operand": 4
               },
               {
-                "node": 27
+                "operand": 5
               },
               {
-                "node": 67
+                "operand": 6
               },
               "quire.op.option.present",
               "present",
               {
-                "node": 0
+                "operand": 7
               }
             ],
             "ordinal": 0
@@ -8175,6 +8272,16 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          53,
+          23,
+          24,
+          26,
+          64,
+          27,
+          67,
+          0
+        ],
         "expected": "admitted",
         "note": "e is bound as a parameter of the selector domain (the slot position); same place template q and owner self as a slot-indexed read of q, which this version does not publish",
         "package_node": 69
@@ -8194,12 +8301,12 @@
                     "clock_place",
                     "model",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "path",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "field",
                     "name",
@@ -8209,7 +8316,7 @@
                     "sequence",
                     "selector",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "minimum",
                     "0",
@@ -8242,16 +8349,16 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "self",
                     "level",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     {
-                      "node": 26
+                      "operand": 3
                     }
                   ],
                   "ordinal": 0
@@ -8284,12 +8391,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 0
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "field",
                 "name",
@@ -8299,7 +8406,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "minimum",
                 "0",
@@ -8329,16 +8436,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "self",
                 "level",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0",
                 {
-                  "node": 26
+                  "operand": 3
                 }
               ],
               "ordinal": 0
@@ -8359,15 +8466,15 @@
               "expression",
               "presence_read",
               {
-                "node": 64
+                "operand": 4
               },
               {
-                "node": 27
+                "operand": 5
               },
               "quire.op.option.present",
               "present",
               {
-                "node": 0
+                "operand": 6
               }
             ],
             "ordinal": 0
@@ -8381,6 +8488,15 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          53,
+          23,
+          24,
+          26,
+          64,
+          27,
+          0
+        ],
         "expected": "refused",
         "expected_code": "ill_typed",
         "expected_cause": "operator-ineligible",
@@ -8401,12 +8517,12 @@
                     "clock_place",
                     "model",
                     {
-                      "node": 53
+                      "operand": 0
                     },
                     "path",
                     "kind",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "field",
                     "name",
@@ -8414,7 +8530,7 @@
                     "resolved_path",
                     "path_step",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0",
                     "declaring_type",
@@ -8441,12 +8557,12 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 1
                     },
                     "i",
                     "level",
                     {
-                      "node": 24
+                      "operand": 2
                     },
                     "0"
                   ],
@@ -8480,12 +8596,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 0
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "field",
                 "name",
@@ -8493,7 +8609,7 @@
                 "resolved_path",
                 "path_step",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0",
                 "declaring_type",
@@ -8517,12 +8633,12 @@
                 "parameter",
                 "name",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "i",
                 "level",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "0"
               ],
@@ -8544,15 +8660,15 @@
               "expression",
               "presence_read",
               {
-                "node": 63
+                "operand": 3
               },
               {
-                "node": 66
+                "operand": 4
               },
               "quire.op.option.present",
               "present",
               {
-                "node": 0
+                "operand": 5
               }
             ],
             "ordinal": 0
@@ -8566,6 +8682,14 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          53,
+          23,
+          24,
+          63,
+          66,
+          0
+        ],
         "expected": "refused",
         "expected_code": "ill_typed",
         "expected_cause": "type-mismatch",
@@ -8586,12 +8710,12 @@
                     "parameter",
                     "name",
                     {
-                      "node": 23
+                      "operand": 0
                     },
                     "i",
                     "level",
                     {
-                      "node": 24
+                      "operand": 1
                     },
                     "0"
                   ],
@@ -8625,12 +8749,12 @@
                 "parameter",
                 "name",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "i",
                 "level",
                 {
-                  "node": 24
+                  "operand": 1
                 },
                 "0"
               ],
@@ -8652,12 +8776,12 @@
               "expression",
               "presence_read",
               {
-                "node": 66
+                "operand": 2
               },
               "quire.op.option.present",
               "present",
               {
-                "node": 0
+                "operand": 3
               }
             ],
             "ordinal": 0
@@ -8671,6 +8795,12 @@
             "ordinal": 0
           }
         },
+        "node_operand_row": [
+          23,
+          24,
+          66,
+          0
+        ],
         "expected": "refused",
         "expected_code": "ill_typed",
         "expected_cause": "operator-ineligible",
@@ -9136,12 +9266,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 0
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "field",
                 "name",
@@ -9151,7 +9281,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "minimum",
                 "0",
@@ -9190,12 +9320,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 0
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 1
                 },
                 "field",
                 "name",
@@ -9205,7 +9335,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 2
                 },
                 "minimum",
                 "0",
@@ -9232,6 +9362,11 @@
         },
         {
           "op": "add",
+          "path": "/semantic_graph/operand_rows/72",
+          "value": []
+        },
+        {
+          "op": "add",
           "path": "/semantic_graph/nodes/52/body/members/3/value/members/-",
           "value": {
             "target": {
@@ -9241,12 +9376,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9256,7 +9391,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9355,12 +9490,12 @@
               "clock_place",
               "model",
               {
-                "node": 53
+                "operand": 2
               },
               "path",
               "kind",
               {
-                "node": 23
+                "operand": 0
               },
               "field",
               "name",
@@ -9370,7 +9505,7 @@
               "sequence",
               "selector",
               {
-                "node": 24
+                "operand": 3
               },
               "minimum",
               "0",
@@ -9393,6 +9528,15 @@
             ],
             "ordinal": 0
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/72",
+          "value": [
+            53,
+            23,
+            24
+          ]
         }
       ],
       "schema": "valid",
@@ -9451,12 +9595,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9466,7 +9610,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9504,12 +9648,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9520,7 +9664,7 @@
                 "selector",
                 "minimum",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "0",
                 "maximum",
@@ -9567,12 +9711,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9582,7 +9726,7 @@
                 "bag",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9616,12 +9760,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9631,7 +9775,7 @@
                 "set",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9665,12 +9809,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9681,7 +9825,7 @@
                 "selector",
                 "minimum",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "0",
                 "maximum",
@@ -9714,12 +9858,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9729,7 +9873,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9766,12 +9910,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9781,7 +9925,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9815,12 +9959,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9830,7 +9974,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -9868,12 +10012,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -9881,7 +10025,7 @@
                 "resolved_path",
                 "path_step",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "0",
                 "declaring_type",
@@ -9921,12 +10065,12 @@
                 "urgency",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "operation",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "operation_name",
                 "size"
@@ -9944,12 +10088,12 @@
                 "urgency",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "when",
                 "predicate",
                 {
-                  "node": 4
+                  "operand": 8
                 }
               ],
               "ordinal": 0
@@ -10105,12 +10249,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -10120,7 +10264,7 @@
                 "bag",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -10154,12 +10298,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -10169,7 +10313,7 @@
                 "set",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -10679,12 +10823,12 @@
                   "clock_place",
                   "model",
                   {
-                    "node": 53
+                    "operand": 0
                   },
                   "path",
                   "kind",
                   {
-                    "node": 23
+                    "operand": 1
                   },
                   "field",
                   "name",
@@ -10694,7 +10838,7 @@
                   "sequence",
                   "selector",
                   {
-                    "node": 24
+                    "operand": 2
                   },
                   "minimum",
                   "0",
@@ -10733,12 +10877,12 @@
                   "clock_place",
                   "model",
                   {
-                    "node": 53
+                    "operand": 0
                   },
                   "path",
                   "kind",
                   {
-                    "node": 23
+                    "operand": 1
                   },
                   "field",
                   "name",
@@ -10748,7 +10892,7 @@
                   "sequence",
                   "selector",
                   {
-                    "node": 24
+                    "operand": 2
                   },
                   "minimum",
                   "0",
@@ -10775,6 +10919,11 @@
           },
           {
             "op": "add",
+            "path": "/semantic_graph/operand_rows/72",
+            "value": []
+          },
+          {
+            "op": "add",
             "path": "/semantic_graph/nodes/52/body/members/3/value/members/-",
             "value": {
               "target": {
@@ -10784,12 +10933,12 @@
                   "clock_place",
                   "model",
                   {
-                    "node": 53
+                    "operand": 2
                   },
                   "path",
                   "kind",
                   {
-                    "node": 23
+                    "operand": 0
                   },
                   "field",
                   "name",
@@ -10799,7 +10948,7 @@
                   "sequence",
                   "selector",
                   {
-                    "node": 24
+                    "operand": 3
                   },
                   "minimum",
                   "0",
@@ -10898,12 +11047,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -10913,7 +11062,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -10947,12 +11096,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -10960,7 +11109,7 @@
                 "resolved_path",
                 "path_step",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "0",
                 "declaring_type",
@@ -10988,12 +11137,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -11003,7 +11152,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -11047,12 +11196,12 @@
                 "clock_place",
                 "model",
                 {
-                  "node": 53
+                  "operand": 2
                 },
                 "path",
                 "kind",
                 {
-                  "node": 23
+                  "operand": 0
                 },
                 "field",
                 "name",
@@ -11062,7 +11211,7 @@
                 "sequence",
                 "selector",
                 {
-                  "node": 24
+                  "operand": 3
                 },
                 "minimum",
                 "0",
@@ -11085,6 +11234,15 @@
               ],
               "ordinal": 0
             }
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/operand_rows/72",
+            "value": [
+              53,
+              23,
+              24
+            ]
           }
         ],
         "schema": "valid",

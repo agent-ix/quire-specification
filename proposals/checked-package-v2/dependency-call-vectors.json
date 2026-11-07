@@ -164,6 +164,11 @@
               "ordinal": 0
             }
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/3",
+          "value": []
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",
@@ -196,6 +201,11 @@
             "identity": "example",
             "kind": "source"
           }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/3",
+          "value": []
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",

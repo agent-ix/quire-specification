@@ -272,7 +272,7 @@
             "value",
             "literal",
             {
-              "node": 2
+              "operand": 0
             },
             "1"
           ]
@@ -317,7 +317,7 @@
             "value",
             "literal",
             {
-              "node": 2
+              "operand": 0
             },
             "2"
           ]
@@ -416,7 +416,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 2
+                    "operand": 0
                   },
                   "1"
                 ]
@@ -431,7 +431,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 2
+                    "operand": 0
                   },
                   "2"
                 ]
@@ -465,7 +465,7 @@
               "value",
               "literal",
               {
-                "node": 2
+                "operand": 0
               },
               "1"
             ]
@@ -477,7 +477,7 @@
               "value",
               "literal",
               {
-                "node": 2
+                "operand": 0
               },
               "2"
             ]
@@ -490,15 +490,15 @@
             "expression",
             "binary",
             {
-              "node": 3
+              "operand": 1
             },
             {
-              "node": 4
+              "operand": 2
             },
             "quire.op.integer.add",
             "binary",
             {
-              "node": 2
+              "operand": 0
             }
           ]
         },
@@ -520,6 +520,23 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [],
+      [
+        2
+      ],
+      [
+        2
+      ],
+      [],
+      [
+        2,
+        3,
+        4
+      ]
     ]
   },
   "source_map": [

@@ -16,7 +16,9 @@
               "path": [
                 "value",
                 "literal",
-                { "node": 23 },
+                {
+                  "operand": 0
+                },
                 "audit"
               ]
             },
@@ -26,9 +28,13 @@
               "path": [
                 "value",
                 "literal",
-                { "node": 24 },
+                {
+                  "operand": 1
+                },
                 "30",
-                { "node": 31 }
+                {
+                  "operand": 2
+                }
               ]
             }
           ]

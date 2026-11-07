@@ -131,16 +131,16 @@
                       "parameter",
                       "name",
                       {
-                        "node": 2
+                        "operand": 0
                       },
                       "sent",
                       "level",
                       {
-                        "node": 1
+                        "operand": 1
                       },
                       "3",
                       {
-                        "node": 10
+                        "operand": 2
                       }
                     ]
                   }
@@ -166,15 +166,15 @@
                       "expression",
                       "binary",
                       {
-                        "node": 38
+                        "operand": 3
                       },
                       {
-                        "node": 22
+                        "operand": 4
                       },
                       "quire.op.integer.eq",
                       "binary",
                       {
-                        "node": 0
+                        "operand": 5
                       }
                     ]
                   }
@@ -191,6 +191,18 @@
             }
           },
           "node": "Example::OrderFlow::run::Main"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/78",
+          "value": [
+            2,
+            1,
+            10,
+            38,
+            22,
+            0
+          ]
         }
       ],
       "expect": {
@@ -402,16 +414,16 @@
                 "operation_anchor",
                 "context",
                 {
-                  "node": 7
+                  "operand": 3
                 },
                 "operation",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "charge",
                 "frame",
                 {
-                  "node": 46
+                  "operand": 4
                 }
               ]
             },
@@ -423,21 +435,68 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "self",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "0",
                 {
-                  "node": 18
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "[\"state\",\"state_clause\",{\"node\":20},{\"node\":47},\"precondition\",{\"node\":3},\"quire.op.state.clause\",\"state_clause\",{\"node\":0}]"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/54/node_id/path/2",
+          "value": {
+            "operand": 5
+          },
+          "node": "[\"state\",\"state_clause\",{\"node\":20},{\"node\":47},\"precondition\",{\"node\":3},\"quire.op.state.clause\",\"state_clause\",{\"node\":0}]"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/54/node_id/path/3",
+          "value": {
+            "operand": 6
+          },
+          "node": "[\"state\",\"state_clause\",{\"node\":20},{\"node\":47},\"precondition\",{\"node\":3},\"quire.op.state.clause\",\"state_clause\",{\"node\":0}]"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/54/node_id/path/5",
+          "value": {
+            "operand": 7
+          },
+          "node": "[\"state\",\"state_clause\",{\"node\":20},{\"node\":47},\"precondition\",{\"node\":3},\"quire.op.state.clause\",\"state_clause\",{\"node\":0}]"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/54/node_id/path/8",
+          "value": {
+            "operand": 8
+          },
+          "node": "[\"state\",\"state_clause\",{\"node\":20},{\"node\":47},\"precondition\",{\"node\":3},\"quire.op.state.clause\",\"state_clause\",{\"node\":0}]"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/54",
+          "value": [
+            2,
+            1,
+            18,
+            7,
+            46,
+            20,
+            47,
+            3,
+            0
+          ]
         }
       ],
       "expect": {
@@ -562,7 +621,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 3
                 }
               ]
             },
@@ -574,16 +633,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "paid",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
@@ -713,19 +772,19 @@
                 "state",
                 "state_clause",
                 {
-                  "node": 20
+                  "operand": 5
                 },
                 {
-                  "node": 47
+                  "operand": 6
                 },
                 "precondition",
                 {
-                  "node": 3
+                  "operand": 7
                 },
                 "quire.op.state.clause",
                 "state_clause",
                 {
-                  "node": 0
+                  "operand": 8
                 }
               ]
             }
@@ -840,16 +899,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 4
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 3
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -869,19 +928,19 @@
                 "state",
                 "state_clause",
                 {
-                  "node": 20
+                  "operand": 5
                 },
                 {
-                  "node": 47
+                  "operand": 6
                 },
                 "precondition",
                 {
-                  "node": 3
+                  "operand": 7
                 },
                 "quire.op.state.clause",
                 "state_clause",
                 {
-                  "node": 0
+                  "operand": 8
                 }
               ]
             },
@@ -893,16 +952,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "opened",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "1",
                 {
-                  "node": 9
+                  "operand": 3
                 }
               ]
             },
@@ -914,16 +973,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "order",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "2",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -935,21 +994,36 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "view",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "0",
                 {
-                  "node": 17
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/82",
+          "value": [
+            2,
+            1,
+            17,
+            9,
+            21,
+            20,
+            47,
+            3,
+            0
+          ]
         }
       ],
       "expect": {
@@ -1086,16 +1160,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 4
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 3
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -1115,22 +1189,22 @@
                 "temporal",
                 "temporal_clause",
                 {
-                  "node": 19
+                  "operand": 5
                 },
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "model-steps",
                 "kind",
                 "origin",
                 {
-                  "node": 57
+                  "operand": 6
                 },
                 "quire.op.temporal.clause",
                 "quire.temporal.event-position.false-extension/v1",
                 "temporal",
                 {
-                  "node": 0
+                  "operand": 7
                 }
               ]
             },
@@ -1142,16 +1216,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "opened",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "1",
                 {
-                  "node": 9
+                  "operand": 3
                 }
               ]
             },
@@ -1163,16 +1237,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "order",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "2",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -1184,16 +1258,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "view",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "0",
                 {
-                  "node": 17
+                  "operand": 2
                 }
               ]
             }
@@ -1322,16 +1396,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 4
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 3
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -1351,22 +1425,22 @@
                 "temporal",
                 "temporal_clause",
                 {
-                  "node": 19
+                  "operand": 5
                 },
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "model-steps",
                 "kind",
                 "origin",
                 {
-                  "node": 57
+                  "operand": 6
                 },
                 "quire.op.temporal.clause",
                 "quire.temporal.event-position.false-extension/v1",
                 "temporal",
                 {
-                  "node": 0
+                  "operand": 7
                 }
               ]
             },
@@ -1378,16 +1452,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "opened",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "1",
                 {
-                  "node": 9
+                  "operand": 3
                 }
               ]
             },
@@ -1399,16 +1473,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "order",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "2",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -1420,16 +1494,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "view",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "0",
                 {
-                  "node": 17
+                  "operand": 2
                 }
               ]
             }
@@ -1539,16 +1613,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 23
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 10
+                  "operand": 2
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -1569,16 +1643,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "sent",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
@@ -1652,16 +1726,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 23
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 10
+                  "operand": 2
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -1673,16 +1747,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "sent",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
@@ -1881,21 +1955,30 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "closed",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "10",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::finish::Closed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/79",
+          "value": [
+            2,
+            1,
+            10
+          ]
         }
       ],
       "expect": {
@@ -1927,16 +2010,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 0
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 1
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 2
                 }
               ]
             }
@@ -1954,15 +2037,15 @@
                 "expression",
                 "binary",
                 {
-                  "node": 40
+                  "operand": 3
                 },
                 {
-                  "node": 22
+                  "operand": 4
                 },
                 "quire.op.integer.eq",
                 "binary",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -1973,21 +2056,33 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 0
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 1
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::finish::Closed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/79",
+          "value": [
+            21,
+            9,
+            1,
+            40,
+            22,
+            0
+          ]
         }
       ],
       "expect": {
@@ -2447,16 +2542,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 0
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 1
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 2
                 }
               ]
             },
@@ -2467,12 +2562,12 @@
                 "expression",
                 "unary",
                 {
-                  "node": 41
+                  "operand": 3
                 },
                 "quire.op.boolean.not",
                 "unary",
                 {
-                  "node": 0
+                  "operand": 2
                 }
               ]
             }
@@ -2533,16 +2628,16 @@
                         "expression",
                         "query",
                         {
-                          "node": 27
+                          "operand": 0
                         },
                         "quire.op.record.project",
                         {
-                          "node": 12
+                          "operand": 1
                         },
                         "ok",
                         "query",
                         {
-                          "node": 0
+                          "operand": 2
                         }
                       ]
                     }
@@ -2601,12 +2696,12 @@
                         "expression",
                         "unary",
                         {
-                          "node": 41
+                          "operand": 3
                         },
                         "quire.op.boolean.not",
                         "unary",
                         {
-                          "node": 0
+                          "operand": 2
                         }
                       ]
                     }
@@ -3319,16 +3414,16 @@
                 "operation_anchor",
                 "context",
                 {
-                  "node": 7
+                  "operand": 3
                 },
                 "operation",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "refund",
                 "frame",
                 {
-                  "node": 48
+                  "operand": 4
                 }
               ]
             },
@@ -3339,7 +3434,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -3351,16 +3446,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "earlier",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "5",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -3372,16 +3467,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "forward",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -3393,16 +3488,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "later",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -3414,16 +3509,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "recovery",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "7",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -3435,16 +3530,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "trigger",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
@@ -3536,16 +3631,16 @@
                 "operation_anchor",
                 "context",
                 {
-                  "node": 7
+                  "operand": 3
                 },
                 "operation",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "refund",
                 "frame",
                 {
-                  "node": 48
+                  "operand": 4
                 }
               ]
             },
@@ -3556,7 +3651,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -3568,16 +3663,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "earlier",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "5",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -3589,16 +3684,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "forward",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -3610,16 +3705,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "later",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -3631,16 +3726,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "recovery",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "7",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -3652,16 +3747,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "trigger",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
@@ -3698,19 +3793,19 @@
                 "state",
                 "state_clause",
                 {
-                  "node": 20
+                  "operand": 3
                 },
                 {
-                  "node": 47
+                  "operand": 4
                 },
                 "precondition",
                 {
-                  "node": 3
+                  "operand": 5
                 },
                 "quire.op.state.clause",
                 "state_clause",
                 {
-                  "node": 0
+                  "operand": 6
                 }
               ]
             }
@@ -3768,19 +3863,19 @@
                 "state",
                 "state_clause",
                 {
-                  "node": 20
+                  "operand": 3
                 },
                 {
-                  "node": 47
+                  "operand": 4
                 },
                 "precondition",
                 {
-                  "node": 3
+                  "operand": 5
                 },
                 "quire.op.state.clause",
                 "state_clause",
                 {
-                  "node": 0
+                  "operand": 6
                 }
               ]
             },
@@ -3791,7 +3886,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 6
                 }
               ]
             },
@@ -3803,16 +3898,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "earlier",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "5",
                 {
-                  "node": 13
+                  "operand": 7
                 }
               ]
             },
@@ -3824,16 +3919,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "forward",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -3845,16 +3940,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "later",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 13
+                  "operand": 7
                 }
               ]
             },
@@ -3866,16 +3961,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "recovery",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "7",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -3887,21 +3982,75 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "trigger",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/body/arguments/6/value/members/1/value/target/path/2",
+          "value": {
+            "operand": 6
+          },
+          "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/body/arguments/10/value/members/0/value/target/path/8",
+          "value": {
+            "operand": 7
+          },
+          "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/body/arguments/10/value/members/1/value/target/path/8",
+          "value": {
+            "operand": 7
+          },
+          "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/body/arguments/10/value/members/2/value/target/path/2",
+          "value": {
+            "operand": 6
+          },
+          "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/81/body/arguments/12/value/members/1/value/target/path/2",
+          "value": {
+            "operand": 6
+          },
+          "node": "Example::OrderFlow::compensate::Refund"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/81",
+          "value": [
+            2,
+            1,
+            11,
+            20,
+            47,
+            3,
+            0,
+            13
+          ]
         }
       ],
       "expect": {
@@ -3989,16 +4138,16 @@
                 "operation_anchor",
                 "context",
                 {
-                  "node": 7
+                  "operand": 3
                 },
                 "operation",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "refund",
                 "frame",
                 {
-                  "node": 48
+                  "operand": 4
                 }
               ]
             },
@@ -4009,7 +4158,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4021,16 +4170,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "earlier",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "5",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -4042,16 +4191,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "forward",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -4063,16 +4212,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "later",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -4084,16 +4233,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "recovery",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "7",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -4105,16 +4254,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "trigger",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
@@ -4215,16 +4364,16 @@
                 "operation_anchor",
                 "context",
                 {
-                  "node": 7
+                  "operand": 3
                 },
                 "operation",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "refund",
                 "frame",
                 {
-                  "node": 48
+                  "operand": 4
                 }
               ]
             },
@@ -4235,7 +4384,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4247,16 +4396,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "earlier",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "5",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -4268,16 +4417,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "forward",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -4289,16 +4438,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "later",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -4310,16 +4459,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "recovery",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "7",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -4331,16 +4480,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "trigger",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
@@ -4555,15 +4704,15 @@
                 "expression",
                 "binary",
                 {
-                  "node": 38
+                  "operand": 3
                 },
                 {
-                  "node": 22
+                  "operand": 4
                 },
                 "quire.op.integer.eq",
                 "binary",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4603,15 +4752,15 @@
                 "expression",
                 "binary",
                 {
-                  "node": 38
+                  "operand": 3
                 },
                 {
-                  "node": 22
+                  "operand": 4
                 },
                 "quire.op.integer.eq",
                 "binary",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4623,21 +4772,33 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "got",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::run::Main::Received"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/65",
+          "value": [
+            2,
+            1,
+            10,
+            38,
+            22,
+            0
+          ]
         }
       ],
       "expect": {
@@ -4665,15 +4826,15 @@
                 "expression",
                 "binary",
                 {
-                  "node": 38
+                  "operand": 3
                 },
                 {
-                  "node": 22
+                  "operand": 4
                 },
                 "quire.op.integer.eq",
                 "binary",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4713,15 +4874,15 @@
                 "expression",
                 "binary",
                 {
-                  "node": 38
+                  "operand": 3
                 },
                 {
-                  "node": 22
+                  "operand": 4
                 },
                 "quire.op.integer.eq",
                 "binary",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4733,21 +4894,33 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "got",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::run::Main::Received"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/65",
+          "value": [
+            2,
+            1,
+            10,
+            38,
+            22,
+            0
+          ]
         }
       ],
       "expect": {
@@ -4775,16 +4948,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4813,16 +4986,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4834,21 +5007,33 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "done",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "9",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::run::Main::Finalized"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/77",
+          "value": [
+            2,
+            1,
+            11,
+            27,
+            12,
+            0
+          ]
         }
       ],
       "expect": {
@@ -4876,16 +5061,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4914,16 +5099,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -4935,21 +5120,33 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "done",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "9",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::run::Main::Finalized"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/77",
+          "value": [
+            2,
+            1,
+            11,
+            27,
+            12,
+            0
+          ]
         }
       ],
       "expect": {
@@ -4977,16 +5174,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -5005,16 +5202,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -5026,21 +5223,33 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "closed",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "10",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::finish::Closed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/79",
+          "value": [
+            2,
+            1,
+            10,
+            27,
+            12,
+            0
+          ]
         }
       ],
       "expect": {
@@ -5068,16 +5277,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -5096,16 +5305,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 3
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 4
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -5117,21 +5326,33 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "closed",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "10",
                 {
-                  "node": 10
+                  "operand": 2
                 }
               ]
             }
           ],
           "node": "Example::OrderFlow::finish::Closed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/operand_rows/79",
+          "value": [
+            2,
+            1,
+            10,
+            27,
+            12,
+            0
+          ]
         }
       ],
       "expect": {
@@ -5622,16 +5843,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 4
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 3
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -5651,22 +5872,22 @@
                 "temporal",
                 "temporal_clause",
                 {
-                  "node": 19
+                  "operand": 5
                 },
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "model-steps",
                 "kind",
                 "origin",
                 {
-                  "node": 57
+                  "operand": 6
                 },
                 "quire.op.temporal.clause",
                 "quire.temporal.event-position.false-extension/v1",
                 "temporal",
                 {
-                  "node": 0
+                  "operand": 7
                 }
               ]
             },
@@ -5678,16 +5899,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "opened",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "1",
                 {
-                  "node": 9
+                  "operand": 3
                 }
               ]
             },
@@ -5699,16 +5920,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "order",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "2",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -5720,16 +5941,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "view",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "0",
                 {
-                  "node": 17
+                  "operand": 2
                 }
               ]
             }
@@ -5981,16 +6202,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 21
+                  "operand": 4
                 },
                 "quire.op.record.project",
                 {
-                  "node": 9
+                  "operand": 3
                 },
                 "order",
                 "query",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -6010,22 +6231,22 @@
                 "temporal",
                 "temporal_clause",
                 {
-                  "node": 19
+                  "operand": 5
                 },
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "model-steps",
                 "kind",
                 "origin",
                 {
-                  "node": 57
+                  "operand": 6
                 },
                 "quire.op.temporal.clause",
                 "quire.temporal.event-position.false-extension/v1",
                 "temporal",
                 {
-                  "node": 0
+                  "operand": 7
                 }
               ]
             },
@@ -6037,16 +6258,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "opened",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "1",
                 {
-                  "node": 9
+                  "operand": 3
                 }
               ]
             },
@@ -6058,16 +6279,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "order",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "2",
                 {
-                  "node": 1
+                  "operand": 1
                 }
               ]
             },
@@ -6079,16 +6300,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "view",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "0",
                 {
-                  "node": 17
+                  "operand": 2
                 }
               ]
             }
@@ -6290,16 +6511,16 @@
                 "expression",
                 "query",
                 {
-                  "node": 27
+                  "operand": 0
                 },
                 "quire.op.record.project",
                 {
-                  "node": 12
+                  "operand": 1
                 },
                 "ok",
                 "query",
                 {
-                  "node": 0
+                  "operand": 2
                 }
               ]
             },
@@ -6310,12 +6531,12 @@
                 "expression",
                 "unary",
                 {
-                  "node": 41
+                  "operand": 3
                 },
                 "quire.op.boolean.not",
                 "unary",
                 {
-                  "node": 0
+                  "operand": 2
                 }
               ]
             }
@@ -6563,16 +6784,16 @@
                 "operation_anchor",
                 "context",
                 {
-                  "node": 7
+                  "operand": 3
                 },
                 "operation",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "refund",
                 "frame",
                 {
-                  "node": 48
+                  "operand": 4
                 }
               ]
             },
@@ -6583,7 +6804,7 @@
                 "value",
                 "literal",
                 {
-                  "node": 0
+                  "operand": 5
                 }
               ]
             },
@@ -6595,16 +6816,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "earlier",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "5",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -6616,16 +6837,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "forward",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "3",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -6637,16 +6858,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "later",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "6",
                 {
-                  "node": 13
+                  "operand": 6
                 }
               ]
             },
@@ -6658,16 +6879,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "recovery",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "7",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             },
@@ -6679,16 +6900,16 @@
                 "parameter",
                 "name",
                 {
-                  "node": 2
+                  "operand": 0
                 },
                 "trigger",
                 "level",
                 {
-                  "node": 1
+                  "operand": 1
                 },
                 "4",
                 {
-                  "node": 11
+                  "operand": 2
                 }
               ]
             }

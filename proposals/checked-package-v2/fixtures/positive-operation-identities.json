@@ -62,10 +62,10 @@
                   "expression",
                   "reference",
                   {
-                    "node": 46
+                    "operand": 0
                   },
                   {
-                    "node": 58
+                    "operand": 1
                   }
                 ]
               },
@@ -117,10 +117,10 @@
               "expression",
               "reference",
               {
-                "node": 46
+                "operand": 0
               },
               {
-                "node": 58
+                "operand": 1
               }
             ]
           }
@@ -132,16 +132,16 @@
             "expression",
             "call",
             {
-              "node": 47
+              "operand": 2
             },
             "quire.op.model.dispatch_call",
             {
-              "node": 12
+              "operand": 3
             },
             "run",
             "call",
             {
-              "node": 16
+              "operand": 4
             }
           ]
         },
@@ -175,14 +175,14 @@
                   "record_value",
                   "name",
                   {
-                    "node": 32
+                    "operand": 0
                   },
                   "count",
                   {
-                    "node": 28
+                    "operand": 1
                   },
                   {
-                    "node": 39
+                    "operand": 2
                   }
                 ]
               },
@@ -202,11 +202,11 @@
                   "record",
                   "name",
                   {
-                    "node": 22
+                    "operand": 3
                   },
                   "count",
                   {
-                    "node": 16
+                    "operand": 4
                   }
                 ]
               },
@@ -224,14 +224,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 4
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 5
               },
               "nfc"
             ]
@@ -247,11 +247,11 @@
               "record",
               "name",
               {
-                "node": 22
+                "operand": 3
               },
               "count",
               {
-                "node": 16
+                "operand": 4
               }
             ]
           },
@@ -263,14 +263,14 @@
               "record_value",
               "name",
               {
-                "node": 32
+                "operand": 0
               },
               "count",
               {
-                "node": 28
+                "operand": 1
               },
               {
-                "node": 39
+                "operand": 2
               }
             ]
           }
@@ -282,16 +282,16 @@
             "expression",
             "query",
             {
-              "node": 46
+              "operand": 6
             },
             "quire.op.record.project",
             {
-              "node": 39
+              "operand": 2
             },
             "name",
             "query",
             {
-              "node": 22
+              "operand": 3
             }
           ]
         },
@@ -312,14 +312,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 4
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 5
             },
             "nfc"
           ]
@@ -336,13 +336,13 @@
                   "value",
                   "collection_value",
                   {
-                    "node": 32
+                    "operand": 0
                   },
                   {
-                    "node": 33
+                    "operand": 1
                   },
                   {
-                    "node": 40
+                    "operand": 2
                   }
                 ]
               },
@@ -356,7 +356,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 22
+                    "operand": 3
                   },
                   "é"
                 ]
@@ -407,13 +407,13 @@
               "value",
               "collection_value",
               {
-                "node": 32
+                "operand": 0
               },
               {
-                "node": 33
+                "operand": 1
               },
               {
-                "node": 40
+                "operand": 2
               }
             ]
           },
@@ -424,7 +424,7 @@
               "value",
               "literal",
               {
-                "node": 22
+                "operand": 3
               },
               "é"
             ]
@@ -437,17 +437,17 @@
             "expression",
             "collection",
             {
-              "node": 48
+              "operand": 4
             },
             {
-              "node": 32
+              "operand": 0
             },
             "quire.op.collection.contains",
             "quire.value.text.unicode-17.0.0/v1",
             "nfc",
             "collection",
             {
-              "node": 19
+              "operand": 5
             }
           ]
         },
@@ -480,7 +480,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 20
+                    "operand": 0
                   },
                   "3fe0000000000000"
                 ]
@@ -495,7 +495,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 20
+                    "operand": 0
                   },
                   "3fe0000000000000"
                 ]
@@ -537,7 +537,7 @@
               "value",
               "literal",
               {
-                "node": 20
+                "operand": 0
               },
               "3fe0000000000000"
             ]
@@ -550,13 +550,13 @@
             "expression",
             "call",
             {
-              "node": 31
+              "operand": 1
             },
             "quire.op.ieee.numeric_equal",
             "quire.value.ieee754-2019-default/v1",
             "call",
             {
-              "node": 19
+              "operand": 2
             }
           ]
         },
@@ -589,7 +589,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 22
+                    "operand": 0
                   },
                   "é"
                 ]
@@ -604,7 +604,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 22
+                    "operand": 0
                   },
                   "e"
                 ]
@@ -649,7 +649,7 @@
               "value",
               "literal",
               {
-                "node": 22
+                "operand": 0
               },
               "e"
             ]
@@ -661,7 +661,7 @@
               "value",
               "literal",
               {
-                "node": 22
+                "operand": 0
               },
               "é"
             ]
@@ -674,17 +674,17 @@
             "expression",
             "binary",
             {
-              "node": 32
+              "operand": 1
             },
             {
-              "node": 33
+              "operand": 2
             },
             "quire.op.text.eq",
             "quire.value.text.unicode-17.0.0/v1",
             "nfc",
             "binary",
             {
-              "node": 19
+              "operand": 3
             }
           ]
         },
@@ -718,16 +718,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 18
+                    "operand": 0
                   },
                   "census",
                   "level",
                   {
-                    "node": 16
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 60
+                    "operand": 2
                   }
                 ]
               },
@@ -741,10 +741,10 @@
                   "expression",
                   "reference",
                   {
-                    "node": 46
+                    "operand": 3
                   },
                   {
-                    "node": 58
+                    "operand": 4
                   }
                 ]
               },
@@ -764,11 +764,11 @@
                   "record",
                   "name",
                   {
-                    "node": 22
+                    "operand": 5
                   },
                   "count",
                   {
-                    "node": 16
+                    "operand": 1
                   }
                 ]
               },
@@ -787,7 +787,7 @@
               "composite_type",
               "reference",
               {
-                "node": 57
+                "operand": 6
               }
             ]
           },
@@ -802,11 +802,11 @@
               "record",
               "name",
               {
-                "node": 22
+                "operand": 5
               },
               "count",
               {
-                "node": 16
+                "operand": 1
               }
             ]
           },
@@ -817,10 +817,10 @@
               "expression",
               "reference",
               {
-                "node": 46
+                "operand": 3
               },
               {
-                "node": 58
+                "operand": 4
               }
             ]
           },
@@ -832,16 +832,16 @@
               "parameter",
               "name",
               {
-                "node": 18
+                "operand": 0
               },
               "census",
               "level",
               {
-                "node": 16
+                "operand": 1
               },
               "0",
               {
-                "node": 60
+                "operand": 2
               }
             ]
           }
@@ -853,19 +853,19 @@
             "expression",
             "query",
             {
-              "node": 9
+              "operand": 7
             },
             {
-              "node": 47
+              "operand": 8
             },
             "quire.op.model.lookup",
             {
-              "node": 39
+              "operand": 9
             },
             "undefined",
             "query",
             {
-              "node": 58
+              "operand": 4
             }
           ]
         },
@@ -885,7 +885,7 @@
             "composite_type",
             "reference",
             {
-              "node": 57
+              "operand": 6
             }
           ]
         }
@@ -902,16 +902,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 18
+                    "operand": 0
                   },
                   "s",
                   "level",
                   {
-                    "node": 16
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 58
+                    "operand": 2
                   }
                 ]
               },
@@ -926,16 +926,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 18
+                    "operand": 0
                   },
                   "s",
                   "level",
                   {
-                    "node": 16
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 58
+                    "operand": 2
                   }
                 ]
               },
@@ -999,16 +999,16 @@
               "parameter",
               "name",
               {
-                "node": 18
+                "operand": 0
               },
               "s",
               "level",
               {
-                "node": 16
+                "operand": 1
               },
               "0",
               {
-                "node": 58
+                "operand": 2
               }
             ]
           }
@@ -1020,16 +1020,16 @@
             "expression",
             "reachability",
             {
-              "node": 59
+              "operand": 3
             },
             "quire.op.model.reaches",
             {
-              "node": 10
+              "operand": 4
             },
             "order",
             "reaches",
             {
-              "node": 19
+              "operand": 5
             }
           ]
         },
@@ -1062,10 +1062,10 @@
                   "value",
                   "collection_value",
                   {
-                    "node": 27
+                    "operand": 0
                   },
                   {
-                    "node": 41
+                    "operand": 1
                   }
                 ]
               },
@@ -1082,7 +1082,7 @@
                     "value",
                     "literal",
                     {
-                      "node": 44
+                      "operand": 2
                     },
                     "1.25"
                   ]
@@ -1104,7 +1104,7 @@
                   "decimal_range",
                   "coefficient_min",
                   {
-                    "node": 16
+                    "operand": 3
                   },
                   "-100000",
                   "coefficient_max",
@@ -1114,11 +1114,11 @@
                   "scale_max",
                   "rounding",
                   {
-                    "node": 18
+                    "operand": 4
                   },
                   "nearest-even",
                   {
-                    "node": 43
+                    "operand": 5
                   }
                 ]
               },
@@ -1138,7 +1138,7 @@
               "decimal_range",
               "coefficient_min",
               {
-                "node": 16
+                "operand": 3
               },
               "-100000",
               "coefficient_max",
@@ -1148,11 +1148,11 @@
               "scale_max",
               "rounding",
               {
-                "node": 18
+                "operand": 4
               },
               "nearest-even",
               {
-                "node": 43
+                "operand": 5
               }
             ]
           },
@@ -1167,7 +1167,7 @@
               "decimal_range",
               "coefficient_min",
               {
-                "node": 16
+                "operand": 3
               },
               "-100000",
               "coefficient_max",
@@ -1177,11 +1177,11 @@
               "scale_max",
               "rounding",
               {
-                "node": 18
+                "operand": 4
               },
               "nearest-even",
               {
-                "node": 43
+                "operand": 5
               }
             ]
           },
@@ -1192,10 +1192,10 @@
               "value",
               "collection_value",
               {
-                "node": 27
+                "operand": 0
               },
               {
-                "node": 41
+                "operand": 1
               }
             ]
           },
@@ -1206,7 +1206,7 @@
               "value",
               "literal",
               {
-                "node": 44
+                "operand": 2
               },
               "1.25"
             ]
@@ -1219,15 +1219,15 @@
             "expression",
             "collection",
             {
-              "node": 49
+              "operand": 6
             },
             "x",
             {
-              "node": 27
+              "operand": 0
             },
             "quire.op.collection.sum.decimal",
             {
-              "node": 44
+              "operand": 2
             },
             "nearest-even",
             "collection"
@@ -1250,7 +1250,7 @@
             "decimal_range",
             "coefficient_min",
             {
-              "node": 16
+              "operand": 3
             },
             "-100000",
             "coefficient_max",
@@ -1260,11 +1260,11 @@
             "scale_max",
             "rounding",
             {
-              "node": 18
+              "operand": 4
             },
             "nearest-even",
             {
-              "node": 43
+              "operand": 5
             }
           ]
         }
@@ -1325,7 +1325,7 @@
             "expression",
             "binary",
             {
-              "node": 16
+              "operand": 0
             },
             "7",
             "-2",
@@ -1400,16 +1400,16 @@
             "parameter",
             "name",
             {
-              "node": 18
+              "operand": 0
             },
             "census",
             "level",
             {
-              "node": 16
+              "operand": 1
             },
             "0",
             {
-              "node": 60
+              "operand": 2
             }
           ]
         },
@@ -1430,11 +1430,11 @@
             "model_population",
             "max",
             {
-              "node": 16
+              "operand": 1
             },
             "2",
             {
-              "node": 42
+              "operand": 3
             }
           ]
         }
@@ -1600,7 +1600,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 16
+                    "operand": 0
                   },
                   "7"
                 ]
@@ -1615,7 +1615,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 16
+                    "operand": 0
                   },
                   "-2"
                 ]
@@ -1657,7 +1657,7 @@
               "value",
               "literal",
               {
-                "node": 16
+                "operand": 0
               },
               "-2"
             ]
@@ -1669,7 +1669,7 @@
               "value",
               "literal",
               {
-                "node": 16
+                "operand": 0
               },
               "7"
             ]
@@ -1682,16 +1682,16 @@
             "expression",
             "binary",
             {
-              "node": 28
+              "operand": 1
             },
             {
-              "node": 30
+              "operand": 2
             },
             "quire.op.integer.rem",
             "quire.value.integer-division.floor/v1",
             "binary",
             {
-              "node": 16
+              "operand": 0
             }
           ]
         },
@@ -1724,7 +1724,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 50
+                    "operand": 0
                   },
                   "3"
                 ]
@@ -1739,7 +1739,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 50
+                    "operand": 0
                   },
                   "2"
                 ]
@@ -1763,7 +1763,7 @@
               "rational_range",
               "numerator_min",
               {
-                "node": 16
+                "operand": 1
               },
               "-9",
               "numerator_max",
@@ -1772,7 +1772,7 @@
               "1",
               "denominator_max",
               {
-                "node": 51
+                "operand": 2
               }
             ]
           },
@@ -1786,7 +1786,7 @@
               "value",
               "literal",
               {
-                "node": 50
+                "operand": 0
               },
               "2"
             ]
@@ -1798,7 +1798,7 @@
               "value",
               "literal",
               {
-                "node": 50
+                "operand": 0
               },
               "3"
             ]
@@ -1811,15 +1811,15 @@
             "expression",
             "binary",
             {
-              "node": 53
+              "operand": 3
             },
             {
-              "node": 54
+              "operand": 4
             },
             "quire.op.rational.div",
             "binary",
             {
-              "node": 52
+              "operand": 5
             }
           ]
         },
@@ -1840,7 +1840,7 @@
             "rational_range",
             "numerator_min",
             {
-              "node": 16
+              "operand": 1
             },
             "-9",
             "numerator_max",
@@ -1849,7 +1849,7 @@
             "1",
             "denominator_max",
             {
-              "node": 51
+              "operand": 2
             }
           ]
         }
@@ -1865,7 +1865,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 16
+                    "operand": 0
                   },
                   "7"
                 ]
@@ -1880,7 +1880,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 16
+                    "operand": 0
                   },
                   "-2"
                 ]
@@ -1922,7 +1922,7 @@
               "value",
               "literal",
               {
-                "node": 16
+                "operand": 0
               },
               "-2"
             ]
@@ -1934,7 +1934,7 @@
               "value",
               "literal",
               {
-                "node": 16
+                "operand": 0
               },
               "7"
             ]
@@ -1947,16 +1947,16 @@
             "expression",
             "binary",
             {
-              "node": 28
+              "operand": 1
             },
             {
-              "node": 30
+              "operand": 2
             },
             "quire.op.integer.div",
             "quire.value.integer-division.floor/v1",
             "binary",
             {
-              "node": 16
+              "operand": 0
             }
           ]
         },
@@ -2147,11 +2147,11 @@
             "float_rounding",
             "rounding",
             {
-              "node": 18
+              "operand": 0
             },
             "nearest-even",
             {
-              "node": 17
+              "operand": 1
             }
           ]
         },
@@ -2214,11 +2214,11 @@
             "float_rounding",
             "rounding",
             {
-              "node": 18
+              "operand": 0
             },
             "toward-zero",
             {
-              "node": 17
+              "operand": 1
             }
           ]
         },
@@ -2315,14 +2315,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 1
             },
             "nfc"
           ]
@@ -2420,14 +2420,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 1
             },
             "binary-utf8"
           ]
@@ -2493,7 +2493,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 21
+                    "operand": 0
                   },
                   "3fe0000000000000"
                 ]
@@ -2508,7 +2508,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 21
+                    "operand": 0
                   },
                   "3fe0000000000000"
                 ]
@@ -2543,11 +2543,11 @@
               "float_rounding",
               "rounding",
               {
-                "node": 18
+                "operand": 1
               },
               "toward-zero",
               {
-                "node": 17
+                "operand": 2
               }
             ]
           },
@@ -2561,7 +2561,7 @@
               "value",
               "literal",
               {
-                "node": 21
+                "operand": 0
               },
               "3fe0000000000000"
             ]
@@ -2574,14 +2574,14 @@
             "expression",
             "binary",
             {
-              "node": 34
+              "operand": 3
             },
             "quire.op.ieee.float64.add",
             "quire.value.ieee754-2019-default/v1",
             "toward-zero",
             "binary",
             {
-              "node": 21
+              "operand": 0
             }
           ]
         },
@@ -2602,11 +2602,11 @@
             "float_rounding",
             "rounding",
             {
-              "node": 18
+              "operand": 1
             },
             "toward-zero",
             {
-              "node": 17
+              "operand": 2
             }
           ]
         }
@@ -2622,7 +2622,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 20
+                    "operand": 0
                   },
                   "3fe0000000000000"
                 ]
@@ -2637,7 +2637,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 20
+                    "operand": 0
                   },
                   "3fe0000000000000"
                 ]
@@ -2672,11 +2672,11 @@
               "float_rounding",
               "rounding",
               {
-                "node": 18
+                "operand": 1
               },
               "nearest-even",
               {
-                "node": 17
+                "operand": 2
               }
             ]
           },
@@ -2690,7 +2690,7 @@
               "value",
               "literal",
               {
-                "node": 20
+                "operand": 0
               },
               "3fe0000000000000"
             ]
@@ -2703,14 +2703,14 @@
             "expression",
             "binary",
             {
-              "node": 31
+              "operand": 3
             },
             "quire.op.ieee.float64.add",
             "quire.value.ieee754-2019-default/v1",
             "nearest-even",
             "binary",
             {
-              "node": 20
+              "operand": 0
             }
           ]
         },
@@ -2731,11 +2731,11 @@
             "float_rounding",
             "rounding",
             {
-              "node": 18
+              "operand": 1
             },
             "nearest-even",
             {
-              "node": 17
+              "operand": 2
             }
           ]
         }
@@ -2751,7 +2751,7 @@
               "decimal_range",
               "coefficient_min",
               {
-                "node": 16
+                "operand": 0
               },
               "-100000",
               "coefficient_max",
@@ -2761,11 +2761,11 @@
               "scale_max",
               "rounding",
               {
-                "node": 18
+                "operand": 1
               },
               "nearest-even",
               {
-                "node": 43
+                "operand": 2
               }
             ]
           },
@@ -2780,7 +2780,7 @@
             "value",
             "literal",
             {
-              "node": 44
+              "operand": 3
             },
             "1.25"
           ]
@@ -2802,7 +2802,7 @@
             "decimal_range",
             "coefficient_min",
             {
-              "node": 16
+              "operand": 0
             },
             "-100000",
             "coefficient_max",
@@ -2812,11 +2812,11 @@
             "scale_max",
             "rounding",
             {
-              "node": 18
+              "operand": 1
             },
             "nearest-even",
             {
-              "node": 43
+              "operand": 2
             }
           ]
         }
@@ -2843,7 +2843,7 @@
             "value",
             "literal",
             {
-              "node": 16
+              "operand": 0
             },
             "7"
           ]
@@ -2878,14 +2878,14 @@
                   "record_value",
                   "name",
                   {
-                    "node": 32
+                    "operand": 0
                   },
                   "count",
                   {
-                    "node": 28
+                    "operand": 1
                   },
                   {
-                    "node": 39
+                    "operand": 2
                   }
                 ]
               },
@@ -2900,14 +2900,14 @@
                   "record_value",
                   "name",
                   {
-                    "node": 32
+                    "operand": 0
                   },
                   "count",
                   {
-                    "node": 28
+                    "operand": 1
                   },
                   {
-                    "node": 39
+                    "operand": 2
                   }
                 ]
               },
@@ -2960,14 +2960,14 @@
               "record_value",
               "name",
               {
-                "node": 32
+                "operand": 0
               },
               "count",
               {
-                "node": 28
+                "operand": 1
               },
               {
-                "node": 39
+                "operand": 2
               }
             ]
           }
@@ -2979,14 +2979,14 @@
             "expression",
             "binary",
             {
-              "node": 46
+              "operand": 3
             },
             "quire.op.structural.eq",
             "quire.value.text.unicode-17.0.0/v1",
             "nfc",
             "binary",
             {
-              "node": 19
+              "operand": 4
             }
           ]
         },
@@ -3030,7 +3030,7 @@
             "value",
             "literal",
             {
-              "node": 16
+              "operand": 0
             },
             "-2"
           ]
@@ -3064,11 +3064,11 @@
               "float_rounding",
               "rounding",
               {
-                "node": 18
+                "operand": 0
               },
               "nearest-even",
               {
-                "node": 17
+                "operand": 1
               }
             ]
           },
@@ -3083,7 +3083,7 @@
             "value",
             "literal",
             {
-              "node": 20
+              "operand": 2
             },
             "3fe0000000000000"
           ]
@@ -3105,11 +3105,11 @@
             "float_rounding",
             "rounding",
             {
-              "node": 18
+              "operand": 0
             },
             "nearest-even",
             {
-              "node": 17
+              "operand": 1
             }
           ]
         }
@@ -3125,14 +3125,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 1
               },
               "nfc"
             ]
@@ -3148,7 +3148,7 @@
             "value",
             "literal",
             {
-              "node": 22
+              "operand": 2
             },
             "é"
           ]
@@ -3170,14 +3170,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 1
             },
             "nfc"
           ]
@@ -3194,14 +3194,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 1
               },
               "nfc"
             ]
@@ -3217,7 +3217,7 @@
             "value",
             "literal",
             {
-              "node": 22
+              "operand": 2
             },
             "e"
           ]
@@ -3239,14 +3239,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 1
             },
             "nfc"
           ]
@@ -3263,11 +3263,11 @@
               "float_rounding",
               "rounding",
               {
-                "node": 18
+                "operand": 0
               },
               "toward-zero",
               {
-                "node": 17
+                "operand": 1
               }
             ]
           },
@@ -3282,7 +3282,7 @@
             "value",
             "literal",
             {
-              "node": 21
+              "operand": 2
             },
             "3fe0000000000000"
           ]
@@ -3304,11 +3304,11 @@
             "float_rounding",
             "rounding",
             {
-              "node": 18
+              "operand": 0
             },
             "toward-zero",
             {
-              "node": 17
+              "operand": 1
             }
           ]
         }
@@ -3369,7 +3369,7 @@
             "expression",
             "binary",
             {
-              "node": 16
+              "operand": 0
             },
             "7",
             "-2",
@@ -3406,14 +3406,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 1
               },
               "binary-utf8"
             ]
@@ -3429,7 +3429,7 @@
             "value",
             "literal",
             {
-              "node": 23
+              "operand": 2
             },
             "é"
           ]
@@ -3451,14 +3451,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 1
             },
             "binary-utf8"
           ]
@@ -3475,14 +3475,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 1
               },
               "binary-utf8"
             ]
@@ -3498,7 +3498,7 @@
             "value",
             "literal",
             {
-              "node": 23
+              "operand": 2
             },
             "é"
           ]
@@ -3520,14 +3520,14 @@
             "text_bounds",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "0",
             "max",
             "64",
             "text_profile",
             {
-              "node": 18
+              "operand": 1
             },
             "binary-utf8"
           ]
@@ -3555,7 +3555,7 @@
             "value",
             "literal",
             {
-              "node": 24
+              "operand": 0
             },
             "3f000000"
           ]
@@ -3593,14 +3593,14 @@
                     "text_bounds",
                     "min",
                     {
-                      "node": 16
+                      "operand": 0
                     },
                     "0",
                     "max",
                     "64",
                     "text_profile",
                     {
-                      "node": 18
+                      "operand": 1
                     },
                     "nfc"
                   ]
@@ -3635,14 +3635,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 1
               },
               "nfc"
             ]
@@ -3664,11 +3664,11 @@
             "record",
             "name",
             {
-              "node": 22
+              "operand": 2
             },
             "count",
             {
-              "node": 16
+              "operand": 0
             }
           ]
         },
@@ -3689,11 +3689,11 @@
             "record",
             "name",
             {
-              "node": 22
+              "operand": 2
             },
             "count",
             {
-              "node": 16
+              "operand": 0
             }
           ]
         }
@@ -3710,14 +3710,14 @@
                   "text_bounds",
                   "min",
                   {
-                    "node": 16
+                    "operand": 0
                   },
                   "0",
                   "max",
                   "64",
                   "text_profile",
                   {
-                    "node": 18
+                    "operand": 1
                   },
                   "nfc"
                 ]
@@ -3736,14 +3736,14 @@
               "text_bounds",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "0",
               "max",
               "64",
               "text_profile",
               {
-                "node": 18
+                "operand": 1
               },
               "nfc"
             ]
@@ -3756,7 +3756,7 @@
             "composite_type",
             "sequence",
             {
-              "node": 22
+              "operand": 2
             }
           ]
         },
@@ -3776,7 +3776,7 @@
             "composite_type",
             "sequence",
             {
-              "node": 22
+              "operand": 2
             }
           ]
         }
@@ -3793,7 +3793,7 @@
                   "decimal_range",
                   "coefficient_min",
                   {
-                    "node": 16
+                    "operand": 0
                   },
                   "-100000",
                   "coefficient_max",
@@ -3803,11 +3803,11 @@
                   "scale_max",
                   "rounding",
                   {
-                    "node": 18
+                    "operand": 1
                   },
                   "nearest-even",
                   {
-                    "node": 43
+                    "operand": 2
                   }
                 ]
               },
@@ -3825,7 +3825,7 @@
               "decimal_range",
               "coefficient_min",
               {
-                "node": 16
+                "operand": 0
               },
               "-100000",
               "coefficient_max",
@@ -3835,11 +3835,11 @@
               "scale_max",
               "rounding",
               {
-                "node": 18
+                "operand": 1
               },
               "nearest-even",
               {
-                "node": 43
+                "operand": 2
               }
             ]
           }
@@ -3851,7 +3851,7 @@
             "composite_type",
             "sequence",
             {
-              "node": 44
+              "operand": 3
             }
           ]
         },
@@ -3871,7 +3871,7 @@
             "composite_type",
             "sequence",
             {
-              "node": 44
+              "operand": 3
             }
           ]
         }
@@ -3887,7 +3887,7 @@
                   "composite_type",
                   "reference",
                   {
-                    "node": 57
+                    "operand": 0
                   }
                 ]
               },
@@ -3904,7 +3904,7 @@
               "composite_type",
               "reference",
               {
-                "node": 57
+                "operand": 0
               }
             ]
           }
@@ -3916,7 +3916,7 @@
             "composite_type",
             "set",
             {
-              "node": 58
+              "operand": 1
             }
           ]
         },
@@ -3936,7 +3936,7 @@
             "composite_type",
             "set",
             {
-              "node": 58
+              "operand": 1
             }
           ]
         }
@@ -4082,7 +4082,7 @@
             "decimal_range",
             "coefficient_min",
             {
-              "node": 16
+              "operand": 0
             },
             "-100000",
             "coefficient_max",
@@ -4092,11 +4092,11 @@
             "scale_max",
             "rounding",
             {
-              "node": 18
+              "operand": 1
             },
             "nearest-even",
             {
-              "node": 43
+              "operand": 2
             }
           ]
         },
@@ -4130,16 +4130,16 @@
                   "parameter",
                   "name",
                   {
-                    "node": 18
+                    "operand": 0
                   },
                   "census",
                   "level",
                   {
-                    "node": 16
+                    "operand": 1
                   },
                   "0",
                   {
-                    "node": 60
+                    "operand": 2
                   }
                 ]
               },
@@ -4159,11 +4159,11 @@
                   "record",
                   "name",
                   {
-                    "node": 22
+                    "operand": 3
                   },
                   "count",
                   {
-                    "node": 16
+                    "operand": 1
                   }
                 ]
               },
@@ -4179,7 +4179,7 @@
               "composite_type",
               "set",
               {
-                "node": 58
+                "operand": 4
               }
             ]
           },
@@ -4194,11 +4194,11 @@
               "record",
               "name",
               {
-                "node": 22
+                "operand": 3
               },
               "count",
               {
-                "node": 16
+                "operand": 1
               }
             ]
           },
@@ -4210,16 +4210,16 @@
               "parameter",
               "name",
               {
-                "node": 18
+                "operand": 0
               },
               "census",
               "level",
               {
-                "node": 16
+                "operand": 1
               },
               "0",
               {
-                "node": 60
+                "operand": 2
               }
             ]
           }
@@ -4231,15 +4231,15 @@
             "expression",
             "query",
             {
-              "node": 9
+              "operand": 5
             },
             "quire.op.model.all_instances",
             {
-              "node": 39
+              "operand": 6
             },
             "query",
             {
-              "node": 42
+              "operand": 7
             }
           ]
         },
@@ -4259,7 +4259,7 @@
             "composite_type",
             "set",
             {
-              "node": 58
+              "operand": 4
             }
           ]
         }
@@ -4278,7 +4278,7 @@
                     "value",
                     "literal",
                     {
-                      "node": 22
+                      "operand": 0
                     },
                     "é"
                   ]
@@ -4297,7 +4297,7 @@
                     "value",
                     "literal",
                     {
-                      "node": 16
+                      "operand": 1
                     },
                     "7"
                   ]
@@ -4316,7 +4316,7 @@
               "value",
               "literal",
               {
-                "node": 22
+                "operand": 0
               },
               "é"
             ]
@@ -4328,7 +4328,7 @@
               "value",
               "literal",
               {
-                "node": 16
+                "operand": 1
               },
               "7"
             ]
@@ -4342,14 +4342,14 @@
             "record_value",
             "name",
             {
-              "node": 32
+              "operand": 2
             },
             "count",
             {
-              "node": 28
+              "operand": 3
             },
             {
-              "node": 39
+              "operand": 4
             }
           ]
         },
@@ -4370,11 +4370,11 @@
             "record",
             "name",
             {
-              "node": 22
+              "operand": 0
             },
             "count",
             {
-              "node": 16
+              "operand": 1
             }
           ]
         }
@@ -4389,14 +4389,14 @@
               "record_value",
               "name",
               {
-                "node": 32
+                "operand": 0
               },
               "count",
               {
-                "node": 28
+                "operand": 1
               },
               {
-                "node": 39
+                "operand": 2
               }
             ]
           },
@@ -4411,14 +4411,14 @@
               "record_value",
               "name",
               {
-                "node": 32
+                "operand": 0
               },
               "count",
               {
-                "node": 28
+                "operand": 1
               },
               {
-                "node": 39
+                "operand": 2
               }
             ]
           }
@@ -4430,10 +4430,10 @@
             "expression",
             "reference",
             {
-              "node": 46
+              "operand": 3
             },
             {
-              "node": 58
+              "operand": 4
             }
           ]
         },
@@ -4453,7 +4453,7 @@
             "composite_type",
             "reference",
             {
-              "node": 57
+              "operand": 5
             }
           ]
         }
@@ -4469,7 +4469,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 22
+                    "operand": 0
                   },
                   "é"
                 ]
@@ -4484,7 +4484,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 22
+                    "operand": 0
                   },
                   "e"
                 ]
@@ -4502,7 +4502,7 @@
               "value",
               "literal",
               {
-                "node": 22
+                "operand": 0
               },
               "e"
             ]
@@ -4514,7 +4514,7 @@
               "value",
               "literal",
               {
-                "node": 22
+                "operand": 0
               },
               "é"
             ]
@@ -4527,13 +4527,13 @@
             "value",
             "collection_value",
             {
-              "node": 32
+              "operand": 1
             },
             {
-              "node": 33
+              "operand": 2
             },
             {
-              "node": 40
+              "operand": 3
             }
           ]
         },
@@ -4553,7 +4553,7 @@
             "composite_type",
             "sequence",
             {
-              "node": 22
+              "operand": 0
             }
           ]
         }
@@ -4569,7 +4569,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 44
+                    "operand": 0
                   },
                   "1.25"
                 ]
@@ -4587,7 +4587,7 @@
               "value",
               "literal",
               {
-                "node": 44
+                "operand": 0
               },
               "1.25"
             ]
@@ -4600,10 +4600,10 @@
             "value",
             "collection_value",
             {
-              "node": 27
+              "operand": 1
             },
             {
-              "node": 41
+              "operand": 2
             }
           ]
         },
@@ -4623,7 +4623,7 @@
             "composite_type",
             "sequence",
             {
-              "node": 44
+              "operand": 0
             }
           ]
         }
@@ -4686,7 +4686,7 @@
             "integer_range",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "-9",
             "max",
@@ -4835,7 +4835,7 @@
             "rational_range",
             "numerator_min",
             {
-              "node": 16
+              "operand": 0
             },
             "-9",
             "numerator_max",
@@ -4844,7 +4844,7 @@
             "1",
             "denominator_max",
             {
-              "node": 51
+              "operand": 1
             }
           ]
         },
@@ -4877,7 +4877,7 @@
               "integer_range",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "-9",
               "max",
@@ -4895,7 +4895,7 @@
             "value",
             "literal",
             {
-              "node": 50
+              "operand": 1
             },
             "3"
           ]
@@ -4917,7 +4917,7 @@
             "integer_range",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "-9",
             "max",
@@ -4936,7 +4936,7 @@
               "integer_range",
               "min",
               {
-                "node": 16
+                "operand": 0
               },
               "-9",
               "max",
@@ -4954,7 +4954,7 @@
             "value",
             "literal",
             {
-              "node": 50
+              "operand": 1
             },
             "2"
           ]
@@ -4976,7 +4976,7 @@
             "integer_range",
             "min",
             {
-              "node": 16
+              "operand": 0
             },
             "-9",
             "max",
@@ -5034,12 +5034,12 @@
             "expression",
             "call",
             {
-              "node": 11
+              "operand": 0
             },
             "quire.op.function.call",
             "call",
             {
-              "node": 16
+              "operand": 1
             }
           ]
         },
@@ -5072,7 +5072,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 23
+                    "operand": 0
                   },
                   "é"
                 ]
@@ -5087,7 +5087,7 @@
                   "value",
                   "literal",
                   {
-                    "node": 23
+                    "operand": 0
                   },
                   "é"
                 ]
@@ -5132,7 +5132,7 @@
               "value",
               "literal",
               {
-                "node": 23
+                "operand": 0
               },
               "é"
             ]
@@ -5144,7 +5144,7 @@
               "value",
               "literal",
               {
-                "node": 23
+                "operand": 0
               },
               "é"
             ]
@@ -5157,17 +5157,17 @@
             "expression",
             "binary",
             {
-              "node": 36
+              "operand": 1
             },
             {
-              "node": 37
+              "operand": 2
             },
             "quire.op.text.eq",
             "quire.value.text.unicode-17.0.0/v1",
             "binary-utf8",
             "binary",
             {
-              "node": 19
+              "operand": 3
             }
           ]
         },
@@ -5264,7 +5264,7 @@
             "composite_type",
             "reference",
             {
-              "node": 57
+              "operand": 0
             }
           ]
         },
@@ -5284,7 +5284,7 @@
             "composite_type",
             "reference",
             {
-              "node": 57
+              "operand": 0
             }
           ]
         }
@@ -5338,16 +5338,16 @@
             "parameter",
             "name",
             {
-              "node": 18
+              "operand": 0
             },
             "s",
             "level",
             {
-              "node": 16
+              "operand": 1
             },
             "0",
             {
-              "node": 58
+              "operand": 2
             }
           ]
         },
@@ -5367,7 +5367,7 @@
             "composite_type",
             "reference",
             {
-              "node": 57
+              "operand": 3
             }
           ]
         }
@@ -5403,7 +5403,7 @@
               "composite_type",
               "set",
               {
-                "node": 58
+                "operand": 0
               }
             ]
           }
@@ -5416,11 +5416,11 @@
             "model_population",
             "max",
             {
-              "node": 16
+              "operand": 1
             },
             "2",
             {
-              "node": 42
+              "operand": 2
             }
           ]
         },
@@ -5440,7 +5440,7 @@
             "composite_type",
             "set",
             {
-              "node": 58
+              "operand": 0
             }
           ]
         }
@@ -5481,6 +5481,294 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [
+        46,
+        58,
+        47,
+        12,
+        16
+      ],
+      [
+        32,
+        28,
+        39,
+        22,
+        16,
+        18,
+        46
+      ],
+      [
+        32,
+        33,
+        40,
+        22,
+        48,
+        19
+      ],
+      [
+        20,
+        31,
+        19
+      ],
+      [
+        22,
+        32,
+        33,
+        19
+      ],
+      [
+        18,
+        16,
+        60,
+        46,
+        58,
+        22,
+        57,
+        9,
+        47,
+        39
+      ],
+      [
+        18,
+        16,
+        58,
+        59,
+        10,
+        19
+      ],
+      [
+        27,
+        41,
+        44,
+        16,
+        18,
+        43,
+        49
+      ],
+      [
+        16
+      ],
+      [
+        18,
+        16,
+        60,
+        42
+      ],
+      [],
+      [],
+      [],
+      [
+        16,
+        28,
+        30
+      ],
+      [
+        50,
+        16,
+        51,
+        53,
+        54,
+        52
+      ],
+      [
+        16,
+        28,
+        30
+      ],
+      [],
+      [],
+      [],
+      [],
+      [
+        18,
+        17
+      ],
+      [
+        18,
+        17
+      ],
+      [
+        16,
+        18
+      ],
+      [
+        16,
+        18
+      ],
+      [],
+      [
+        21,
+        18,
+        17,
+        34
+      ],
+      [
+        20,
+        18,
+        17,
+        31
+      ],
+      [
+        16,
+        18,
+        43,
+        44
+      ],
+      [
+        16
+      ],
+      [
+        32,
+        28,
+        39,
+        46,
+        19
+      ],
+      [
+        16
+      ],
+      [
+        18,
+        17,
+        20
+      ],
+      [
+        16,
+        18,
+        22
+      ],
+      [
+        16,
+        18,
+        22
+      ],
+      [
+        18,
+        17,
+        21
+      ],
+      [
+        16
+      ],
+      [
+        16,
+        18,
+        23
+      ],
+      [
+        16,
+        18,
+        23
+      ],
+      [
+        24
+      ],
+      [
+        16,
+        18,
+        22
+      ],
+      [
+        16,
+        18,
+        22
+      ],
+      [
+        16,
+        18,
+        43,
+        44
+      ],
+      [
+        57,
+        58
+      ],
+      [],
+      [
+        16,
+        18,
+        43
+      ],
+      [
+        18,
+        16,
+        60,
+        22,
+        58,
+        9,
+        39,
+        42
+      ],
+      [
+        22,
+        16,
+        32,
+        28,
+        39
+      ],
+      [
+        32,
+        28,
+        39,
+        46,
+        58,
+        57
+      ],
+      [
+        22,
+        32,
+        33,
+        40
+      ],
+      [
+        44,
+        27,
+        41
+      ],
+      [
+        16
+      ],
+      [],
+      [
+        16,
+        51
+      ],
+      [
+        16,
+        50
+      ],
+      [
+        16,
+        50
+      ],
+      [
+        11,
+        16
+      ],
+      [
+        23,
+        36,
+        37,
+        19
+      ],
+      [],
+      [
+        57
+      ],
+      [
+        18,
+        16,
+        58,
+        57
+      ],
+      [
+        58,
+        16,
+        42
+      ],
+      []
     ]
   },
   "source_map": [
