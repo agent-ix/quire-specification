@@ -582,6 +582,29 @@ Complete-V1 source names the type of a quantity in a declared unit as
 word of the complete-V1 facets, so a declaration named `Quantity` is
 `invalid_syntax`.
 
+Complete-V1 source SHALL also accept a product of qualified unit names with
+optional signed integer powers in that first argument, for example
+`Quantity<kg*m^2*s^-2>`. Each factor SHALL resolve in the unit namespace,
+including a factor written with exponent zero. A product or explicit power
+SHALL form the checked compound unit of FR-322 using the existing compound
+normalization and admission rules: canonical root-unit identities, combined
+integer exponents, no zero terms and canonical term order. A bare qualified
+name SHALL keep its declared-unit meaning. In particular, a one-term or
+empty compound SHALL NOT become a declared unit, and equal base-dimension
+maps SHALL NOT rename a compound to `J` or another declared unit. This is a
+source spelling for the existing checked `compound_unit`, not a new
+declaration, evaluator value identity or wire form.
+
+The source parser SHALL retain the written qualified factors, exact signed
+exponents and source locations, and SHALL refuse missing factors, missing
+exponents and non-integer exponents as `invalid_syntax`. The checker SHALL
+retain the existing `missing_declaration`/`missing-name` refusal at an
+unresolved unit factor; a dimension-only name does not resolve as a unit.
+Existing source-integer and frontend validation ceilings SHALL apply without
+wrapping or truncating an exponent. The optional carrier and its comma remain
+the existing `Quantity<u, C>` form and introduce no new carrier kind or
+implicit conversion.
+
 **Namespaces.** Dimensions, units and everything else a unit of compilation
 declares are three namespaces. The third, the type namespace, holds records,
 tuples, unions, enums, aliases, functions, predicates, protocols, claims and
@@ -722,6 +745,8 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-36 | An empty carried sum is the carrier's zero in the unit: over `Li` it is `0 m` after one scalar retain; over `Quantity<m, Int[1, 5]>` it is a located undefined outcome with no charge, its linked sum over a `Sequence<Quantity<m, Int[1, 5]>>[0,1]` source refusing `undefined_expression`/`unproved-range` and over a `[1,1]` source admitted (TC-187 U48). | Test (TC-187) |
 | FR-142-AC-37 | A carried sum never rounds: over `Decimal[-500, 500; 2, 2; nearest-even]` and over its `exact` twin, `1.25 m` and `2.50 m` are `(375, 2) m` with no `DecimalLoss` and no `decimal.rounding` charge, `4.00 m` and `2.00 m` are a located undefined outcome, never `decimal_out_of_domain`, and the empty sum is `(0, 2) m` (TC-187 U49). | Test (TC-187) |
 | FR-142-AC-38 | A carried sum over `Rational[-3, 7; 1, 12]` keeps reduced exact magnitudes: `1/4 m` and `1/3 m` are `7/12 m`, `1/2 m` and `1/2 m` are `1 m`, `1/4 m` and `1/5 m` (`9/20 m`) and `6 m` and `2 m` are each a located undefined outcome, never rounded and never `rational_out_of_domain`, and the empty sum is `0 m` (TC-187 U50). | Test (TC-187) |
+| FR-142-AC-39 | Over TC-187's `kg`, `m` and `s` roots, `Quantity<kg*m^2*s^-2>` is accepted in parameter, result and conversion-target positions and names the checked compound with canonical root terms `kg:1`, `m:2`, `s:-2`. `Quantity<s^-2*kg*m*m>` has the same normalized compound identity. Bare `Quantity<kg>` remains declared, while `Quantity<kg^1>` and `Quantity<kg*m^0>` have the same one-term compound identity, distinct from declared `kg`; `Quantity<m*m^-1>` is the empty compound. The first U25 conversion can therefore be written `convert<Quantity<kg*m^2*s^-2>>(q)` for `q: Quantity<N_m>` and its result explicitly converted to `Quantity<J>`, retaining U25's exact values, identities and charges without a synthetic declared target unit. | Test |
+| FR-142-AC-40 | `Quantity<>`, `Quantity<kg*>`, `Quantity<kg**m>`, `Quantity<m^>`, `Quantity<m^n>` and `Quantity<m^1.5>` refuse `invalid_syntax` at the malformed unit expression. `Quantity<kg*ghost^2>` and `Quantity<ghost^0>` refuse `missing_declaration`/`missing-name` at `ghost`; a dimension-only factor refuses that same unit lookup. Existing integer and frontend ceilings produce their existing typed refusal or limit result, never a truncated exponent or partial authoritative compound. Existing bare named-unit and named-unit carrier forms retain their meanings. | Test |
 
 ## Dependencies
 

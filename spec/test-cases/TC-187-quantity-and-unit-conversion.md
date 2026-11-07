@@ -34,7 +34,21 @@ scale `1` and offset `-10`; `u3` targeting `degC` with scale `1` and offset
 below, `L(i,d,e,o,w,r)` abbreviates `ScalarLimitsV1 { integer_bits: i,
 decimal_digits: d, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0,
 normalized_scalars: 0, unit_edges: e, value_occurrences: o, work_units: w,
-result_units: r }`. Execute:
+result_units: r }`.
+
+For U25's source target (FR-142-AC-39 and AC-40), parse and check a function
+from `Quantity<N_m>` whose first conversion is
+`convert<Quantity<kg*m^2*s^-2>>(q)` and whose second converts that result to
+`Quantity<J>`. Inspect the retained qualified factors, signed exponents and
+source locations, and the actual checked compound identity; compare the
+reordered spelling `s^-2*kg*m*m`. Also inspect bare `Quantity<kg>`, the
+one-term compound spellings `kg^1` and `kg*m^0`, and the cancelling compound
+`m*m^-1`. Test every malformed or unresolved factor of AC-40 in its own
+source unit and exercise the existing integer/frontend ceilings. These
+source/check observations are separate from executing U25's two conversion
+steps; neither substitutes a synthetic declared unit for the compound.
+
+Execute:
 
 | Vector | Operation | Expected value/disposition |
 | --- | --- | --- |
