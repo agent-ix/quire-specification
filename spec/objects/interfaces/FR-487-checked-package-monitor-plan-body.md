@@ -42,7 +42,9 @@ whose rules below do not hold, with the first refusal in the reader order below.
   `declaration`, no `owner`, `semantic_type` the node of the `state` binding
   (below), occurrences of role `generated` (FR-322 "Source map"). Its
   `node_id` is a derived node's: `path` is `["temporal", "monitor_plan",
-  ...operands]` where the operands are, in body order, the index segments of the
+  ...operands]` where the operands are (each an operand reference in FR-322's
+  sense: an operand slot in the node's own id, an index segment where the id
+  is document-held), in body order, the index segments of the
   nodes the `clause` to `on_watermark` bindings reference and then the decimal
   text of the two integer premises and the canonical text of `max_event_rate`,
   then for each `buffers` entry the index segment of its subformula and the
@@ -51,7 +53,7 @@ whose rules below do not hold, with the first refusal in the reader order below.
   index segment of the body-root node of every declared `function` node
   (a node with a `declaration`) that the entries call, directly or through the
   body of another closure member, an atom body or the activation guard, in
-  ascending node-id order of the called function nodes, each once (FR-322 `path`). As for every index segment, the segment names the body-root node by graph position, and it is that node's structural `node_id` (its content-bearing key, FR-322 "Structural node identity"), not the position, that distinguishes two keys; reordering the graph rewrites positions and changes no key. Like every derived path this is the producer's duty: the reader recomputes no identifier and refuses no path for differing from the derivation (FR-322 "Declaration-less function nodes"), and the call closure is a rule of the key, not a reader check.
+  ascending node-id order of the called function nodes, each once (FR-322 `path`). As for every operand segment, the segment names the body-root node through the plan node's operand row (FR-322 "Operand index segments"), and it is that node's structural `node_id` (its content-bearing key, FR-322 "Structural node identity"), not the slot or the row's graph index, that distinguishes two keys; reordering the graph rewrites the row and changes no key and no node's bytes. Like every derived path this is the producer's duty: the reader recomputes no identifier and refuses no path for differing from the derivation (FR-322 "Declaration-less function nodes"), and the call closure is a rule of the key, not a reader check.
   Every premise of the plan, and so the subject, clock binding, uncertainty,
   gap, rate and capacities of QSL FR-251, is part of the key: changing one
   yields a different root key and so a different plan. Changing an entry body changes that entry's own derived `node_id`

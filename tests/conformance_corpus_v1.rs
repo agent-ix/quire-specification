@@ -8,12 +8,19 @@ use serde_json::{Value, json};
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;
 
+#[path = "support/operand_slots.rs"]
+mod operand_slots;
+
 const SCHEMA: &str = include_str!("../proposals/conformance-corpus-v1/schema.json");
 const FIXTURE: &str = include_str!("../proposals/conformance-corpus-v1/fixtures/complete-v1.json");
 const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 
+
+/// A published file in index view: the replay request's embedded package
+/// names operands by operand slots, and its document-held ids by index
+/// segments, so the oracles compare them in one form (FR-322).
 fn parsed(text: &str) -> Value {
-    serde_json::from_str(text).expect("authored JSON is valid")
+    operand_slots::index_view(&serde_json::from_str(text).expect("authored JSON is valid"))
 }
 
 fn definition_validator(schema: &Value, name: &str) -> jsonschema::Validator {

@@ -11,17 +11,27 @@
 use ix_trace_rs::trace;
 use serde_json::Value;
 
+#[path = "support/operand_slots.rs"]
+mod operand_slots;
+
 const ROWS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/protocol-node-layout-rows.json");
+
 const BASE: &str = include_str!("../proposals/checked-package-v2/fixtures/protocol-node-base.json");
 const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 
 fn parse(text: &str) -> Value {
-    serde_json::from_str(text).expect("authored fixture is valid JSON")
+    operand_slots::index_view(&serde_json::from_str(text).expect("authored fixture is valid JSON"))
 }
 
 /// Applies the RFC 6902 `add`, `remove` and `replace` operations a row uses.
+/// `base` (an index view) with a row's `edit` applied in the published slot
+/// form, read back as an index view (FR-322 "Operand index segments").
 fn apply(base: &Value, edit: &[Value]) -> Value {
+    operand_slots::index_view(&apply_published(&operand_slots::slot_view(base), edit))
+}
+
+fn apply_published(base: &Value, edit: &[Value]) -> Value {
     let mut package = base.clone();
     for op in edit {
         let path = op["path"].as_str().expect("path");

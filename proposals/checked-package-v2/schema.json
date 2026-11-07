@@ -5995,7 +5995,8 @@
       "type": "object",
       "required": [
         "graph_version",
-        "nodes"
+        "nodes",
+        "operand_rows"
       ],
       "properties": {
         "graph_version": {
@@ -6006,6 +6007,18 @@
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/SemanticNode"
+          }
+        },
+        "operand_rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
           }
         }
       },
@@ -13463,8 +13476,25 @@
         },
         {
           "$ref": "#/$defs/NodeIndex"
+        },
+        {
+          "$ref": "#/$defs/OperandSlot"
         }
       ]
+    },
+    "OperandSlot": {
+      "type": "object",
+      "required": [
+        "operand"
+      ],
+      "properties": {
+        "operand": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
     },
     "NodeIndex": {
       "type": "object",

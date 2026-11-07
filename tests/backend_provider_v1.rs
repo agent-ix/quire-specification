@@ -16,6 +16,9 @@ use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;
 use serde_json::Value;
 
+#[path = "support/operand_slots.rs"]
+mod operand_slots;
+
 const SCHEMA: &str = include_str!("../proposals/backend-provider-v1/schema.json");
 const VECTORS: &str = include_str!("../proposals/backend-provider-v1/vectors.json");
 const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
@@ -26,6 +29,7 @@ const DEPENDENCY_FIXTURE: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-library.json");
 
 const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
 
 fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
@@ -1696,7 +1700,8 @@ fn tc_431_context_pairs_are_admitted_by_shape_alone() {
 #[test]
 fn tc_431_derived_items_name_their_anchor_and_follow_the_structural_order() {
     const DERIVED: [&str; 3] = ["deadlock-freedom", "time-lock-freedom", "race-freedom"];
-    let package = parsed(PACKAGE_FIXTURE);
+    // Claim nodes are document-held ids; compare them with the index view.
+    let package = operand_slots::index_view(&parsed(PACKAGE_FIXTURE));
     let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
     let document = composed(&positive("derived-items-request"));
     assert_eq!(errors(&validator(), &document), Vec::<String>::new());
@@ -1903,7 +1908,8 @@ fn tc_431_abstract_subject_package_is_one_of_the_request_dependencies() {
 #[test]
 fn tc_431_a_derived_item_is_keyed_by_its_anchor_node_and_kind() {
     const DERIVED: [&str; 3] = ["deadlock-freedom", "time-lock-freedom", "race-freedom"];
-    let package = parsed(PACKAGE_FIXTURE);
+    // Claim nodes are document-held ids; compare them with the index view.
+    let package = operand_slots::index_view(&parsed(PACKAGE_FIXTURE));
     let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
     // The reader's anchor check: Some((tag, form)) of the resolved anchor, or None when refused.
     let anchor_of = |document: &Value, index: usize| -> Option<(String, String)> {
@@ -2100,7 +2106,8 @@ fn tc_431_a_model_subject_over_several_selections_has_no_derived_item() {
             _ => Err(("unsupported_projection", "unsupported-requested-capability")),
         }
     }
-    let package = parsed(PACKAGE_FIXTURE);
+    // Claim nodes are document-held ids; compare them with the index view.
+    let package = operand_slots::index_view(&parsed(PACKAGE_FIXTURE));
     let document = composed(&positive("derived-items-request"));
     let item = &document["request"]["items"][3];
     assert_eq!(anchor(&package), Ok(item["claim"]["node"].clone()), "one selection: the anchor is the model_root");

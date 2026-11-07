@@ -371,7 +371,7 @@
             "expression",
             "binary",
             {
-              "node": 2
+              "operand": 0
             },
             "1",
             "2",
@@ -397,6 +397,15 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [],
+      [],
+      [
+        2
+      ]
     ]
   },
   "source_map": [

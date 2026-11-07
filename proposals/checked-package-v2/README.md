@@ -8,6 +8,19 @@ structures, but any external consumer receives only the contract.
 ## Contract contents
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
+- Operand references (FR-322 "Operand index segments"): every node id held
+  inside a node names its operands by operand slots `{"operand": k}` into that
+  node's row of `semantic_graph.operand_rows`, so a node's bytes hold no graph
+  index of its own graph and do not change when unrelated nodes are added,
+  removed or moved (a foreign `{package, node}` key keeps its dependency's
+  index segments, which no importing declaration changes).
+  Every node id held elsewhere (`source_map`, sidecar rows, and every id a
+  vector writes outside a node object) names operands by index segments
+  `{"node": i}`. A vector that carries a node object outside a graph carries
+  its row beside it, as `<member>_operand_row` for one node and
+  `operand_rows` (or `<prefix>_operand_rows`) for a list of nodes.
+  `node-index-vectors.json` (TC-233 `NI-*`) publishes the operand checks'
+  refusals and the locality case.
 - `selected-documents.json` maps each positive fixture that names a
   model-owned field, operation or owner to the `domain-package-*.json`
   document it selects (TC-233, FR-322-AC-266). Several documents carry the

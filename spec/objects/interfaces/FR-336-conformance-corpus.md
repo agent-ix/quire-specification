@@ -176,10 +176,13 @@ replay `parameter` key, an `occurrence_key` or `obligation_identity`
 `node_id`, a `DomainKey` node, a `reference`'s `universe` and `type`) has the
 checked-package `NodeId` shape: the corpus schema's `$defs.NodeId` is
 `urn:quire:checked-package:v2#/$defs/NodeId`, so a path segment is a string or
-an index segment `{"node": i}` and never a nested node id. A corpus document
+an index segment `{"node": i}` and never a nested node id. Every such id is
+document-held (FR-322 "Operand index segments"): an operand slot
+`{"operand": k}`, which the shared shape admits, is misplaced there and
+refuses `malformed_wire` at its `operand` member. A corpus document
 holds no semantic graph, so each index segment of a corpus node id resolves
 against the `semantic_graph.nodes` of the checked package the document is
-about, exactly as that package writes the id (FR-322 "Operand index
+about, written as a document-held id of that package (FR-322 "Operand index
 segments"): for a replay request, the checked package of its top-level
 `package` member (`ReplayRequestWire.package`), never a `dependencies` entry;
 for any other corpus vector, the checked package its `input` compiles to. A

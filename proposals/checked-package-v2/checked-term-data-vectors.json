@@ -2534,10 +2534,10 @@
                       "expression",
                       "reference",
                       {
-                        "node": 46
+                        "operand": 0
                       },
                       {
-                        "node": 58
+                        "operand": 1
                       }
                     ]
                   },
@@ -2589,10 +2589,10 @@
                   "expression",
                   "reference",
                   {
-                    "node": 46
+                    "operand": 0
                   },
                   {
-                    "node": 58
+                    "operand": 1
                   }
                 ]
               }
@@ -2666,6 +2666,13 @@
               ]
             }
           }
+        ],
+        "operand_rows": [
+          [
+            46,
+            58
+          ],
+          []
         ]
       },
       "value": [
@@ -2717,10 +2724,10 @@
                       "expression",
                       "reference",
                       {
-                        "node": 46
+                        "operand": 0
                       },
                       {
-                        "node": 58
+                        "operand": 1
                       }
                     ]
                   },
@@ -2772,10 +2779,10 @@
                   "expression",
                   "reference",
                   {
-                    "node": 46
+                    "operand": 0
                   },
                   {
-                    "node": 58
+                    "operand": 1
                   }
                 ]
               }
@@ -2873,11 +2880,20 @@
                 "composite_type",
                 "reference",
                 {
-                  "node": 44
+                  "operand": 0
                 }
               ]
             }
           }
+        ],
+        "operand_rows": [
+          [
+            46,
+            58
+          ],
+          [
+            44
+          ]
         ]
       },
       "value": [
@@ -2929,10 +2945,10 @@
                       "expression",
                       "reference",
                       {
-                        "node": 46
+                        "operand": 0
                       },
                       {
-                        "node": 58
+                        "operand": 1
                       }
                     ]
                   },
@@ -2984,10 +3000,10 @@
                   "expression",
                   "reference",
                   {
-                    "node": 46
+                    "operand": 0
                   },
                   {
-                    "node": 58
+                    "operand": 1
                   }
                 ]
               }
@@ -3068,6 +3084,13 @@
               ]
             }
           }
+        ],
+        "operand_rows": [
+          [
+            46,
+            58
+          ],
+          []
         ]
       },
       "value": [
@@ -3119,10 +3142,10 @@
                       "expression",
                       "reference",
                       {
-                        "node": 46
+                        "operand": 0
                       },
                       {
-                        "node": 58
+                        "operand": 1
                       }
                     ]
                   },
@@ -3174,10 +3197,10 @@
                   "expression",
                   "reference",
                   {
-                    "node": 46
+                    "operand": 0
                   },
                   {
-                    "node": 58
+                    "operand": 1
                   }
                 ]
               }
@@ -3251,6 +3274,13 @@
               ]
             }
           }
+        ],
+        "operand_rows": [
+          [
+            46,
+            58
+          ],
+          []
         ]
       },
       "value": [

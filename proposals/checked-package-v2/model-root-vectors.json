@@ -55,6 +55,11 @@
         },
         {
           "op": "add",
+          "path": "/semantic_graph/operand_rows/-",
+          "value": []
+        },
+        {
+          "op": "add",
           "path": "/source_map/-",
           "value": {
             "node_id": {
@@ -128,6 +133,11 @@
               "ordinal": 0
             }
           }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/operand_rows/-",
+          "value": []
         }
       ],
       "schema": "valid",

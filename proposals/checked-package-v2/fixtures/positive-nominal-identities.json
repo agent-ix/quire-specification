@@ -40,7 +40,7 @@
             "value",
             "enum_value",
             {
-              "node": 1
+              "operand": 0
             },
             "READY"
           ],
@@ -340,10 +340,10 @@
             "scalar_type",
             "dimension_equivalence",
             {
-              "node": 4
+              "operand": 0
             },
             {
-              "node": 3
+              "operand": 1
             }
           ],
           "ordinal": 0
@@ -357,10 +357,10 @@
             "scalar_type",
             "dimension_equivalence",
             {
-              "node": 4
+              "operand": 0
             },
             {
-              "node": 3
+              "operand": 1
             }
           ],
           "ordinal": 0
@@ -420,6 +420,20 @@
           }
         }
       }
+    ],
+    "operand_rows": [
+      [
+        1
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [
+        4,
+        3
+      ]
     ]
   },
   "source_map": [

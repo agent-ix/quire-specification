@@ -165,7 +165,7 @@
             "integer_range",
             "min",
             {
-              "node": 0
+              "operand": 0
             },
             "1",
             "max",
@@ -212,7 +212,7 @@
             "value",
             "literal",
             {
-              "node": 1
+              "operand": 0
             },
             "audit"
           ]
@@ -257,11 +257,11 @@
             "value",
             "literal",
             {
-              "node": 0
+              "operand": 0
             },
             "30",
             {
-              "node": 2
+              "operand": 1
             }
           ]
         },
@@ -282,7 +282,7 @@
             "integer_range",
             "min",
             {
-              "node": 0
+              "operand": 0
             },
             "1",
             "max",
@@ -304,7 +304,7 @@
                     "value",
                     "literal",
                     {
-                      "node": 1
+                      "operand": 0
                     },
                     "audit"
                   ]
@@ -323,11 +323,11 @@
                     "value",
                     "literal",
                     {
-                      "node": 0
+                      "operand": 1
                     },
                     "30",
                     {
-                      "node": 2
+                      "operand": 2
                     }
                   ]
                 },
@@ -355,11 +355,11 @@
               "value",
               "literal",
               {
-                "node": 0
+                "operand": 1
               },
               "30",
               {
-                "node": 2
+                "operand": 2
               }
             ]
           },
@@ -370,7 +370,7 @@
               "value",
               "literal",
               {
-                "node": 1
+                "operand": 0
               },
               "audit"
             ]
@@ -405,6 +405,25 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        0,
+        2
+      ]
     ]
   },
   "source_map": [

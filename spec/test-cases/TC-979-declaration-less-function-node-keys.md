@@ -22,7 +22,8 @@ its owner-chosen label.
 Read `proposals/checked-package-v2/entry-key-vectors.json`. For each case with
 `parameters`, derive the path `["function", semantic_form, parameter count text, ...parameter index
 segments, body root index segment, measure index segment if any]` and compare it
-with `expected_path`; a case naming `equal_to` must equal that case's path and a
+with `expected_path` (a vector path outside a node object is document-held, so
+its operands are index segments, FR-322 "Operand index segments"); a case naming `equal_to` must equal that case's path and a
 case naming `differs_from` must differ from it. EK-07 gives two nodes with equal
 `package`, `path` and `ordinal`, which the reader refuses as a duplicate
 `node_id`. EK-08 is an accessor with an owner-chosen label, admitted unchanged.

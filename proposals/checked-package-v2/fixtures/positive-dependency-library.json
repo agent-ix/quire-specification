@@ -192,7 +192,7 @@
             "integer_range",
             "min",
             {
-              "node": 0
+              "operand": 0
             },
             "0",
             "max",
@@ -266,16 +266,16 @@
             "parameter",
             "name",
             {
-              "node": 2
+              "operand": 0
             },
             "x",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "0",
             {
-              "node": 3
+              "operand": 2
             }
           ]
         },
@@ -296,7 +296,7 @@
             "integer_range",
             "min",
             {
-              "node": 0
+              "operand": 1
             },
             "0",
             "max",
@@ -321,16 +321,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 2
+                          "operand": 0
                         },
                         "x",
                         "level",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "0",
                         {
-                          "node": 3
+                          "operand": 2
                         }
                       ]
                     },
@@ -358,16 +358,16 @@
               "parameter",
               "name",
               {
-                "node": 2
+                "operand": 0
               },
               "x",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "0",
               {
-                "node": 3
+                "operand": 2
               }
             ]
           }
@@ -503,16 +503,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 2
+                          "operand": 0
                         },
                         "x",
                         "level",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "0",
                         {
-                          "node": 3
+                          "operand": 2
                         }
                       ]
                     },
@@ -540,16 +540,16 @@
               "parameter",
               "name",
               {
-                "node": 2
+                "operand": 0
               },
               "x",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "0",
               {
-                "node": 3
+                "operand": 2
               }
             ]
           }
@@ -619,7 +619,7 @@
             "composite_type",
             "set",
             {
-              "node": 6
+              "operand": 0
             }
           ]
         },
@@ -639,7 +639,7 @@
             "composite_type",
             "set",
             {
-              "node": 6
+              "operand": 0
             }
           ]
         }
@@ -693,16 +693,16 @@
             "parameter",
             "name",
             {
-              "node": 2
+              "operand": 0
             },
             "points",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "0",
             {
-              "node": 8
+              "operand": 2
             }
           ]
         },
@@ -722,7 +722,7 @@
             "composite_type",
             "set",
             {
-              "node": 6
+              "operand": 3
             }
           ]
         }
@@ -744,16 +744,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 2
+                          "operand": 0
                         },
                         "points",
                         "level",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "0",
                         {
-                          "node": 8
+                          "operand": 2
                         }
                       ]
                     },
@@ -781,16 +781,16 @@
               "parameter",
               "name",
               {
-                "node": 2
+                "operand": 0
               },
               "points",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "0",
               {
-                "node": 8
+                "operand": 2
               }
             ]
           }
@@ -879,10 +879,10 @@
             "composite_type",
             "tuple",
             {
-              "node": 0
+              "operand": 0
             },
             {
-              "node": 6
+              "operand": 1
             }
           ]
         },
@@ -902,10 +902,10 @@
             "composite_type",
             "tuple",
             {
-              "node": 0
+              "operand": 0
             },
             {
-              "node": 6
+              "operand": 1
             }
           ]
         }
@@ -959,16 +959,16 @@
             "parameter",
             "name",
             {
-              "node": 2
+              "operand": 0
             },
             "pair",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "0",
             {
-              "node": 11
+              "operand": 2
             }
           ]
         },
@@ -988,10 +988,10 @@
             "composite_type",
             "tuple",
             {
-              "node": 0
+              "operand": 1
             },
             {
-              "node": 6
+              "operand": 3
             }
           ]
         }
@@ -1013,16 +1013,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 2
+                          "operand": 0
                         },
                         "pair",
                         "level",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "0",
                         {
-                          "node": 11
+                          "operand": 2
                         }
                       ]
                     },
@@ -1050,16 +1050,16 @@
               "parameter",
               "name",
               {
-                "node": 2
+                "operand": 0
               },
               "pair",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "0",
               {
-                "node": 11
+                "operand": 2
               }
             ]
           }
@@ -1170,7 +1170,7 @@
             "composite_type",
             "reference",
             {
-              "node": 14
+              "operand": 0
             }
           ]
         },
@@ -1190,7 +1190,7 @@
             "composite_type",
             "reference",
             {
-              "node": 14
+              "operand": 0
             }
           ]
         }
@@ -1244,16 +1244,16 @@
             "parameter",
             "name",
             {
-              "node": 2
+              "operand": 0
             },
             "order",
             "level",
             {
-              "node": 0
+              "operand": 1
             },
             "0",
             {
-              "node": 15
+              "operand": 2
             }
           ]
         },
@@ -1273,7 +1273,7 @@
             "composite_type",
             "reference",
             {
-              "node": 14
+              "operand": 3
             }
           ]
         }
@@ -1295,16 +1295,16 @@
                         "parameter",
                         "name",
                         {
-                          "node": 2
+                          "operand": 0
                         },
                         "order",
                         "level",
                         {
-                          "node": 0
+                          "operand": 1
                         },
                         "0",
                         {
-                          "node": 15
+                          "operand": 2
                         }
                       ]
                     },
@@ -1332,16 +1332,16 @@
               "parameter",
               "name",
               {
-                "node": 2
+                "operand": 0
               },
               "order",
               "level",
               {
-                "node": 0
+                "operand": 1
               },
               "0",
               {
-                "node": 15
+                "operand": 2
               }
             ]
           }
@@ -1413,6 +1413,75 @@
           ]
         }
       }
+    ],
+    "operand_rows": [
+      [],
+      [],
+      [],
+      [
+        0
+      ],
+      [
+        2,
+        0,
+        3
+      ],
+      [
+        2,
+        0,
+        3
+      ],
+      [],
+      [
+        2,
+        0,
+        3
+      ],
+      [
+        6
+      ],
+      [
+        2,
+        0,
+        8,
+        6
+      ],
+      [
+        2,
+        0,
+        8
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        2,
+        0,
+        11,
+        6
+      ],
+      [
+        2,
+        0,
+        11
+      ],
+      [],
+      [
+        14
+      ],
+      [
+        2,
+        0,
+        15,
+        14
+      ],
+      [
+        2,
+        0,
+        15
+      ],
+      []
     ]
   },
   "source_map": [

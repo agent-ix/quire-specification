@@ -1238,7 +1238,7 @@
             "state",
             "frame",
             {
-              "node": 13
+              "operand": 0
             }
           ]
         },
@@ -1260,6 +1260,9 @@
           ]
         }
       },
+      "second_frame_operand_row": [
+        13
+      ],
       "expected_code": "invalid_semantic_graph",
       "expected_cause": null,
       "expected_locus_node_id": {
