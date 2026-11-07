@@ -208,6 +208,19 @@ bindings"). A `duration` bound in any other unit, whether another unit of
 a clock in `ms` is `lower` `0` and `upper` `300000` of the `ms` node, and one
 window has one node identity.
 
+The clock unit node is the unit's own node, whose `node_id.package` is that
+of the package that owns the unit, whatever the clause node's package. A unit that an admitted domain package
+declares (`T` its FCD identity, such as `ix://acme/rpc/unit/ms`) is a
+model-owned node whose `node_id.package` is that domain package's identity
+(FR-322 "Structural node identity"), so its `node_id.package` differs from the
+clause node's whenever the checked package is not that domain package. A
+producer SHALL write no second `scalar_type`/`unit` node, in the clause's
+package or elsewhere, to stand for the clock unit: the bounds' `type` is the
+one node the unit has, the node every other quantity of that unit also names.
+A reader SHALL therefore match a `duration` bound's `type` against the clock
+unit by `node_id.path` and `semantic_form` alone, and SHALL NOT build the clock
+unit's `node_id` from the clause node's `package`.
+
 For each clause, the reader checks each aggregate application its formula
 reaches, in ascending node-id order, at the pointers `B` = `/semantic_graph/nodes/{n}/body`, `A` = `B/arguments/0`
 and `M` = `A/members/{m}`, and reports the first defect:
@@ -243,7 +256,8 @@ and `M` = `A/members/{m}`, and reports the first defect:
    no `unit-mismatch`. A `window_kind` the profile does not take
    (`duration` under event-position, `positions` under timestamped-event)
    refuses `ill_typed`/`unit-mismatch` at `M/value`. A `duration` `lower` or
-   `upper` whose `type` is not the clause's clock unit node (another unit of
+   `upper` whose `type` is not the clause's clock unit node (a node whose
+   `node_id.path` is not `["scalar_type", "unit", T]`: another unit of
    `Time`, or a unit of a dimension other than `Time`), checked after its
    `value_kind` and before its sign, and a `threshold` quantity of another
    unit than `value`, refuse `ill_typed`/`unit-mismatch` at `M/value`. After `upper`,
@@ -429,6 +443,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-17 | `quire.op.temporal.aggregate` is catalogued as a `temporal_formula` with one `aggregate` operand, result `temporal` and no member, and both the catalog and the V2 schema enumerate it. Under event-position false-extension, a `count` with a `filter`, a `sum`, `min` and `max` with a `value`, a `fraction` with a `predicate` and a `quantile` with `q` and a `value`, each over `positions` bounds, are admitted, as is a `quantile` over `duration` quantity bounds under timestamped-event finite-window; each argument holds exactly its kind's bindings in table order. | Test (TC-303) |
 | FR-370-AC-18 | The reader refuses an aggregate argument at the first defect of "Window aggregate atom": an aggregate under infinite-trace `invalid-value` at the body; an unknown and a non-binding member `unknown-member`, a repeated binding `duplicate-member` and a misordered binding `invalid-value`, each at the member; a missing `kind`, `window_kind` or `comparison` and a `quantile` without `q` `missing-member` at the argument; `q` on a `sum` and `value` on a `count` `unknown-member` at the member; a `kind` of `median`, `q` `1`, a negative bound and `min_count` `0` on `max` `invalid-value` at the value; a `positions` window under timestamped-event, a `duration` window under event-position, a `duration` `lower` in `s` or in `m` and an `upper` in `s` under a clock in `ms`, and a `threshold` of another unit than `value` `ill_typed`/`unit-mismatch` at the value; a non-Boolean `filter` and a `rational` threshold on `count` `ill_typed`/`type-mismatch` at the value; and `past[5, 2]` `invalid-value` at the argument. Each value refusal of step 5 is exercised: a `comparison` of `!=` and a `window_kind` of `sliding` `invalid-value` at the value; a `q`, `window_kind`, `comparison`, `lower`, `upper` or `min_count` holding a literal of another `value_kind` or a reference `wrong-value-kind` at the value; a `value` of family `boolean`, a non-Boolean `predicate` and an `integer` threshold on `fraction` `ill_typed`/`type-mismatch` at the value; a `sum` without `value`, a `fraction` without `predicate`, and a missing `lower`, `upper`, `min_count` or `threshold` `missing-member` at the argument; and `min_count` `-1` `invalid-value` at the value. `min_count` `0` on `count` and `sum` is admitted, as is `past[0, 300000]` in `ms` under a clock in `ms`. | Test (TC-303) |
 | FR-370-AC-19 | Over the positive `sum` argument of FR-370-AC-18 under event-position, a `value` term whose type is the `scalar_type`/`carried_quantity` node of `Quantity<m, Int[-5, 5]>`, with a `threshold` literal of `m`'s unit node, refuses `ill_typed`/`type-mismatch` at the `value` member's value; the same over the `min`, `max` and `quantile` positives; a `threshold` term of that carried node beside a `value` of `m`'s unit node refuses the same at the `threshold` member's value; and a `value` and `threshold` of the package unit node `ix://acme/rpc/unit/ms` (FR-414-AC-13) are admitted. | Test (TC-303) |
+| FR-370-AC-20 | In a checked package named `acme/orders` that selects the domain package `acme/rpc` (base dimension `Time`, units `s` and `ms`), a timestamped-event clause whose `temporal_bindings` row names `timestamp_unit` `ix://acme/rpc/unit/ms`, with a `duration` `count` aggregate whose `lower` and `upper` are quantity literals typed by the model-owned node `{package: "acme/rpc", path: ["scalar_type", "unit", "ix://acme/rpc/unit/ms"], ordinal: 0}`, is admitted although the clause node's `node_id.package` is `acme/orders`; the package holds exactly one node with that path; and the same clause with `upper` typed by `ix://acme/rpc/unit/s`'s node refuses `ill_typed`/`unit-mismatch` at `upper`'s value. | Test (TC-303) |
 
 ## Published artifacts and the operation catalog
 
