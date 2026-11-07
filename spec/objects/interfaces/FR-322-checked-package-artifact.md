@@ -3206,7 +3206,7 @@ no object type component: a subject binding fixes both (FR-480).
 | `member_family` | The member's type family is the named family or a member of the named group. |
 | `bound_family` | The bound of binder operand n has the named family or group. |
 | `bound_is_member` | The bound of binder operand n resolves to the same type node as the `type_argument` member. |
-| `carried_member` | The `type_argument` member resolves to a `scalar_type`/`carried_quantity` node. |
+| `carried_member` | The `type_argument` member resolves to a `scalar_type`/`carried_quantity` node. The constraint names no operand (its `operands` list is empty) and no family (`family` `null`). |
 | `exact_conversion` | FR-149 classifies operand 0's type to the member type as exact. |
 | `range_narrowing` | FR-149 classifies it as range narrowing: a checked obligation that the value lies in the target range (`unproved-range` when not proved), never rounding; `mode` is `null`. |
 | `rational_narrowing` | FR-149 classifies a rational-to-rational conversion as rational narrowing: a checked obligation that the reduced numerator and denominator lie in the target bounds (`unproved-range`); `mode` is `null`. |
@@ -3269,7 +3269,7 @@ denominator bounds refuses `rational_out_of_domain`/`outside-domain`.
 catalog entry is: operator `collection`; operands `collection_kind` then
 `binder`, with no rest; result `member`; no law; mode kind `rounding`; member
 `type_argument`; the constraints `member_family` `quantity`,
-`carried_member` and `bound_is_member` over operand 1; and no leaves. It
+`carried_member`, which names no operand, and `bound_is_member` over operand 1; and no leaves. It
 differs from the entry of `quire.op.collection.sum.quantity` only by
 `carried_member`, so the catalog itself, not prose alone, sends a carried
 `type_argument` to this identity. A reader SHALL admit an application of it

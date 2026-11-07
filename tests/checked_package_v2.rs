@@ -2153,6 +2153,12 @@ impl<'a> OperationOracle<'a> {
                     .and_then(|bound| bound.ty.clone());
                 matches!((bound, member().and_then(|m| m.ty)), (Some(l), Some(r)) if self.same_type(&l, &r))
             }
+            Some("carried_member") => member()
+                .and_then(|m| m.ty)
+                .and_then(|id| self.resolve(&id))
+                .is_some_and(|node| {
+                    node["node_tag"] == "scalar_type" && node["semantic_form"] == "carried_quantity"
+                }),
             Some("exact_conversion") => converts_as(ConversionClass::Exact),
             Some("range_narrowing") => converts_as(ConversionClass::RangeNarrowing),
             Some("rational_narrowing") => converts_as(ConversionClass::RationalNarrowing),
