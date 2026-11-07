@@ -208,8 +208,8 @@ bindings"). A `duration` bound in any other unit, whether another unit of
 a clock in `ms` is `lower` `0` and `upper` `300000` of the `ms` node, and one
 window has one node identity.
 
-The clock unit node is the unit's own node, in the package that owns it, and
-not a node of the clause's package. A unit that an admitted domain package
+The clock unit node is the unit's own node, whose `node_id.package` is that
+of the package that owns the unit, whatever the clause node's package. A unit that an admitted domain package
 declares (`T` its FCD identity, such as `ix://acme/rpc/unit/ms`) is a
 model-owned node whose `node_id.package` is that domain package's identity
 (FR-322 "Structural node identity"), so its `node_id.package` differs from the
