@@ -42,7 +42,9 @@ whose rules below do not hold, with the first refusal in the reader order below.
   `declaration`, no `owner`, `semantic_type` the node of the `state` binding
   (below), occurrences of role `generated` (FR-322 "Source map"). Its
   `node_id` is a derived node's: `path` is `["temporal", "monitor_plan",
-  ...operands]` where the operands are, in body order, the index segments of the
+  ...operands]` where the operands are (each an operand reference in FR-322's
+  sense: an operand slot in the node's own id, an index segment where the id
+  is document-held), in body order, the index segments of the
   nodes the `clause` to `on_watermark` bindings reference and then the decimal
   text of the two integer premises and the canonical text of `max_event_rate`,
   then for each `buffers` entry the index segment of its subformula and the

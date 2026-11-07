@@ -11,7 +11,9 @@ structures, but any external consumer receives only the contract.
 - Operand references (FR-322 "Operand index segments"): every node id held
   inside a node names its operands by operand slots `{"operand": k}` into that
   node's row of `semantic_graph.operand_rows`, so a node's bytes hold no graph
-  index and do not change when unrelated nodes are added, removed or moved.
+  index of its own graph and do not change when unrelated nodes are added,
+  removed or moved (a foreign `{package, node}` key keeps its dependency's
+  index segments, which no importing declaration changes).
   Every node id held elsewhere (`source_map`, sidecar rows, and every id a
   vector writes outside a node object) names operands by index segments
   `{"node": i}`. A vector that carries a node object outside a graph carries

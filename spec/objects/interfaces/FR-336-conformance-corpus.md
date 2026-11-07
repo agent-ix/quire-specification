@@ -182,7 +182,7 @@ document-held (FR-322 "Operand index segments"): an operand slot
 refuses `malformed_wire` at its `operand` member. A corpus document
 holds no semantic graph, so each index segment of a corpus node id resolves
 against the `semantic_graph.nodes` of the checked package the document is
-about, exactly as that package writes the id (FR-322 "Operand index
+about, written as a document-held id of that package (FR-322 "Operand index
 segments"): for a replay request, the checked package of its top-level
 `package` member (`ReplayRequestWire.package`), never a `dependencies` entry;
 for any other corpus vector, the checked package its `input` compiles to. A
