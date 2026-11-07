@@ -92,7 +92,7 @@ order, not only for the canonical order.
 evaluates as follows, equal in value to the `state-contract` left fold from
 zero because `0 + e_1 = e_1` is exact:
 
-1. When `n = 0`, the result is `0`, which `N`'s domain must admit; no addition
+1. When `n = 0` and `N`'s domain admits `0`, the result is `0`; no addition
    occurs. When `N`'s domain does not admit `0`, an empty source leaves the
    `sum` with no value: a linked `sum` whose source is not proved nonempty
    (`size(c) >= 1`) is refused as an unproved prefix is, below, and direct
@@ -250,6 +250,7 @@ named charge, an unbounded source can never evaluate unmetered.
 | FR-145-AC-9 | A set or bag step outside the closed syntactic catalog is `ill_typed` even when it calls a function that declares or has commutative and associative behavior. | Test (TC-190) |
 | FR-145-AC-10 | `dropFirst(c)` over a `Sequence` or `OrderedSet` returns the same kind without its first occurrence in order, is the empty collection for an empty `c`, and has the static bound `[max(a-1,0),max(b-1,0)]`; over a `Set` or a `Bag` it refuses `ill_typed`/`operator-ineligible`; and it charges the formation of the survivors only. | Test (TC-190) |
 | FR-145-AC-11 | `removeOne(c, v)` over each collection kind drops exactly one occurrence equal to `v` under the FR-144 membership relation (the first in occurrence order for a sequence, the member for a set or ordered set, one multiplicity for a bag), returns `c` unchanged when no member equals `v`, has the static bound `[max(a-1,0),b]`, refuses a `v` of another type with `ill_typed`/`type-mismatch`, and charges the `contains` scan then the formation of the result. | Test (TC-190) |
+| FR-145-AC-12 | With `type Pos = Int[1,5];`, direct kernel evaluation of `sum<Pos>(x in q: x)` over an empty `q` of `Sequence<Int[1,5]>[0,2]` is a located undefined outcome at the `sum` with no charge and no value, because `0` is not a member of `Pos`; linking it over `q: Sequence<Int[1,5]>[0,1]` refuses `undefined_expression`/`unproved-range` at the `sum`, the source not proved nonempty, and over `q: Sequence<Int[1,5]>[1,1]` is admitted. | Test (TC-190) |
 
 ## Dependencies
 
