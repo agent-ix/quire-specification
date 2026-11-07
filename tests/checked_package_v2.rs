@@ -20808,7 +20808,8 @@ fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
     "FR-322-AC-315",
     "FR-322-AC-316",
     "FR-322-AC-317",
-    "FR-322-AC-318"
+    "FR-322-AC-318",
+    "FR-322-AC-388"
 )]
 #[test]
 fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
@@ -20999,10 +21000,13 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     for row in location_rows {
         let origin = &row["location"]["origin"];
         assert_eq!(origin["kind"], "type_declaration", "{}", row["id"]);
-        let expected = if row["id"] == "PL-03-declaration" {
-            "protocol Handshake"
-        } else {
-            SLOT_SITE
+        let expected = match row["id"].as_str().unwrap() {
+            "PL-03-declaration" => "protocol Handshake",
+            "PL-04-case-guard" => "protocol Handshake run Main Pick case yes guard",
+            "PL-04b-case-guard-shared" => "protocol Handshake run Main Pick case no guard",
+            "PL-05-related-end" => "protocol Handshake run Main Got related 0 from",
+            "PL-05b-related-end-shared" => "protocol Handshake run Main Got related 1 from",
+            _ => SLOT_SITE,
         };
         assert_eq!(origin["name"], expected, "{} (AC-313, AC-317)", row["id"]);
         assert!(
@@ -21017,6 +21021,39 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
     assert_eq!(site("PL-01-root")["origin"], site("PL-02-child")["origin"]);
     assert_eq!(site("PL-01-root")["path"], json!([]));
     assert_eq!(site("PL-02-child")["path"], json!([2, 0]));
+    // FR-322-AC-388: a case guard is named by its label and a `related` end by
+    // its record position, so two slots whose expressions are one application
+    // occurrence keep distinct origins; no such row carries a span name.
+    let pl = |id: &str| location_rows.iter().find(|row| row["id"] == id).unwrap();
+    for (first, second) in [
+        ("PL-04b-case-guard-shared", "PL-04-case-guard"),
+        ("PL-05-related-end", "PL-05b-related-end-shared"),
+    ] {
+        assert_eq!(pl(first)["application"], pl(second)["application"]);
+        assert_eq!(pl(first)["occurrence"], pl(second)["occurrence"]);
+        assert_eq!(pl(first)["term_ordinal"], json!(0), "{first}");
+        assert_eq!(pl(second)["term_ordinal"], json!(1), "{second}");
+        assert_ne!(site(first)["origin"], site(second)["origin"]);
+        assert_eq!(site(first)["path"], json!([]));
+        assert_eq!(site(second)["path"], json!([]));
+    }
+    for row in location_rows {
+        let name = row["location"]["origin"]["name"].as_str().unwrap();
+        let Some((_, slot)) = name.split_once(" run ") else {
+            continue;
+        };
+        let words: Vec<&str> = slot.split(' ').collect();
+        match words.as_slice() {
+            [.., "case", _, "guard"] => {}
+            [.., "related", k, "from" | "to"] => assert!(
+                k.parse::<u64>().is_ok(),
+                "{} names a related end by record position",
+                row["id"]
+            ),
+            _ => panic!("{} is not a case-guard or related-end site", row["id"]),
+        }
+        assert!(!name.contains(".."), "{} carries no span name", row["id"]);
+    }
     let refusals = vectors["reader_refusals"].as_array().unwrap();
     for vector in refusals {
         let id = vector["id"].as_str().unwrap();
@@ -21597,11 +21634,11 @@ fn tc_233_checked_term_data_vectors_cover_the_shared_carrier() {
         .sum();
     assert_eq!(
         row_count + unit_count + enum_count + candidate_count + term_path_segments,
-        26
+        30
     );
-    assert_eq!(work["exact_limit"], 26);
+    assert_eq!(work["exact_limit"], 30);
     assert_eq!(work["exact_result"], "admitted");
-    assert_eq!(work["one_less_limit"], 25);
+    assert_eq!(work["one_less_limit"], 29);
     assert!(
         work["one_less_result"]
             .as_str()

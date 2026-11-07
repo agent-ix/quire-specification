@@ -773,7 +773,7 @@ mismatched row witness refuses at that member. Probabilistic-claim rows retain
 the exact declaration `NodeRef` and `claim` occurrence. The positive claim
 control gives two distinct declaration nodes equal display names and source
 spans, while malformed rows cover absent, foreign, wrong-kind and mismapped
-identities, missing occurrences and duplicate keys. The 26-unit work boundary
+identities, missing occurrences and duplicate keys. The 30-unit work boundary
 admits; one fewer unit refuses at the final probabilistic-claim row with no
 partial data view (FR-322-AC-288..292, AC-296..297). A protocol-location row
 whose `application` names an admitted leaf node (literal, Local parameter or
@@ -782,7 +782,7 @@ reference; the PL-R3 vectors carry the graph) refuses
 leaf row copies an enclosing application's location, while a row naming the
 admitted application is not refused by the leaf rule (FR-322-AC-310..312). Each
 protocol slot row carries a `type_declaration` site-name origin, and only
-PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..318). `PL-04-case-guard` carries a row under `protocol Handshake run Main Pick case yes guard` and `PL-05-related-end` one under `protocol Handshake run Main Got related 0 from`, and no case guard or `related` end row is under a span-named origin (FR-322-AC-388).
+PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..318). `PL-04-case-guard` and `PL-04b-case-guard-shared` are two rows of one application occurrence under `protocol Handshake run Main Pick case yes guard` and `... case no guard`, and `PL-05-related-end` and `PL-05b-related-end-shared` two rows of one application occurrence under `protocol Handshake run Main Got related 0 from` and `... related 1 from`; each pair has `term_ordinal` 0 and 1 and distinct origins, and no case guard or `related` end row is under a span-named origin (FR-322-AC-388).
 
 FR-322-AC-319 to FR-322-AC-341 and FR-272-AC-26 are retired (source-byte integrity removed); no published package carries a `source_integrity` member and no test checks one.
 
