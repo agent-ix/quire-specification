@@ -424,7 +424,7 @@
       "unknownPolicy": "reject",
       "variants": [
         {
-          "identity": "ix://acme/shapes/variant/Color-red",
+          "identity": "ix://acme/shapes/variant/Color-Red",
           "name": "Red",
           "origin": {
             "source": {
@@ -436,7 +436,7 @@
           }
         },
         {
-          "identity": "ix://acme/shapes/variant/Color-green",
+          "identity": "ix://acme/shapes/variant/Color-Green",
           "name": "Green",
           "origin": {
             "source": {
