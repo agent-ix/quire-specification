@@ -147,7 +147,7 @@ charge.
 
 Carried quantity sum wire cases. The following rows read the checked-package
 wire of `quire.op.collection.sum.carried_quantity` (FR-322 "Carried-quantity
-sum", FR-322-AC-388 to FR-322-AC-390). `Q` is the `scalar_type`/`carried_quantity` node of
+sum", FR-322-AC-389 to FR-322-AC-391). `Q` is the `scalar_type`/`carried_quantity` node of
 `Li` (unit `m`, carrier `Int[-5, 5]`, `rounding` `exact`), `Qd` that of `Ld`,
 `Qn` that of `Quantity<m, Int[-5, 5; nearest-even]>`, `Q4` that of
 `Quantity<m, Int[-4, 4]>`, `Qc` that of `Quantity<cm, Int[-5, 5]>`, `Qr` that
