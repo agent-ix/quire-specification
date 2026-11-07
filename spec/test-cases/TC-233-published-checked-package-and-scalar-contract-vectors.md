@@ -27,6 +27,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-313
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-388
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-314
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-315
@@ -762,7 +764,7 @@ reference; the PL-R3 vectors carry the graph) refuses
 leaf row copies an enclosing application's location, while a row naming the
 admitted application is not refused by the leaf rule (FR-322-AC-310..312). Each
 protocol slot row carries a `type_declaration` site-name origin, and only
-PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..318).
+PL-R1-duplicate-term carries a `protocol_attempt` origin (FR-322-AC-313..318). `PL-04-case-guard` carries a row under `protocol Handshake run Main Pick case yes guard` and `PL-05-related-end` one under `protocol Handshake run Main Got related 0 from`, and no case guard or `related` end row is under a span-named origin (FR-322-AC-388).
 
 FR-322-AC-319 to FR-322-AC-341 and FR-272-AC-26 are retired (source-byte integrity removed); no published package carries a `source_integrity` member and no test checks one.
 
