@@ -3,7 +3,7 @@ id: SR-20261106202641
 title: "IR-842 Color fixture scoped gap analysis"
 type: SpecReview
 analysis: gap-analysis
-scope: "agent-ix/quire-specification; PR 635 at 5039e654289dbf377b483e8be4519b31e49df3e0; FR-154 variant identity, TC-234 I34, proposals/checked-package-v2/domain-package-acme-shapes.json, tests/model_variant_fixture.rs"
+scope: "agent-ix/quire-specification; PR635 at 67847241; spec/functional/type-model/FR-154-admit-domain-package-model.md, spec/test-cases/TC-234-domain-package-model-intake.md, proposals/checked-package-v2/domain-package-acme-shapes.json, proposals/checked-package-v2/domain-package-acme-colors.json, proposals/checked-package-v2/fixtures/model-enum-comparison.native, src/lib.rs, tests/model_variant_fixture.rs, proposals/checked-package-v2/README.md; FR-154-AC-11, TC-234 I34"
 review_set: subset
 relationships:
   - target: ix://agent-ix/quire-specification/FR-154
@@ -48,3 +48,19 @@ No AssuranceProfile is declared in this repository's spec tree. Direct change-sc
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | No findings (placeholder) | - |
+
+## Published standalone colors input review
+
+Candidate: 67847241f5b067a6845142dcf8c84b36e8d9a848.
+
+**PASS for the in-scope change** — Two producer guards have truthful FR-154-AC-11 bindings. Private QSL compile/run receipts strengthen current consumer evidence without inflating the producer test into FR-014-AC-2 generated agreement coverage.
+
+The new acme/colors document is a complete independently identified Semantic IR model containing only the two nullary Color cases. It does not modify or prune the complex acme/shapes declaration set. The owner-required canonicalization descriptor, construct meaning, source identity, type identity, case identities and source origins agree. The four no-argument Boolean functions encode the two truth arms of equality and inequality: redEqualsRed=true, redEqualsGreen=false, redDiffersFromRed=false, redDiffersFromGreen=true.
+
+The dependency-free library exposes exact authored input bytes with two documented include_str constants. They are justified consumer-facing definition accessors, not placeholder compiler APIs, copied validators or duplicate minting algorithms. No Cargo dependency, lockfile, schema, executable helper or QSL source changed. The second Rust guard checks the published model through its public accessor, requires one construct and one type, checks both exact nullary cases and their original source origins, and has an exact two-id TC-234/FR-154-AC-11 trace. The golden table reads the fixture under test and cannot pass missing or incorrectly cased entries.
+
+Reviewed evidence at the exact committed pair: cmp succeeds for both private probe copies against the tracked model/source files. The real public QSL compile produced one model root, one variant-type declaration, two enum values, four pure functions, four binary applications and four checked equality decisions with enum member metadata. Four real native-run results are completed Boolean true/false/false/true for the functions named above. This is actual QSL compiler/value evidence, not generated-code or CG/QSL agreement evidence; the Rust producer guards do not themselves execute the compiler. The complex shapes fixture still reaches its separate downstream assembly refusal; nothing hides that result.
+
+The two fixture guards and strict library/new-target Clippy pass in /tmp/ir842-colors-published-focused.log; changed source/test formatting and diff checks pass. Eight typed documents validate with zero grammar findings. The existing proposal README is plain untyped Markdown and is not claimed to pass typed artifact validation. The static matrix exit 0 now binds both guard functions to FR-154-AC-11; this remains partial producer evidence for that broad intake criterion.
+
+The previously disclosed global formatting drift and 18 untouched legacy Clippy errors remain final-gate constraints. This reviewer ran no Cargo or aggregate gate and grants no waiver or unconditional merge-ready claim. No new in-scope finding was identified.
