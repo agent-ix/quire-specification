@@ -838,6 +838,54 @@
     ],
     "protocol_locations": [
       {
+        "id": "PL-04b-case-guard-shared",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "protocol-case-guard-term"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 0,
+        "location": {
+          "origin": {
+            "kind": "type_declaration",
+            "name": "protocol Handshake run Main Pick case no guard"
+          },
+          "path": []
+        }
+      },
+      {
+        "id": "PL-04-case-guard",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "protocol-case-guard-term"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 1,
+        "location": {
+          "origin": {
+            "kind": "type_declaration",
+            "name": "protocol Handshake run Main Pick case yes guard"
+          },
+          "path": []
+        }
+      },
+      {
         "id": "PL-03-declaration",
         "application": {
           "package": "example",
@@ -861,6 +909,54 @@
           "path": [
             1
           ]
+        }
+      },
+      {
+        "id": "PL-05-related-end",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "protocol-related-end-term"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 0,
+        "location": {
+          "origin": {
+            "kind": "type_declaration",
+            "name": "protocol Handshake run Main Got related 0 from"
+          },
+          "path": []
+        }
+      },
+      {
+        "id": "PL-05b-related-end-shared",
+        "application": {
+          "package": "example",
+          "path": [
+            "expression",
+            "call",
+            "protocol-related-end-term"
+          ],
+          "ordinal": 0
+        },
+        "occurrence": {
+          "role": "expression",
+          "ordinal": 0
+        },
+        "term_ordinal": 1,
+        "location": {
+          "origin": {
+            "kind": "type_declaration",
+            "name": "protocol Handshake run Main Got related 1 from"
+          },
+          "path": []
         }
       },
       {
@@ -4728,10 +4824,10 @@
       "each dispatch candidate",
       "each probabilistic claim declaration row"
     ],
-    "equation": "19 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 0 equality term_path segments = 26 work units",
-    "exact_limit": 26,
+    "equation": "23 top-level rows + 3 unit facts + 2 enum facts + 2 dispatch candidates + 0 equality term_path segments = 30 work units",
+    "exact_limit": 30,
     "exact_result": "admitted",
-    "one_less_limit": 25,
+    "one_less_limit": 29,
     "one_less_result": "resource_exhausted at the final probabilistic claim declaration row with no partial data view"
   },
   "probabilistic_claim_order": {
