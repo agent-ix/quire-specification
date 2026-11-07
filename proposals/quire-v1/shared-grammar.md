@@ -344,9 +344,11 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
                 '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
               | 'Reference', '<', qualified-name, '>'
-              | 'Quantity', '<', qualified-name, [ ',', type-ref ], '>'
+              | 'Quantity', '<', quantity-unit, [ ',', type-ref ], '>'
               | 'Population', '<', qualified-name, '>', [ '[', uint, ']' ] ;
 qualified-name = ident, { '::', member-name } ;
+quantity-unit = unit-term, { '*', unit-term } ;
+unit-term     = qualified-name, [ '^', signed-int ] ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
               | 'toward-negative' | 'nearest-even' | 'nearest-away' ;
 text-profile  = 'unicode-scalars' | 'nfc' | 'nfd' | 'nfkc' | 'nfkd'
@@ -1152,7 +1154,7 @@ aliases, functions, predicates, protocols, claims and declared values, the type
 namespace) are three namespaces, so a unit may
 share its name with a dimension or with a type. Ambiguous cross-unit
 declarations refuse. A bare `type-ref` looks up the type namespace only, and
-`Quantity<u>` and `Quantity<u, C>` are the `type-ref`s that look up the unit namespace; the checker restricts `C` to a bounded `Int[..]`, `Decimal[..]` or `Rational[..]` (FR-142 "Carried quantity"), and an `Int[lo, hi; mode]` carrier is the one place `Int` takes a trailing rounding mode; a `Rational[..]` carrier takes none and its mode is `exact`. A unit
+`Quantity<u>` and `Quantity<u, C>` are the `type-ref`s that look up the unit namespace. Their first argument may also be a product of qualified unit factors with signed integer powers, such as `kg*m^2*s^-2`; every factor uses that same namespace. A bare qualified name keeps its declared-unit meaning, while a product or explicit power forms a checked compound unit under FR-142, even when normalization leaves one term or none. The comma and closing `>` delimit the unit expression; no value expression is an exponent here. The checker restricts `C` to a bounded `Int[..]`, `Decimal[..]` or `Rational[..]` (FR-142 "Carried quantity"), and an `Int[lo, hi; mode]` carrier is the one place `Int` takes a trailing rounding mode; a `Rational[..]` carrier takes none and its mode is `exact`. A unit
 containing only model-independent Boolean predicates needs no dummy model import.
 Any referenced model declaration still requires an exact explicit import, except that a domain package's own clauses name its declarations through the self alias of their owner and need no import (FR-470). Predicate
 parameters and lexical binders are unique in their enclosing declaration and
