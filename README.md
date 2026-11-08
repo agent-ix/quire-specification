@@ -1,5 +1,8 @@
 # quire-specification
 
+[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/k8DVhuYBR2)
+[![Quire](https://img.shields.io/badge/Quire-Specification%20Language-1F6FEB)](https://github.com/agent-ix/quire-spec-language)
+
 quire-specification is the written standard for the Quire language. It holds
 the semantics of the language, the profiles that select parts of it, the
 interchange formats programs use to hand each other checked results, and the
