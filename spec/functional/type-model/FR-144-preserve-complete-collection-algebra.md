@@ -133,8 +133,11 @@ equality, `contains` and `convert` that compare elements as values refuse
 `invalid_timed_model`/`clock-read-outside-constraint` over such a collection.
 A `Map` key type SHALL be a scalar type with a total canonical key below (a
 scalar key type, FR-154 "Map types"): a key type that is clock-bearing, a
-record, tuple or union, an `Option`, a collection, a `Map` or a `Reference` is
-`refused { code: ill_typed, cause: operator-ineligible }`.
+record, tuple or union, an `Option`, a collection, a `Map`, a `Reference`, or a
+type with no row below (the natives `Rational` and `Decimal`) is
+`refused { code: ill_typed, cause: operator-ineligible }`. A native `Text` map
+key with no bounds and no profile (FR-154 "Map types") has the `String` row's
+key: its exact Unicode scalar sequence, with no normalization.
 
 Every type that admits the membership relation has a total canonical key,
 exactly as follows. Keys are compared as written, and two values have equal

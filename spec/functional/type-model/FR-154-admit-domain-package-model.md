@@ -130,10 +130,11 @@ Declaration refusals:
 | A tuple value type (FR-208) has no position, a position index is not a contiguous zero-based ordinal, a position has no `typeRef`, its type is unsupported, or the type declares fields, identity fields, operations, supertypes or clauses | `invalid_model_binding`/`malformed-declaration` |
 | An option value type ("Option value types" below) whose `inner` is absent, `null`, empty, not a string, an array, or an object; whose `inner` names (directly or through an alias chain) an option value type, `ix://quire/native/Clock` or a node that is no value type (an event type, state machine, process, persistence interface or namespace); that declares fields, identity fields, operations, supertypes, clauses, positions, variants, `items`, `keys`, `values`, `bound` or `target` member, or a non-empty `constraints`; or a constraint whose `appliesTo` names an option value type | `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.inner` (at the declared member's path for a declared member, `TypeDefinition.constraints` for a constraint of the type and `Constraint.appliesTo` for a constraint naming it); this row owns every `inner` form failure of an option value type and the reference-form row above does not report it a second time |
 | An option value type's `inner` is a well-formed package type identity that names no node of the package | `missing_declaration`/`missing-name` at `TypeDefinition.inner` |
-| A map type ("Map types" below) with no `keys` member or no `bound` member, or whose `bound` is not an object of exactly an integer `lower` of at least `0` and, when present, an integer `upper` of at least `0` | `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.keys` or `TypeDefinition.bound`, the absent or malformed member |
-| A map type's `keys` is a well-formed package type identity that names no node of the package | `missing_declaration`/`missing-name` at `TypeDefinition.keys` |
+| A map type ("Map types" below) with no `keys`, `values` or `bound` member; whose `bound` is not an object of exactly an integer `lower` of at least `0` and, when present, an integer `upper` of at least `0`; that declares fields, identity fields, operations, supertypes, clauses, positions, variants, `items`, `inner` or `target`; or whose `keys` names a node that is no type (an event type, state machine, process, persistence interface or namespace) | `invalid_model_binding`/`malformed-declaration` at the absent, malformed or declared member (`TypeDefinition.keys`, `TypeDefinition.values`, `TypeDefinition.bound` or the extra member) |
+| A type definition of any kind other than `map` that declares `keys` or `bound` | `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.keys` or `TypeDefinition.bound` |
+| A map type's `keys` or `values` is a well-formed package type identity that names no node of the package | `missing_declaration`/`missing-name` at `TypeDefinition.keys` or `TypeDefinition.values` |
 | A map type's `keys` names (directly or through an alias chain) a type that is not a scalar key type ("Map types" below) | `ill_typed`/`operator-ineligible` at `TypeDefinition.keys` |
-| A map type's `bound` has `lower > upper` | `invalid_model_binding`/`unpreserved-model-meaning` at `TypeDefinition.bound` |
+| A map type's `bound` has `lower > upper`, or has no `upper` and a `lower` above `0` | `invalid_model_binding`/`unpreserved-model-meaning` at `TypeDefinition.bound` |
 | A field of option value type (directly or through an alias chain) with presence `optional` and multiplicity `[1, 1]` (lower and upper `1`, any ordered and unique flags), which would be `Option<Option<T>>` | `invalid_model_binding`/`malformed-declaration` at `Field.presence` |
 | A `reference` whose `target` names an option value type (a reference names an object) | `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.target` |
 | A variant case's `payloadType` is unresolved or names a type not admitted as a value type | `unsupported_construct`/`declaration-form` |
@@ -323,7 +324,10 @@ after the field's `typeRef` refusals.
 members, each required: `keys`, the key type, and `values`, the value type, each
 a string `typeRef` of the three forms; and `bound`, the entry-count bound, an
 object `{lower, upper}` of non-negative integers whose `upper` is absent when
-the map has no maximum, read as a multiplicity's `lower` and `upper` are. It
+the map has no maximum, read as a multiplicity's `lower` and `upper` are. A
+map with no maximum has `lower` `0`: FR-322 gives no type to an unbounded upper
+with a lower above `0`, so that `bound` is refused rather than typed without
+its lower bound. It
 denotes `Map<K, V>[lower, upper]` (FR-322 "Model-owned members"), `K` the type
 `keys` names and `V` the type `values` names: a finite function from keys to
 values that holds at least `lower` and at most `upper` entries, one for each key
@@ -333,26 +337,33 @@ without `keys` or without `bound` is refused at the absent member, and no
 
 The key type SHALL be a **scalar key type**, a scalar type with a total
 canonical key (FR-144 "Element admission and canonical keys"; FR-322 `Map<K,V>`,
-`K` a scalar key type): a native value type other than `Clock` (`Boolean`,
-`Integer`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `String`,
-`UUID`, `Timestamp`, `Bytes`, `Duration` and `JsonObject`), a unit
-(`Quantity<u>`), a value type of the package bound as `Int[lo, hi]`,
-`Text[min, max; profile]` or `Rational[..]`, a variant type none of whose cases
-carries a `payloadType` (an enumeration), or an alias whose `target` chain
-reaches one of those. Intake SHALL refuse every other key type
+`K` a scalar key type): the native value types `Boolean`, `Integer`,
+`Float32`, `Float64`, `Text`, `String`, `UUID`, `Timestamp`, `Bytes`,
+`Duration` and `JsonObject`, a unit (`Quantity<u>`), a value type of the package
+bound as `Int[lo, hi]`, as `Text[min, max; profile]` or as a bounded
+`Rational[n1, n2; d1, d2]` with or without a `unit`, a variant type none of
+whose cases carries a `payloadType` (an enumeration), or an alias whose
+`target` chain reaches one of those. A native `Text` key (no bounds and no
+profile) is typed by the `scalar_type`/`text` node and keyed by its exact
+Unicode scalar sequence with no normalization, as a `String` key is (FR-144
+"Element admission and canonical keys"), and is its key type only: a member typed bare `Text` still has no
+type (FR-322 step 4). Intake SHALL refuse every other key type
 `ill_typed`/`operator-ineligible` at `TypeDefinition.keys`, naming the map type
 node, after the `keys` reference-form and resolution rows: a clock-bearing key
 (`Clock`, an alias of it, or a record value type with a clock field such as
 `Timer { x: Clock; n: Int }`, FR-415 "Clock places"); a record value type,
 tuple value type or variant type with a payload-bearing case (a union) that holds
 no clock (`record Cfg { a: Boolean }`); an option value type (`Option<Text>`);
-a sequence or map type; and a `reference` type or an object type
-(`Reference<T>`). A key is an immutable lookup value with a canonical order,
+a sequence or map type; a `reference` type or an object type
+(`Reference<T>`); the natives `Rational` and `Decimal`, a value type bound as a
+`Decimal[...]` domain and a value type no FR-322 row binds (a key type with no
+type). A key is an immutable lookup value with a canonical order,
 and a clock advances with time. `values` names any type a sequence `items`
 names, `Clock` and clock-bearing types included, which makes the map a clock
 collection (FR-415 "Clock collections"). A map type's failures report in the
-order `keys` presence, `keys` form, `keys` resolution, `keys` eligibility,
-`bound` presence and shape, then `bound` order.
+order extra members, `keys` presence, `keys` form, `keys` resolution, `keys`
+eligibility, `values` presence, `values` form, `values` resolution, `bound`
+presence and shape, then `bound` order.
 
 `ix://quire/unit/<name>` is admitted at every position that takes a type:
 a field, parameter or result `typeRef`, an alias `target`, a sequence `items`,
@@ -870,7 +881,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-46 | `Ratio` with `unit` `ix://quire/unit/m` is admitted by intake; `Ratio` with `unit` `m`, with `unit` `1` and with `unit` `ix://quire/native/Rational`, and a value type of `scalar` `string` with `unit` `ix://quire/unit/m`, each refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.unit`. | Test (TC-981) |
 | FR-154-AC-47 | Supplied values `7/12`, `-3/1` and `0/1` to a `Ratio` field are admitted, and `8/1`, `1/13`, `2/4`, `-4/1` and the float `0.5` each refuse `invalid_runtime_input`/`invalid-value` naming the member path, with no value reduced or rounded; with `Ratio` given `unit` `ix://quire/unit/m`, `1/4` is admitted as `1/4 m` and `1/13` refuses the same. | Test (TC-981) |
 | FR-154-AC-48 | A map type `M` with `keys` `ix://quire/native/Text`, `values` the record value type `Timer` (clock field `x`, data field `n`) and `bound` `{lower: 0, upper: 2}` is admitted and reads as `Map<Text, Timer>[0, 2]`, a clock collection; with `bound` `{lower: 0}` it reads as `Map<Text, Timer>` with no maximum; `M` with `keys` `ix://quire/native/Integer`, a value type bound as `Int[0, 9]`, a variant type with no payload-bearing case, a unit `ix://quire/unit/ms` or an alias of `Text` is admitted, each the key type it names. | Test (TC-234) |
-| FR-154-AC-49 | Over `M`, each single defect refuses once at the `M` node: `keys` `ix://quire/native/Clock`, an alias of `Clock`, `Timer`, a record value type `Cfg` with one `Boolean` field `a`, an option value type over `Text`, a sequence type, a map type, a tuple value type, a variant type with a payload-bearing case, a `reference` type and an object type each refuse `ill_typed`/`operator-ineligible` at `TypeDefinition.keys`; an absent `keys` refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.keys` and a `keys` naming no node `missing_declaration`/`missing-name` there; an absent `bound`, a `bound` that is a string, has a negative or non-integer `lower` or `upper`, has no `lower` or carries another member refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.bound`; `bound` `{lower: 3, upper: 2}` refuses `invalid_model_binding`/`unpreserved-model-meaning` at `TypeDefinition.bound`. | Test (TC-234) |
+| FR-154-AC-49 | Over `M`, each single defect refuses once at the `M` node: `keys` `ix://quire/native/Clock`, an alias of `Clock`, `Timer`, a record value type `Cfg` with one `Boolean` field `a`, an option value type over `Text`, a sequence type, a map type, a tuple value type, a variant type with a payload-bearing case, a `reference` type, an object type, the native `ix://quire/native/Rational` and a value type bound as a `Decimal[...]` domain each refuse `ill_typed`/`operator-ineligible` at `TypeDefinition.keys`; an absent `keys`, and a `keys` naming a namespace, refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.keys` and a `keys` naming no node `missing_declaration`/`missing-name` there; an absent `values` refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.values`; an `items` member on `M` refuses it at that member; an absent `bound`, a `bound` that is a string, has a negative or non-integer `lower` or `upper`, has no `lower` or carries another member refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.bound`; `bound` `{lower: 3, upper: 2}` and `bound` `{lower: 1}` (no maximum) each refuse `invalid_model_binding`/`unpreserved-model-meaning` at `TypeDefinition.bound`; a `bound` on a `sequence` type definition refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.bound`. | Test (TC-234) |
 
 ## Dependencies
 

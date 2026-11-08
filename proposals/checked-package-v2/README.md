@@ -558,14 +558,15 @@ and two nodes declaring one name refuse as `ambiguous-name`
 - `entry-key-vectors.json` publishes the declaration-less function key cases `EK-01` to `EK-08` (FR-322-AC-309, TC-979): the derived path of a producer-emitted function from its parameter, body-root and measure index segments, the duplicate `node_id` and a model-owned accessor label. The producer derives the key; the reader recomputes none.
 - `bounded-quantity-vectors.json` publishes BQ-01..BQ-10 for `Quantity<u>[min,max]`, including unit/bound identity, canonical exact endpoints, add/convert/lt admission and refusals; it does not replace the existing `carried_quantity` vectors.
 - `map-type-vectors.json` publishes MT-01..MT-07 for the structural `composite_type`/`map` arm and its key/value identities.
-  Its `package_map_types` section publishes PM-01..PM-27 for the domain
+  Its `package_map_types` section publishes PM-01..PM-34 for the domain
   package map type (FR-154 "Map types", FR-154-AC-48, FR-154-AC-49, TC-234
   I35, I36): every map type declares `keys`, `values` and `bound`, the key a
   scalar key type, and the ineligible keys (`Clock`, an alias of it, `Timer`,
-  `Cfg { a: Boolean }`, `Option<Text>`, collection, map, tuple, union and
-  reference keys) refuse `ill_typed`/`operator-ineligible` at
+  `Cfg { a: Boolean }`, `Option<Text>`, collection, map, tuple, union,
+  reference, native `Rational` and `Decimal[...]` keys) refuse `ill_typed`/`operator-ineligible` at
   `TypeDefinition.keys`. The `ClockMap` of `domain-package-acme-timed-slots.json`,
   `domain-package-acme-timed-clauses.json` and `domain-package-acme-orders.json`
-  declares `keys` `Text` and `bound` `{lower: 0}`; `tests/package_map_types.rs`
+  declares `keys` `Text` and `bound` `{lower: 0}`, as does the `MO` map of
+  `model-option-type-vectors.json`; `tests/package_map_types.rs`
   runs the cases.
 - `timed-clock-no-row-vectors.json` publishes TN-01..TN-05: timed model subjects use `timed_model/time_source`, traces supply time-stamped positions, and timed clauses never receive a `temporal_bindings` clock-configuration row.
