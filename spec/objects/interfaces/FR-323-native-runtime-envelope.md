@@ -599,8 +599,8 @@ out-of-domain values and non-canonical encodings refuse before consumption.
   for Integer and Rational membership.
 - [Accounting definition](../../../proposals/quire-v1/definitions/value-accounting.md)
   owns the unchanged scalar/population objects and closed evaluated incomplete.
-- [IR-718 SPEC](https://linear.app/agent-ix/issue/IR-718/spec-quire-exact-bounded-fallible-decimal-membership-for-supplied) /
-  [IR-719 implementation](https://linear.app/agent-ix/issue/IR-719/quire-exactqsv-implement-bounded-decimal-membership-and-supplied)
+- IR-718 /
+  IR-719
   own Decimal capability qualification; QSL-503 owns full-fixture integration.
 - QSL FR-255 / ADR-014 owners retain setting-registry, default and B-2
   phase-projection amendments; this envelope does not approve those gates.

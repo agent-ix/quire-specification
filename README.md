@@ -18,12 +18,23 @@ tool authors use it as the shared reference.
   <img alt="The standard is authored as requirements, test cases, schemas with vectors, and definition bytes. Today the qualification tests check the schemas, vectors and definition bytes and report each vector admitted or refused. Compiler acceptance of the test cases by quire-spec-language and the backends is planned." src="docs/images/hero-light.svg">
 </picture>
 
-> **Status: prerelease, private repository.** There is no released standard.
-> The grammar, profiles and formats are drafts and are still changing, and no
-> draft becomes normative until it has been reviewed. The Rust tests here check
-> the authored schemas, vectors and canonical identities; they do not run a
-> compiler. Compiler acceptance of the written test cases is planned and lives in
-> quire-spec-language.
+## Getting started
+
+Clone the repository to read the standard:
+
+```sh
+git clone https://github.com/agent-ix/quire-specification
+cd quire-specification
+```
+
+To use the authored definition documents from Rust, add the library as a git
+dependency. Its package name is `quire-specification-qualification` and its
+library name is `quire_specification`:
+
+```toml
+[dependencies]
+quire-specification-qualification = { git = "https://github.com/agent-ix/quire-specification" }
+```
 
 ## Contents
 
@@ -32,13 +43,11 @@ tool authors use it as the shared reference.
 | `spec/` | The requirements and everything that hangs off them, as Markdown artifacts. See the chart below. |
 | `proposals/` | Draft grammar, profiles, JSON schemas and the vector and fixture files that specify them. One folder per proposal. |
 | `docs/` | [The atomic V1 capability inventory](docs/v1-capability-inventory.md), which is the binding statement of scope, and [the complete architecture](docs/v1-complete-architecture.md). |
-| `plan/`, `reviews/` | Delivery plans and review records for the work above. |
-| `src/lib.rs` | A dependency-free Rust library that exposes authored documents as constants and the 167 vector rows of TC-185, TC-186, TC-187, TC-192 and TC-193 as a typed table (`QUALIFICATION_VECTORS`), generated at build time from the authored test cases. |
-| `tests/` | The qualification tests. |
+| `src/lib.rs` | A dependency-free Rust library that exposes authored documents as constants and the qualification vector rows as a typed table (`QUALIFICATION_VECTORS`), generated at build time from the authored test cases. |
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/corpus-dark.svg">
-  <img alt="The spec/ tree holds 719 authored artifacts in 9 kinds: assurance 16, decisions 6, functional 200, integration 19, non-functional 16, objects 149, stakeholder 2, test-cases 300, usecase 11." src="docs/images/corpus-light.svg">
+  <img alt="The spec/ tree holds 773 authored artifacts in 9 kinds: assurance 16, decisions 6, functional 212, integration 19, non-functional 17, objects 158, stakeholder 2, test-cases 332, usecase 11." src="docs/images/corpus-light.svg">
 </picture>
 
 Every chart number is counted from the tree by `docs/images/figures.py`.
@@ -53,7 +62,7 @@ The proposals are:
 | [`shared-reference-2-draft`](proposals/shared-reference-2-draft/README.md) | The artifact roles that verification records use. |
 | [`checked-package-v2`](proposals/checked-package-v2/README.md) | The checked-package schema and its identity, model and operation vectors. |
 | [`backend-provider-v1`](proposals/backend-provider-v1/README.md) | The schema and vectors for how a backend advertises what it can check. |
-| [`conformance-corpus-v1`](proposals/conformance-corpus-v1/README.md) | The closed schema and fixture for the FR-336 qualification corpus. |
+| [`conformance-corpus-v1`](proposals/conformance-corpus-v1/README.md) | The closed schema and fixture for the qualification corpus. |
 
 ## Example conformance case
 
@@ -84,17 +93,14 @@ each must produce. The cases from that file:
 | `duplicate-object` | refused, `duplicate_object` |
 | `incomplete-population` | incomplete, `incomplete_population` |
 
-The file's status is `manually-authored-expectations-not-evaluator-output`, and
-the fixture's model is named by identity alone, so no domain package is supplied
-and linking it refuses `missing_import`/`missing-selection`; the model is
-resolved only when a resolver supplies a package. These are the draft's authored
-expectations; no program has produced them as results yet.
+The expectations in that file are authored by hand. The fixture's model is
+named by identity alone, so linking it refuses `missing_import` until a resolver
+supplies the domain package.
 
-## Rust library
+## Usage
 
 The library crate is named `quire_specification`. A consumer reads the
-documents by reference. From
-`tests/checked_package_v2.rs`:
+documents by reference:
 
 ```rust
 use quire_specification::{
@@ -102,23 +108,8 @@ use quire_specification::{
 };
 ```
 
-The same file's test checks that each constant holds exactly the bytes of the
-file under `proposals/quire-v1/definitions/`. The crate does no parsing.
-
-## Tests
-
-| Test file | What it checks |
-| --- | --- |
-| `tests/backend_provider_v1.rs` | Every positive backend-provider vector is admitted by the schema, every adverse one is refused, and the request carries exactly the checked package its identifier names. |
-| `tests/conformance_corpus_v1.rs` | The FR-336 fixture and closed-domain controls are checked against the conformance-corpus schema. |
-| `tests/checked_package_v2.rs` | The checked-package and complete-value vectors. |
-| `tests/model_member_types.rs` | Model-owned member vectors: owner recovery, member resolution and member type derivation. |
-| `tests/record_conformance.rs` | Record conformance and event-equality vectors, against the shared operation catalog. |
-| `tests/shared_reference.rs` | The producer structure of the verification-reference fixtures, and the strict intake limits. |
-
-These are producer checks. They do not show that an independent reader accepts
-the same data. They do not discharge the written test cases under
-`spec/test-cases/`, which describe compiler acceptance and are planned.
+Each constant holds exactly the bytes of the file under
+`proposals/quire-v1/definitions/`.
 
 ## The Quire ecosystem
 
@@ -130,33 +121,23 @@ the compiler and the backends that implement and consume it.
   <img alt="The Quire repositories. The main chain runs from the standard, quire-specification, to the compiler, quire-spec-language, then quire-contract-ir, quire-contract-codegen and quire-contract-runtime. quire-spec-language also feeds quire-protocol, and quire-contract-ir feeds quire-analyze. quire-observation feeds quire-protocol and quire-mltl. Above the chain, quire-driver runs it, quire-integration tests it and quire-verification plans verification. Below it, shared libraries used throughout: quire-exact, quire-semantic-value, quire-walk, quire-canonical and quire-verification-contracts." src="docs/images/ecosystem-light.svg">
 </picture>
 
-Its dependencies are for the tests only: the public
+The library has no dependencies. The tests use the
 [quire-verification-contracts](https://github.com/agent-ix/quire-verification-contracts)
-crate (canonical JSON identity and the operation catalog) and ix-trace-rs, which
-ties each test to the criterion it verifies. The library itself has no
-dependencies. The compiler that implements the standard is
+crate crate (canonical JSON identity and the operation catalog) and ix-trace-rs, which
+ties each test to the criterion it verifies. The compiler that implements the standard is
 [quire-spec-language](https://github.com/agent-ix/quire-spec-language).
 
 ## Building and testing
-
-Build, test, and qualification checks run locally. The CLA workflow handles
-contributor agreement administration.
 
 ```sh
 cargo test --locked
 cargo fmt --all -- --check
 cargo clippy --locked --all-targets --all-features -- -D warnings
-quire validate --scope . 'spec/**/*.md' 'plan/*/plan.md' 'plan/*/index.md' 'plan/*/tasks/*.md' 'reviews/2026-*.md' --summary
+quire validate --scope . 'spec/**/*.md' --summary
 ```
 
 The first Cargo run fetches the git dependencies; later runs can add
-`--offline`. The dated review glob selects the typed review artifacts. The older review note
-has no type frontmatter, and an unrestricted glob reports that structural error.
-The typed `## Properties` tables of the object documents derive Type and Multiplicity from the retained prose, which each document keeps under `## Field sources`; a field whose prose states no type or multiplicity is listed in that section's derivation table, and the `Constraints` cell is left to the closed keyword set the module reads (so notes cannot live there).
-Enumeration documents write each `## Values` cell in Identifier form (letters, digits and underscores, so `timed_out`) because the module reads that cell as an Identifier; the Description begins with the wire spelling in backticks (``Wire spelling `timed-out`.``), and other artifacts quote the wire spelling.
-The plan globs name the Plan, index and Task files and leave out each
-`plan/*/log.md`: those are execution logs with frontmatter `type: log`, which no
-installed module registers, and `quire validate` has no exclude option.
+`--offline`. `quire validate` is the [quire-cli](https://github.com/agent-ix/quire-cli) command.
 
 To regenerate the figures, run the docs-figures skill from
 [dev-tools](https://github.com/agent-ix/dev-tools) on `docs/images/figures.py`.
@@ -164,8 +145,6 @@ To regenerate the figures, run the docs-figures skill from
 ## Contributing and license
 
 Every contribution needs a signed contributor agreement: read
-[CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md) first. Executable code
-here is Rust; see [AGENTS.md](AGENTS.md) for the language and review rules.
-Research and private issue links must not enter a public release. This
-repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE).
-Publishing it needs a fresh review.
+[CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md) first. This repository
+is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE). Content rights
+are described in [CONTENT_RIGHTS.md](CONTENT_RIGHTS.md).
