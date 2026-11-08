@@ -1,12 +1,12 @@
 # Contributor and session guidance
 
-Read README.md, LICENSE (`AGPL-3.0-or-later`) and the owning issue before editing. This is a private bootstrap repository, not a released implementation.
+Read README.md, LICENSE (`AGPL-3.0-or-later`) and the owning issue before editing. This repository holds the draft Quire language standard; it has no released version yet.
 
 - Preserve authored/source identity and explicit unsupported/incomplete results.
 - Use the first specification issue to establish requirements, acceptance fixtures and scoped implementation/CI work before scaffolding speculative crates.
 - Inspect existing shared model, contract and Quoin interfaces before duplicating them.
 - Do not infer licensing from process or repository boundaries.
-- Keep private research, traces and issue links out of public releases. No public posting, visibility change, or source relicensing without explicit approval.
+- Keep private research, traces and issue-tracker links out of this repository. Source relicensing needs explicit approval.
 - Use isolated worktrees for concurrent code sessions; preserve unrelated edits.
 - Owner directive: build, test, and qualification checks run locally until stable. Hosted workflows for those checks must be manual-dispatch only (`workflow_dispatch`); do not add automatic triggers or dispatch a run without explicit direction. The existing CLA workflow may continue its automatic administration.
 - Prototype workflow: maintain one current draft and use Git for working history.

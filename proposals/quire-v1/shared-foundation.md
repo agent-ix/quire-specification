@@ -123,7 +123,7 @@ another owner's absent input by approximation.
 
 ### PR correction disposition
 
-[SR-408](../../reviews/2026-09-10-composed-v1-pr15.md) records the independent
+SR-408 records the independent
 review at `3972783`; its original FAIL verdict remains unchanged. The
 following dispositions resolve SR-408's findings:
 
@@ -134,7 +134,7 @@ following dispositions resolve SR-408's findings:
 | SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
 | SR-408 FND-005 | The capability ledger links the same temporal/protocol files as the definition index. |
 
-B's independently reviewed [global-conformance closure correction](../../spec/reviews/global-conformance-closure/base.md)
+B's independently reviewed global-conformance closure correction
 is also integrated. Its fifth closure record, including `not-required` for
 non-global claims, is preserved by the current definition and observation
 consumer contracts and their planned controls. It does not replace either

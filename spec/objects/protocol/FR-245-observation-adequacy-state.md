@@ -69,9 +69,8 @@ decision." The protocol adequacy vocabulary is
 
 FR-115 does not say which of FR-061's two disjoint adequacy domains its bare
 "adequacy" names, and FR-116 names neither. This artifact records the divergence
-and does not decide it. The repo review
-[`SR-208`](../../reviews/protocol-verification-projection-object.md) FND-002
-already flags the same word collision: "Protocol adequacy and E02 observation
+and does not decide it. An earlier repository review
+already flagged the same word collision: "Protocol adequacy and E02 observation
 adequacy share the word 'adequacy' but have different authorities."
 
 ## Acceptance Criteria
