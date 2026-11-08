@@ -19562,14 +19562,17 @@ fn selected_type<'a>(document: &'a Value, identity: &str) -> Option<&'a Value> {
 
 /// The element type FR-322 "Member type" derives from a `typeRef`: a `sequence`
 /// type definition renders as `Sequence<` its `items` `>` and a `map` one as
-/// `Map<Text, ` its `values` `>`, any other reference as its own identity.
+/// `Map<` its `keys` `, ` its `values` `>` (a native key by its name, as the
+/// rows write `Map<Text, _>`), any other reference as its own identity.
 fn selected_element(document: &Value, type_ref: &str) -> String {
     match selected_type(document, type_ref) {
         Some(declared) if declared["kind"] == "sequence" => {
             format!("Sequence<{}>", selected_element(document, declared["items"].as_str().expect("items")))
         }
         Some(declared) if declared["kind"] == "map" => {
-            format!("Map<Text, {}>", selected_element(document, declared["values"].as_str().expect("values")))
+            let keys = declared["keys"].as_str().expect("keys");
+            let key = keys.strip_prefix("ix://quire/native/").map_or_else(|| selected_element(document, keys), str::to_owned);
+            format!("Map<{key}, {}>", selected_element(document, declared["values"].as_str().expect("values")))
         }
         _ => type_ref.to_owned(),
     }
@@ -19594,8 +19597,14 @@ fn selected_field_row(document: &Value, owner: &str, name: &str) -> Vec<String> 
     let multiplicity = &field["multiplicity"];
     let (lower, upper) = (multiplicity["lower"].as_u64().unwrap(), multiplicity["upper"].as_u64());
     let (kind, rendered, min, max) = if (lower, upper) == (1, Some(1)) {
-        match selected_type(document, type_ref).map(|declared| declared["kind"].as_str().unwrap()) {
-            Some(collection @ ("sequence" | "map")) => (collection.to_owned(), element, "0".to_owned(), "unbounded".to_owned()),
+        // A `sequence` definition carries no bounds; a `map` definition carries its `bound`.
+        match selected_type(document, type_ref) {
+            Some(declared) if declared["kind"] == "sequence" => ("sequence".to_owned(), element, "0".to_owned(), "unbounded".to_owned()),
+            Some(declared) if declared["kind"] == "map" => {
+                let bound = &declared["bound"];
+                let upper = bound.get("upper").map_or_else(|| "unbounded".to_owned(), Value::to_string);
+                ("map".to_owned(), element, bound["lower"].to_string(), upper)
+            }
             _ => ("none".to_owned(), element, String::new(), String::new()),
         }
     } else {
@@ -19814,7 +19823,7 @@ fn tc_367_timed_slot_vectors_name_a_complete_selected_package() {
     for declared in document["types"].as_array().unwrap() {
         let allowed: &[&str] = match declared["kind"].as_str() {
             Some("sequence") => &["constraints", "displayName", "extensions", "identity", "items", "kind", "origin", "roles", "unknownPolicy"],
-            Some("map") => &["constraints", "displayName", "extensions", "identity", "values", "kind", "origin", "roles", "unknownPolicy"],
+            Some("map") => &["bound", "constraints", "displayName", "extensions", "identity", "keys", "values", "kind", "origin", "roles", "unknownPolicy"],
             _ => &["constraints", "displayName", "extensions", "fields", "identity", "identityFields", "kind", "operations", "origin", "relationships", "roles", "supertypes", "unknownPolicy"],
         };
         for member in declared.as_object().unwrap().keys() {
@@ -19823,7 +19832,7 @@ fn tc_367_timed_slot_vectors_name_a_complete_selected_package() {
     }
 }
 
-#[trace("TC-367", "FR-322-AC-240", "FR-322-AC-241")]
+#[trace("TC-367", "FR-322-AC-240", "FR-322-AC-241", "FR-322-AC-396")]
 #[test]
 fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
     let vectors = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
@@ -19853,6 +19862,14 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
         order["fields"].as_array_mut().unwrap().iter_mut().find(|f| f["name"] == "ts").unwrap()["multiplicity"]["upper"] = json!(4);
     });
     assert!(defect(&vectors, &wrong_bound, &package).contains("slot step does not carry"));
+    // The map place `clock` reads its key type and bound from the `map` definition `ClockMap`.
+    let clock_map = |edit: &dyn Fn(&mut Value)| {
+        edit_document(&|d| edit(d["types"].as_array_mut().unwrap().iter_mut().find(|t| t["identity"] == "ix://acme/orders/ClockMap").unwrap()))
+    };
+    let bounded_map = clock_map(&|t| t["bound"]["upper"] = json!(2));
+    assert!(defect(&vectors, &bounded_map, &package).contains("slot step does not carry"));
+    let integer_keys = clock_map(&|t| t["keys"] = json!("ix://quire/native/Integer"));
+    assert!(defect(&vectors, &integer_keys, &package).contains("do not join"));
     // The vectors and the package.
     let mut moved = vectors.clone();
     moved["cases"][4]["package_node"] = json!(2);

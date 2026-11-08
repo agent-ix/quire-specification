@@ -95,6 +95,28 @@
       "unknownPolicy": "reject"
     },
     {
+      "bound": {
+        "lower": 0
+      },
+      "constraints": [],
+      "displayName": "ClockMap",
+      "extensions": [],
+      "identity": "ix://acme/orders/ClockMap",
+      "keys": "ix://quire/native/Text",
+      "kind": "map",
+      "origin": {
+        "source": {
+          "path": "orders/ClockMap.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "values": "ix://quire/native/Clock"
+    },
+    {
       "constraints": [
         {
           "appliesTo": "ix://acme/orders/Code",
@@ -900,7 +922,7 @@
             }
           },
           "presence": "required",
-          "typeRef": "Map<Text, ix://quire/native/Clock>"
+          "typeRef": "ix://acme/orders/ClockMap"
         }
       ],
       "identity": "ix://acme/orders/Order",

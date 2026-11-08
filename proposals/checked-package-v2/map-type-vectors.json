@@ -9,5 +9,57 @@
     {"id":"MT-05","description":"missing value binding","expected":{"code":"malformed_wire","pointer":"/semantic_graph/nodes/{n}/body"}},
     {"id":"MT-06","description":"body key target differs from key node in structural path","expected":{"code":"invalid_package","cause":"invalid-derived-shape","pointer":"/semantic_graph/nodes/{n}"}},
     {"id":"MT-07","description":"Map<Text,Clock> as a clock-bearing model type","expected":"admitted-clock-place-resolution-per-FR-415"}
-  ]
+  ],
+  "package_map_types": {
+    "note": "FR-154 \"Map types\" (TC-234 I35, I36): a domain package map type declares keys, values and bound, each required. base is a projection of the type definitions intake reads (origin, displayName and the other FCD bookkeeping members omitted); M is the map under test. Each case applies its RFC 6902 patch to base alone. reads is the FR-322 member type of a field typed M with multiplicity {1, 1}. A refusal names the M node and the member path. The bound [0, 2] and the Text key are the QSL FR-230-AC-19 declaration Map<Text, Timer>[0, 2]. No reader consumes this section yet: the FCD members keys and bound and the IR reader are follow-up work.",
+    "base": {
+      "identity": "acme/maps",
+      "units": ["ix://quire/unit/ms"],
+      "types": [
+        {"identity":"ix://acme/maps/Timer","kind":"record","fields":[{"name":"x","typeRef":"ix://quire/native/Clock"},{"name":"n","typeRef":"ix://quire/native/Integer"}]},
+        {"identity":"ix://acme/maps/Cfg","kind":"record","fields":[{"name":"a","typeRef":"ix://quire/native/Boolean"}]},
+        {"identity":"ix://acme/maps/Small","kind":"value","scalar":"integer","min":"0","max":"9"},
+        {"identity":"ix://acme/maps/Color","kind":"variant","variants":[{"name":"Red"},{"name":"Green"}]},
+        {"identity":"ix://acme/maps/Shape","kind":"variant","variants":[{"name":"Dot"},{"name":"Box","payloadType":"ix://quire/native/Integer"}]},
+        {"identity":"ix://acme/maps/Pair","kind":"tuple","positions":[{"typeRef":"ix://quire/native/Boolean"},{"typeRef":"ix://quire/native/Integer"}]},
+        {"identity":"ix://acme/maps/Key","kind":"alias","target":"ix://quire/native/Text"},
+        {"identity":"ix://acme/maps/Stopwatch","kind":"alias","target":"ix://quire/native/Clock"},
+        {"identity":"ix://acme/maps/OptText","kind":"option","inner":"ix://quire/native/Text"},
+        {"identity":"ix://acme/maps/Texts","kind":"sequence","items":"ix://quire/native/Text"},
+        {"identity":"ix://acme/maps/Inner","kind":"map","keys":"ix://quire/native/Text","values":"ix://quire/native/Integer","bound":{"lower":0}},
+        {"identity":"ix://acme/maps/ClockRef","kind":"reference","target":"ix://quire/native/Clock"},
+        {"identity":"ix://acme/maps/Holder","kind":"object","fields":[{"name":"m","typeRef":"ix://acme/maps/M"}]},
+        {"identity":"ix://acme/maps/M","kind":"map","keys":"ix://quire/native/Text","values":"ix://acme/maps/Timer","bound":{"lower":0,"upper":2}}
+      ]
+    },
+    "cases": [
+      {"id":"PM-01","criterion":"FR-154-AC-48","description":"the base map type","patch":[],"expected":{"admitted":true,"reads":"Map<ix://quire/native/Text, ix://acme/maps/Timer>[0, 2]"}},
+      {"id":"PM-02","criterion":"FR-154-AC-48","description":"bound with no upper","patch":[{"op":"replace","path":"/types/13/bound","value":{"lower":0}}],"expected":{"admitted":true,"reads":"Map<ix://quire/native/Text, ix://acme/maps/Timer>"}},
+      {"id":"PM-03","criterion":"FR-154-AC-48","description":"Integer key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://quire/native/Integer"}],"expected":{"admitted":true,"reads":"Map<ix://quire/native/Integer, ix://acme/maps/Timer>[0, 2]"}},
+      {"id":"PM-04","criterion":"FR-154-AC-48","description":"Int[0, 9] value type key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Small"}],"expected":{"admitted":true,"reads":"Map<Int[0, 9], ix://acme/maps/Timer>[0, 2]"}},
+      {"id":"PM-05","criterion":"FR-154-AC-48","description":"payload-free variant (enumeration) key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Color"}],"expected":{"admitted":true,"reads":"Map<ix://acme/maps/Color, ix://acme/maps/Timer>[0, 2]"}},
+      {"id":"PM-06","criterion":"FR-154-AC-48","description":"unit key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://quire/unit/ms"}],"expected":{"admitted":true,"reads":"Map<Quantity<ms>, ix://acme/maps/Timer>[0, 2]"}},
+      {"id":"PM-07","criterion":"FR-154-AC-48","description":"alias of Text key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Key"}],"expected":{"admitted":true,"reads":"Map<ix://quire/native/Text, ix://acme/maps/Timer>[0, 2]"}},
+      {"id":"PM-08","criterion":"FR-154-AC-49","description":"Clock key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://quire/native/Clock"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-09","criterion":"FR-154-AC-49","description":"alias of Clock key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Stopwatch"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-10","criterion":"FR-154-AC-49","description":"clock-bearing record key Timer","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Timer"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-11","criterion":"FR-154-AC-49","description":"record Cfg { a: Boolean } key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Cfg"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-12","criterion":"FR-154-AC-49","description":"Option<Text> key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/OptText"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-13","criterion":"FR-154-AC-49","description":"sequence type key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Texts"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-14","criterion":"FR-154-AC-49","description":"map type key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Inner"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-15","criterion":"FR-154-AC-49","description":"tuple value type key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Pair"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-16","criterion":"FR-154-AC-49","description":"union (payload-bearing variant) key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Shape"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-17","criterion":"FR-154-AC-49","description":"reference type key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/ClockRef"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-18","criterion":"FR-154-AC-49","description":"object type key","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Holder"}],"expected":{"refused":{"code":"ill_typed","cause":"operator-ineligible","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-19","criterion":"FR-154-AC-49","description":"absent keys","patch":[{"op":"remove","path":"/types/13/keys"}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-20","criterion":"FR-154-AC-49","description":"keys naming no node","patch":[{"op":"replace","path":"/types/13/keys","value":"ix://acme/maps/Nothing"}],"expected":{"refused":{"code":"missing_declaration","cause":"missing-name","at":"ix://acme/maps/M","path":"TypeDefinition.keys"}}},
+      {"id":"PM-21","criterion":"FR-154-AC-49","description":"absent bound","patch":[{"op":"remove","path":"/types/13/bound"}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}},
+      {"id":"PM-22","criterion":"FR-154-AC-49","description":"string bound","patch":[{"op":"replace","path":"/types/13/bound","value":"[0, 2]"}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}},
+      {"id":"PM-23","criterion":"FR-154-AC-49","description":"negative lower","patch":[{"op":"replace","path":"/types/13/bound/lower","value":-1}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}},
+      {"id":"PM-24","criterion":"FR-154-AC-49","description":"non-integer upper","patch":[{"op":"replace","path":"/types/13/bound/upper","value":1.5}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}},
+      {"id":"PM-25","criterion":"FR-154-AC-49","description":"bound with an extra member","patch":[{"op":"add","path":"/types/13/bound/ordered","value":true}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}},
+      {"id":"PM-26","criterion":"FR-154-AC-49","description":"lower above upper","patch":[{"op":"replace","path":"/types/13/bound","value":{"lower":3,"upper":2}}],"expected":{"refused":{"code":"invalid_model_binding","cause":"unpreserved-model-meaning","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}},
+      {"id":"PM-27","criterion":"FR-154-AC-49","description":"bound with no lower","patch":[{"op":"replace","path":"/types/13/bound","value":{"upper":2}}],"expected":{"refused":{"code":"invalid_model_binding","cause":"malformed-declaration","at":"ix://acme/maps/M","path":"TypeDefinition.bound"}}}
+    ]
+  }
 }
