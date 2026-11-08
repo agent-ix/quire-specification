@@ -1,6 +1,6 @@
 {
   "version": "quire.model-option-type-vectors/v1",
-  "note": "STD-627. Option value types (FR-154 \"Option value types\"): a type definition of kind option with one inner typeRef, named by package identity; typeRef stays the three forms. domain_package is the FR-154 projection in the style of model-tuple-union-vectors.json (identity, version, object_types, tuple_types, variant_types); this file defines the further collections it needs: units, record_types, option_types (node, inner), aliases (node, target), sequence_types (node, items), map_types (node, values), reference_types (node, target), namespaces and constraints (identity, keyword, appliesTo, operands). field_type_cases give the FR-322 step 4 type of a member (forms as in model-tuple-union-vectors.json; same_node_as names the field sharing the composite_type/option node). intake_cases are RFC 6902 patches over domain_package; `at` is a pointer into the patched projection. No reader consumes this file yet: the strict reader and the FCD kind are follow-up work.",
+  "note": "STD-627. Option value types (FR-154 \"Option value types\"): a type definition of kind option with one inner typeRef, named by package identity; typeRef stays the three forms. domain_package is the FR-154 projection in the style of model-tuple-union-vectors.json (identity, version, object_types, tuple_types, variant_types); this file defines the further collections it needs: units, record_types, option_types (node, inner), aliases (node, target), sequence_types (node, items), map_types (node, keys, values, bound; FR-154 \"Map types\"), reference_types (node, target), namespaces and constraints (identity, keyword, appliesTo, operands). field_type_cases give the FR-322 step 4 type of a member (forms as in model-tuple-union-vectors.json; same_node_as names the field sharing the composite_type/option node). intake_cases are RFC 6902 patches over domain_package; `at` is a pointer into the patched projection. No reader consumes this file yet: the strict reader and the FCD kind are follow-up work.",
   "domain_package": {
     "identity": "acme/optionals",
     "version": "1.0.0",
@@ -298,7 +298,11 @@
           "value": [
             {
               "node": "ix://acme/optionals/MO",
-              "values": "ix://acme/optionals/OptInt"
+              "keys": "ix://quire/native/Text",
+              "values": "ix://acme/optionals/OptInt",
+              "bound": {
+                "lower": 0
+              }
             }
           ]
         },

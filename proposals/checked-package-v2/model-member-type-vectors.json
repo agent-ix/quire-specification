@@ -230,7 +230,7 @@
           },
           {
             "name": "clock",
-            "typeRef": "Map<Text, ix://quire/native/Clock>",
+            "typeRef": "ix://acme/orders/ClockMap",
             "presence": "required",
             "multiplicity": {
               "lower": "1",
@@ -544,6 +544,17 @@
         "lower": "0",
         "upper": "64",
         "profile": "casefold"
+      }
+    ],
+    "map_types": [
+      {
+        "node": "ix://acme/orders/ClockMap",
+        "keys": "ix://quire/native/Text",
+        "values": "ix://quire/native/Clock",
+        "bound": {
+          "lower": "0",
+          "upper": "unbounded"
+        }
       }
     ],
     "relationships": [

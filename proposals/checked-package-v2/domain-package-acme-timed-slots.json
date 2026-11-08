@@ -51,10 +51,14 @@
   },
   "types": [
     {
+      "bound": {
+        "lower": 0
+      },
       "constraints": [],
       "displayName": "ClockMap",
       "extensions": [],
       "identity": "ix://acme/orders/ClockMap",
+      "keys": "ix://quire/native/Text",
       "kind": "map",
       "origin": {
         "source": {

@@ -1446,7 +1446,8 @@ fn projected_slot(slot: &Value) -> Value {
 /// The projection FR-154 intake reads from the selected document: for each
 /// object type or interface its supertypes, fields, operations and
 /// operation redefinitions; for each value type its native type, bounds and
-/// text profile; for each relationship its named ends, `sourceEnd.role` then
+/// text profile; for each map type its `keys`, `values` and `bound` (FR-154
+/// "Map types"); for each relationship its named ends, `sourceEnd.role` then
 /// `targetEnd.role` when present. Lists ascend by node identity.
 fn project_document(document: &Value) -> Value {
     let meanings: BTreeMap<(&str, &str), &str> = array(document, "constructs")
@@ -1464,7 +1465,22 @@ fn project_document(document: &Value) -> Value {
     let mut object_types = Vec::new();
     let mut value_types = Vec::new();
     let mut relationships = Vec::new();
+    let mut map_types = Vec::new();
     for declared in array(document, "types") {
+        if declared["kind"] == "map" {
+            map_types.push(json!({
+                "node": declared["identity"],
+                "keys": declared["keys"],
+                "values": declared["values"],
+                "bound": {
+                    "lower": declared["bound"]["lower"].to_string(),
+                    "upper": declared["bound"]
+                        .get("upper")
+                        .map_or("unbounded".to_owned(), Value::to_string),
+                },
+            }));
+            continue;
+        }
         let meaning = meanings[&(
             text(&declared["kind"], "module"),
             text(&declared["kind"], "name"),
@@ -1574,6 +1590,7 @@ fn project_document(document: &Value) -> Value {
         "version": document["package"]["version"],
         "object_types": object_types,
         "value_types": value_types,
+        "map_types": map_types,
         "relationships": relationships,
     })
 }

@@ -281,7 +281,14 @@ collection are live only while the collection holds the element (below).
   A reference to a slot place names the slot and keeps naming it when the
   collection moves its element. The state key holds the place id of a
   `Reference<Clock>`, a one-to-one encoding of the place's owner object, place
-  and slot indices (QSL FR-230 "Place identity"), and no clock value.
+  and slot indices (QSL FR-230 "Place identity"), and no clock value. A place
+  under a `Map` value is selected by key and has no place id: `ref` of such a
+  place (`ref(self.m[k].x)`) refuses `ill_typed`/`type-mismatch` at the `ref`,
+  a `deref(r)` denotes no such place, and a supplied snapshot `Reference<Clock>`
+  whose identity names the `clock_place` of such a place, with any slot indices,
+  refuses `invalid_runtime_input`/`invalid-value`. Its clocks are reached by
+  selection by key and through `forall` and `exists` over the map, never through
+  a reference.
 - A package constraint whose `appliesTo` is `Clock` or an alias of it is a
   **clock constraint**. `max c`, `c` an exact non-negative rational number of
   the model's time unit, is the time invariant `x <= c` on every clock place of
@@ -302,20 +309,30 @@ clock-bearing type whose multiplicity is not `[1, 1]` (FR-322 gives it
 clock collection is admitted in every position a collection of its element type
 is admitted, with its clock rules below, including `Option` of a clock
 collection, a collection of `Option<Clock>`, a collection of collections and a
-record that holds one. A clock-bearing `Map` key refuses
-`ill_typed`/`operator-ineligible`, because a key is an immutable lookup value
-and a clock advances with time.
+record that holds one. A `Map` reaches a model as a domain package map type,
+which declares its key type, its value type and its bound (FR-154 "Map types"),
+and its key type is a scalar key type: a clock-bearing key (`Clock`, an alias of
+it, a record such as `Timer`), a record, tuple or union key, and an `Option`,
+collection, `Map` or `Reference` key refuse `ill_typed`/`operator-ineligible` at
+the map type's key type, because a key is an immutable lookup value with a
+canonical order and a clock advances with time.
 
 - **Element places.** An element of a clock collection has one place for each
-  clock its element type contains. The place's path has a **slot** step: the
-  element's zero-based position in the collection's iteration order, which is
-  occurrence order for a `Sequence` and an `OrderedSet`, ascending key for a
-  `Map`, and ascending canonical key of the element's data part (FR-144) for a
-  `Set` and a `Bag`, copies of one data part in the order they were created.
-  That position (or key) is the selector of an **instance** of the place. The
-  checked package holds one template `clock_place` node for the path, whose slot
-  step carries a symbolic element selector and no index (FR-322 "Timed-model
-  nodes").
+  clock its element type contains. The place's path has a **slot** step. For a
+  `Sequence`, `Set`, `Bag` or `OrderedSet` the slot is the element's zero-based
+  position in the collection's iteration order, which is occurrence order for a
+  `Sequence` and an `OrderedSet`, and ascending canonical key of the element's
+  data part (FR-144) for a `Set` and a `Bag`, copies of one data part in the
+  order they were created. For a `Map` the slot is the entry's **key**, never a
+  position: the place of a clock under a map value is selected by key
+  (`Call.m.[key].x`), so inserting or removing another entry never changes which
+  instance a key selects. That position or key is the selector of an
+  **instance** of the place. The checked package holds one template
+  `clock_place` node for the path, whose slot step carries a symbolic element
+  selector and no index: the `Integer` type node for a position and the map's
+  key type node for a key (FR-322 "Timed-model nodes"). A place under a `Map`
+  value has no place id, because the slot indices of a place id are positions
+  and cannot name a key ("Clock places").
   The **data part** of a clock-bearing value is the value with every clock
   component removed.
 - **Uniqueness.** A `Set`, `OrderedSet` or `Bag` of a clock-bearing element
@@ -378,7 +395,7 @@ and a clock advances with time.
   places' collection sizes times the clocks each element holds, and the clock
   dimension of a model is bounded by the sum, over its clock collections, of the
   declared maximum cardinality (FR-144's bound `K<T>[a, b]`, a field's
-  multiplicity upper bound) times the clocks each element holds, taken over the
+  multiplicity upper bound, a map type's `bound` `upper`) times the clocks each element holds, taken over the
   universe's objects. A clock collection with no declared maximum has no static
   bound: its live places in a state are still the collection's size, and an
   analysis that reaches a state whose live clocks exceed the model checker's
@@ -514,6 +531,7 @@ work limit was reached.
 | FR-415-AC-24 | A clock guard `forall(e in p: B)` carries the typed slot parameter `e` in that guard part's `binders`, and reduces to the conjunction of `B` over the live places selected by `p`; `exists(e in p: B)` carries the same binder form and reduces to the disjunction over those places. A time invariant `forall(e in p: B)` carries `e` in the invariant's `binders` and bounds each live place only while live. Empty collections make `forall` true and `exists` false. A binder not corresponding in order to the place constraint's slot terms refuses `invalid_package`/`timed-node-reference` at the binder reference. | Test (TC-367; CK-37; CL-57..CL-60) |
 | FR-415-AC-25 | The checked-package producer refuses `unsupported_construct`/`expression-form`, naming the construct, a guard `self.x >= 1 ms or self.versionNumber > 0` (a disjunct with no clock constraint), the whole-collection write `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` and `self.ts = filter(e in self.ts: e.n > 1)`, the drop `self.v = absent`, the ordered element write `self.ts[i] = Timer { x: 0 ms, n: 1 }` (`CW-06`), and the selection reset `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`; it builds the guard whose every disjunct reads a clock, the constant write `self.v = 0 ms` and a reset whose condition reads only the presence of the binder's place. A presence requirement has no clause node. The cases are `GJ-01`..`GJ-03`, `CW-01`..`CW-06`, `SD-01` and `SD-02` of `timed-clause-node-vectors.json` (FR-322-AC-267). | Test (TC-367; CK-38) |
 | FR-415-AC-26 | A task-automaton search charges one unit immediately before each expanded product node, including its source and task successor enumeration; the default is `1,048,576` under `zone_check.max_task_product_work`, a request setting of `limits.max_task_product_work` changes that effective bound, and a zero value is refused. Reaching the bound settles incomplete with `limit-reached` naming `max_task_product_work`, the bound and `zone_check.max_task_product_work`, with `task_search` whose frontier marks `work-limit`; an unresolved continuous demand, budget-change or queue choice before the bound settles incomplete with `bounded-search-incomplete{reason: unresolved-dynamics}` and a replayable `task_search` frontier marked `unresolved-choice` with an open set that names demand, budget-change or queue, with no `limit` member. | Test (TC-431) |
+| FR-415-AC-27 | With `m` typed by a domain package map type whose `keys` is `Text`, whose `values` is `Timer` (`Timer { x: Clock; n: Int }`) and whose `bound` is `{lower: 0, upper: 2}` (`Map<Text, Timer>[0, 2]`), the place of `x` under the entry of key `"a"` is the instance `Call.m.["a"].x` of the one template `clock_place` whose slot step's selector is the `Text` type node, live exactly while `m` holds `"a"`; inserting the entry `"0"` (ascending before `"a"`) or removing another entry leaves `Call.m.["a"].x` naming the same clock with its value; `ref(self.m[k].x)` refuses `ill_typed`/`type-mismatch` at the `ref`; a snapshot `Reference<Clock>` naming that `clock_place` with slot `0` refuses `invalid_runtime_input`/`invalid-value`; the map type with `keys` `Timer`, `record Cfg { a: Boolean }` or an option value type over `Text` refuses `ill_typed`/`operator-ineligible` at its key type; and the clock dimension contributed by `m` is `2` per object. | Test (TC-367) |
 
 ## Dependencies
 
