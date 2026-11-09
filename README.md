@@ -146,5 +146,4 @@ To regenerate the figures, run the docs-figures skill from
 
 Every contribution needs a signed contributor agreement: read
 [CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md) first. This repository
-is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE). Content rights
-are described in [CONTENT_RIGHTS.md](CONTENT_RIGHTS.md).
+is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE).
