@@ -44,3 +44,10 @@ AD-016's other rows is also recorded.
 
 FAIL until FND-001 is fixed (one-word change). Location claim, constructor clause,
 dependency clause and `PopulationBinding` exclusion all verified correct.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, commit 170341ed: AD-016:353 now reads "`PopulationId` (the opaque structural identity carried by `Value::Population`, the `NodeId` of the population declaration node)"; no "digest" remains outside spec/reviews/. Consistent with FR-201:47-48, :64, AC-11 and quire-exact `PopulationId(NodeKey)`. |
+| FND-002 | fixed | Round 1, commit 170341ed: AD-016:126 and :425 now name `ValueType::Population(Option<u64>)`, matching quire-exact src/value.rs:392 and QSL's use (`ValueType::Population(None)`, qsl-eval/src/simulation/model.rs:1456). |

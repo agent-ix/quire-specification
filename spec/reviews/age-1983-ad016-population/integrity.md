@@ -35,3 +35,9 @@ citation.
 
 FAIL until FND-001 is fixed in the AD-016 cell. Internal consistency of the
 constructor/dependency clauses and the location cell verified clean.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, commit 170341ed: "population binding admission" removed; the cell describes `PopulationId` as the `NodeId` of the population declaration node, matching its own "exact structural members of FR-201" clause, FR-201:64 and the kernel. QC-21 is now cited only for "only QSL `model` calls the `PopulationId` constructor". No new contradiction: "opaque newtype" over a NodeId matches `PopulationId(NodeKey)`, and FR-201-AC-11's exact-member equality holds. |
