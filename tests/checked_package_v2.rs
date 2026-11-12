@@ -55,6 +55,8 @@ const ZONE_CERTIFICATE_VECTORS: &str =
     include_str!("../proposals/backend-provider-v1/zone-certificate-vectors.json");
 const OPERATION_EFFECT_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/operation-effect-vectors.json");
+const OPERATION_BODY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/operation-body-vectors.json");
 const OPTION_VALUE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/option-value-vectors.json");
 const SELECTED_TIMED_SLOT_DOCUMENT: &str =
@@ -22516,6 +22518,327 @@ fn operation_effect_carrier_vectors_match_the_closed_member_schema_and_reader() 
             case["locus"].as_str().unwrap().to_owned(),
         );
         assert_eq!(read_operation_effects(documents, &rows), Err(expected), "{id}");
+    }
+}
+
+type BodyNodeKey = (String, Vec<String>, u64);
+type BodyRowKey = (Vec<u8>, BodyNodeKey, Vec<u8>);
+type BodyDeclared<'a> = BTreeMap<BodyNodeKey, (&'a Value, String, Option<&'a Value>)>;
+
+/// Reference reader for the FR-322 `operation_bodies` carrier join: per-row
+/// joins in array order, then key checks, then coverage.
+fn read_operation_bodies(case: &Value, rows: &[Value]) -> Result<(), OperationEffectRefusal> {
+    let documents = case["documents"].as_array().unwrap();
+    let selections: Vec<&str> = documents
+        .iter()
+        .map(|document| document["identity"].as_str().unwrap())
+        .collect();
+    let mut declared: BodyDeclared = BTreeMap::new();
+    for document in documents {
+        let identity = document["identity"].as_str().unwrap();
+        for ty in document["types"].as_array().unwrap() {
+            let form = ty["form"].as_str().unwrap();
+            declared.insert(
+                effect_node_order(&effect_node(identity, form, ty["name"].as_str().unwrap())),
+                (document, form.to_owned(), Some(ty)),
+            );
+        }
+        for name in document["relationships"].as_array().unwrap() {
+            declared.insert(
+                effect_node_order(&effect_node(
+                    identity,
+                    "relationship",
+                    name.as_str().unwrap(),
+                )),
+                (document, "relationship".to_owned(), None),
+            );
+        }
+    }
+    let graph: BTreeMap<BodyNodeKey, &Value> = case["graph_nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| (effect_node_order(&entry["node"]), entry))
+        .collect();
+    let candidates = case["dispatch_candidates"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
+    let mut keys: Vec<BodyRowKey> = Vec::new();
+    for (index, row) in rows.iter().enumerate() {
+        let at = |suffix: &str| format!("/operation_bodies/{index}{suffix}");
+        let document_id = row["document"].as_str().unwrap();
+        if !selections.contains(&document_id) {
+            return Err(refuse(
+                "missing_declaration",
+                Some("missing-selection"),
+                at("/document"),
+            ));
+        }
+        let declaring = effect_node_order(&row["declaring"]);
+        if !selections.contains(&declaring.0.as_str()) {
+            return Err(refuse(
+                "invalid_package",
+                Some("invalid-value"),
+                at("/declaring"),
+            ));
+        }
+        let Some((document, form, ty)) = declared.get(&declaring) else {
+            return Err(refuse(
+                "missing_declaration",
+                Some("missing-name"),
+                at("/declaring"),
+            ));
+        };
+        if !matches!(form.as_str(), "object_type" | "process" | "state_machine") {
+            return Err(refuse(
+                "ill_typed",
+                Some("operator-ineligible"),
+                at("/declaring"),
+            ));
+        }
+        if document["identity"] != row["document"] {
+            return Err(refuse(
+                "invalid_package",
+                Some("invalid-value"),
+                at("/document"),
+            ));
+        }
+        let operation = row["operation"].as_str().unwrap();
+        let declared_operation = ty.unwrap()["operations"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|candidate| candidate["name"] == operation);
+        let Some(declared_operation) = declared_operation else {
+            return Err(refuse(
+                "ill_typed",
+                Some("operator-ineligible"),
+                at("/operation"),
+            ));
+        };
+        let has_body = declared_operation["has_body"].as_bool().unwrap();
+        let body = &row["body"];
+        if (body["kind"] == "function") != has_body {
+            return Err(refuse(
+                "invalid_package",
+                Some("invalid-value"),
+                at("/body"),
+            ));
+        }
+        if has_body {
+            let node = effect_node_order(&body["node"]);
+            let Some(entry) = graph.get(&node) else {
+                return Err(refuse(
+                    "missing_declaration",
+                    Some("missing-name"),
+                    at("/body/node"),
+                ));
+            };
+            if entry["form"] != "function" {
+                return Err(refuse(
+                    "ill_typed",
+                    Some("operator-ineligible"),
+                    at("/body/node"),
+                ));
+            }
+            let owner = format!(
+                "ix://{document_id}/{}/{operation}",
+                declaring.1[2].rsplit('/').next().unwrap()
+            );
+            if entry["owner"]["identity"] != row["document"]
+                || entry["owner"]["node"] != owner
+                || entry["clause"] != "body"
+            {
+                return Err(refuse(
+                    "invalid_package",
+                    Some("invalid-value"),
+                    at("/body/node"),
+                ));
+            }
+        }
+        for candidate in &candidates {
+            let witness = &candidate["selected_operation"];
+            if effect_node_order(&witness["declaring"]) == declaring
+                && witness["operation"] == row["operation"]
+            {
+                let agrees = has_body && candidate["operation_body"] == body["node"];
+                if !agrees {
+                    return Err(refuse(
+                        "invalid_package",
+                        Some("invalid-value"),
+                        at("/body"),
+                    ));
+                }
+            }
+        }
+        keys.push((
+            document_id.as_bytes().to_vec(),
+            declaring,
+            operation.as_bytes().to_vec(),
+        ));
+    }
+    for index in 1..keys.len() {
+        let at = format!("/operation_bodies/{index}");
+        if keys[..index].contains(&keys[index]) {
+            return Err(refuse(
+                "invalid_package",
+                Some("conflicting-definition"),
+                at,
+            ));
+        }
+        if keys[index] < keys[index - 1] {
+            return Err(refuse("invalid_package", Some("invalid-value"), at));
+        }
+    }
+    let required: usize = documents
+        .iter()
+        .flat_map(|document| document["types"].as_array().unwrap())
+        .filter(|ty| {
+            matches!(
+                ty["form"].as_str().unwrap(),
+                "object_type" | "process" | "state_machine"
+            )
+        })
+        .map(|ty| ty["operations"].as_array().unwrap().len())
+        .sum();
+    if keys.len() != required {
+        return Err(refuse(
+            "invalid_package",
+            Some("invalid-value"),
+            "/operation_bodies".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+#[trace("TC-987", "FR-322-AC-397")]
+#[test]
+fn operation_body_carrier_vectors_match_the_closed_member_schema_and_reader() {
+    let vectors: Value =
+        serde_json::from_str(OPERATION_BODY_VECTORS).expect("operation body vectors JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let row_validator = schema_for_def(&schema, "OperationBodyRow");
+    let member = &schema["properties"]["operation_bodies"];
+    assert_eq!(member["items"]["$ref"], "#/$defs/OperationBodyRow");
+    assert!(
+        member.get("minItems").is_none(),
+        "a present member may be empty"
+    );
+    assert!(
+        !schema["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("operation_bodies")),
+        "the carrier is absent (bodies unavailable) in a package that does not carry it"
+    );
+
+    let positive = vectors["positive"].as_array().expect("positive cases");
+    let ids: Vec<&str> = positive
+        .iter()
+        .map(|case| case["id"].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        ids,
+        [
+            "OBC-01-with-body",
+            "OBC-02-no-body",
+            "OBC-03-mixed-members",
+            "OBC-04-same-member-name",
+            "OBC-05-dispatch-candidate",
+            "OBC-06-no-operations",
+        ]
+    );
+    for case in positive {
+        let rows = case["rows"].as_array().unwrap();
+        for row in rows {
+            assert!(row_validator.is_valid(row), "{} row is closed", case["id"]);
+        }
+        assert_eq!(read_operation_bodies(case, rows), Ok(()), "{}", case["id"]);
+    }
+    assert_eq!(positive[0]["rows"][0]["body"]["kind"], "function");
+    assert_eq!(positive[1]["rows"][0]["body"], json!({"kind": "no_body"}));
+    assert!(positive[5]["rows"].as_array().unwrap().is_empty());
+    let shared = positive[3]["rows"].as_array().unwrap();
+    assert_eq!(
+        shared
+            .iter()
+            .filter(|row| row["operation"] == "settle")
+            .count(),
+        3
+    );
+    assert!(
+        shared
+            .iter()
+            .all(|row| row["declaring"]["path"][2] != "ix://acme/orders/Premium")
+    );
+
+    let base_for = |id: &str| -> &Value {
+        positive
+            .iter()
+            .find(|case| case["id"] == id)
+            .unwrap_or_else(|| panic!("base case {id}"))
+    };
+    let patched_rows = |case: &Value| -> Vec<Value> {
+        let base = base_for(case["base"].as_str().unwrap());
+        let mut package = json!({"operation_bodies": base["rows"].clone()});
+        for patch in case["patch"].as_array().unwrap() {
+            apply_json_patch(&mut package, patch);
+        }
+        package["operation_bodies"].as_array().unwrap().clone()
+    };
+
+    let schema_refusals = vectors["schema_refusals"]
+        .as_array()
+        .expect("schema refusals");
+    assert_eq!(schema_refusals.len(), 13);
+    for case in schema_refusals {
+        let id = case["id"].as_str().unwrap();
+        assert_eq!(case["schema"], "invalid", "{id}");
+        assert_eq!(case["expected_code"], "malformed_wire", "{id}");
+        let mut loci = Vec::new();
+        for (index, row) in patched_rows(case).iter().enumerate() {
+            for error in row_validator.iter_errors(row) {
+                loci.push(format!(
+                    "/operation_bodies/{index}{}",
+                    error.instance_path()
+                ));
+            }
+        }
+        loci.sort();
+        loci.dedup();
+        assert_eq!(
+            loci,
+            vec![case["locus"].as_str().unwrap().to_owned()],
+            "{id}"
+        );
+    }
+
+    let reader_refusals = vectors["reader_refusals"]
+        .as_array()
+        .expect("reader refusals");
+    assert_eq!(reader_refusals.len(), 21);
+    for case in reader_refusals {
+        let id = case["id"].as_str().unwrap();
+        assert_eq!(case["schema"], "valid", "{id}");
+        let rows = patched_rows(case);
+        for row in &rows {
+            assert!(row_validator.is_valid(row), "{id} is a reader mutation");
+        }
+        let mut context = base_for(case["base"].as_str().unwrap()).clone();
+        if let Some(candidates) = case.get("dispatch_candidates") {
+            context["dispatch_candidates"] = candidates.clone();
+        }
+        let expected = (
+            case["expected_code"].as_str().unwrap().to_owned(),
+            case["expected_cause"].as_str().map(str::to_owned),
+            case["locus"].as_str().unwrap().to_owned(),
+        );
+        assert_eq!(
+            read_operation_bodies(&context, &rows),
+            Err(expected),
+            "{id}"
+        );
     }
 }
 

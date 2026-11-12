@@ -86,6 +86,13 @@ structures, but any external consumer receives only the contract.
   objects and documents; the schema and reader refusals OES-* and OER-* carry
   exact codes and loci (FR-322-AC-303). QSL emits the carrier and the IR strict
   reader admits or refuses it.
+- `operation-body-vectors.json` publishes the optional `operation_bodies`
+  carrier of QSL FR-576's per-operation body: a reference to the checked body
+  function node or the typed absence `no_body`, keyed by selected document,
+  declaring node and original operation name as `operation_effects`. Positive
+  cases OBC-01 to OBC-06 cover a body, no body, mixed members, one member name
+  under different objects and documents, a dispatch candidate, and the empty member; the schema and reader
+  refusals OBS-* and OBR-* carry exact codes and loci (FR-322-AC-397).
 - `temporal-fairness-target-vectors.json` publishes complete fairness members
   for operation, protocol-root, attempt-node, parallel-branch,
   compensation-template and hybrid-transition targets, plus closed-shape
