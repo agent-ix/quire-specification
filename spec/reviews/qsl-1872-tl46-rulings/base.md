@@ -56,3 +56,4 @@ are wording.
 | FND-002 | fixed | TC-050 procedure and Expected Results now exercise two internalities for one bound role under one binding and a checked static role carrying an internality member (aaf84855). |
 | FND-003 | fixed | FR-217 Key and AC-5 define one binding as one binding-authority input for the bound roles of one workflow instance (aaf84855). |
 | FND-004 | fixed | FR-217 Values rows and Absence bullet now say bound role (aaf84855). |
+| FND-005 | fixed | FR-061 Result scope and AC-18 drop the FR-061-AC-4 citation; AC-18 and TC-061 name the refusal as a non-requested subject (8158d9f9). |

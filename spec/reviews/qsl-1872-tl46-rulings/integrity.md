@@ -60,3 +60,4 @@ round; FND-004 is a nit.
 | FND-002 | fixed | The full FR-227 record claim is dropped; the package carrier is the FR-466 choice body, and the unreachable "lacks the record refuses" clause is removed (aaf84855). |
 | FND-003 | fixed | FR-049 paragraph and AC-14 scope the rule to closed progress and complete input and defer open progress to the FR-061 rows unchanged; "no truth is derived from a timeout" replaces the ambiguous phrase (aaf84855). |
 | FND-004 | fixed | FR-479 frontmatter now references FR-172 and FR-227 (aaf84855). |
+| FND-005 | fixed | TC-174 Expected Results now name the open-progress fixture where the FR-061 decisive-counterexample row does not hold (8158d9f9). |
