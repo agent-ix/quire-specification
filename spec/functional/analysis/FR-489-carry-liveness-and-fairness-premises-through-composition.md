@@ -132,7 +132,7 @@ FR-176-AC-4's iterations.
 | An unsupported composition rule | `unsupported` | `unavailable` | the missing capability (FR-348-AC-4) |
 | A liveness cycle outside FR-176's fixed-point rule | -- | -- | refused as FR-176-AC-3 refuses circular reasoning: `invalid_model_binding`/`malformed-declaration`, naming the cycle's guarantees (FR-491), scoped to the composition item |
 | A discharge record whose subject differs, or whose identity names no settled result | -- | -- | refused `invalid_runtime_input`/`invalid-value`, naming the member |
-| Work or resource bound reached | `incomplete` | `unavailable` | the reached limit |
+| Work or resource bound reached | `failed`, FR-241 `resource-incomplete` (FR-331 result `incomplete`) | `unavailable` | the reached limit |
 
 Unmet premise, trusted assumption, unsupported rule, failed check and
 exhausted resources keep their distinct outcomes, trust basis and extent.
@@ -150,7 +150,7 @@ Unrelated supported claims in the request continue.
 | FR-489-AC-6 | A premise discharged by an accepted plugin result that carries certification `trusted` settles `proved` with certification `trusted`, the discharge record citing that plugin result. | Test (TC-983) |
 | FR-489-AC-7 | An unsupported composition rule settles `unsupported` naming the missing capability. | Test (TC-983) |
 | FR-489-AC-8 | A failed component check settles `inconclusive`, cause `premise-unproved`, naming the component's premise. | Test (TC-983) |
-| FR-489-AC-9 | An exhausted work or resource bound settles `incomplete` naming the reached limit; AC-6 to AC-9 are four distinct outcomes with their own trust basis and extent. | Test (TC-983) |
+| FR-489-AC-9 | An exhausted work or resource bound settles FR-360 `failed` with FR-241 `resource-incomplete` (FR-331 result `incomplete`), naming the reached limit; AC-6 to AC-9 are four distinct outcomes with their own trust basis and extent. | Test (TC-983) |
 | FR-489-AC-10 | A discharge record whose guarantee subject differs from its premise's subject, and one whose identity names no settled result, are refused `invalid_runtime_input`/`invalid-value` naming the member; a referenced result that is itself `inconclusive` does not discharge the premise; sibling claims of the same request settle independently. | Test (TC-983) |
 | FR-489-AC-11 | A premise supplied only as an assumption, with no plugin result behind it, is not settled `proved`: the composition settles `inconclusive`, cause `premise-unproved`, naming the premise and the assumption; `trusted` belongs to plugin results alone (FR-354-AC-1, AC-6). | Test (TC-983) |
 
