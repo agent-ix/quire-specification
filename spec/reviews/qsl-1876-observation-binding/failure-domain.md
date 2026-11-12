@@ -26,3 +26,10 @@ FAIL. Identity confusion between instances is handled correctly by the FR-287
 subject. Occurrence ordinals need a correction rule (rank over correction chains
 or heads only) and a total order with ties named (for example progress position,
 then source ordinal) over a named admitted set.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Ranks are over FR-296 correction-chain heads only; a correction replaces its predecessor and adds no occurrence (FR-261, FR-260-AC-7, TC-140). |
+| FND-002 | fixed | Total order is (progress position of the record's clock family, then source ordinal) over the admitted set as of a pinned evaluation point; late-data renumbering is stated explicitly. |

@@ -24,3 +24,10 @@ definition identity, so AC-4 goes beyond it. AC-4 also bundles three claims.
 
 FAIL on FND-001: add an EARS statement for the derivation (in FR-261 or in FR-260,
 where admitted records live) and trace AC-4 to it. Split AC-4.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-260 Description now carries a "When a consumer attributes ... SHALL derive ... SHALL NOT accept caller attribution" statement; FR-261-AC-4 is removed and FR-260-AC-5..9 trace to it. |
+| FND-002 | fixed | The compound AC is split into FR-260-AC-5 (node), AC-6 (instance), AC-7 (occurrence), AC-8 (field independence) and AC-9 (caller attribution refused). |

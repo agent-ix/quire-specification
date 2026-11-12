@@ -27,7 +27,8 @@ Permute object-member presentation, mutate each FR-296 key member one at a time
 and then each attribute member, remove a key member, and pair one key with
 unequal observation members. Admit three records for one binding identity and
 subject in a known progress order, then a record with the same binding identity
-and another subject, and one with another binding identity and the same subject.
+and another subject, and one with another binding identity, mapping to a completely disjoint set of
+nodes, and the same subject.
 Offer a caller-supplied node, instance and ordinal in place of the derivation.
 Admit a record whose binding identity resolves to no declared role mapping.
 Change a record's trace ID, signal name and timestamp outside progress position.
