@@ -45,3 +45,18 @@ table read internality as a package fact; FR-019 cites FR-300 (now
 expose-rust-lifecycle-api) where FR-479 is meant. Both are downstream
 quire-protocol edits, not defects of this PR. FND-001 to FND-003 need a fix
 round; FND-004 is a nit.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-005 | low | TC-174 Expected Results still say the false constraint "with open progress reports `pending`" unconditionally, while FR-049 now says open progress takes the FR-061 rows unchanged ("pending unless the FR-061 decisive-counterexample row holds"); the TC should name a fixture where that row does not hold, or say "pending or, under the FR-061 decisive row, violated". | spec/test-cases/TC-174-bind-protocol-deadlines.md:20, spec/functional/foundation/FR-049-bind-native-choreography-syntax.md:86-92 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-172 carrier and AC-6 now name the `owner` and `visible` set of every choice body of the qualified definition and state that the row selects no choice (aaf84855). |
+| FND-002 | fixed | The full FR-227 record claim is dropped; the package carrier is the FR-466 choice body, and the unreachable "lacks the record refuses" clause is removed (aaf84855). |
+| FND-003 | fixed | FR-049 paragraph and AC-14 scope the rule to closed progress and complete input and defer open progress to the FR-061 rows unchanged; "no truth is derived from a timeout" replaces the ambiguous phrase (aaf84855). |
+| FND-004 | fixed | FR-479 frontmatter now references FR-172 and FR-227 (aaf84855). |

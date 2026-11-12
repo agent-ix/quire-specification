@@ -41,3 +41,18 @@ undefined "one binding".
 The rulings themselves are coherent and the pre-existing validation claim
 holds. FND-001 and FND-002 need a fix round before merge; FND-003 and FND-004
 are wording.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-005 | low | FR-061 Result scope and FR-061-AC-18 cite FR-061-AC-4 for a "mismatched claim subject" refusal, but FR-061-AC-4 covers only an impossible dimension combination or conflicting claim strength; the citation does not support the refusal it names (AC-18 itself now states the refusal, so it remains testable). | spec/functional/protocol/FR-061-report-orthogonal-results.md:164-169,232,246 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-061-AC-18 now refuses a `ProtocolResult` whose subject is a selection event rather than a requested requirement, and TC-061 Expected Results name the refusal (aaf84855). |
+| FND-002 | fixed | TC-050 procedure and Expected Results now exercise two internalities for one bound role under one binding and a checked static role carrying an internality member (aaf84855). |
+| FND-003 | fixed | FR-217 Key and AC-5 define one binding as one binding-authority input for the bound roles of one workflow instance (aaf84855). |
+| FND-004 | fixed | FR-217 Values rows and Absence bullet now say bound role (aaf84855). |
