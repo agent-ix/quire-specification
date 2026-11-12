@@ -9,7 +9,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-378
     type: references
-  - target: ix://agent-ix/quire-specification/FR-341
+  - target: ix://agent-ix/quire-specification/FR-360
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
@@ -46,7 +46,7 @@ counterexample, the concrete package and the abstract subject's package.
 
 ## Outputs
 
-An [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+An [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
 result with its settlement basis and cause, a counterexample, and a replay
 result.
 
@@ -54,7 +54,7 @@ result.
 
 **Verdicts.**
 
-| Outcome | FR-341 label | FR-243 basis |
+| Outcome | FR-360 label | FR-243 basis |
 | --- | --- | --- |
 | Explicit-state run completed with no failure | `proved` | `closed-scope` |
 | Per-step simulation: every step obligation and the initial-state obligation proved | `proved` | `decisive-witness` |
@@ -65,7 +65,7 @@ result.
 | An undecided contract conjunction of either subject during expansion or a step check | `inconclusive`, cause undecided successor | `unsettled` |
 | Replay recomputes a different failure kind or position | `inconclusive`, cause `replay-parity` | `unsettled` |
 | Liveness half with a hidden field (FR-378) | `unsupported` | `unavailable` |
-| A budget stopped the run before it completed its method | `incomplete`, execution `resource-incomplete`, cause `limit-reached{limit, value, setting}` | `unavailable` |
+| A budget stopped the run before it completed its method | `failed`, execution `resource-incomplete` (FR-331 result `incomplete`), cause `limit-reached{limit, value, setting}` | `unavailable` |
 
 An explicit-state `proved` holds for the concrete subject's initial states
 and universes. A per-step `proved` holds for every state of the declared
@@ -213,7 +213,7 @@ when its relation is defined.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-379-AC-1 | Each outcome of the verdict table settles exactly its FR-341 label, FR-243 basis and cause, and a per-step simulation failure never settles `refuted`. | Test (TC-312, TC-315) |
+| FR-379-AC-1 | Each outcome of the verdict table settles exactly its FR-360 label, FR-243 basis and cause, and a per-step simulation failure never settles `refuted`. | Test (TC-312, TC-315) |
 | FR-379-AC-2 | A refutation carries exactly one `refinement_failure` member of the seven kinds with their listed members, or on a protocol abstract subject of the nine kinds of both tables; a safety failure is a finite prefix ending at its failing step and a liveness failure is a lasso fair under `F_C`; the counterexample carries concrete steps only. | Test (TC-312, TC-313) |
 | FR-379-AC-3 | Replay re-executes the concrete steps, recomputes history values, `map` and candidate sets, reruns the step function at the failing position, and settles `reproduced-with-evaluated-witness` and the item `refuted` when it agrees. | Test (TC-315) |
 | FR-379-AC-4 | A lasso whose history values or candidate set at the loop's last position differ from those at its entry is refused `invalid_runtime_input`/`invalid-value`. | Test (TC-315) |
@@ -232,7 +232,7 @@ when its relation is defined.
 
 - [FR-377](FR-377-decide-model-refinement.md) and
   [FR-378](FR-378-check-refinement-auxiliary-state.md) decide the item.
-- [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+- [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
   and [FR-243](../../objects/protocol/FR-243-settlement-basis.md) supply the
   result labels and settlement bases.
 - [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)

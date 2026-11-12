@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-007
     type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 
 # FR-174: Project global protocols soundly
@@ -47,6 +49,30 @@ preserves channel-key order and all admitted interleavings. Correctness requires
 both local-composition trace inclusion in the global semantics and preservation
 of every globally required visible action.
 
+## Derived-artifact identity
+
+A role-local graph, like a realizability witness (FR-175), is a derived
+artifact: analysis derives it from selected inputs and no author states its
+identity. Its identity kind is *derived* and its key is structural, as
+[FR-249](../../objects/protocol/FR-249-derived-projection-result.md) keys a
+derived projection result, with no hash:
+
+- the FR-288 qualified definition key of the global protocol definition;
+- the selected role;
+- the projection profile;
+- the channel, choice and visibility premises, as selected (FR-054);
+- the bounds.
+
+Two projected artifacts are the same artifact exactly when all five members
+compare equal. Display name, path, span, producing run, timestamp and artifact
+bytes never participate, and no digest stands in for a member. The artifact carries its key members as a structured value on the result, so
+a reader can recompute and compare the identity. An absent member is refused
+`invalid_runtime_input`/`missing-member` naming the member: by the analyzer
+building the key, and by a reader of a carried artifact whose key member is
+absent. Nothing defaults it. A change to any member is a different artifact.
+Where the artifact is carried inside a canonical protocol result, FR-062 and
+FR-249 identify only the projected E02 result around it, not the artifact.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -56,6 +82,7 @@ of every globally required visible action.
 | FR-174-AC-3 | Unsupported dynamic/queue constructs or exhausted bounds return non-conclusive/unsupported without a substitute graph. | Test (TC-205) |
 | FR-174-AC-4 | Every global communication projects to exactly one matching send/receive pair with preserved occurrence correspondence. | Test (TC-205) |
 | FR-174-AC-5 | A local branch merge is accepted only under compatible next actions or explicit distinguishing evidence. | Test (TC-205) |
+| FR-174-AC-6 | Changing the FR-288 definition key, the selected role, the projection profile, the channel, choice or visibility premises or the bounds yields a different derived-artifact identity, while changing only display name, path, span or producing run does not; the artifact carries its key members; an absent key member is refused `invalid_runtime_input`/`missing-member` naming the member; and no digest of the artifact stands in for a member. | Test (TC-205) |
 
 ## Dependencies
 

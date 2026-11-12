@@ -50,6 +50,8 @@ visible `ack` from `ready` to `done`, and internal `spin`, a self-loop at
    with `label` `{step: "other", binder: []}`, and with a one-step loop; replay
    case 6's with `direction` `abstract-only`.
 
+10. **Resource-limit stop (FR-177-AC-8).** Check case 1 with a state budget smaller than the product.
+
 ## Expected Results
 
 Case 1 refines: `prep` passes as a `stutter` step and `ack` matches the
@@ -76,3 +78,5 @@ abstract-only}` (FR-379-AC-10). Case 8 holds (FR-379-AC-11). In case 9 the
 `replay-parity`, the loop is refused `invalid_runtime_input`/`invalid-value`,
 and the wrong `direction` settles `replay-parity` (FR-379-AC-13). A step rule
 failing on the incoming step is reported before these kinds (FR-379-AC-12).
+
+Case 1 settles `refines`, FR-360 `proved`, with the FR-379 basis for an explicit-state run; case 4 settles `violates`, FR-360 `refuted`, `decisive-counterexample`. Case 10 settles FR-360 `failed`, FR-241 `resource-incomplete`, FR-331 result `incomplete`, cause `limit-reached{limit, value, setting}`, never `proved` or `refuted` (FR-177-AC-8).

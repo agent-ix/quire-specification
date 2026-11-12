@@ -72,7 +72,7 @@ A step after which the set is empty fails with `NoAbstractMatch`. The set
 keeps every abstract choice alive until a later concrete step rules it out,
 so a safety refinement that would need a prophecy variable is decided
 exactly. The set is bounded by the hidden fields' finite domains and by the
-caller's budgets; reaching a budget settles the item `incomplete`, FR-241 `resource-incomplete`, cause `limit-reached{limit, value, setting}`.
+caller's budgets; reaching a budget settles the item FR-331 `incomplete` (FR-360 `failed`), FR-241 `resource-incomplete`, cause `limit-reached{limit, value, setting}`.
 
 **Divergence with hidden fields.** When the abstract side is a protocol
 specification whose profile makes divergence observable, the analyzer
