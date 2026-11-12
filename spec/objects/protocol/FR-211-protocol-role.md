@@ -25,7 +25,6 @@ When a protocol declaration names a role, the protocol linker SHALL bind that ro
 | typed_declaration | String | 1..1 |  |
 | declaration_kind | String | 1..1 |  |
 | authority | String | 1..1 |  |
-| internality | RoleInternality | 1..1 |  |
 | choice_ownership | String | 1..1 |  |
 | declaration_span | String | 1..1 |  |
 
@@ -39,7 +38,6 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | typed_declaration | type not stated in source; see Field sources |
 | declaration_kind | type not stated in source; see Field sources |
 | authority | type not stated in source; see Field sources |
-| internality | one of internal or external (FR-050, FR-217) |
 | choice_ownership | type not stated in source; multiplicity not stated in source; see Field sources |
 | declaration_span | type not stated in source; see Field sources |
 
@@ -49,9 +47,13 @@ Type and Multiplicity above were derived from the retained text below. Where tha
 | Typed declaration | FR-050 | "the protocol linker SHALL bind every role, role instance, workflow instance, message and channel reference to its exact typed declaration and configuration identity before conformance evaluation." |
 | Declaration kind | FR-049-AC-1 | "Role, channel and relationship positions bind their required declaration kinds; substituting a payload type, endpoint or scalar identity refuses at its source location." |
 | Authority | FR-050 | "The linker SHALL refuse duplicate role authorities, ambiguous instance bindings and name-only substitutions." |
-| Internality | FR-050, [FR-217](FR-217-role-internality.md) | Internal or external; "an external role is not assumed to be fully observable" (FR-050). |
 | Choice ownership | FR-053 | A labeled choice requires "one owning role" and evidence the owner can distinguish every selected branch (FR-053). |
 | Declaration span | FR-049-AC-11 | "Every lowered source node, including synthesized control edges and bounded occurrences, retains its declaration span and exact derivation/iteration identity." |
+
+A static role carries no internality. Internality is a binding fact supplied
+for the role by the runtime or configuration binding authority
+([FR-217](FR-217-role-internality.md)); it is not a property of the role, is not
+authored in the source and is not spelled by the checked package (FR-465).
 
 A role is not a component, an endpoint or a channel: "The linker SHALL keep roles
 distinct from components, endpoints and channels" (FR-050), and "A queue or
