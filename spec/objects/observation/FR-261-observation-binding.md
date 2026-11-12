@@ -18,6 +18,35 @@ identity "requires a newly linked subject, while a changed
 concrete mapping or admitted record set under the same selection remains an
 identified assessment input".
 
+## Binding of an admitted observation to a checked node, instance and occurrence
+
+An admitted observation record carries no checked-node, workflow-instance or
+occurrence field. The link is derived from members the record already carries
+(requirement statement and acceptance criteria: FR-260):
+
+- **Checked node** — the record's `declared_binding_identity` is resolved through
+  the assessment's declared role mapping. One explicit binding may be referenced
+  by several compatible role mappings
+  ([observation contract](../../../proposals/quire-v1/observation-contract.md)),
+  so it resolves to a set of owning native declarations (checked event,
+  compensation or response nodes). The record is an observation for node N
+  exactly when N is in that set. A binding identity that resolves to nothing
+  refuses.
+- **Workflow instance** — the record's FR-287 subject. Equal binding identity
+  with a different subject is a different instance's observation.
+- **Repeat occurrence** — the nth occurrence is the rank of the record among the
+  heads of the FR-296 correction chains that share one binding identity and one
+  subject, in the total order (progress position of the record's clock family,
+  then source ordinal), over the admitted set as of the evaluation point. A
+  correction replaces its predecessor and is not a further occurrence. Late
+  admitted data may renumber later occurrences, so a consumer pins the
+  evaluation point. Ordinals are never stored on the record, and arrival order,
+  key order and timestamps outside progress position do not establish them.
+
+The derivation uses no new identity and no generated key. The observation
+library needs no new view accessor: the binding identity and subject are already
+exposed.
+
 ## Properties
 
 | Field | Type | Multiplicity | Constraints |
