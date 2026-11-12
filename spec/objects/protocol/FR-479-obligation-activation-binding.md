@@ -59,6 +59,13 @@ the relation row from any carrier other than the admitted package.
   activation state, the immutable captures and the exact evaluation anchor
   (FR-093, FR-232).
 
+The binding carries no choice-visibility member. The owned-choice visibility
+evidence an activation preserves is the checked FR-227 record of the
+qualified definition above
+([FR-172](../../functional/protocol/FR-172-bind-choice-obligation-captures.md)
+"Choice visibility carrier"); replacing the definition replaces that evidence,
+so no separate component can be offered.
+
 The FR-230 instance key is derived from the binding: `package` and
 `protocol definition` from the qualified definition, `workflow instance` from
 the workflow instance, `control occurrence` from the activation relation row

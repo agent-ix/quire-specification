@@ -108,6 +108,6 @@ unknown and absent bases refuse. Known and unknown participation remain
 structurally distinct; empty is not absent or unknown, exact role-instance
 identity and canonical order are preserved, and target participation labels are
 never accepted as source values. Completeness is recomputed with contradiction
-precedence and never supplies a progress/closure fact. Claim, strength, fragment
+precedence and never supplies a progress/closure fact. Branch selection is not a result and carries no truth, while a requirement reading it reports its own truth. Claim, strength, fragment
 and backend are exact, single-valued and capability-compatible; missing,
 multiple, unknown, cross-domain or display-derived selections refuse.

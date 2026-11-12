@@ -159,6 +159,14 @@ identity and canonical order. If that key or order is unavailable, construction
 or reordering SHALL refuse rather than use display names. E02 participation
 labels are derived projection states and SHALL NOT be accepted as source values.
 
+Result scope. A result in this requirement answers one requested assessment.
+Selecting a branch of an `await` or choice is a control step of the assessed
+execution, not a requested assessment: it is not an FR-061 result, carries no
+truth or settlement basis and is never reported as one. A requirement that
+depends on the selection, such as an `await` response-bound constraint, is
+assessed and reports its own truth; a false constraint with closed progress and
+complete input is `violated` with basis `decisive-counterexample` (FR-049-AC-14).
+
 Every result SHALL carry exactly one FR-290 protocol-family claim kind. The result producer SHALL
 attach exactly one source-bound FR-281 claim strength, one exact FR-291
 admitted fragment and one exact FR-292 backend selection to every advanced
@@ -231,6 +239,7 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-15 | Participation accepts exactly the FR-285 known/unknown shapes, retains exact role-instance and missing-dependency references, and refuses target labels, mixed variants, duplicate members or display-derived ordering. | Test (TC-061) |
 | FR-061-AC-16 | Completeness accepts exactly the FR-295 state derived from the complete required population and remains independent from all five progress/closure facts and assessment execution. | Test (TC-061) |
 | FR-061-AC-17 | Each result retains one exact FR-290 protocol-family claim kind; every advanced result retains one compatible FR-281 strength, FR-291 fragment and FR-292 backend, and unknown/absent/mismatched or display-derived selections refuse; a non-protocol FR-290 member in the claim refuses as mismatched. | Test (TC-061) |
+| FR-061-AC-18 | Branch selection or non-selection of an `await` or choice is retained as no FR-061 result and no truth; a record that presents it as a result with truth or settlement basis is refused, while the assessment of a requirement that reads the selection carries its own truth. | Test (TC-061) |
 
 ## Dependencies
 

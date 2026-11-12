@@ -48,9 +48,12 @@ The linker SHALL keep role instances and workflow instances distinct from their
 static definitions. The linker SHALL refuse duplicate role authorities,
 ambiguous instance bindings and name-only substitutions. Internal and external
 participants use the same identity rules; an external role is not assumed to be
-fully observable. Every static role SHALL carry exactly one exact internality
-member, `internal` or `external`; absence or any other spelling refuses rather
-than defaulting. Internality alone establishes no observation adequacy.
+fully observable. Internality is a binding fact, not a static-definition
+member: the runtime or configuration binding authority SHALL supply exactly one
+exact internality, `internal` or `external`, for every static role it binds
+(FR-217), and the checked static role carries none (FR-465). Absence or any
+other spelling refuses rather than defaulting. Internality alone establishes no
+observation adequacy.
 
 The linker and runtime binder SHALL use these exact identity keys, where the
 qualified protocol-definition identity is the FR-288 value rather than a
@@ -106,7 +109,7 @@ establish source order, role precedence, message order or causality.
 | FR-050-AC-7 | Reusing one complete workflow-, role-instance- or message-identity key with incompatible definition, role, workflow, configuration, obligation or channel binding facts refuses as an identity contradiction. | Test (TC-050) |
 | FR-050-AC-8 | Lexicographically sorting role, role-instance, workflow-instance, channel or message keys changes no authored causal or delivery relation. | Test (TC-050) |
 | FR-050-AC-9 | A participant, static role, role instance and component remain four non-interchangeable objects; two role instances may bind one compatible participant without merging, and a static participant-slot identity never substitutes for the concrete FR-287 participant key. | Test (TC-050) |
-| FR-050-AC-10 | Each static role carries exactly one exact `internal` or `external` member; absence, another spelling or inference from its model/provider refuses, and neither member alone establishes observation adequacy. | Test (TC-050) |
+| FR-050-AC-10 | The binding supplies exactly one exact `internal` or `external` internality for each static role it binds, and the checked static role carries none; absence, another spelling or inference from its model/provider refuses, and neither member alone establishes observation adequacy. | Test (TC-050) |
 
 ## Dependencies
 
