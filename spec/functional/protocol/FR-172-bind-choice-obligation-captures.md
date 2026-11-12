@@ -45,19 +45,23 @@ remain separate occurrences with one value each.
 
 ## Choice visibility carrier
 
-The owned-choice visibility evidence the binder preserves is the choice's
-checked visibility evidence record ([FR-227](../../objects/protocol/FR-227-owned-choice.md)
-"Visibility evidence contract", `visibility_premises`), which belongs to the
-exact FR-288 qualified protocol-definition the
+The owned-choice visibility evidence an activation preserves is the
+`owner` and `visible` set of every `choice` control of the exact FR-288
+qualified protocol-definition the
 [FR-479](../../objects/protocol/FR-479-obligation-activation-binding.md)
-activation binding names. The activation binding adds no visibility-evidence
-member of its own: the evidence is reached only through the binding's qualified
-definition and the choice's occurrence in the activation relation row, so
-replacing the definition or row replaces the evidence (FR-479-AC-3), and a
-binding naming a definition whose choice lacks the record refuses. The evidence
-is a static checked fact of the definition; a consumer reads it from the
-admitted package and never supplies or reconstructs it from a runtime message,
-name, payload or timestamp.
+activation binding names, as the admitted package's choice body holds them
+([FR-466](../../objects/interfaces/FR-466-checked-package-protocol-control-bodies.md)).
+The activation relation row selects no single choice (FR-464 "Activation
+relation": it holds a clause key, an activation and a temporal clause key), and
+none is needed: admission already refuses every choice whose owner cannot
+distinguish its branches from its `visible` set (FR-053, FR-466-AC-14), so every
+choice of an admitted definition carries its discharged evidence, and the
+binding reaches all of it through its qualified definition. The distinguishing
+fact and causal path of the FR-227 "Visibility evidence contract" are what
+admission checked; the package retains no separate record of them and a
+consumer does not reconstruct one. The activation binding adds no
+visibility-evidence member of its own, and replacing the definition replaces
+the evidence (FR-479-AC-3).
 
 ## Activation ordering
 
@@ -78,7 +82,7 @@ refuses the activation atomically and emits no partial capture list.
 | FR-172-AC-3 | Duplicate capture expressions retain authored order and separate occurrence identities with inclusive-boundary values. | Test (TC-203) |
 | FR-172-AC-4 | Choice commitment, visibility recording, activation and capture evaluation occur in the specified order. | Test (TC-203) |
 | FR-172-AC-5 | One undefined capture refuses activation atomically without exposing preceding capture values. | Test (TC-203) |
-| FR-172-AC-6 | The owned-choice visibility evidence an activation preserves is the checked FR-227 record of the choice in the binding's FR-288 qualified definition; the FR-479 binding carries no separate visibility member, a binding whose definition lacks the choice's record refuses, and a caller-supplied or runtime-reconstructed substitute does not stand in for it. | Test (TC-203) |
+| FR-172-AC-6 | The owned-choice visibility evidence an activation preserves is the `owner` and `visible` set of the choice bodies of the binding's FR-288 qualified definition; the FR-479 binding carries no separate visibility member, no choice is selected by the activation relation row, and a caller-supplied or runtime-reconstructed substitute does not stand in for it. | Test (TC-203) |
 
 ## Dependencies
 

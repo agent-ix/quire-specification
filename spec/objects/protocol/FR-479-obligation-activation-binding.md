@@ -19,6 +19,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
+  - target: ix://agent-ix/quire-specification/FR-172
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-227
+    type: references
 ---
 # FR-479: Protocol-obligation activation binding
 
@@ -60,8 +64,8 @@ the relation row from any carrier other than the admitted package.
   (FR-093, FR-232).
 
 The binding carries no choice-visibility member. The owned-choice visibility
-evidence an activation preserves is the checked FR-227 record of the
-qualified definition above
+evidence an activation preserves is the `owner` and `visible` set of the choice
+bodies of the qualified definition above
 ([FR-172](../../functional/protocol/FR-172-bind-choice-obligation-captures.md)
 "Choice visibility carrier"); replacing the definition replaces that evidence,
 so no separate component can be offered.

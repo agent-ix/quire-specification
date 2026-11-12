@@ -83,10 +83,13 @@ is not taken. If the decision-scope progress is `closed` and the input is
 complete, the assessment of the requirement that holds the constraint SHALL
 report truth `violated` with settlement basis `decisive-counterexample`,
 identifying the bound response observation that falsifies the constraint
-(FR-061). It is never `satisfied`, never `pending` and never a timeout miss. If
-progress is open, or a fact in the decision-support set is missing, the
-FR-061 rows for a pending or unavailable truth apply instead. Selecting or not
-selecting a branch is not itself a result (FR-061).
+(FR-061). It is never `satisfied`, never `pending` and never a timeout miss. This
+rule is scoped to closed decision-scope progress with complete input; with open
+progress, or a missing decision-support fact, the FR-061 result-combination rows
+apply unchanged (pending unless the FR-061 decisive-counterexample row holds,
+else unavailable). A timeout never produces any of these truths for a false
+constraint. Selecting or not selecting a branch is not itself a result
+(FR-061).
 
 ## Acceptance Criteria
 
@@ -105,7 +108,7 @@ selecting a branch is not itself a result (FR-061).
 | FR-049-AC-11 | Every lowered source node, including synthesized control edges and bounded occurrences, retains its declaration span and exact derivation/iteration identity. | Test (TC-171) |
 | FR-049-AC-12 | A finish record without required closure, or with unsettled required obligations, cannot establish complete global success; it does not cause any business operation or compensation to execute. | Test (TC-174) |
 | FR-049-AC-13 | The admitted occurrence schema retains the qualified definition, control handle, exact role slot or structural-owner marker, and every outer-to-inner bounded-repeat domain; binding refuses an absent or foreign workflow key, a wrong role, a missing or surplus ordinal, and an ordinal outside its declared domain. | Test (TC-171) |
-| FR-049-AC-14 | For a bound response whose response-bound constraint is false, with decision-scope progress `closed` and complete input, no branch is selected, the timeout path is not taken, and the result is truth `violated` with basis `decisive-counterexample` naming the falsifying response observation; with open progress or missing decision support it is `pending` or unavailable and never `violated` by timeout. | Test (TC-174) |
+| FR-049-AC-14 | For a bound response whose response-bound constraint is false, with decision-scope progress `closed` and complete input, no branch is selected, the timeout path is not taken, and the result is truth `violated` with basis `decisive-counterexample` naming the falsifying response observation; with open progress or missing decision support the FR-061 rows apply unchanged and no truth is derived from a timeout. | Test (TC-174) |
 
 ## Dependencies
 

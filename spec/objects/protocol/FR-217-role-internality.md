@@ -23,8 +23,8 @@ When a protocol declares a role, the protocol linker SHALL apply the same identi
 
 | Value | Description |
 | --- | --- |
-| `internal` | Exact lowercase spelling for a static role inside the assessed protocol. It is subject to the same identity rules as an external role (FR-050). |
-| `external` | Exact lowercase spelling for a static role outside the assessed protocol. It is subject to the same identity rules as an internal role, and is not assumed to be fully observable (FR-050). |
+| `internal` | Exact lowercase spelling for a bound role inside the assessed protocol. It is subject to the same identity rules as an external role (FR-050). |
+| `external` | Exact lowercase spelling for a bound role outside the assessed protocol. It is subject to the same identity rules as an internal role, and is not assumed to be fully observable (FR-050). |
 
 ## Identity and comparison
 
@@ -41,14 +41,16 @@ When a protocol declares a role, the protocol linker SHALL apply the same identi
   appends no component to the FR-211 role key, is not content of the FR-288
   qualified definition and is not a member of the checked package role (FR-465),
   so changing it changes no definition identity; offering two different
-  internalities for one role under one binding refuses as contradiction.
+  internalities for one bound role under one binding refuses as contradiction.
+  One binding is one input from the binding authority for the bound roles of
+  one workflow instance.
 - **Key order** — lexicographic over the exact label for canonical collection
   comparison only. It supplies no internality rank, precedence or observability
   relation.
 - **Causal order** — not applicable. Internality contributes no causal edge;
   causal order is the authored partial acyclic order of FR-052 and is never
   derived from key order, timestamp or source position (FR-052, FR-052-AC-2).
-- **Absence** — every static role requires exactly one member. Absence, an
+- **Absence** — every bound role requires exactly one member in its binding. Absence, an
   unknown member or another spelling refuses and is never defaulted to
   `internal`. Neither member alone establishes full observability or adequacy.
 
@@ -60,7 +62,7 @@ When a protocol declares a role, the protocol linker SHALL apply the same identi
 | FR-217-AC-2 | An external role is not treated as fully observable. | Analysis |
 | FR-217-AC-3 | A role with an absent internality receives no default member and is not thereby treated as fully observable. | Analysis |
 | FR-217-AC-4 | `internal` and `external` are the complete exact lowercase vocabulary; an unknown or differently spelled value refuses. | Test (TC-050) |
-| FR-217-AC-5 | The binding supplies exactly one internality for each static role it binds, as a binding fact rather than a static-definition or checked-package member; it does not extend a role or participant key or the FR-288 identity, and cannot be inferred from a model, component, provider or authority; two different internalities for one role under one binding refuse as contradiction. | Test (TC-050) |
+| FR-217-AC-5 | The binding (one input from the binding authority for the bound roles of one workflow instance) supplies exactly one internality for each static role it binds, as a binding fact rather than a static-definition or checked-package member; it does not extend a role or participant key or the FR-288 identity, and cannot be inferred from a model, component, provider or authority; two different internalities for one role under one binding refuse as contradiction. | Test (TC-050) |
 
 ## Dependencies
 

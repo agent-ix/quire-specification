@@ -36,7 +36,7 @@ change authority/kind, reuse one
 complete key across incompatible definition/role/workflow/configuration/
 obligation/channel facts, and permute key order. For every static role the binding supplies, exercise
 exact `internal`, exact `external`, absence, an unknown/differently cased value
-and inference from model/provider authority.
+and inference from model/provider authority. Supply one binding with two different internalities for one bound role, and a checked package whose static role carries an `internal`/`external` member.
 
 ## Expected Results
 
@@ -44,5 +44,5 @@ The valid package retains distinct static and runtime identities and canonical
 key order without creating causal or delivery order. Every absent, placeholder,
 foreign, colliding or incompatibly rebound identity refuses at its source
 location; one shared participant never merges its role instances. Internality
-is a binding fact that admits exactly one closed member per bound role and establishes no adequacy by itself; the checked package role carries none and is never defaulted to one.
+is a binding fact that admits exactly one closed member per bound role and establishes no adequacy by itself; the checked package role carries none and is never defaulted to one. Two different internalities for one bound role under one binding refuse as contradiction, and a checked static role carrying an internality member is refused.
 One invalid dependency does not erase an independent valid definition.
