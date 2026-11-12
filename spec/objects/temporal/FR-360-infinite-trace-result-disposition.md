@@ -38,7 +38,12 @@ provenance."
 The vocabulary covers infinite-trace results, state-graph results
 ([FR-391](../../functional/analysis/FR-391-settle-state-graph-claims.md)) and
 hyperproperty and step-relation results over a model subject
-([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)).
+([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)). It also covers refinement results
+([FR-379](../../functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md),
+[FR-177](../protocol/FR-177-check-protocol-refinement.md)), reduced-run results
+([FR-385](../../functional/analysis/FR-385-report-reduced-verdicts.md)) and composition and guarantee
+results ([FR-488](../../functional/ir-proof/FR-488-attach-a-temporal-guarantee-to-implementation-rust.md),
+[FR-489](../../functional/analysis/FR-489-carry-liveness-and-fairness-premises-through-composition.md)).
 Each label keeps the exact FR-241, FR-242 and FR-243 combination below for
 every one of them.
 

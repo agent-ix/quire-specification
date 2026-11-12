@@ -128,7 +128,7 @@ frame and the environment premises it reads; it needs no progress item.
 | A premise identity that names no settled result | -- | -- | refused `invalid_runtime_input`/`invalid-value`, naming the member (FR-380) |
 | A model element with no bound abstraction relation | -- | -- | refused `missing_declaration`/`missing-name` (FR-353-AC-3), scoped to the item |
 | Verus or the checking backend not registered | `unsupported` | `unavailable` | the missing capability (FR-350-AC-5) |
-| Work or resource bound reached | `incomplete` | `unavailable` | the reached limit |
+| Work or resource bound reached | `failed`, FR-241 `resource-incomplete` (FR-331 result `incomplete`) | `unavailable` | the reached limit |
 
 A guarantee item is never `refuted`: an implementation counterexample refutes a
 correspondence premise, not the model claim. A finite implementation trace,
@@ -166,7 +166,7 @@ invalidates the record.
 | FR-488-AC-7 | An environment premise the item lists whose identity names no settled record is refused `invalid_runtime_input`/`invalid-value`, naming the member. | Test (TC-982) |
 | FR-488-AC-8 | A model claim not `proved` settles `inconclusive`, cause `premise-unproved`, naming the model claim and its result. | Test (TC-982) |
 | FR-488-AC-9 | A premise identity (model claim, correspondence or progress item) that names no settled result is refused `invalid_runtime_input`/`invalid-value`, naming the member. | Test (TC-982) |
-| FR-488-AC-10 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles `incomplete`; the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
+| FR-488-AC-10 | A model element with no bound abstraction relation refuses `missing_declaration`/`missing-name`, an unregistered backend settles `unsupported` naming the capability and an exhausted bound settles FR-360 `failed` with FR-241 `resource-incomplete` (FR-331 result `incomplete`); the three are distinct and the sibling items with resolved bindings settle independently. | Test (TC-982) |
 | FR-488-AC-11 | A finite implementation trace over which the clause holds does not settle a liveness item `proved`; a guarantee item never settles `refuted`. | Test (TC-982) |
 | FR-488-AC-12 | Rebinding the model to a new relation revision, changing an implementation source or changing an environment premise invalidates the recorded conclusion, and the item is settled again from its premises. | Test (TC-982) |
 | FR-488-AC-13 | A clause with an interval operator nested under an unbounded one, and a clause using previous, each settle `inconclusive`, cause `transfer-not-preserving` with reason `fragment` naming the operator, although every premise is `proved`. | Test (TC-982) |

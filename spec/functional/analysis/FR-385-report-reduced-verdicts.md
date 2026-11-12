@@ -11,7 +11,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-384
     type: references
-  - target: ix://agent-ix/quire-specification/FR-341
+  - target: ix://agent-ix/quire-specification/FR-360
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
@@ -44,7 +44,7 @@ A model-check item with its claim form, fairness set and reduction selection
 
 ## Outputs
 
-An [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+An [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
 result with its [FR-243](../../objects/protocol/FR-243-settlement-basis.md)
 basis, proof basis or cause, in the item's
 [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)
@@ -78,7 +78,7 @@ combination applies only when every selected reduction's row reads "yes".
 
 ## Verdicts
 
-| Outcome | FR-341 label | FR-241 / FR-243 | Proof basis or cause |
+| Outcome | FR-360 label | FR-241 / FR-243 | Proof basis or cause |
 | --- | --- | --- | --- |
 | Run completed with symmetry or partial-order reduction applied, no counterexample | `proved` | `completed` / `closed-scope` | proof basis `reduced`, listing each applied reduction with its parameters and preservation row, with `certification` `uncertified` |
 | Run with only a state constraint, completed, no boundary state reached, no counterexample | `proved` | `completed` / `closed-scope` | proof basis `exhaustive`, with `certification` `uncertified`; the constraint is in the terminal record's method |
@@ -88,7 +88,7 @@ combination applies only when every selected reduction's row reads "yes".
 | Run completed with no counterexample and at least one boundary state | `inconclusive` | `completed` / `unsettled` | `constraint-reached{boundary_states}`, taking precedence over `reduction-horizon` and a horizon bound when both apply |
 | Partial-order run completed to its search horizon `max_depth` with no counterexample | `inconclusive` | `completed` / `unsettled` | `reduction-horizon{max_depth}` |
 | Symmetry-only run completed to its search horizon `max_depth` with no counterexample | `inconclusive` | `completed` / `unsettled` | the cause an unreduced run to that horizon settles with |
-| A budget stopped the run before it completed its method, under any reduction | `incomplete` | `resource-incomplete` / `unavailable` | `limit-reached{limit, value, setting}` |
+| A budget stopped the run before it completed its method, under any reduction | `failed` (FR-331 result `incomplete`) | `resource-incomplete` / `unavailable` | `limit-reached{limit, value, setting}` |
 | Selected reduction not advertised, or partial-order reduction over a system with no footprints | `unsupported` | `unsupported` / `unavailable` | `unsupported_projection`/`unsupported-requested-capability` naming the reduction |
 
 A claim that evaluates undefined at a reached state settles `refuted` with
@@ -124,7 +124,7 @@ and its basis is `decisive-counterexample` whatever reduction found it.
 | FR-385-AC-6 | A partial-order run that completes to its search horizon `max_depth` with no counterexample settles `inconclusive`, FR-241 `completed`, FR-243 `unsettled`, cause `reduction-horizon` naming the horizon value, and never `failed` or `resource-incomplete`; a symmetry-only run to the same horizon settles `inconclusive` with the cause an unreduced run to that horizon settles with. | Test (TC-323) |
 | FR-385-AC-7 | Each result label carries exactly its FR-241 execution and FR-243 basis from the verdict table. | Test (TC-327) |
 | FR-385-AC-8 | The protocol `Mark` under its default scheduler constraints with partial-order reduction settles `proved`, proof basis `reduced`, and under `scheduling adversarial` settles `refuted` with the lasso `fork`, `send(S)`, then the loop `duplicate`, `lose`. | Test (TC-325) |
-| FR-385-AC-9 | A run under any reduction that reaches `max_states` before completing its method settles `incomplete`, FR-241 `resource-incomplete`, cause `limit-reached{limit: max_states, value, setting}`, and never `failed`. | Test (TC-323) |
+| FR-385-AC-9 | A run under any reduction that reaches `max_states` before completing its method settles FR-360 `failed` (FR-331 result `incomplete`), FR-241 `resource-incomplete`, cause `limit-reached{limit: max_states, value, setting}`, and never execution `failed`. | Test (TC-323) |
 
 ## Dependencies
 
@@ -132,7 +132,7 @@ and its basis is `decisive-counterexample` whatever reduction found it.
   pre-check; [FR-383](FR-383-explore-under-state-space-reduction.md) and
   [FR-384](FR-384-decide-each-fairness-on-annotated-quotient.md) own the
   reduced run.
-- [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md),
+- [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md),
   [FR-241](../../objects/protocol/FR-241-assessment-execution-disposition.md)
   and [FR-243](../../objects/protocol/FR-243-settlement-basis.md) supply the
   result axes.

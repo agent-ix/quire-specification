@@ -45,5 +45,5 @@ boundary:
 2. The flag refused `invalid_runtime_input`/`wrong-value-kind`; the four lists accepted.
 3. Each `inconclusive`/`premise-unproved` naming the premise, premise undischarged.
 4. Refused as FR-176-AC-3 refuses circular reasoning; with the lattice accepted and every iteration recorded.
-5. `proved` with certification `trusted` citing the plugin result; `inconclusive`/`premise-unproved` naming the premise and the assumption; `unsupported` naming the capability; `inconclusive`/`premise-unproved`; `incomplete`; five distinct outcomes.
+5. `proved` with certification `trusted` citing the plugin result; `inconclusive`/`premise-unproved` naming the premise and the assumption; `unsupported` naming the capability; `inconclusive`/`premise-unproved`; FR-360 `failed` with FR-241 `resource-incomplete` (FR-331 `incomplete`) naming the limit; the outcomes stay distinct.
 6. The first two refused `invalid_runtime_input`/`invalid-value` naming the member; the third leaves the premise undischarged (`inconclusive`/`premise-unproved`); the unrelated claim settles in each.

@@ -60,12 +60,16 @@ derived projection result, with no hash:
 - the FR-288 qualified definition key of the global protocol definition;
 - the selected role;
 - the projection profile;
+- the channel, choice and visibility premises, as selected (FR-054);
 - the bounds.
 
-Two projected artifacts are the same artifact exactly when all four members
+Two projected artifacts are the same artifact exactly when all five members
 compare equal. Display name, path, span, producing run, timestamp and artifact
-bytes never participate, and no digest stands in for a member. An absent member
-is a refusal, never a default. A change to any member is a different artifact.
+bytes never participate, and no digest stands in for a member. The artifact carries its key members as a structured value on the result, so
+a reader can recompute and compare the identity. An absent member is refused
+`invalid_runtime_input`/`missing-member` naming the member: by the analyzer
+building the key, and by a reader of a carried artifact whose key member is
+absent. Nothing defaults it. A change to any member is a different artifact.
 Where the artifact is carried inside a canonical protocol result, FR-062 and
 FR-249 identify only the projected E02 result around it, not the artifact.
 
@@ -78,7 +82,7 @@ FR-249 identify only the projected E02 result around it, not the artifact.
 | FR-174-AC-3 | Unsupported dynamic/queue constructs or exhausted bounds return non-conclusive/unsupported without a substitute graph. | Test (TC-205) |
 | FR-174-AC-4 | Every global communication projects to exactly one matching send/receive pair with preserved occurrence correspondence. | Test (TC-205) |
 | FR-174-AC-5 | A local branch merge is accepted only under compatible next actions or explicit distinguishing evidence. | Test (TC-205) |
-| FR-174-AC-6 | Changing the FR-288 definition key, the selected role, the projection profile or the bounds yields a different derived-artifact identity, while changing only display name, path, span or producing run does not; an absent key member is refused, and no digest of the artifact stands in for a member. | Test (TC-205) |
+| FR-174-AC-6 | Changing the FR-288 definition key, the selected role, the projection profile, the channel, choice or visibility premises or the bounds yields a different derived-artifact identity, while changing only display name, path, span or producing run does not; the artifact carries its key members; an absent key member is refused `invalid_runtime_input`/`missing-member` naming the member; and no digest of the artifact stands in for a member. | Test (TC-205) |
 
 ## Dependencies
 

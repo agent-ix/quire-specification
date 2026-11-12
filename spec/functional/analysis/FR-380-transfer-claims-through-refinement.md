@@ -13,7 +13,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-092
     type: references
-  - target: ix://agent-ix/quire-specification/FR-341
+  - target: ix://agent-ix/quire-specification/FR-360
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
@@ -43,7 +43,7 @@ abstract subject.
 
 ## Outputs
 
-An [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+An [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
 result for the transfer item with its basis, cause and premises.
 
 ## Behavior
@@ -101,7 +101,7 @@ does not cover the stutter tails the refinement admits.
 
 **Settlement.**
 
-| Premises and checks | FR-341 label | FR-243 basis | Cause |
+| Premises and checks | FR-360 label | FR-243 basis | Cause |
 | --- | --- | --- | --- |
 | Both premises `proved`; fragment, subject match, fairness implication and premise form all hold | `proved` | `decisive-witness` | none; the witness is the pair of premise records |
 | A clause outside the fragment | `inconclusive` | `unsettled` | `transfer-not-preserving`, naming the interval or previous operator |
@@ -147,7 +147,7 @@ composition over component interface contracts.
   infinite-trace operators their non-strict meaning, and
   [FR-092](../temporal/FR-092-evaluate-bounded-past.md) defines previous and
   strong previous.
-- [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md),
+- [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md),
   [FR-243](../../objects/protocol/FR-243-settlement-basis.md) and
   [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) supply the
   result labels, bases and kind.

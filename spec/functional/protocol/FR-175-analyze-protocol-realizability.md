@@ -62,7 +62,13 @@ identity". Its key is:
 - the identity and version of the analyzer that produced it, because distinct
   analyzers may return distinct valid witnesses for one claim.
 
-Changing any member is a different artifact. No digest stands in for a member.
+The analyzer SHALL be deterministic for a fixed key: one key yields one
+witness, so the analyzer's identity and version fix any seed or configuration
+that affects the result. The artifact carries its key members as a structured
+value on the result. An absent member is refused
+`invalid_runtime_input`/`missing-member` naming the member, by the analyzer
+building the key and by a reader of a carried artifact. Changing any member is
+a different artifact. No digest stands in for a member.
 
 ## Acceptance Criteria
 
@@ -73,7 +79,7 @@ Changing any member is a different artifact. No digest stands in for a member.
 | FR-175-AC-3 | Missing environment/channel premises or analysis limits return inconclusive rather than realizable. | Test (TC-206) |
 | FR-175-AC-4 | A witness strategy selects the same action for every pair of locally indistinguishable histories. | Test (TC-206) |
 | FR-175-AC-5 | Realizability quantifies over every admitted environment play rather than only sampled executions. | Test (TC-206) |
-| FR-175-AC-6 | Changing the FR-288 definition key, the strategy profile, the visibility, channel or environment premises, the bounds or the producing analyzer identity or version yields a different witness identity, while changing only display name, path, span or producing run does not; an absent key member is refused. | Test (TC-206) |
+| FR-175-AC-6 | Changing the FR-288 definition key, the strategy profile, the visibility, channel or environment premises, the bounds or the producing analyzer identity or version yields a different witness identity, while changing only display name, path, span or producing run does not; the artifact carries its key members; two runs of one analyzer identity and version on one key return the same witness; an absent key member is refused `invalid_runtime_input`/`missing-member` naming the member. | Test (TC-206) |
 
 ## Dependencies
 

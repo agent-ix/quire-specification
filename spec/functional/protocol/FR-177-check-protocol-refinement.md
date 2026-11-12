@@ -104,7 +104,7 @@ states:
 | FR-177-AC-5 | Failure-set inclusion and assumption weakening are checked independently from visible-trace inclusion. | Test (TC-208) |
 | FR-177-AC-6 | Visible-step matching, internal steps and paired initial states are decided by FR-377's step rules with internal actions as `stutter` steps and observations as step labels; an observable internal loop at a specification state that can move refutes as a divergence under every fairness set, including an empty one, while the same loop in a model refinement with empty abstract fairness holds. | Test (TC-318) |
 | FR-177-AC-7 | A refusal-set violation and a terminal-success mismatch refute with the FR-379 kinds `RefusalNotPermitted` and `TerminalSuccessMismatch`, defined with their payloads, checks and replay there; a permitted refusal and matching terminal success hold. | Test (TC-318) |
-| FR-177-AC-8 | `refines` settles FR-360 `proved` and `violates` settles `refuted`, each with the FR-241, FR-242 and FR-243 combination FR-360 names for it; `inconclusive`, `unsupported` and `failed` settle the same-named labels; a refinement run stopped by a resource limit settles `failed` with FR-241 `resource-incomplete`, never `proved` or `refuted`. | Test (TC-318) |
+| FR-177-AC-8 | `refines` settles FR-360 `proved` and `violates` settles `refuted`, each with the FR-241 and FR-242 values FR-360 names for it and the FR-243 settlement basis the FR-379 verdict table gives the outcome; `inconclusive`, `unsupported` and `failed` settle the same-named labels; a refinement run stopped by a resource limit settles `failed` with FR-241 `resource-incomplete`, never `proved` or `refuted`. | Test (TC-318) |
 
 ## Dependencies
 
