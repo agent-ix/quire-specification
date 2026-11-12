@@ -70,6 +70,12 @@
         "$ref": "#/$defs/OperationEffectRow"
       }
     },
+    "operation_bodies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/OperationBodyRow"
+      }
+    },
     "capability_report": {
       "type": "array",
       "items": {
@@ -331,6 +337,62 @@
         }
       },
       "additionalProperties": false
+    },
+    "OperationBodyRow": {
+      "type": "object",
+      "required": [
+        "document",
+        "declaring",
+        "operation",
+        "body"
+      ],
+      "properties": {
+        "document": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "declaring": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "operation": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "body": {
+          "$ref": "#/$defs/OperationBody"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OperationBody": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "node"
+          ],
+          "properties": {
+            "kind": {
+              "const": "function"
+            },
+            "node": {
+              "$ref": "#/$defs/NodeRef"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "no_body"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     },
     "ExactNumber": {
       "oneOf": [

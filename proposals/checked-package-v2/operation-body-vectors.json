@@ -1,0 +1,1395 @@
+{
+  "note": "STD-660. The operation_bodies rows carry QSL FR-576's per-operation body: a reference to the checked body function node or the typed absence no_body, keyed by selected document, declaring node and original operation name (the key of operation_effects). Each case's documents are compact excerpts of the selected FR-154 model documents (types with their declared operations and has_body); graph_nodes lists the package graph nodes the body references resolve against; the optional dispatch_candidates are excerpts of checked_term_data dispatch candidates and operation_effect_keys the key set of a carried operation_effects member. schema_refusals and reader_refusals are RFC 6902 patches over the rows of their base positive case, applied to {\"operation_bodies\": rows}; a reader case may replace the base operation_effect_keys. Loci are absolute JSON pointers into that package member.",
+  "positive": [
+    {
+      "id": "OBC-01-with-body",
+      "description": "one operation with an authored body: the row references its checked body function node",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "graph_nodes": [
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          },
+          "form": "expression"
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Order/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "OBC-02-no-body",
+      "description": "one operation without an authored body: the row carries the typed absence no_body and no node",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [],
+              "operations": [
+                {
+                  "name": "touch",
+                  "params": [],
+                  "has_body": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "graph_nodes": [
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          },
+          "form": "expression"
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch",
+          "body": {
+            "kind": "no_body"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OBC-03-mixed-members",
+      "description": "two members of one object, one with a body and one without; rows sorted by key",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": true
+                },
+                {
+                  "name": "touch",
+                  "params": [],
+                  "has_body": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "graph_nodes": [
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          },
+          "form": "expression"
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Order/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch",
+          "body": {
+            "kind": "no_body"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OBC-04-same-member-name",
+      "description": "settle under a process of one document and two object types of another: separate rows, distinct bodies or no_body; subtype Premium inherits settle and has no row",
+      "documents": [
+        {
+          "identity": "acme/billing",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Ledger",
+              "form": "process",
+              "fields": [],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "identity": "acme/orders",
+          "relationships": [
+            "Placed"
+          ],
+          "types": [
+            {
+              "name": "Invoice",
+              "form": "object_type",
+              "fields": [],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": false
+                }
+              ]
+            },
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": true
+                },
+                {
+                  "name": "touch",
+                  "params": [],
+                  "has_body": false
+                }
+              ]
+            },
+            {
+              "name": "Premium",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "graph_nodes": [
+        {
+          "node": {
+            "package": "acme/billing",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/billing/Ledger/settle/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          },
+          "form": "expression"
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/billing",
+          "declaring": {
+            "package": "acme/billing",
+            "path": [
+              "model",
+              "process",
+              "ix://acme/billing/Ledger"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "function",
+            "node": {
+              "package": "acme/billing",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/billing/Ledger/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "no_body"
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Order/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch",
+          "body": {
+            "kind": "no_body"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OBC-05-dispatch-candidate-and-effects",
+      "description": "Order.settle is a dispatch candidate whose operation_body equals the row body, and the operation_effects key set equals the row key set",
+      "documents": [
+        {
+          "identity": "acme/billing",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Ledger",
+              "form": "process",
+              "fields": [],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "identity": "acme/orders",
+          "relationships": [
+            "Placed"
+          ],
+          "types": [
+            {
+              "name": "Invoice",
+              "form": "object_type",
+              "fields": [],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": false
+                }
+              ]
+            },
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [
+                "total"
+              ],
+              "operations": [
+                {
+                  "name": "settle",
+                  "params": [],
+                  "has_body": true
+                },
+                {
+                  "name": "touch",
+                  "params": [],
+                  "has_body": false
+                }
+              ]
+            },
+            {
+              "name": "Premium",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "graph_nodes": [
+        {
+          "node": {
+            "package": "acme/billing",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/billing/Ledger/settle/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          },
+          "form": "expression"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/other"
+            ],
+            "ordinal": 0
+          },
+          "form": "function"
+        }
+      ],
+      "dispatch_candidates": [
+        {
+          "selected_operation": {
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle"
+          },
+          "operation_body": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "operation_effect_keys": [
+        {
+          "document": "acme/billing",
+          "declaring": {
+            "package": "acme/billing",
+            "path": [
+              "model",
+              "process",
+              "ix://acme/billing/Ledger"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle"
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle"
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle"
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch"
+        }
+      ],
+      "rows": [
+        {
+          "document": "acme/billing",
+          "declaring": {
+            "package": "acme/billing",
+            "path": [
+              "model",
+              "process",
+              "ix://acme/billing/Ledger"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "function",
+            "node": {
+              "package": "acme/billing",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/billing/Ledger/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "no_body"
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle",
+          "body": {
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Order/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "touch",
+          "body": {
+            "kind": "no_body"
+          }
+        }
+      ]
+    },
+    {
+      "id": "OBC-06-no-operations",
+      "description": "a selected document declares no operation: the member is present and empty, which is not absent",
+      "documents": [
+        {
+          "identity": "acme/orders",
+          "relationships": [],
+          "types": [
+            {
+              "name": "Order",
+              "form": "object_type",
+              "fields": [],
+              "operations": []
+            }
+          ]
+        }
+      ],
+      "graph_nodes": [
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          },
+          "form": "expression"
+        }
+      ],
+      "rows": []
+    }
+  ],
+  "schema_refusals": [
+    {
+      "id": "OBS-01-missing-document",
+      "description": "row without its document",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_bodies/2/document"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2"
+    },
+    {
+      "id": "OBS-02-missing-declaring",
+      "description": "row without its declaring node",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_bodies/2/declaring"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2"
+    },
+    {
+      "id": "OBS-03-missing-operation",
+      "description": "row without its operation",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_bodies/2/operation"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2"
+    },
+    {
+      "id": "OBS-04-missing-body",
+      "description": "row without its body, so absence is never implied by omission",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_bodies/2/body"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2"
+    },
+    {
+      "id": "OBS-05-extra-member",
+      "description": "row with a member the closed schema does not name",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_bodies/2/provenance",
+          "value": "x"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2"
+    },
+    {
+      "id": "OBS-06-operation-not-identifier",
+      "description": "operation that is not an identifier",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/operation",
+          "value": "not an identifier"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/operation"
+    },
+    {
+      "id": "OBS-07-body-null",
+      "description": "body null instead of a reference or no_body",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body",
+          "value": null
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBS-08-body-bare-node-ref",
+      "description": "body as a bare node reference without its kind",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBS-09-body-unknown-kind",
+      "description": "body of an unknown kind",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body",
+          "value": {
+            "kind": "empty"
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBS-10-no-body-with-node",
+      "description": "no_body carrying a node",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/1/body",
+          "value": {
+            "kind": "no_body",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Invoice/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/1/body"
+    },
+    {
+      "id": "OBS-11-function-without-node",
+      "description": "function body without its node",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body",
+          "value": {
+            "kind": "function"
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBS-12-function-extra-member",
+      "description": "function body with an extra member",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_bodies/2/body/expression",
+          "value": "x"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBS-13-body-node-malformed",
+      "description": "function body whose node reference lacks its ordinal",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_bodies/2/body/node/ordinal"
+        }
+      ],
+      "schema": "invalid",
+      "expected_code": "malformed_wire",
+      "locus": "/operation_bodies/2/body"
+    }
+  ],
+  "reader_refusals": [
+    {
+      "id": "OBR-01-document-not-selected",
+      "description": "row document that is no selection of the lock",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/document",
+          "value": "acme/unselected"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-selection",
+      "locus": "/operation_bodies/2/document"
+    },
+    {
+      "id": "OBR-02-declaring-package-not-selected",
+      "description": "declaring node of a package that is not selected",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/declaring/package",
+          "value": "acme/unselected"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/declaring"
+    },
+    {
+      "id": "OBR-03-declaring-absent",
+      "description": "declaring node the selected package does not declare",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/declaring/path/2",
+          "value": "ix://acme/orders/Missing"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "locus": "/operation_bodies/2/declaring"
+    },
+    {
+      "id": "OBR-04-declaring-relationship",
+      "description": "declaring node that is a relationship",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/declaring",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "relation",
+              "relationship",
+              "ix://acme/orders/Placed"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_bodies/2/declaring"
+    },
+    {
+      "id": "OBR-05-declaring-other-document",
+      "description": "declaring node owned by a document other than the row document",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/document",
+          "value": "acme/billing"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/document"
+    },
+    {
+      "id": "OBR-06-operation-is-field",
+      "description": "operation that names a field",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/3/operation",
+          "value": "total"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_bodies/3/operation"
+    },
+    {
+      "id": "OBR-07-operation-only-inherited",
+      "description": "row for subtype Premium naming the operation it only inherits from Order",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/declaring",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Premium"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_bodies/2/operation"
+    },
+    {
+      "id": "OBR-08-no-body-but-authored",
+      "description": "no_body for an operation the document gives a body",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body",
+          "value": {
+            "kind": "no_body"
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBR-09-body-but-not-authored",
+      "description": "a function body for an operation the document gives none",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/1/body",
+          "value": {
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Invoice/settle/body"
+              ],
+              "ordinal": 0
+            }
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/1/body"
+    },
+    {
+      "id": "OBR-10-body-node-absent",
+      "description": "body node the package graph does not hold",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node/path/2",
+          "value": "ix://acme/orders/Order/settle/missing"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "locus": "/operation_bodies/2/body/node"
+    },
+    {
+      "id": "OBR-11-body-node-not-function",
+      "description": "body node that is an expression and not a function",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "expression",
+              "literal",
+              "1"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/operation_bodies/2/body/node"
+    },
+    {
+      "id": "OBR-12-body-node-shared",
+      "description": "two rows naming one body function node",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/0/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/operation_bodies/2/body/node"
+    },
+    {
+      "id": "OBR-13-candidate-disagrees",
+      "description": "row body that differs from the operation_body of a dispatch candidate for the same operation",
+      "base": "OBC-05-dispatch-candidate-and-effects",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/other"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/body"
+    },
+    {
+      "id": "OBR-14-repeated-key",
+      "description": "a repeated key",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/operation_bodies/-",
+          "value": {
+            "document": "acme/orders",
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            },
+            "operation": "touch",
+            "body": {
+              "kind": "no_body"
+            }
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "conflicting-definition",
+      "locus": "/operation_bodies/4"
+    },
+    {
+      "id": "OBR-15-key-order",
+      "description": "rows out of key order",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/0",
+          "value": {
+            "document": "acme/orders",
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Invoice"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle",
+            "body": {
+              "kind": "no_body"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/operation_bodies/1",
+          "value": {
+            "document": "acme/billing",
+            "declaring": {
+              "package": "acme/billing",
+              "path": [
+                "model",
+                "process",
+                "ix://acme/billing/Ledger"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle",
+            "body": {
+              "kind": "function",
+              "node": {
+                "package": "acme/billing",
+                "path": [
+                  "function",
+                  "pure_function",
+                  "ix://acme/billing/Ledger/settle/body"
+                ],
+                "ordinal": 0
+              }
+            }
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/1"
+    },
+    {
+      "id": "OBR-16-missing-coverage",
+      "description": "an operation without a row",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/operation_bodies/3"
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies"
+    },
+    {
+      "id": "OBR-17-empty-member-with-operations",
+      "description": "an empty member while operations exist",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies",
+          "value": []
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies"
+    },
+    {
+      "id": "OBR-18-effects-key-set-differs",
+      "description": "a package whose operation_effects key set differs from the operation_bodies key set",
+      "base": "OBC-05-dispatch-candidate-and-effects",
+      "patch": [],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies",
+      "operation_effect_keys": [
+        {
+          "document": "acme/billing",
+          "declaring": {
+            "package": "acme/billing",
+            "path": [
+              "model",
+              "process",
+              "ix://acme/billing/Ledger"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle"
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle"
+        },
+        {
+          "document": "acme/orders",
+          "declaring": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          "operation": "settle"
+        }
+      ]
+    }
+  ]
+}
