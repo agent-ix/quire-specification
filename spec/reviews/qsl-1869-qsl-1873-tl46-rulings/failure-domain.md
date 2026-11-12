@@ -41,3 +41,11 @@ quire-protocol `origin/main` FR-152 and FR-030.
 REVISE. FND-001 is the blocking finding: as written, the identity ruling
 would let quire-protocol FR-030-AC-5 accept a projection computed under
 different channel premises as the same artifact.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-174 key now has five members including "the channel, choice and visibility premises, as selected (FR-054)"; FR-174-AC-6 and TC-205 case 2 vary them (head 0fed3afc). |
+| FND-002 | fixed | FR-175 states "The analyzer SHALL be deterministic for a fixed key: one key yields one witness"; FR-175-AC-6 and TC-206 case 4 check two runs return the same witness. |
+| FND-003 | fixed | FR-174 and FR-175 state the artifact carries its key members as a structured value on the result; both ACs and TC-205/TC-206 case 1 check it. |

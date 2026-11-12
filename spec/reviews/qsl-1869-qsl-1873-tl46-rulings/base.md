@@ -51,3 +51,13 @@ diff (FR-177 Outputs, FR-377 budget-stop prose and AC-13, FR-378, FR-379
 table and AC-1, FR-489 table and AC-9). The FR-377 rewording "never execution
 `failed`" correctly disambiguates the execution value from the FR-360 label.
 Ruling 3's structural, digest-free form matches FR-288 and FR-249.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | TC-318 case 10 stops case 1 on a state budget and expects FR-360 `failed`, FR-241 `resource-incomplete`, FR-331 `incomplete`; cases 1 and 4 now state `proved` and `refuted` with their FR-379 bases (head 0fed3afc). |
+| FND-002 | fixed | TC-205 "Derived-artifact identity cases" vary each of the five key members, each excluded member, and omit each member with the expected refusal. |
+| FND-003 | fixed | TC-206 "Derived-artifact identity cases" vary each key member including analyzer identity and version, check excluded members, determinism, and absent members. |
+| FND-004 | fixed | FR-174 and FR-175 name `invalid_runtime_input`/`missing-member` naming the member, refused by the analyzer building the key and by a reader of a carried artifact; both ACs carry it. |
+| FND-005 | fixed | FR-177-AC-8 takes the FR-241/FR-242 values from FR-360 and the FR-243 basis from the FR-379 verdict table. |

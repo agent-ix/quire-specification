@@ -47,3 +47,13 @@ FND-002 leave the spec saying both "`incomplete` is not an FR-360 label" and
 "FR-360 label `incomplete`". These can be fixed in this PR or deferred to a
 follow-up ticket; FND-001 is the stronger case for this PR because quire-protocol
 FR-202 reads FR-488/FR-489 composition labels through FR-360.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-488 table row and FR-488-AC-10 now read FR-360 `failed`, FR-241 `resource-incomplete` (FR-331 result `incomplete`) (head 0fed3afc). |
+| FND-002 | fixed | FR-385 links and table header repointed to FR-360; budget row reads `failed` (FR-331 result `incomplete`); AC-9 reads FR-360 `failed` and "never execution `failed`". |
+| FND-003 | fixed | FR-360 Scope now names refinement (FR-379, FR-177), reduced-run (FR-385) and composition and guarantee (FR-488, FR-489) results. |
+| FND-004 | fixed | FR-380 relationship, prose link, table header and dependency link repointed from FR-341 to FR-360. |
+| FND-005 | fixed | TC-983 step 5 expects FR-360 `failed` with FR-241 `resource-incomplete` (FR-331 `incomplete`) naming the limit, and drops the "five" count for "the outcomes stay distinct". |
