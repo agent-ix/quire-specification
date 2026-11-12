@@ -25,7 +25,8 @@ identity, then separately change only the concrete mapping and admitted-record
 set under the original selected definition.
 Permute object-member presentation, mutate each FR-296 key member one at a time
 and then each attribute member, remove a key member, and pair one key with
-unequal observation members. Supply a correction with the exact immutable
+unequal observation members. Admit three records for one binding identity and subject in a known progress order, then a record with the same binding identity and another subject, and one with another binding identity and the same subject.
+Supply a correction with the exact immutable
 predecessor and then with missing, self-referential and unknown predecessors.
 
 ## Expected Results
@@ -40,3 +41,4 @@ mutation changes it and an attribute mutation does not. Missing keys, the same
 key on unequal members and invalid predecessor relations refuse without a
 partial admitted observation. A valid correction preserves predecessor members
 and carries a new source ordinal.
+The three records are occurrences one to three of one node and instance by progress order; the other two are a different instance and a different node, and no ordinal is read from arrival order or timestamps.
