@@ -3963,19 +3963,23 @@ document gives the operation a body (`invalid_package`/`invalid-value` at
 `body`, so `no_body` for an authored body and a body for a bodiless operation
 both refuse); then `body.node` names a node of the package
 (`missing_declaration`/`missing-name` at `body/node`) that has tag `function`
-(`ill_typed`/`operator-ineligible` at `body/node`) and that no earlier row
-names (`invalid_package`/`conflicting-definition` at `body/node`); and finally,
-when a `checked_term_data` dispatch candidate carries this row's
-`selected_operation`, its `operation_body` equals `body.node`
-(`invalid_package`/`invalid-value` at `body`). After the row joins it visits
+(`ill_typed`/`operator-ineligible` at `body/node`) and is the operation's own
+body clause function: its `owner` is the `ModelOwner` whose `identity` is the
+row's `document` and whose `node` is the operation member identity
+`<declaring owner node>/<operation>`, and its clause kind (the `clause` binding
+of QSL FR-094) is `body` (`invalid_package`/`invalid-value` at `body/node`), so
+the body of another operation, a precondition or invariant clause function and a
+node of another package each refuse; and finally, when a `checked_term_data`
+dispatch candidate carries this row's `selected_operation`, the row's `body` is
+a `function` whose node equals the candidate's `operation_body`
+(`invalid_package`/`invalid-value` at `body`), so a `no_body` row for a
+dispatch candidate's operation refuses. After the row joins it visits
 each later row in array order and checks its key against every earlier key
 (`invalid_package`/`conflicting-definition` at that row) before against its
 predecessor's (`invalid_package`/`invalid-value` at that row), with the key
-order of `operation_effects`. Coverage is checked next: an operation with no row
+order of `operation_effects`. Coverage is checked last: an operation with no row
 refuses `invalid_package`/`invalid-value` at `/operation_bodies`, as does an
-empty member while an operation exists. Last, when the package also carries
-`operation_effects`, the two key sets are equal
-(`invalid_package`/`invalid-value` at `/operation_bodies`). The closed schema
+empty member while an operation exists. The closed schema
 refuses a missing or extra row member, a `body` that is `null`, a bare node
 reference, of an unknown `kind`, a `function` without its `node` or a
 `no_body` with one, an extra `body` member, a malformed node reference and a
@@ -3991,7 +3995,7 @@ operation)`, and quire-driver's typed read and CG's subject emission consume it.
 The IR neither mirrors the body in a type of its own nor reads it from a name or
 a path. `operation-body-vectors.json` publishes the positive cases (a body, no
 body, mixed members, one member name under different documents and objects, a
-dispatch candidate and a matching `operation_effects` key set, and the empty
+dispatch candidate, and the empty
 member), the schema refusals and the schema-valid reader refusals with exact
 codes, causes and loci; TC-987 consumes it.
 
@@ -4772,8 +4776,7 @@ unchanged (FR-322-AC-308).
 | FR-322-AC-394 | An operand row not numbered by first occurrence refuses `malformed_wire`, with no cause, before every `semantic_graph` check: node `2`'s only slot written `1` over the row `[1, 0]`, at `/semantic_graph/nodes/2/node_id/path/3/operand` (`NI-19`); node `2`'s path extended with slot `1` over the row `[0, 0]`, a repeated entry, at `/semantic_graph/operand_rows/2/1` (`NI-20`); and node `2`'s row `[0, 1]`, whose entry `1` no slot of node `2` names, at `/semantic_graph/operand_rows/2/1` (`NI-21`). | Test (TC-233; NI-19..NI-21) |
 | FR-322-AC-395 | Node bytes are not identity, and a reader follows a node-held reference only through its holding node's row. A node appended with node `2`'s bytes and the row `[1]` (`NI-22`) has a structural key different from node `2`'s and passes the operand checks and the duplicate-`node_id` check; appended with the row `[0]` (`NI-23`) it has node `2`'s key and refuses `invalid_semantic_graph` at `/semantic_graph/nodes/4/node_id`. In the published fixture, the literal `type` that node `3` holds and node `2`'s own `node_id` have equal bytes and, each resolved through its own holding node's row, the same key, so the reference names node `2`. | Test (TC-233; NI-22, NI-23) |
 | FR-322-AC-396 | A field typed by the map type `M` of FR-154-AC-48 (`keys` `ix://quire/native/Text`, `values` `Timer`, `bound` `{lower: 0, upper: 2}`) with multiplicity `{1, 1}` has the member type `Map<Text, Timer>[0, 2]`, its row rendering `Map<Text, ix://acme/maps/Timer>` with minimum `0` and maximum `2`, and with `bound` `{lower: 0}` the maximum `unbounded` (`PM-01`, `PM-02`); the `ClockMap` place `clock` of the selected timed package carries kind `map` and bounds `0` and `unbounded` read from its `bound`, a `ClockMap` with `upper` `2` or `keys` `Integer` failing the join. | Test (TC-367, TC-234) |
-
-| FR-322-AC-397 | A package carries `operation_bodies` or omits it; when omitted the bodies are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, body}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)` as `operation_effects`, and is an empty array only when no selected document declares an operation member. `body` is `{"kind": "function", "node"}` naming a package `function` node exactly when the selected document gives the operation a body, and `{"kind": "no_body"}` otherwise; no row or `body` is omitted, null or defaulted, no `function` node is named by two rows, a dispatch candidate's `operation_body` for the same operation equals the row's node, and the key set equals the `operation_effects` key set when both are carried. The positive vectors OBC-01 to OBC-06 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed` and `invalid_package` refusals and loci for missing or extra members, a malformed `body`, an unselected, absent, ineligible or foreign declaring node, a field or inherited operation, a body that disagrees with the document, an absent, non-function or shared body node, a candidate mismatch, a repeated key, key order, missing coverage and an `operation_effects` mismatch are in TC-987. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-987) |
+| FR-322-AC-397 | A package carries `operation_bodies` or omits it; when omitted the bodies are unavailable, not empty, and no other member changes. When present it has exactly one closed `{document, declaring, operation, body}` row per operation member of every admitted `object_type`, `process` and `state_machine` declaring node, keyed and sorted by `(document, declaring, operation)` as `operation_effects`, and is an empty array only when no selected document declares an operation member. `body` is `{"kind": "function", "node"}` naming a package `function` node exactly when the selected document gives the operation a body, and `{"kind": "no_body"}` otherwise; no row or `body` is omitted, null or defaulted, the `function` node is the operation's own body clause function (its `owner` is the operation member and its clause kind is `body`), and a dispatch candidate for the operation requires a `function` row whose node equals the candidate's `operation_body`. The positive vectors OBC-01 to OBC-06 are schema-valid and read back; the exact `malformed_wire`, `missing_declaration`, `ill_typed` and `invalid_package` refusals and loci for missing or extra members, a malformed `body`, an unselected, absent, ineligible or foreign declaring node, a field or inherited operation, a body that disagrees with the document, an absent, non-function, other-operation, precondition or other-package body node, a candidate mismatch or a `no_body` row for a candidate's operation, a repeated key, key order and missing coverage are in TC-987. QSL emits the carrier and the IR strict reader admits or refuses it; the IR does not mirror it. | Test (TC-987) |
 
 ## Dependencies
 

@@ -91,8 +91,7 @@ structures, but any external consumer receives only the contract.
   function node or the typed absence `no_body`, keyed by selected document,
   declaring node and original operation name as `operation_effects`. Positive
   cases OBC-01 to OBC-06 cover a body, no body, mixed members, one member name
-  under different objects and documents, a dispatch candidate with a matching
-  `operation_effects` key set, and the empty member; the schema and reader
+  under different objects and documents, a dispatch candidate, and the empty member; the schema and reader
   refusals OBS-* and OBR-* carry exact codes and loci (FR-322-AC-397).
 - `temporal-fairness-target-vectors.json` publishes complete fairness members
   for operation, protocol-root, attempt-node, parallel-branch,

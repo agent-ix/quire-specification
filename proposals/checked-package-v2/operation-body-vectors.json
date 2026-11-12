@@ -1,5 +1,5 @@
 {
-  "note": "STD-660. The operation_bodies rows carry QSL FR-576's per-operation body: a reference to the checked body function node or the typed absence no_body, keyed by selected document, declaring node and original operation name (the key of operation_effects). Each case's documents are compact excerpts of the selected FR-154 model documents (types with their declared operations and has_body); graph_nodes lists the package graph nodes the body references resolve against; the optional dispatch_candidates are excerpts of checked_term_data dispatch candidates and operation_effect_keys the key set of a carried operation_effects member. schema_refusals and reader_refusals are RFC 6902 patches over the rows of their base positive case, applied to {\"operation_bodies\": rows}; a reader case may replace the base operation_effect_keys. Loci are absolute JSON pointers into that package member.",
+  "note": "STD-660. The operation_bodies rows carry QSL FR-576's per-operation body: a reference to the checked body function node or the typed absence no_body, keyed by selected document, declaring node and original operation name (the key of operation_effects). Each case's documents are compact excerpts of the selected FR-154 model documents (types with their declared operations and has_body); graph_nodes lists the package graph nodes the body references resolve against, each with its form and, for a function node, its FR-094 owner and clause; the optional dispatch_candidates are excerpts of checked_term_data dispatch candidates. schema_refusals and reader_refusals are RFC 6902 patches over the rows of their base positive case, applied to {\"operation_bodies\": rows}; a reader case may replace the base dispatch_candidates. Loci are absolute JSON pointers into that package member.",
   "positive": [
     {
       "id": "OBC-01-with-body",
@@ -35,7 +35,13 @@
             ],
             "ordinal": 0
           },
-          "form": "function"
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "body"
         },
         {
           "node": {
@@ -175,7 +181,13 @@
             ],
             "ordinal": 0
           },
-          "form": "function"
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "body"
         },
         {
           "node": {
@@ -289,7 +301,7 @@
                 {
                   "name": "touch",
                   "params": [],
-                  "has_body": false
+                  "has_body": true
                 }
               ]
             },
@@ -313,7 +325,13 @@
             ],
             "ordinal": 0
           },
-          "form": "function"
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/billing",
+            "node": "ix://acme/billing/Ledger/settle"
+          },
+          "clause": "body"
         },
         {
           "node": {
@@ -325,7 +343,49 @@
             ],
             "ordinal": 0
           },
-          "form": "function"
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "body"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/touch/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/touch"
+          },
+          "clause": "body"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/requires"
+            ],
+            "ordinal": 0
+          },
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "precondition"
         },
         {
           "node": {
@@ -420,14 +480,23 @@
           },
           "operation": "touch",
           "body": {
-            "kind": "no_body"
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Order/touch/body"
+              ],
+              "ordinal": 0
+            }
           }
         }
       ]
     },
     {
-      "id": "OBC-05-dispatch-candidate-and-effects",
-      "description": "Order.settle is a dispatch candidate whose operation_body equals the row body, and the operation_effects key set equals the row key set",
+      "id": "OBC-05-dispatch-candidate",
+      "description": "Order.settle is a dispatch candidate whose operation_body equals the row body",
       "documents": [
         {
           "identity": "acme/billing",
@@ -480,7 +549,7 @@
                 {
                   "name": "touch",
                   "params": [],
-                  "has_body": false
+                  "has_body": true
                 }
               ]
             },
@@ -504,7 +573,13 @@
             ],
             "ordinal": 0
           },
-          "form": "function"
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/billing",
+            "node": "ix://acme/billing/Ledger/settle"
+          },
+          "clause": "body"
         },
         {
           "node": {
@@ -516,7 +591,67 @@
             ],
             "ordinal": 0
           },
-          "form": "function"
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "body"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/touch/body"
+            ],
+            "ordinal": 0
+          },
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/touch"
+          },
+          "clause": "body"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/requires"
+            ],
+            "ordinal": 0
+          },
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "precondition"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/other"
+            ],
+            "ordinal": 0
+          },
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/orders",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "body"
         },
         {
           "node": {
@@ -529,18 +664,6 @@
             "ordinal": 0
           },
           "form": "expression"
-        },
-        {
-          "node": {
-            "package": "acme/orders",
-            "path": [
-              "function",
-              "pure_function",
-              "ix://acme/orders/Order/settle/other"
-            ],
-            "ordinal": 0
-          },
-          "form": "function"
         }
       ],
       "dispatch_candidates": [
@@ -566,60 +689,6 @@
             ],
             "ordinal": 0
           }
-        }
-      ],
-      "operation_effect_keys": [
-        {
-          "document": "acme/billing",
-          "declaring": {
-            "package": "acme/billing",
-            "path": [
-              "model",
-              "process",
-              "ix://acme/billing/Ledger"
-            ],
-            "ordinal": 0
-          },
-          "operation": "settle"
-        },
-        {
-          "document": "acme/orders",
-          "declaring": {
-            "package": "acme/orders",
-            "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Invoice"
-            ],
-            "ordinal": 0
-          },
-          "operation": "settle"
-        },
-        {
-          "document": "acme/orders",
-          "declaring": {
-            "package": "acme/orders",
-            "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Order"
-            ],
-            "ordinal": 0
-          },
-          "operation": "settle"
-        },
-        {
-          "document": "acme/orders",
-          "declaring": {
-            "package": "acme/orders",
-            "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Order"
-            ],
-            "ordinal": 0
-          },
-          "operation": "touch"
         }
       ],
       "rows": [
@@ -702,7 +771,16 @@
           },
           "operation": "touch",
           "body": {
-            "kind": "no_body"
+            "kind": "function",
+            "node": {
+              "package": "acme/orders",
+              "path": [
+                "function",
+                "pure_function",
+                "ix://acme/orders/Order/touch/body"
+              ],
+              "ordinal": 0
+            }
           }
         }
       ]
@@ -1171,33 +1249,9 @@
       "locus": "/operation_bodies/2/body/node"
     },
     {
-      "id": "OBR-12-body-node-shared",
-      "description": "two rows naming one body function node",
-      "base": "OBC-04-same-member-name",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/operation_bodies/0/body/node",
-          "value": {
-            "package": "acme/orders",
-            "path": [
-              "function",
-              "pure_function",
-              "ix://acme/orders/Order/settle/body"
-            ],
-            "ordinal": 0
-          }
-        }
-      ],
-      "schema": "valid",
-      "expected_code": "invalid_package",
-      "expected_cause": "conflicting-definition",
-      "locus": "/operation_bodies/2/body/node"
-    },
-    {
-      "id": "OBR-13-candidate-disagrees",
+      "id": "OBR-12-candidate-disagrees",
       "description": "row body that differs from the operation_body of a dispatch candidate for the same operation",
-      "base": "OBC-05-dispatch-candidate-and-effects",
+      "base": "OBC-05-dispatch-candidate",
       "patch": [
         {
           "op": "replace",
@@ -1219,7 +1273,7 @@
       "locus": "/operation_bodies/2/body"
     },
     {
-      "id": "OBR-14-repeated-key",
+      "id": "OBR-13-repeated-key",
       "description": "a repeated key",
       "base": "OBC-04-same-member-name",
       "patch": [
@@ -1239,7 +1293,16 @@
             },
             "operation": "touch",
             "body": {
-              "kind": "no_body"
+              "kind": "function",
+              "node": {
+                "package": "acme/orders",
+                "path": [
+                  "function",
+                  "pure_function",
+                  "ix://acme/orders/Order/touch/body"
+                ],
+                "ordinal": 0
+              }
             }
           }
         }
@@ -1250,7 +1313,7 @@
       "locus": "/operation_bodies/4"
     },
     {
-      "id": "OBR-15-key-order",
+      "id": "OBR-14-key-order",
       "description": "rows out of key order",
       "base": "OBC-04-same-member-name",
       "patch": [
@@ -1310,7 +1373,7 @@
       "locus": "/operation_bodies/1"
     },
     {
-      "id": "OBR-16-missing-coverage",
+      "id": "OBR-15-missing-coverage",
       "description": "an operation without a row",
       "base": "OBC-04-same-member-name",
       "patch": [
@@ -1325,7 +1388,7 @@
       "locus": "/operation_bodies"
     },
     {
-      "id": "OBR-17-empty-member-with-operations",
+      "id": "OBR-16-empty-member-with-operations",
       "description": "an empty member while operations exist",
       "base": "OBC-04-same-member-name",
       "patch": [
@@ -1341,53 +1404,122 @@
       "locus": "/operation_bodies"
     },
     {
-      "id": "OBR-18-effects-key-set-differs",
-      "description": "a package whose operation_effects key set differs from the operation_bodies key set",
-      "base": "OBC-05-dispatch-candidate-and-effects",
+      "id": "OBR-17-body-node-of-another-operation",
+      "description": "a body node that belongs to another operation of the same document: the bodies of Order.settle and Order.touch swapped",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/touch/body"
+            ],
+            "ordinal": 0
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/operation_bodies/3/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/body"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/body/node"
+    },
+    {
+      "id": "OBR-18-body-node-is-a-precondition",
+      "description": "a precondition clause function of the row's own operation in place of its body",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/requires"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/body/node"
+    },
+    {
+      "id": "OBR-19-body-node-of-another-package",
+      "description": "a body node of another document's package",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node",
+          "value": {
+            "package": "acme/billing",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/billing/Ledger/settle/body"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/body/node"
+    },
+    {
+      "id": "OBR-20-no-body-for-dispatch-candidate",
+      "description": "no_body for an operation that is the selected_operation of a dispatch candidate",
+      "base": "OBC-04-same-member-name",
       "patch": [],
       "schema": "valid",
       "expected_code": "invalid_package",
       "expected_cause": "invalid-value",
-      "locus": "/operation_bodies",
-      "operation_effect_keys": [
+      "locus": "/operation_bodies/1/body",
+      "dispatch_candidates": [
         {
-          "document": "acme/billing",
-          "declaring": {
-            "package": "acme/billing",
-            "path": [
-              "model",
-              "process",
-              "ix://acme/billing/Ledger"
-            ],
-            "ordinal": 0
+          "selected_operation": {
+            "declaring": {
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "object_type",
+                "ix://acme/orders/Invoice"
+              ],
+              "ordinal": 0
+            },
+            "operation": "settle"
           },
-          "operation": "settle"
-        },
-        {
-          "document": "acme/orders",
-          "declaring": {
+          "operation_body": {
             "package": "acme/orders",
             "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Invoice"
+              "function",
+              "pure_function",
+              "ix://acme/orders/Invoice/settle/body"
             ],
             "ordinal": 0
-          },
-          "operation": "settle"
-        },
-        {
-          "document": "acme/orders",
-          "declaring": {
-            "package": "acme/orders",
-            "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Order"
-            ],
-            "ordinal": 0
-          },
-          "operation": "settle"
+          }
         }
       ]
     }
