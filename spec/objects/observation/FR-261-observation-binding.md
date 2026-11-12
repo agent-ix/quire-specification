@@ -21,27 +21,31 @@ identified assessment input".
 ## Binding of an admitted observation to a checked node, instance and occurrence
 
 An admitted observation record carries no checked-node, workflow-instance or
-occurrence field. The link is derived from members the record already carries:
+occurrence field. The link is derived from members the record already carries
+(requirement statement and acceptance criteria: FR-260):
 
-- **Checked node** — the declared binding identity (`declared_binding_identity`)
-  is the identity of the declared observation role, which is "the identity of its
-  owning native declaration, original source region, and role kind". A consumer
-  resolves that identity in its checked package; the owning native declaration
-  it names is the checked event, compensation or response node. A record whose
-  binding identity resolves to no declaration, or to a different node than the
-  one being waited on, is not that node's observation.
-- **Workflow instance** — the record's FR-287 subject (authority, subject kind,
-  authority-local object identity) is the runtime instance. Equal binding
-  identity with a different subject is a different instance's observation.
+- **Checked node** — the record's `declared_binding_identity` is resolved through
+  the assessment's declared role mapping. One explicit binding may be referenced
+  by several compatible role mappings
+  ([observation contract](../../../proposals/quire-v1/observation-contract.md)),
+  so it resolves to a set of owning native declarations (checked event,
+  compensation or response nodes). The record is an observation for node N
+  exactly when N is in that set. A binding identity that resolves to nothing
+  refuses.
+- **Workflow instance** — the record's FR-287 subject. Equal binding identity
+  with a different subject is a different instance's observation.
 - **Repeat occurrence** — the nth occurrence is the rank of the record among the
-  admitted observations that share one binding identity and one subject, ordered
-  by the monitor's progress order for that clock family. Ordinals are never
-  stored on the record, and arrival order, key order and timestamps outside that
-  progress order do not establish them.
+  heads of the FR-296 correction chains that share one binding identity and one
+  subject, in the total order (progress position of the record's clock family,
+  then source ordinal), over the admitted set as of the evaluation point. A
+  correction replaces its predecessor and is not a further occurrence. Late
+  admitted data may renumber later occurrences, so a consumer pins the
+  evaluation point. Ordinals are never stored on the record, and arrival order,
+  key order and timestamps outside progress position do not establish them.
 
-The derivation uses no new identity and no generated key; a consumer SHALL NOT
-accept caller attribution in its place. The observation library therefore needs
-no new view accessor: the binding identity and subject are already exposed.
+The derivation uses no new identity and no generated key. The observation
+library needs no new view accessor: the binding identity and subject are already
+exposed.
 
 ## Properties
 
@@ -110,7 +114,6 @@ roles".
 | FR-261-AC-1 | Two bindings differing in definition identity compare unequal and link different subjects. | Test (TC-140) |
 | FR-261-AC-2 | Two bindings differing only in concrete mapping or admitted record set compare equal on the key and retain the same static subject. | Test (TC-140) |
 | FR-261-AC-3 | Equal local role names do not merge two roles, and a local name does not participate in the key. | Test (TC-140) |
-| FR-261-AC-4 | Two admitted records with equal binding identity and subject are the same node and instance and are ordered into occurrences by progress order only; a differing binding identity or subject makes them different nodes or instances, and no node, instance or ordinal is read from a field outside the record's binding identity and subject. | Test (TC-140) |
 
 ## Dependencies
 

@@ -17,6 +17,12 @@ relationships:
 
 When a record is admitted as an observation, the observation binder SHALL retain the exact observation identity, source schema identity, declared binding identity, field units, selected subject identity, and whether the record is internal or externally observed, or refuse the record with a typed cause.
 
+When a consumer attributes an admitted observation to a checked node, workflow
+instance and repeat occurrence, the consumer SHALL derive them from the record's
+declared binding identity, selected subject identity and FR-296 key as stated in
+[FR-261](FR-261-observation-binding.md), and SHALL NOT accept caller attribution
+in their place.
+
 FR-110 states the retained set as one list and makes refusal the only alternative
 to retaining it.
 
@@ -95,6 +101,11 @@ and visibility provenance."
 | FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Test (TC-140) |
 | FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Test (TC-140) |
 | FR-260-AC-4 | The observation key is the structural FR-296 tuple; the same key on unequal observation members and any missing or defaulted key member are refused. | Test (TC-140) |
+| FR-260-AC-5 | A record is an observation for checked node N exactly when its declared binding identity resolves, through the declared role mapping, to a set containing N; a binding identity resolving to nothing is refused. | Test (TC-140) |
+| FR-260-AC-6 | Two records with equal binding identity and different subjects are observations of different workflow instances. | Test (TC-140) |
+| FR-260-AC-7 | Occurrence ranks are assigned over FR-296 correction-chain heads only, in order of progress position then source ordinal, so a correction does not add an occurrence. | Test (TC-140) |
+| FR-260-AC-8 | Changing a record's trace ID, signal name or timestamp outside progress position leaves its derived node, instance and occurrence unchanged. | Test (TC-140) |
+| FR-260-AC-9 | A caller-supplied node, instance or ordinal offered in place of the derivation is refused. | Test (TC-140) |
 
 ## Dependencies
 
