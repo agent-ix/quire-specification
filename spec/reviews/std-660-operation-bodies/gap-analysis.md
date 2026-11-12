@@ -42,3 +42,9 @@ code that implements the section.
 - Tests in scope: 1, tagged and passing.
 - Semantic review: run at reviewer level by the mutation run.
 - Plan completion: not assessed
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | At 498a3593, `quire matrix` binds FR-322-AC-397 to `operation_body_carrier_vectors_match_the_closed_member_schema_and_reader` (status tagged), and the `untracked-id-has-minted-children` warning for 397 is gone. |

@@ -391,6 +391,24 @@
           "node": {
             "package": "acme/orders",
             "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/foreign-owner"
+            ],
+            "ordinal": 0
+          },
+          "form": "function",
+          "owner": {
+            "kind": "model",
+            "identity": "acme/billing",
+            "node": "ix://acme/orders/Order/settle"
+          },
+          "clause": "body"
+        },
+        {
+          "node": {
+            "package": "acme/orders",
+            "path": [
               "expression",
               "literal",
               "1"
@@ -1522,6 +1540,30 @@
           }
         }
       ]
+    },
+    {
+      "id": "OBR-21-body-node-owner-identity",
+      "description": "a body function node whose owner node is the row's operation member but whose owner identity is another document",
+      "base": "OBC-04-same-member-name",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/operation_bodies/2/body/node",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "function",
+              "pure_function",
+              "ix://acme/orders/Order/settle/foreign-owner"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected_code": "invalid_package",
+      "expected_cause": "invalid-value",
+      "locus": "/operation_bodies/2/body/node"
     }
   ]
 }

@@ -22817,7 +22817,7 @@ fn operation_body_carrier_vectors_match_the_closed_member_schema_and_reader() {
     let reader_refusals = vectors["reader_refusals"]
         .as_array()
         .expect("reader refusals");
-    assert_eq!(reader_refusals.len(), 20);
+    assert_eq!(reader_refusals.len(), 21);
     for case in reader_refusals {
         let id = case["id"].as_str().unwrap();
         assert_eq!(case["schema"], "valid", "{id}");

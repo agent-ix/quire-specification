@@ -30,3 +30,9 @@ failure-domain SpecReview's FND-001.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The new code fails both of the README's gates. `cargo clippy --locked --test checked_package_v2` reports two new `clippy::type_complexity` errors, at 22533 (`declared` map) and 22558 (`keys`): 20 errors on the head against 18 on main. `rustfmt --edition 2024 --check` reports 21 diff hunks in lines 22543-22750. Both gates were already red on main for this file, which is why the severity is low. Fix: add type aliases (for example `type NodeKey = (String, Vec<String>, u64)`) and run rustfmt over the new lines. | tests/checked_package_v2.rs:22533; tests/checked_package_v2.rs:22558 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 498a3593 adds the `BodyNodeKey`, `BodyRowKey` and `BodyDeclared` aliases and runs rustfmt over the new code. `cargo clippy --locked --test checked_package_v2` is back to the 18 errors on main, all before line 22252. rustfmt reports no hunk between 22524 and 22849. Every hunk of the fix commit lies inside the author's own functions (22524-22849). |

@@ -40,13 +40,13 @@ the base `dispatch_candidates`. Each case holds one defect.
 ## Expected Results
 
 All positive cases read back. The 13 schema refusals (OBS-01 to OBS-13) are
-`malformed_wire`. The 20 reader refusals (OBR-01 to OBR-20) are: OBR-01
+`malformed_wire`. The 21 reader refusals (OBR-01 to OBR-21) are: OBR-01
 `missing_declaration`/`missing-selection`; OBR-03 and OBR-10
 `missing_declaration`/`missing-name`; OBR-02, OBR-05, OBR-08, OBR-09, OBR-12,
-OBR-14, OBR-15, OBR-16, OBR-17, OBR-18, OBR-19 and OBR-20
+OBR-14, OBR-15, OBR-16, OBR-17, OBR-18, OBR-19, OBR-20 and OBR-21
 `invalid_package`/`invalid-value` (OBR-15 and OBR-16 at `/operation_bodies`;
-OBR-17 to OBR-19 at `body/node` for a body of another operation, a precondition
-clause function and a node of another package); OBR-13
+OBR-17 to OBR-19 and OBR-21 at `body/node` for a body of another operation, a precondition
+clause function, a node of another package and a node whose owner identity is another document); OBR-13
 `invalid_package`/`conflicting-definition`; OBR-04, OBR-06, OBR-07 and OBR-11
 `ill_typed`/`operator-ineligible`. The IR reader exposes the admitted body by
 key and owns no mirror type; QSL owns emission.

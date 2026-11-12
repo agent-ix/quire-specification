@@ -43,3 +43,9 @@ Examined and clean:
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | high | The FR-322-AC-397 row follows a blank line after the FR-322-AC-396 row, so it is a separate paragraph and not a row of the acceptance-criteria table. quire mints no FR-322-AC-397: `quire matrix` has no row for it, the criterion count is 3194 on both main and head, and the trace tag on the new test raises `untracked-id-has-minted-children`. Fix: delete the blank line at 4775 so that the row continues the table. | spec/objects/interfaces/FR-322-checked-package-artifact.md:4775-4776 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix head 498a3593 removes the blank line, so the FR-322-AC-397 row continues the table. `quire matrix` now lists FR-322-AC-397 as tagged (tests/checked_package_v2.rs:22717), the criterion count rises from 3194 to 3195, and `quire validate` still reports only the two failures already on main (FR-407, FR-341). |
