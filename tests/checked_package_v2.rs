@@ -1608,11 +1608,64 @@ impl<'a> OperationOracle<'a> {
         }
     }
 
+    /// FR-322 "Reaches over a field" steps 2 to 4: the node of the object type
+    /// `T` that owns the field a `reaches_field` member names, walking the
+    /// member's declaration and then its supertypes, when the field's type is
+    /// `Reference<T>`, `Option<Reference<T>>` or a bounded
+    /// `Sequence<Reference<T>>`. `None` when the member names no such edge
+    /// (operand checks, steps 1 and the operand half of 4, are TC-281's).
+    fn field_edge_owner(&self, member: &Value) -> Option<String> {
+        let declaration = self
+            .node(&member["declaration"])
+            .filter(|node| node["node_tag"] == "model" && node["semantic_form"] == "object_type")?;
+        let name = member["name"].as_str()?;
+        let mut pending = vec![declaration["owner"]["node"].as_str()?.to_owned()];
+        let mut seen = BTreeSet::new();
+        while let Some(owner) = pending.pop() {
+            if !seen.insert(owner.clone()) {
+                continue;
+            }
+            let Some(declared) = self
+                .documents
+                .iter()
+                .filter_map(|document| document["object_types"].as_array())
+                .flatten()
+                .find(|declared| declared["node"] == owner.as_str())
+            else {
+                continue;
+            };
+            if let Some(field) = declared["fields"]
+                .as_array()
+                .and_then(|fields| fields.iter().find(|field| field["name"] == name))
+            {
+                let multiplicity = &field["multiplicity"];
+                let single = multiplicity["lower"] == "1" && multiplicity["upper"] == "1";
+                let sequence = field["presence"] == "required"
+                    && multiplicity["ordered"] == true
+                    && multiplicity["unique"] == false
+                    && multiplicity["upper"] != "unbounded"
+                    && !single;
+                return (field["typeRef"] == owner.as_str() && (single || sequence))
+                    .then_some(owner);
+            }
+            pending.extend(
+                declared["supertypes"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|supertype| supertype.as_str().map(str::to_owned)),
+            );
+        }
+        None
+    }
+
     /// FR-322 "Population link of a `reaches`": whether a `relationship_end`
-    /// member's optional `population` is admissible. An absent key is. A present
-    /// one is only on a `reaches` application and names a
-    /// `bounded_domain`/`model_population` node over `Set<Reference<T>>` whose
-    /// model declaration `T` is the type of the end the member's role names.
+    /// or `reaches_field` `field` member's optional `population` is
+    /// admissible. An absent key is. A present one is only on a `reaches`
+    /// application and names a `bounded_domain`/`model_population` node over
+    /// `Set<Reference<T>>` whose model declaration `T` is the type of the end
+    /// the member's role names, or, for a field member, the object type that
+    /// owns the field (never the member's declaration).
     fn population_link_holds(&self, entry: &Value, member: &Value) -> bool {
         let Some(population) = member.get("population") else {
             return true;
@@ -1638,12 +1691,17 @@ impl<'a> OperationOracle<'a> {
                 .find(|end| end["role"] == name)
                 .map(|end| end["type"].clone())
         };
+        let owner_type = || match member["kind"].as_str() {
+            Some("relationship_end") => near_end_type(),
+            Some("field") => self.field_edge_owner(member).map(Value::from),
+            _ => None,
+        };
         entry["operator"] == "reaches"
-            && member["kind"] == "relationship_end"
+            && entry["member"] == member["kind"]
             && matches!(
-                (object_type(), near_end_type()),
-                (Some(object), Some(end))
-                    if is_model_declaration(object) && object["owner"]["node"] == end
+                (object_type(), owner_type()),
+                (Some(object), Some(owner))
+                    if is_model_declaration(object) && object["owner"]["node"] == owner
             )
     }
 
@@ -2128,6 +2186,9 @@ impl<'a> OperationOracle<'a> {
             Some("conforming_reference") => {
                 panic!("the TC-233 oracle does not decide conforming_reference")
             }
+            // Member half of the constraint only (steps 2 and 3); its operand
+            // half is qualified by TC-281.
+            Some("reference_edge") => self.field_edge_owner(&operation["member"]).is_some(),
             Some("same_dimension") => {
                 let dimension = |id: Option<Value>| {
                     let unit = self.resolve(&id?)?;
@@ -2351,6 +2412,7 @@ impl<'a> OperationOracle<'a> {
             || entry["member"] == "state_clause"
             || entry["member"] == "temporal_interval"
             || entry["member"] == "fairness"
+            || operation["identity"] == "quire.op.model.reaches_field"
             || self.member_descriptor(member).is_some();
         let population_links = self.population_link_holds(entry, member);
         let constraints_hold = entry["constraints"]
@@ -10384,7 +10446,8 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
     let cases = adverse["reaches_population_cases"]
         .as_array()
         .expect("cases");
-    assert_eq!(cases.len(), 7);
+    assert!(cases.iter().any(|case| case["outcome"] == "admitted"));
+    assert!(cases.iter().any(|case| case["expected_code"].is_string()));
     for case in cases {
         let id = case["id"].as_str().expect("id");
         let mut candidate = positive_fixtures()
@@ -10463,6 +10526,125 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
                 ])),
                 "{id}: the published member names exactly kind, declaration, name and destination_type"
             );
+        }
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ if case["expected_code"] == "invalid_semantic_graph" => assert!(
+                matches!(outcome, Err(ReadRefusal::GraphShape(_))),
+                "{id}: {outcome:?}"
+            ),
+            _ => {
+                let refusal =
+                    OperationRefusal::from_cause(case["expected_cause"].as_str().expect("cause"))
+                        .expect("a published operation cause");
+                assert_eq!(case["expected_code"], refusal.code(), "{id}");
+                assert_eq!(outcome, Err(ReadRefusal::Operation(refusal)), "{id}");
+            }
+        }
+    }
+}
+
+/// The model declaration node of `owner_node` in `package`: the `Order`
+/// node, or a clone of it owned by another declared object type such as `Sub`.
+fn model_declaration_for(package: &mut Value, owner_node: &str) -> Value {
+    let order = node_index_where(package, |node| {
+        node["node_tag"] == "model" && node["owner"]["node"] == "ix://acme/orders/Order"
+    });
+    if owner_node == "ix://acme/orders/Order" {
+        return package["semantic_graph"]["nodes"][order]["node_id"].clone();
+    }
+    let mut other = package["semantic_graph"]["nodes"][order].clone();
+    other["owner"]["node"] = json!(owner_node);
+    append_structural_node(package, other);
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .and_then(|nodes| nodes.last())
+        .expect("appended")["node_id"]
+        .clone()
+}
+
+/// FR-322-AC-398 (population link of a `reaches_field`): the published
+/// `field_population_cases`. The relationship-end `reaches` application of the
+/// published fixture is rewritten to `quire.op.model.reaches_field` over a
+/// field of `Order`, whose `field` member names `population`. A population over
+/// the field's owner is admitted for a `max` of `3`, of `0` and an absent one,
+/// when the member's declaration is `Order` or its subtype `Sub`; a population
+/// over the declaration of a proper subtype, over another type, an
+/// `integer_range` node, an absent node or one missing from `dependencies`
+/// refuses as for a relationship end; a set-typed field edge refuses at the
+/// application; a `population` on a field projection fails the V2 schema.
+#[trace("TC-233", "FR-322-AC-398")]
+#[test]
+fn tc_233_a_reaches_field_population_link_names_a_population_over_the_field_owner() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["field_population_cases"].as_array().expect("cases");
+    assert!(cases.iter().any(|case| case["outcome"] == "admitted"));
+    assert!(cases.iter().any(|case| case["expected_code"].is_string()));
+    assert!(cases.iter().any(|case| case["schema"] == "refused"));
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        if case["schema"] == "refused" {
+            // A field projection (`quire.op.record.project`) with a population.
+            let projection = node_index_where(&candidate, |node| {
+                node["body"]["operation"]["identity"] == "quire.op.record.project"
+            });
+            assert!(v2.is_valid(&candidate), "{id}: the published fixture validates");
+            let link = candidate["semantic_graph"]["nodes"][projection]["node_id"].clone();
+            edit_node(&mut candidate, projection, |node| {
+                node["body"]["operation"]["member"]["population"] = link.clone();
+            });
+            assert!(!v2.is_valid(&candidate), "{id}: the schema refuses it");
+            continue;
+        }
+        let application = node_index_where(&candidate, |node| {
+            node["body"]["operation"]["member"]["kind"] == "relationship_end"
+                && node["body"]["operation"]["identity"] == "quire.op.model.reaches"
+        });
+        let declaration = model_declaration_for(
+            &mut candidate,
+            case["declaration"].as_str().expect("declaration"),
+        );
+        let field = case["field"].as_str().expect("field");
+        let population = &case["population"];
+        let link = if population["absent"] == true {
+            json!({"package": "absent", "path": ["absent"], "ordinal": 0})
+        } else if let Some(owner_node) = population["model_population_over"].as_str() {
+            let object = model_declaration_for(&mut candidate, owner_node);
+            append_population_chain(&mut candidate, &object, population["max"].as_str())
+        } else {
+            let target = node_index_where(&candidate, |node| {
+                node["node_tag"] == population["node_tag"]
+                    && node["semantic_form"] == population["semantic_form"]
+            });
+            candidate["semantic_graph"]["nodes"][target]["node_id"].clone()
+        };
+        let without_dependency = case["dependencies"] == "without-population";
+        edit_node(&mut candidate, application, |node| {
+            node["body"]["operation"]["identity"] = json!("quire.op.model.reaches_field");
+            node["body"]["operation"]["member"] =
+                json!({"kind": "field", "declaration": declaration, "name": field, "population": link});
+            node["dependencies"] = Value::Array(application_dependencies(&node["body"]));
+        });
+        assert!(v2.is_valid(&candidate), "{id}: the field member validates against the V2 schema");
+        if without_dependency {
+            edit_node(&mut candidate, application, |node| {
+                let kept: Vec<Value> = node["dependencies"]
+                    .as_array()
+                    .expect("dependencies")
+                    .iter()
+                    .filter(|dependency| *dependency != &link)
+                    .cloned()
+                    .collect();
+                node["dependencies"] = json!(kept);
+            });
         }
         let outcome = read_package_semantics(&candidate, &catalog);
         match case["outcome"].as_str() {
