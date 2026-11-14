@@ -305,31 +305,38 @@ budgets are recorded in the result and are outside the obligation identity.
 
 ### Workers
 
-The request SHALL carry `workers`, a positive integer, the number of threads
-that may draw samples at once, set by the request setting `statistical.workers`
-and defaulting to 1. It is a resource choice, not a budget: it stops no run,
-takes no row in `StatisticalLimits` or the limit table (FR-461), and enters
-neither the obligation identity nor the provenance.
+The request carries `workers`, a positive integer, the number of threads that
+may draw samples at once, set by the request setting `statistical.workers`
+and defaulting to 1 when the request names none. It is a resource choice, not
+a budget: it stops no run, takes no row in `StatisticalLimits` or the limit
+table (FR-461), and enters neither the obligation identity nor the provenance.
+This section registers the setting; QSL FR-191 "Workers" states the same
+semantics for the engine, and where the two texts differ this section governs
+the statistical settings and QSL FR-191 SHALL NOT contradict it.
 
-- The provider SHALL refuse `workers` 0 before any sample is drawn, with
-  `invalid_runtime_input`/`invalid-value` naming the setting, and no engine
-  runs for that item.
+- When the request carries `workers` 0, the provider SHALL refuse the item at
+  negotiation, before any sample is drawn, with the typed refusal
+  `invalid_runtime_input`/`invalid-value` naming `statistical.workers`, settling
+  the item `invalid-request`; the cause is never `invalid_capability`/
+  `not-statistical`, no engine runs for that item, and the refusal is its one
+  terminal accounting record.
 - A sample is a function of the seed, the sampler and its trace index alone,
   so the provider MAY draw samples of different trace indices concurrently.
-  It SHALL merge samples in trace-index order, and SHALL charge `max_samples`,
-  `max_draws` and `max_cycle_steps`, and run the method's stopping rule
-  (Okamoto's `N`, the SPRT bounds, the regenerative cycle count), in that
-  merge order. A sample drawn beyond the stopping trace index SHALL be
-  discarded and appear in no count, estimate, witness or provenance range.
-- For every `workers` of 1 or more the run SHALL return the same decision,
-  counts, estimates, witnesses, provenance and stop (limit and value) as the
-  one-worker run, and the same certificates, findings and verdict.
-- A run stopped by caller cancellation SHALL return counts and estimates equal
-  to the one-worker run stopped at the trace index the merge reached, and no
-  sample of a higher trace index; the index reached MAY differ between runs.
-- QSL FR-191 "Workers" is the authority for these semantics; this section adds
-  the setting's registration and its refusal, and FR-255 "Worker count setting
-  names" lists the same setting.
+  The provider SHALL merge samples in trace-index order, and SHALL charge
+  `max_samples`, `max_draws` and `max_cycle_steps`, and run the method's
+  stopping rule (Okamoto's `N`, the SPRT bounds, the regenerative cycle
+  count), in that merge order.
+- While a run draws, the provider SHALL hold at most `workers` samples drawn
+  and not yet merged, so a run stopped at a trace index has drawn at most
+  `workers - 1` samples beyond it. The provider SHALL discard those samples,
+  and they SHALL appear in no count, estimate, witness or provenance range.
+- For every `workers` of 1 or more the provider SHALL return the same
+  decision, counts, estimates, witnesses, provenance, stop (limit and value),
+  certificates, findings and verdict as the one-worker run.
+- When the caller cancels a run, the provider SHALL return counts and
+  estimates equal to the one-worker run stopped at the trace index the merge
+  reached, and no sample of a higher trace index; the index reached MAY
+  differ between runs.
 
 ### Reproducibility
 
@@ -355,9 +362,10 @@ is a new, independent measurement of the same obligation.
 | FR-408-AC-12 | The regenerative half-width is the Chow–Robbins half-width `z · √(S² + 1/n) / (L̄ · √n)`, rounded outward, and is positive when the sample variance is 0: on a fixture whose every cycle is identical (length 1, `P` holding), the half-width is `z / n`, the run does not stop at `min_cycles` 1000, and with `z = z_{0.99} ≈ 2.3263478740` and `ι = 1/5000` it stops at exactly `n = 11632`, the least `n` with `z / n <= ι`. | Test (TC-356) |
 | FR-408-AC-13 | With `α = β = 1/100`, `m = 1`, `ι = 1/10` and `probability >= 0.9`, the exact binomial method draws `N = 231` counted samples, as Okamoto's method does. Of `k` holding samples, it accepts for `k >= 219` (`G(219, 9/10) ≈ 0.006343`, `G(218, 9/10) ≈ 0.012772`), rejects for `k <= 196` (`L(196, 9/10) ≈ 0.008772`, `L(197, 9/10) ≈ 0.014642`), and is undecided for `197 <= k <= 218`, while Okamoto's method on the same counts accepts only at `k = 231` and rejects only for `k <= 184`. At `k = 219` the exact Clopper–Pearson ends, each truncated after 20 digits, are `0.90351472792271070929…` (lower) and `0.97621175445884490995…` (upper); the reported lower end is at most the exact lower end and within `2^-64` of it, and the reported upper end is at least the exact upper end and within `2^-64` of it; the coverage is `finite-sample`. | Test (TC-355) |
 | FR-408-AC-14 | A request naming the exact binomial method for a mean of a fraction or a long-run fraction settles `invalid-request` at negotiation with `invalid_capability`/`not-statistical`, and no sample is drawn. Each binomial tail the method reads is a pair of binary floating bounds within a relative `2^-90` of the true tail, and a tail whose exact value lies below its level by less than the rounding error, so that its upper bound exceeds the level, gives undecided; two runs on different platforms give identical counts, tail bounds, interval ends and decisions. | Test (TC-355) |
-| FR-408-AC-15 | When a statistical request carries `workers` of 1, 2, 4 or 64, the run returns the decision, per-test counts, estimates, witnesses, provenance, certificates and stop (limit and value) byte-equal to the one-worker run's, including when a sampler test double finishes the sample of a higher trace index first, and a run stopped by `max_samples` 100 with `workers` 4 counts no sample beyond trace index 99. | Test (TC-356) |
-| FR-408-AC-16 | When a statistical request carries `workers` 0, the provider refuses it with `invalid_runtime_input`/`invalid-value` naming `statistical.workers` and draws no sample; when the request omits `workers`, the run uses 1 worker; and `statistical.workers` takes no row in `StatisticalLimits` and no `limit-reached` name. | Test (TC-356) |
-| FR-408-AC-17 | When the caller cancels a run with `workers` 4, the run settles `incomplete`, `cancelled{source}` with counts and estimates equal to the one-worker run stopped at the trace index the merge reached, and carries no sample of a higher trace index. | Test (TC-356) |
+| FR-408-AC-15 | When a statistical request carries `workers` of 1, 2, 4 or 64, the provider returns the decision, per-test counts, estimates, witnesses, provenance, certificates, findings, verdict and stop (limit and value) byte-equal to the one-worker run's, including when a sampler test double finishes the sample of a higher trace index first, and a run stopped by `max_samples` 100 with `workers` 4 counts no sample beyond trace index 99. | Test (TC-356) |
+| FR-408-AC-16 | When a statistical request carries `workers` 0, the provider refuses the item at negotiation with `invalid_runtime_input`/`invalid-value` naming `statistical.workers`, settling it `invalid-request` with a cause that is not `invalid_capability`/`not-statistical`, and draws no sample; when the request names no `workers`, the run uses 1 worker; and `statistical.workers` has no member in `StatisticalLimits`, so no `limit-reached` result names it. | Test (TC-356) |
+| FR-408-AC-17 | When the caller cancels a run with `workers` 4, the provider settles `incomplete`, `cancelled{source}` with counts and estimates equal to the one-worker run stopped at the trace index the merge reached, and the result carries no sample of a higher trace index. | Test (TC-356) |
+| FR-408-AC-18 | When a run with `workers` 4 stops at `max_samples` 100, a sampler test double that counts draws started records at most 103 draws and, at every moment, at most 4 samples drawn and not yet merged; a provider that draws further ahead fails. | Test (TC-356) |
 
 ## Dependencies
 
