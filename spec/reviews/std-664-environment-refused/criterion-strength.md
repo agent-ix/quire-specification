@@ -33,3 +33,9 @@ PASS with one low ambiguity.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-272-AC-28's last clause "neither the `unimplemented_capability` row nor the `resource_exhausted` row lists `environment-refused`" does not say which documents' rows; TC-233 reads it as both, but a checker that inspects only FR-272 satisfies the text | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:207 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | b6234e25: FR-272-AC-28's exclusion clause now names all three documents (FR-271 values table, FR-272, native-diagnostics.md) and requires each file's own row to satisfy the criterion. |

@@ -48,3 +48,11 @@ Examined and clean:
 | FND-001 | medium | FR-272-AC-28 requires the FR-271 values row to name the `backend` and `resource` payload keys and to state that `executable-memory` is the only member of the `resource` set; the FR-271 row says only "resource `executable-memory`" in prose, names no payload keys and states no closed set, so TC-233's AC-28 check fails against the PR's own text. Either extend the FR-271 row or drop FR-271 from AC-28's payload and closed-set clauses | spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md:78; spec/objects/foundation/FR-272-typed-diagnostic-cause.md:207 |
 | FND-002 | low | The new payload key `resource` is not added to the "Canonical cause payload contract" ordered name list, so its position in canonical field order is undefined (FR-272-AC-27 added `request_index` and `family` there; `backend` is a pre-existing omission) | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:212-216 |
 | FND-003 | low | The TC-047 paired-failure row asserts "removing the host denial removes it" (beyond FR-272-AC-29) and does not say how the test induces a host denial of executable memory | spec/test-cases/TC-047-emit-typed-located-causes.md:42 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | b6234e25: the FR-271 `environment_refused` row now names payload `backend` and `resource` and states that the `resource` set has `executable-memory` as its only member, as FR-272-AC-28 requires. |
+| FND-002 | fixed | b6234e25: `backend` and `resource` appended to the canonical ordered payload-name list. |
+| FND-003 | fixed | b6234e25: FR-272-AC-29 now states the granting-host case, and the TC-047 row says the denial is induced by a denying executable-memory allocator at the backend's allocation seam (or an OS policy), not by mocking the diagnostic. |

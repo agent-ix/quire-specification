@@ -28,3 +28,9 @@ PASS with one low wording defect.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-272-AC-29 has a doubled comma ("`executable-memory`,, and no ...") | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:208 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | b6234e25: the doubled comma in FR-272-AC-29 is removed. |
