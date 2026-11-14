@@ -208,14 +208,20 @@ order and the first failing check is its defect:
    Every refusal of this step is located at the reference,
    `B/members/3/value/members/{g}/members/{m}`, and for one reference the
    checks run in this order:
-   1. its fairness node's `target` that is not an `operation` target refuses
+   1. a reference whose target is not a `temporal`/`fairness` node refuses
+      `ill_typed`/`operator-ineligible`, and the reader admits no Group
+      reference to any other node form (a `temporal`/`temporal_clause`, an
+      `expression`, a `value` or a `model` node among them); a reference to
+      a `temporal`/`formula` node never reaches this check, since FR-370's
+      temporal step has already refused it as misplaced;
+   2. its fairness node's `target` that is not an `operation` target refuses
       `invalid_model_binding`/`malformed-declaration`;
-   2. FR-370 "Fairness resolution" steps 1 to 3 run on the fairness node as
+   3. FR-370 "Fairness resolution" steps 1 to 3 run on the fairness node as
       on a clause's fairness member, with their codes and causes;
-   3. a declaring node whose `ModelOwner` is not of the package whose
+   4. a declaring node whose `ModelOwner` is not of the package whose
       `model_root` the Group's alias names refuses
       `invalid_model_binding`/`malformed-declaration`;
-   4. under a body wrapper whose profile is one whose FR-370 profile fit
+   5. under a body wrapper whose profile is one whose FR-370 profile fit
       admits only an empty fairness argument, the reference refuses
       `invalid_package`/`operation-member-mismatch`.
 
@@ -232,6 +238,7 @@ order and the first failing check is its defect:
 | FR-402-AC-7 | Each quantifier fairness refusal is located at the reference `/semantic_graph/nodes/{n}/body/members/3/value/members/{g}/members/{m}`: a fairness node whose target is a `protocol_root` target refuses `invalid_model_binding`/`malformed-declaration`; one whose `operation` target names no effective operation refuses `missing_declaration`/`missing-name`; one whose declaring node belongs to another alias's package refuses `invalid_model_binding`/`malformed-declaration`; and a non-empty quantifier fairness set under a body wrapper whose profile is `quire.temporal.event-position.false-extension/v1` refuses `invalid_package`/`operation-member-mismatch`. A `quantifier` value `some` refuses `invalid_package`/`invalid-value` and a Group with `quantifier` before `variable` refuses `invalid_semantic_graph`. | Test (TC-346) |
 | FR-402-AC-8 | A `behaviours` clause's `body` references a body wrapper whose `formula` argument references the body's root formula node and whose `fairness` argument is empty; the request the producer writes for the clause holds no FR-368 `formula` item whose `claim.node` is the wrapper; a `body` referencing a `temporal`/`formula` node directly refuses `ill_typed`/`operator-ineligible` at the hyperproperty node; a wrapper with a non-empty `fairness` argument refuses `invalid_semantic_graph` at that argument; and a finite-domain `body` referencing an integer-typed `expression` node refuses `ill_typed`/`non-boolean-root` at the target. | Test (TC-346) |
 | FR-402-AC-9 | Every slot parameter name matches `[A-Za-z_][A-Za-z0-9_]*` and decodes to its tag and fields: `v @ a` is `slot_sv_sa`, `a.step.op` is `op_sa` and `a.step.Vault::step.i` is `arg_sa_sVault_sstep_si`; the slots for object parameter `a_b` in trace `c` and for `a` in trace `b_c` are `slot_sa__b_sc` and `slot_sa_sb__c`, which differ; a byte outside ASCII letters, digits and `_` is `_x` and two uppercase hexadecimal digits; and names built from every pair of distinct tags and field lists over a set including `_`, `s`, `x` and digit-leading names are pairwise distinct. | Test (TC-346) |
+| FR-402-AC-10 | A quantifier Group `reference` whose target is a node of the graph other than a `temporal`/`fairness` node is refused, never admitted: with `a`'s fairness reference of TC-346 HI-08 retargeted to the clause's body wrapper `temporal`/`temporal_clause` node, to a Boolean `expression` node, or to `Vault`'s `model`/`object_type` node, each refuses `ill_typed`/`operator-ineligible` at `/semantic_graph/nodes/{n}/body/members/3/value/members/0/members/3`, before any fairness-target or resolution check of that reference. | Test (TC-346) |
 
 ## Dependencies
 

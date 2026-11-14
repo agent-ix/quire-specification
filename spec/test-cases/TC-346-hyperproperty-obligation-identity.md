@@ -50,6 +50,7 @@ refusal and location.
 | HI-15 | HB-01's slot parameter nodes; the encoder over (`slot`, [`a_b`, `c`]), (`slot`, [`a`, `b_c`]), (`slot`, [`é`, `a`]) and every pair of distinct (tag, field list) over the fields `_`, `s`, `x`, `x41`, `1a`, `a` and `b` | HB-01 holds `slot_sv_sa`, `slot_sv_sb`, `op_sa`, `op_sb`, `arg_sa_sVault_sstep_si` and `arg_sb_sVault_sstep_si`; the three encodings are `slot_sa__b_sc`, `slot_sa_sb__c` and `slot_s_xC3_xA9_sa`; every name matches `[A-Za-z_][A-Za-z0-9_]*`, decodes to its tag and fields, and no two pairs share a name (FR-402-AC-9) |
 | HI-16 | HI-08 with: (a) the `align_skip` binding removed (six bindings); (b) an added alias `W` in `subjects` that no Group names; HI-09 with (c) a `subjects` binding, (d) an `alias` binding on its Group, (e) a fairness reference in its Group | each `invalid_semantic_graph`: (a) at the first binding that breaks the layout, (b) at `W`'s `subjects` binding, (c) to (e) at the added member (FR-402-AC-6) |
 | HI-17 | HB-01 and HB-01 with trace variable `a` renamed `c` throughout | different node ids and different obligation identities (FR-402-AC-3) |
+| HI-18 | HI-08 with `a`'s Group `reference` retargeted to: (a) the clause's body wrapper `temporal`/`temporal_clause` node; (b) a Boolean `expression` node (a match conjunct); (c) `Vault`'s `model`/`object_type` node | each refuses `ill_typed`/`operator-ineligible` at `/semantic_graph/nodes/{n}/body/members/3/value/members/0/members/3`; none is admitted (FR-402-AC-10) |
 
 ## Expected Results
 
