@@ -20,6 +20,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-322
     type: references
+  - target: ix://agent-ix/quire-specification/FR-204
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
 ---
 # FR-351: Separating witness record
 
@@ -65,6 +69,36 @@ This one record shape backs every family's decisive settlement, and no family de
 - **Temporal** — a decisive temporal witness or counterexample preserves the truth under every admitted continuation only with completed assessment execution, exact complete decision support and this record (FR-094, FR-061-AC-8).
 - **Protocol** — an open decision scope settles `satisfied` or `violated` because the selected profile proves the retained witness or counterexample preserves that truth under every admitted continuation (FR-243 `decisive-witness`, `decisive-counterexample`).
 
+## Assessed subject's root
+
+The assessed subject's root is the claim's binding of the subject it is
+assessed over. It has two parts: the selected observation identity, and the
+subject within that observation. The value path's `root` is this binding.
+For a protocol claim the subject is the [FR-204](../foundation/FR-204-declared-object-identity.md)
+declared object identity that the claim is assessed over, written as an
+FR-207 `object` root subject.
+
+The root is not derived from the checked package. A checked protocol
+definition names no observation, and no FR-207 subject kind names a protocol
+definition, so the analysis cannot compute the root. The caller that binds
+the claim to its subject carries the root on the request. For a
+`local-projection` or `realizability` item the carrier is the item's
+`assessed_root` member ([FR-331](../interfaces/FR-331-backend-provider-envelope.md)
+"Items"), an FR-207 `root` object with exactly `observation` and an `object`
+subject. The producer copies `root.observation` and `root.subject` of the
+record's value path verbatim from `assessed_root`, and never invents,
+derives or defaults either. A request of either kind with the root, or
+either part of it, absent is refused `invalid_runtime_input`/`missing-member`
+naming the absent member. The root is request-scoped settlement data: it is
+not a member of the FR-174 or FR-175 derived-artifact key, so two results of
+one key under different roots differ only in this record.
+
+For a decisive protocol-analysis counterexample, `value_path` has an empty
+`steps` array. FR-207 defines an empty `steps` array as the subject itself,
+never as an absent path. No FR-207 step kind selects a node of a checked
+protocol graph, so the path introduces no step: `deciding_element` names the
+node.
+
 ## Witness-free dispositions
 
 A separating witness accompanies only a `decisive-witness` or `decisive-counterexample` settlement basis (FR-243). Resource exhaustion or cancellation retains the incomplete-execution disposition, originating stage, charged work item and effective limit or cancellation source, and carries no witness. A valid checked subject with an unsupported requested backend capability retains the checked subject and emits no substitute witness in the deciding element's place. A strict reader accepts a witness only as the exact record above or as its absence; extending FR-094-AC-7's one-axis-substitution refusal to the witness axis, it refuses a record missing a required component, carrying a foreign shape, or substituting a default for absence on any one component.
@@ -100,6 +134,7 @@ A separating witness accompanies only a `decisive-witness` or `decisive-countere
 | FR-351-AC-5 | A strict reader accepts a witness only as the exact record above or as its absence; a record missing a required component, carrying a foreign shape, or substituting a default for absence on any one component is refused. | Test (TC-254) |
 | FR-351-AC-6 | No ordering over separating witness records is asserted by this artifact or inferred from presentation text. | Inspection |
 | FR-351-AC-7 | A collection `forall` refuted at its third element records the refuting quantifier's occurrence key, that element, index 2 and the value path to the stored collection; two otherwise-equal records naming different occurrences of one quantifier node compare unequal; a `filter` or `map` domain records the stored source collection and source index; and an element of a collection built inside the claim records a value path rooted at the building expression's occurrence key. | Test (TC-254) |
+| FR-351-AC-8 | A decisive protocol-analysis counterexample's record has a `value_path` whose `root.observation` and `root.subject` equal the request item's `assessed_root` exactly, an `object` root subject and an empty `steps` array; a request with `assessed_root`, its `observation` or its `subject` absent is refused `invalid_runtime_input`/`missing-member` naming the absent member; two requests that differ only in `assessed_root` yield the same FR-174 or FR-175 key and records that differ only in `value_path.root`. | Test (TC-254) |
 
 ## Dependencies
 

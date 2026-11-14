@@ -24,12 +24,19 @@ sound projection.
 ## Inputs
 
 Checked global graph, selected roles, channel/choice premises, projection profile
-and bounds.
+and bounds, and the claim's assessed-subject root, carried as the request
+item's `assessed_root`
+([FR-351](../../objects/protocol/FR-351-separating-witness-record.md)
+"Assessed subject's root"). The root is not a key member.
 
 ## Outputs
 
 Role-local graphs plus soundness record, counterexample, inconclusive result or
-typed refusal.
+typed refusal. A result is written as an
+[FR-352](../foundation/FR-352-mint-native-run-result-witness-wire.md)
+protocol-analysis record, settled with the
+[FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
+labels.
 
 ## Behavior
 
