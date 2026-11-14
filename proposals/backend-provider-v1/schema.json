@@ -545,6 +545,7 @@
         "method": {"$ref": "#/$defs/StatisticalMethod"},
         "seed": {"$ref": "#/$defs/Decimal"},
         "max_witnesses": {"$ref": "#/$defs/Count"},
+        "workers": {"description": "FR-331, FR-408: the statistical worker count `statistical.workers`, default 1; 0 is admitted on the wire and refused by the provider with invalid_runtime_input/invalid-value (FR-408-AC-16).", "$ref": "#/$defs/Count"},
         "q": {"description": "FR-408, FR-420: the delay-draw grid exponent of a timed subject.", "$ref": "#/$defs/Count"},
         "max_sample_steps": {"description": "FR-408: default 2^24.", "$ref": "#/$defs/PositiveCount"},
         "limits": {}
@@ -552,7 +553,7 @@
       "allOf": [
         {"if": {"properties": {"evidence": {"const": "statistical"}}, "required": ["evidence"]},
          "then": {"required": ["method", "seed", "max_witnesses"], "properties": {"limits": {"$ref": "#/$defs/StatisticalLimits"}}},
-         "else": {"properties": {"method": false, "seed": false, "max_witnesses": false, "q": false, "max_sample_steps": false}}},
+         "else": {"properties": {"method": false, "seed": false, "max_witnesses": false, "workers": false, "q": false, "max_sample_steps": false}}},
         {"if": {"properties": {"evidence": {"const": "exact"}}, "required": ["evidence"]},
          "then": {"properties": {"limits": {"$ref": "#/$defs/ExactProbLimits"}}}},
         {"if": {"not": {"properties": {"evidence": {"enum": ["statistical", "exact"]}}, "required": ["evidence"]}},

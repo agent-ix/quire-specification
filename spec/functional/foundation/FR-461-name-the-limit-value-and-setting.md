@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-272
     type: references
+  - target: ix://agent-ix/quire-specification/FR-408
+    type: references
   - target: ix://agent-ix/quire-specification/FR-300
     type: references
   - target: ix://agent-ix/quire-specification/FR-301
@@ -84,6 +86,7 @@ setting.
    library setter; its `value` is the denied atom's identity and its `setting`
    names the remedy, the plan-declared capture binding, so Behavior 3 and 4 do
    not apply to it.
+   The statistical worker count `statistical.workers` (FR-408 "Workers") is a resource choice, not a limit: it takes no limit row and no limit name, and no limit outcome names it. It is a request setting that the library and `--limit statistical.workers=<n>` accept as a positive integer and a replay request carries as the statistical request's `workers`; the value 0 is refused with `invalid_runtime_input`/`invalid-value` (FR-408-AC-16). The other worker counts are not registered here.
 6. **Execution budgets name their counter.** An `incomplete` execution
    outcome names its `quire.value.accounting/v1` counter, for example
    `work_units`, as its limit. A counter of the evaluation meter, one of the
@@ -122,6 +125,7 @@ setting.
 | FR-461-AC-9 | The spellings the `quire.value.accounting/v1` ordered charge-point table declares equal, in table order, the spellings of the published list `value-accounting-charge-point-vectors.json`, and every spelling has an amount row; the set includes `equality.plan-form`, `frame.write`, `frame.redefines-link`, `declaration.check` and `temporal.visit`. | Test (TC-426) |
 | FR-461-AC-10 | A spelling the table does not declare, such as `temporal.visits`, is absent from the ordered table (and therefore the amount table) and from the published list, and a one-sided change to either fails the comparison; `tests/value_accounting_vocabulary.rs` enforces this half. A conforming kernel's test compares its `ChargePoint::ALL` `as_str()` set with `VALUE_ACCOUNTING_CHARGE_POINT_VECTORS` and requires each undeclared entry to fail `from_code`. | Test (TC-426) |
 | FR-461-AC-11 | The ten `ScalarLimitsV1` counter spellings the `quire.value.accounting/v1` Limit object lists, in field order, equal the spellings of the published list `value-accounting-limit-kind-vectors.json`, which is the `ScalarLimitsV1` counter vocabulary only (the `limit_kind` values of `PopulationAdmissionLimitsV1` and `ModelNormalizationLimitsV1` are not part of it); a spelling that is not a `ScalarLimitsV1` counter, such as `unit_work` or `accounting.work_units`, is absent from the Limit object, from the published list and from every `limit_kind` the definition names, and a one-sided change fails the comparison. A conforming kernel's test compares its `LimitKind::ALL` `as_str()` set with `VALUE_ACCOUNTING_LIMIT_KIND_VECTORS` and requires each undeclared entry to fail `from_code`. | Test (TC-426) |
+| FR-461-AC-12 | When the CLI is given `--limit statistical.workers=4`, the statistical request carries `workers` 4 and no limit row or `limit-reached` outcome names `statistical.workers`; given `--limit statistical.workers=0` it refuses with `invalid_runtime_input`/`invalid-value`. | Test (TC-426) |
 
 ## Dependencies
 
