@@ -15,7 +15,10 @@ relationships:
 
 Calls every lifecycle operation through the Rust library with valid,
 wrong-stage, cancelled and foreign-format inputs, and `prove` over a checked
-package that `package` refuses to emit. Planned.
+package that `package` refuses to emit. It also checks which protocol-analysis
+inconclusive causes and which `assessed_root` request members the
+backend-provider schema admits for each item kind, and that a provider
+declines a `realizability` item whose assessed root is incomplete. Planned.
 
 ## Test Procedure
 
@@ -36,4 +39,8 @@ package that `package` refuses to emit. Planned.
 
 Every operation is typed end to end, wrong-stage input cannot be written,
 cancellation stops within one charge with no partial artifact, and the library
-and CLI agree byte for byte.
+and CLI agree byte for byte. The schema admits each protocol-analysis cause
+only on the item kinds FR-331 allows, and admits `assessed_root` only on a
+`local-projection` or `realizability` item in its closed shape. The provider
+declines an item with any part of its assessed root absent, naming that
+part.

@@ -69,3 +69,26 @@ Examined and clean:
 | FND-010 | low | The correspondence and refusal lists give no rule for a protocol-analysis record with FR-360 `failed` and execution `failed` (an engine failure, which the prose says gets no record), and do not check that `bound-reached.depth` equals the key's `max_depth` | spec/functional/foundation/FR-352-mint-native-run-result-witness-wire.md:253-259; spec/functional/foundation/FR-352-mint-native-run-result-witness-wire.md:285-293 |
 | FND-011 | low | One record carries two `basis` members with different vocabularies: top-level FR-243 `basis` and `analysis.settlement.basis` (FR-331 proof basis, `exhaustive` on proved); nothing tells a reader they differ | spec/functional/foundation/FR-352-mint-native-run-result-witness-wire.md:251 |
 | FND-012 | low | `key` "holds each key member as a typed value" can be read as the FR-331 typed-value encoding; QSL's `ProtocolAnalysisKey::to_json` writes plain serde JSON with a `kind` of `projection`/`realizability` | spec/functional/foundation/FR-352-mint-native-run-result-witness-wire.md:247 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-013 | low | TC-220 now carries LC-08 to LC-10 (schema admission of protocol causes and assessed_root, and the provider's declination), but its Description still says it calls every lifecycle operation through the Rust library and its Expected Results speak only of typed operations, cancellation and library/CLI parity; neither mentions the new admission and declination rows | spec/test-cases/TC-220-rust-lifecycle-api-contract.md:14-18; spec/test-cases/TC-220-rust-lifecycle-api-contract.md:35-39 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 25db9c5e: FR-331 lists `bound-reached{depth}` on either kind for a `max_depth`, `max_history` or evaluator method-bound horizon, `depth` always the key's `max_depth` |
+| FND-002 | fixed | 25db9c5e: FR-352 base witness table gives `deciding_element` per record form and `trace_position` as a canonical decimal string (FR-351 types it String) |
+| FND-003 | fixed | 25db9c5e: the reader reads `settlement` as a result entry with the four omitted members disregarded, their presence `unknown-member`; required members listed per result |
+| FND-004 | fixed | 25db9c5e: FR-331 scopes the causes by kind; four schema allOf rules enforce it (checked with jsonschema: `cut-count` on local-projection, `premise-not-stated` on temporal-satisfaction, `no-instance` on realizability refused); FR-352-AC-14/15 and NR-15/16 name the kind |
+| FND-005 | fixed | 25db9c5e: `unforced-refutation` covers a lost game with no forced defeating play and a class conflict with no forced pair |
+| FND-006 | fixed | 25db9c5e: `cut-count` says it replaces a would-be `proved` under an open range, tests no dependence, and a refutation stays `refuted` |
+| FND-007 | fixed | 25db9c5e: schema requires no member of `assessed_root` (still closed, `tag` const `object`); prose and FR-331-AC-53 decline an absent root, observation, subject or FR-207 subject member; checked with jsonschema |
+| FND-008 | fixed | 25db9c5e: `premise-not-stated` cites FR-175 "Strategy game" instead of FR-175-AC-3 |
+| FND-009 | fixed | 25db9c5e: split into FR-331-AC-51/52/53, each Test (TC-220) traced by LC-08/09/10 |
+| FND-010 | fixed | 25db9c5e: `failed`/`failed` record refused and `bound-reached.depth` checked against the key's `max_depth`; both in FR-352-AC-15 and NR-16 |
+| FND-011 | fixed | 25db9c5e: `settlement` row states its `basis` is the FR-331 proof basis, a different vocabulary from the top-level FR-243 `basis` |
+| FND-012 | fixed | 25db9c5e: `key` is plain JSON, not the FR-331 typed value encoding, with `kind` `projection`/`realizability` |
