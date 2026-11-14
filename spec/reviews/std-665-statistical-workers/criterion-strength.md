@@ -37,3 +37,10 @@ PASS with two low findings.
 | --- | --- | --- | --- |
 | FND-001 | low | FR-408-AC-15 has no adverse case on physical draws: unlike QSL FR-191-AC-6 ("the double records at most 103 draws"), nothing fails for a provider that draws far beyond the stop and discards the excess (see base FND-002) | spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md:358 |
 | FND-002 | low | FR-408-AC-16's clause "`statistical.workers` takes no row in `StatisticalLimits` and no `limit-reached` name" has no TC-356 vector (WK-03 checks only the refusal and the default), and WK-03 names no fixture or method | spec/test-cases/TC-356-regenerative-long-run.md:39 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 86ac612d: FR-408-AC-18 adds the adverse case (at most 103 draws, at most 4 drawn and not merged; a provider that draws further ahead fails) and WK-02 checks it. |
+| FND-002 | fixed | 86ac612d: WK-03 names `NoFault` with Okamoto and adds a third run checking that `StatisticalLimits` has exactly `max_samples`, `max_draws`, `max_cycle_steps` and the `limit-reached` names `max_samples`. |

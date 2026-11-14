@@ -29,3 +29,9 @@ PASS with one low finding.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-461 now cites FR-408 "Workers" as the source of its new sentence but has no `references` edge to FR-408, while it carries edges for the other FRs its behaviors cite (FR-300, FR-301, FR-323) | spec/functional/foundation/FR-461-name-the-limit-value-and-setting.md:1-17,87 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 86ac612d: FR-461 frontmatter gains a `references` edge to ix://agent-ix/quire-specification/FR-408. |

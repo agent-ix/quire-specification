@@ -28,3 +28,10 @@ PASS with two low findings.
 | --- | --- | --- | --- |
 | FND-001 | low | FR-408 states the worker semantics as its own SHALLs and also says "QSL FR-191 'Workers' is the authority for these semantics", while QSL FR-191 and FR-255 say QSpec FR-408 owns the statistical settings; with two normative texts that already differ (the look-ahead bound, base FND-002) nothing says which one governs | spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md:330-332 |
 | FND-002 | low | The "same results" bullet requires equal findings and verdict, but FR-408-AC-15 and WK-01 list decision, counts, estimates, witnesses, provenance, certificates and stop only, so findings and verdict equality is untested | spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md:324-326,358 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 86ac612d: the "authority" bullet is replaced by a rule that this section governs the statistical settings where the texts differ, consistent with QSL FR-191/FR-255 saying QSpec FR-408 owns them (the wording of that rule is ears-conformance FND-002). |
+| FND-002 | fixed | 86ac612d: FR-408-AC-15 and WK-01 now include findings and verdict. |

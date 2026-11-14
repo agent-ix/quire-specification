@@ -312,7 +312,7 @@ a budget: it stops no run, takes no row in `StatisticalLimits` or the limit
 table (FR-461), and enters neither the obligation identity nor the provenance.
 This section registers the setting; QSL FR-191 "Workers" states the same
 semantics for the engine, and where the two texts differ this section governs
-the statistical settings and QSL FR-191 SHALL NOT contradict it.
+the statistical settings.
 
 - When the request carries `workers` 0, the provider SHALL refuse the item at
   negotiation, before any sample is drawn, with the typed refusal

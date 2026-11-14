@@ -29,3 +29,15 @@ PASS with one low finding.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | "The request SHALL carry `workers`, a positive integer ... defaulting to 1" puts the obligation on the request rather than the provider, and contradicts itself: "SHALL carry" makes the member required while the default and FR-408-AC-16 cover a request that omits it, and "a positive integer" excludes the 0 that the next bullet refuses | spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md:308-310 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The fix's "QSL FR-191 SHALL NOT contradict it" places a SHALL on another repository's document, with no system that can satisfy it and no criterion; the governing rule ("where the two texts differ this section governs the statistical settings") is enough on its own | spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md:313-315 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 86ac612d: the sentence is now descriptive ("The request carries `workers`, a positive integer ... defaulting to 1 when the request names none") with no SHALL on the request; the 0 case is a separate provider obligation. |
