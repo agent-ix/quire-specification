@@ -24,12 +24,19 @@ communication and environment premises.
 ## Inputs
 
 Checked global graph, role knowledge/visibility, channel/environment assumptions,
-strategy profile and bounds.
+strategy profile and bounds, and the claim's assessed-subject root, carried as
+the request item's `assessed_root`
+([FR-351](../../objects/protocol/FR-351-separating-witness-record.md)
+"Assessed subject's root"). The root is not a key member.
 
 ## Outputs
 
 Realizable with strategy witnesses, unrealizable with counterexample,
-inconclusive, unsupported or failed.
+inconclusive, unsupported or failed. A result is written as an
+[FR-352](../foundation/FR-352-mint-native-run-result-witness-wire.md)
+protocol-analysis record, settled with the
+[FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
+labels.
 
 ## Behavior
 

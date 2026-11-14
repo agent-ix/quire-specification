@@ -40,6 +40,10 @@ shape. Separately drive one obligation to a `closed-scope` basis, one to
 unsupported requested backend capability. Attempt to read a record missing its
 deciding element, a record carrying an extra foreign member, and a default
 value substituted for an absent index, value path or trace position.
+Refute a `realizability` request item carrying an `assessed_root`; repeat
+with only its `assessed_root` changed; then submit the item with
+`assessed_root`, its `observation` and its `subject` each absent
+(FR-351-AC-8).
 
 ## Expected Results
 
@@ -54,4 +58,8 @@ temporal and protocol records share one shape. `closed-scope` and `unsettled`
 results carry no witness. The exhausted, cancelled and unsupported results
 retain their disposition and checked subject and emit no witness or substitute
 witness. Every malformed, foreign-shaped or defaulted-absence record is
-refused rather than accepted as the witness.
+refused rather than accepted as the witness. The realizability record's
+`value_path` root equals the item's `assessed_root` with an `object` subject
+and empty `steps`; the changed-root run has the same key and a record that
+differs only in `value_path.root`; each absent root member is refused
+`invalid_runtime_input`/`missing-member` naming it.

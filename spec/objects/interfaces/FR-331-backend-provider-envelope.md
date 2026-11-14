@@ -563,6 +563,20 @@ in milliseconds (FR-462).
   `environment`, and `key` the slot key of [FR-492](FR-492-planner-settlement-request.md);
   it is part of request identity, and an item of another kind that carries
   it refuses before consumption.
+- `assessed_root` is carried by a `local-projection` or `realizability` item
+  and by no other kind. It is the claim's assessed-subject root
+  ([FR-351](../protocol/FR-351-separating-witness-record.md) "Assessed
+  subject's root"): an [FR-207](../foundation/FR-207-runtime-value-path.md)
+  `root` object with exactly `observation` and a `subject` whose tag is
+  `object`. It is part of request identity. An item of another kind that
+  carries it refuses before consumption, as does an `assessed_root` with
+  another member or a `subject` with another tag. The schema requires no
+  member of `assessed_root` and does not restate FR-207's `object` subject
+  members. The provider checks them: it refuses an item of either kind
+  whose `assessed_root`, `observation`, `subject` or FR-207 subject member
+  is absent, `invalid_runtime_input`/`missing-member` naming the absent
+  member, and settles that item `declined` `invalid-input`. An in-process
+  request (no frame) is refused the same way.
 - `requirements` is the nonempty, repeat-free set of the item's routing requirements, from the closed vocabulary {`hybrid-dynamics`}, carried only by a `temporal-satisfaction` item and by every item that carries `hybrid` (FR-193 "Routing a hybrid item"); an item that breaks either rule refuses before consumption.
 - An item with an absent `kind`, a `kind` outside the vocabulary, an absent
   `extent`, or an absent or unknown probabilistic evidence kind is admitted on
@@ -702,11 +716,42 @@ clause's node and `result` the result of its unproved item), FR-380
 `request_index`), FR-439 (`memory-bound-reached{limit, value, states}`, `limit` the request
 member that raises the budget, `max_store_buffer` or `max_messages`), FR-428
 (`instance-bound-reached{limit, value, states}`, `limit` always
-`max_live_instances`, the member that raises it) and AD-016's
-`kani_vacuous_proof`. FR-439 adds the unsupported cause
+`max_live_instances`, the member that raises it), FR-174 and FR-175
+(`premise-not-stated`, `replay-disagreed`, `unforced-refutation`,
+`strategy-replay-failed`, `cut-count` and `undecided-evaluation`, defined
+below) and AD-016's `kani_vacuous_proof`. FR-439 adds the unsupported cause
 `weak-access-shape{site, transition, shape}`. FR-427 adds the unsupported cause
 `recovery-view{predicate}`, `predicate` the qualified name of the compensation
 template whose recovery predicate reads its recovery binder.
+
+A `local-projection` or `realizability` item (FR-174, FR-175) that completes
+its method and settles FR-360 `inconclusive` carries one of these closed
+inconclusive causes, and no other:
+
+- `bound-reached{depth}` (FR-363), on either kind, when the search reached a
+  horizon with no counterexample: `max_depth`, a realizability key's
+  `max_history`, or a method bound of the protocol evaluator. `depth` is
+  always the key's `max_depth`, whichever horizon was reached.
+- `replay-disagreed`, on either kind.
+- `premise-not-stated`, `unforced-refutation`, `strategy-replay-failed`,
+  `cut-count` and `undecided-evaluation`, on a `realizability` item only.
+
+Each of the six causes below is a bare `type` with no payload member:
+
+| Cause | Meaning |
+| --- | --- |
+| `premise-not-stated` | The realizability claim does not state its role-knowledge premise or its environment premise, so the game has no admitted observations or no admitted environment moves to quantify over (FR-175 "Strategy game"). A premise declared empty is stated and is not this cause. |
+| `replay-disagreed` | The analysis found a counterexample, and the counterexample did not replay against the checked protocol graph and the premises: a step is not an admitted successor, or the walk does not end in the stated divergence or violation. The result is never `refuted`, and the counterexample is not carried. |
+| `unforced-refutation` | The game is lost or a role has an observation class with no common winning action, yet no refutation is forced. Either no forced environment play reaches the defeat, or no two forced indistinguishable histories need incompatible actions (FR-175 "Strategy game"). |
+| `strategy-replay-failed` | The analysis built a strategy table, and the table failed its replay walk (FR-175-AC-1). The walk runs every admitted environment play and selects each role's action by its recomputed observation class. Some play did not satisfy the global obligations, or the walk did not close within the bounds. The result is never `proved`. |
+| `cut-count` | The strategy table passed its replay walk, but some channel's delivery policy admits an open count range (`at-least-once`, `unknown`), so its delivery counts were cut at the channel's literal capacity and the `max_depth` horizon. A result that would otherwise be `proved` settles this cause instead. It does not test whether the result depended on the cut. A refutation under an open range still settles `refuted`. |
+| `undecided-evaluation` | The result depended on an evaluation the protocol evaluator left undecided. That is an undetermined clause or protocol expression, or a terminal predicate that is undefined or refused at a terminal state. It is not the `refuted` cause `undefined-evaluation{where, cause}`. |
+
+The schema binds these causes to the item kind the result entry names: a
+realizability-only cause on another kind's entry, and any other inconclusive
+cause on a protocol-analysis entry, are refused before consumption. That
+`depth` equals the key's `max_depth` is a reader obligation, because the
+entry does not carry the key.
 
 A reader SHALL refuse a result entry, or the `counterexamples` entry a
 `refuted` result names, before consumption with the FR-272 `invalid_result`
@@ -945,6 +990,9 @@ computed.
 | FR-331-AC-48 | The request identity includes the request's `memory` selections: two requests that differ only in one `memory` entry's model have different request identities, as FR-434-AC-1 requires of obligation identities. | Test (TC-431) |
 | FR-331-AC-49 | Withdrawn: the `stale-dependency` cause is removed; replay recompiles the supplied inputs and compares nothing against a supplied package. | Withdrawn |
 | FR-331-AC-50 | A domain rooted at a field, an operation parameter or an operation result of a selected domain package is a `node` key under the model declaration node of the member's declaring type, with path `[0, f, ...]`, `[1, o, p, ...]` or `[2, o, ...]` as "Model member domain keys" defines; over the published `acme/orders` document, `Order.total` is `[0, 17]`, `Order.scaled`'s parameter `n` is `[1, 1, 0]`, its result is `[2, 1]`, `Order.size`'s result is `[2, 2]` and `Sub.size`'s result is `[2, 1]` under `Sub`'s node, and no two roots of the document share a key. | Analysis |
+| FR-331-AC-51 | An `inconclusive` result entry of a `realizability` item carrying each of `premise-not-stated`, `replay-disagreed`, `unforced-refutation`, `strategy-replay-failed`, `cut-count` and `undecided-evaluation` as a bare `type`, and `bound-reached{depth}`, is admitted, as is an entry of a `local-projection` item carrying `replay-disagreed` or `bound-reached{depth}`. Independently, refused before consumption: `cut-count` on a `local-projection` entry; `premise-not-stated` on a `temporal-satisfaction` entry; `no-instance` on a `realizability` entry; `replay-disagreed` with a payload member; and the spelling `replay-disagreement`. | Test (TC-220) |
+| FR-331-AC-52 | A `local-projection` and a `realizability` request item carrying `assessed_root` `{observation, subject}` with an `object` subject are admitted; `assessed_root` on a `temporal-satisfaction` item, an `assessed_root` with an extra member, and one whose `subject` tag is `population` are each refused before consumption. | Test (TC-220) |
+| FR-331-AC-53 | A `realizability` item without `assessed_root`, and one whose `assessed_root` lacks `observation`, lacks `subject` or has an `object` subject that lacks an FR-207 member, each settle `declined` `invalid-input` with `invalid_runtime_input`/`missing-member` naming the absent member, in a request frame and in an in-process request. | Test (TC-220) |
 
 ## Dependencies
 
