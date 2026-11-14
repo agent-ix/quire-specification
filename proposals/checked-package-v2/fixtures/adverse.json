@@ -662,6 +662,161 @@
       "expected_code": "invalid_semantic_graph"
     }
   ],
+  "field_population_cases": [
+    {
+      "id": "reaches-field-population-reference-max-3-admitted",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "outcome": "admitted"
+    },
+    {
+      "id": "reaches-field-population-reference-max-0-admitted",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "0"
+      },
+      "outcome": "admitted"
+    },
+    {
+      "id": "reaches-field-population-unbounded-admitted",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order"
+      },
+      "outcome": "admitted"
+    },
+    {
+      "id": "reaches-field-population-option-admitted",
+      "base": "positive-operation-identities",
+      "field": "parent",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "outcome": "admitted"
+    },
+    {
+      "id": "reaches-field-population-sequence-admitted",
+      "base": "positive-operation-identities",
+      "field": "prior",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "outcome": "admitted"
+    },
+    {
+      "id": "reaches-field-population-over-field-owner-through-subtype-admitted",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Sub",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "outcome": "admitted"
+    },
+    {
+      "id": "reaches-field-population-over-subtype-declaration-refused",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Sub",
+      "population": {
+        "model_population_over": "ix://acme/orders/Sub",
+        "max": "3"
+      },
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
+    },
+    {
+      "id": "reaches-field-population-over-another-model-declaration",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Invoice",
+        "max": "3"
+      },
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
+    },
+    {
+      "id": "reaches-field-population-names-integer-range",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "node_tag": "bounded_domain",
+        "semantic_form": "integer_range"
+      },
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
+    },
+    {
+      "id": "reaches-field-population-names-absent-node",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "absent": true
+      },
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
+    },
+    {
+      "id": "reaches-field-population-omitted-from-dependencies",
+      "base": "positive-operation-identities",
+      "field": "origin",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "dependencies": "without-population",
+      "expected_code": "invalid_semantic_graph"
+    },
+    {
+      "id": "reaches-field-population-set-typed-edge-refuses-at-the-application",
+      "base": "positive-operation-identities",
+      "field": "peers",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
+    },
+    {
+      "id": "reaches-field-population-unbounded-sequence-edge-refuses-at-the-application",
+      "base": "positive-operation-identities",
+      "field": "trail",
+      "declaration": "ix://acme/orders/Order",
+      "population": {
+        "model_population_over": "ix://acme/orders/Order",
+        "max": "3"
+      },
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
+    },
+    {
+      "id": "field-projection-population-fails-the-schema",
+      "base": "positive-operation-identities",
+      "schema": "refused"
+    }
+  ],
   "unbounded_population_cases": [
     {
       "id": "population-without-max-is-unbounded",

@@ -4703,6 +4703,10 @@
                 "bare",
                 "explicit_deref"
               ]
+            },
+            "population": {
+              "description": "Only on the field member of quire.op.model.reaches_field (FR-322 Population link of a reaches); the Operation rule refuses it on any other operation.",
+              "$ref": "#/$defs/NodeId"
             }
           },
           "additionalProperties": false
@@ -5023,6 +5027,37 @@
           }
         }
       },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "identity": {
+                "not": {
+                  "const": "quire.op.model.reaches_field"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "member": {
+                "not": {
+                  "type": "object",
+                  "required": [
+                    "kind",
+                    "population"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "const": "field"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "Occurrence": {

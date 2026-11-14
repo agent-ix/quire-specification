@@ -348,6 +348,17 @@ FR-152) and `relationship-end-names-missing-inverse`
 `reaches-population-names-absent-node` and `reaches-population-over-another-model-declaration`
 (`ill_typed`/`operator-ineligible`); and `reaches-population-omitted-from-dependencies`
 (`invalid_semantic_graph`), all FR-322-AC-73.
+`adverse.json` `field_population_cases` holds the `quire.op.model.reaches_field` field-member cases of
+FR-322-AC-398: `reaches-field-population-reference-max-3-admitted`,
+`reaches-field-population-reference-max-0-admitted`, `reaches-field-population-unbounded-admitted`,
+`reaches-field-population-option-admitted`, `reaches-field-population-sequence-admitted` and
+`reaches-field-population-over-field-owner-through-subtype-admitted` (a `Sub` declaration, the node over
+the field's owner `Order`), each admitted; `reaches-field-population-over-subtype-declaration-refused`,
+`reaches-field-population-over-another-model-declaration`, `reaches-field-population-names-integer-range`,
+`reaches-field-population-names-absent-node`, `reaches-field-population-set-typed-edge-refuses-at-the-application`
+and `reaches-field-population-unbounded-sequence-edge-refuses-at-the-application`
+(`ill_typed`/`operator-ineligible`); `reaches-field-population-omitted-from-dependencies`
+(`invalid_semantic_graph`); and `field-projection-population-fails-the-schema` (the V2 schema refuses it).
 `adverse.json` `unbounded_population_cases` holds `population-without-max-is-unbounded` and
 `population-max-3-stays-bounded` (a `model_population` node over `Set<Reference<Order>>` with no
 `max` member, and with `max` `3`, each named by the `population` key of the `Order-order-Order`
