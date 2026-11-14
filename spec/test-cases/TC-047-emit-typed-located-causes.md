@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-272
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-29
+    type: verifies
 ---
 ## Description
 
@@ -37,6 +39,7 @@ response wire. Compare these paired failures independently:
 | Wrong extraction mode versus conflicting selected package versus wrong binding count | The three retained codes and their distinct typed payloads; deleting one guard must fail that case. |
 | A refinement using a feature the producer has not built (`history-row`, `protocol-abstract-side`, `refinement-internal-list`, `nested-reference-row`) versus a declaration form the selected profile prohibits | `unsupported_construct`/`not-yet-implemented` retaining the feature name, declaration and profile identity, versus `declaration-form` retaining the prohibited form; one feature name against another compares unequal (FR-272-AC-20). |
 | Sequence declaration without a declared maximum versus a valid model exceeding a caller work budget | Invalid source/model admission versus resource incompleteness; no invented bound or shared generic limit cause. |
+| A built backend with a translatable entry on a host that denies executable memory versus an unbuilt backend, an untranslatable entry and a caller budget too small to run | `environment_refused`/`environment-refused` retaining `backend` and `executable-memory`, versus `unimplemented_capability` (`backend-not-supplied`, `untranslatable-entry`) and `resource_exhausted`; raising the budget leaves the first unchanged and removing the host denial removes it. |
 
 Supply each valid diagnostic to its strict consumer, then remove a required cause
 field, substitute another cause kind while keeping the same message, change the
