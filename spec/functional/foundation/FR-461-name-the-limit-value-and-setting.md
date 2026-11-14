@@ -84,6 +84,7 @@ setting.
    library setter; its `value` is the denied atom's identity and its `setting`
    names the remedy, the plan-declared capture binding, so Behavior 3 and 4 do
    not apply to it.
+   The worker counts `explore.workers`, `model_check.workers` and `statistical.workers` are resource choices, not limits: they take no limit row and no limit name, and the settings operation refuses the value 0 with `invalid_runtime_input`/`invalid-value` (FR-408 "Workers").
 6. **Execution budgets name their counter.** An `incomplete` execution
    outcome names its `quire.value.accounting/v1` counter, for example
    `work_units`, as its limit. A counter of the evaluation meter, one of the

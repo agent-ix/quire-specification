@@ -11,7 +11,7 @@ relationships:
 
 ## Description
 
-Measure long-run fractions by regeneration with asymptotic coverage, measure a per-window claim, and stop runs at budgets.
+Measure long-run fractions by regeneration with asymptotic coverage, measure a per-window claim, stop runs at budgets, and check that the worker count changes no result.
 
 ## Test Procedure
 
@@ -34,6 +34,10 @@ The models below are defined here in full; the citation names the QSL design rec
 | RG-04 | SC-01 with `max_samples` 1000 | `incomplete`, `limit-reached` naming `max_samples`, value 1000, and the request setting that raises it; no `measured` value |
 | RG-05 | Fixture `Up`: one object `v: Server { up: Boolean }`, initially `up = true`, one operation `Server::tick` with post `up = pre(up)`, `workload Steady on Up { weight Server::tick = 1; }`; claim `long_run_fraction holds(v.up) <= 0.9995` with `alpha 0.01, beta 0.01, indifference 0.0002`, regenerative, `min_cycles` 1000 | Every cycle has length 1 and ratio 1, so `S² = 0` and `Â = 1`; the half-width is `z / n` with `z = z_{0.99} ≈ 2.3263478740`, rounded outward. At `n = 1000` it is about `0.00233`, above `ι`, so the run does not stop at `min_cycles`. It stops at exactly `n = 11632` cycles, the least `n` with `z / n <= 1/5000` (`z / ι ≈ 11631.74`), with the interval above `0.9995`: `measured: rejected`, coverage `asymptotic` |
 | RG-06 | RG-01 cancelled by the caller after 500 cycles | `incomplete`, `cancelled{source: "requested"}`; not `limit-reached`; no `measured` value |
+| WK-01 | `NoFault` with Okamoto and `max_samples` 1000, and `P95` (TC-355) with SPRT, each run with `workers` 1, 2, 4 and 64 | Every run is byte-equal to its one-worker run: provenance, per-test counts, estimates, witnesses, certificates and decision; the first stops with `limit-reached{MaxSamples, 1000}` and 1000 samples counted. A sampler test double that finishes a higher trace index first changes no result |
+| WK-02 | `NoFault` with `max_samples` 100 and `workers` 4 | Samples at trace indices 0 to 99 equal the one-worker run's and none beyond 99 is counted |
+| WK-03 | `workers` 0 | Refused `invalid_runtime_input`/`invalid-value` naming `statistical.workers`; the sampler double records no draw. `workers` omitted runs as 1 |
+| WK-04 | RG-01 with `workers` 4 cancelled by the caller after a delay | `incomplete`, `cancelled{source: "requested"}`; counts and estimates equal the one-worker run stopped at the trace index reached; no sample of a higher trace index; no `measured` value |
 
 ## Expected Results
 
