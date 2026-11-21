@@ -61,6 +61,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/filament-specification/FR-322-AC-282
     type: verifies
+  - target: ix://agent-ix/filament-specification/FR-322-AC-520
+    type: verifies
   - target: ix://agent-ix/filament-specification/FR-322-AC-392
     type: verifies
   - target: ix://agent-ix/filament-specification/FR-322-AC-393
@@ -650,7 +652,7 @@ through XT-20 do not close the FSL-authored part of IR-1052 AC-7.
 
 ### Operand index segment vectors
 
-`NI-01` to `NI-12` and `NI-15` to `NI-24` are the `cases` of `node-index-vectors.json`, each an RFC 6902 patch over `fixtures/positive-dependency-call.json`, whose nodes are `0` Integer, `1` Boolean, `2` `Int[0, 9]` (path `["bounded_domain", "integer_range", "min", {"operand": 0}, "0", "max", "9"]`, operand row `[0]`) and `3` `App::check` (operand row `[0]`, the one slot of its literal `type`), with the operand rows `[[], [], [0], [0]]` (FR-322 "Operand index segments"). A case of `schema` `invalid` fails the V2 schema; a case of `schema` `valid` passes it and the reader's operand checks refuse it before every `semantic_graph` check, unless its expected result says otherwise. Also scan every published fixture and vector file: no `node_id.path` holds a `node_id` object, every node-held id holds only operand slots, every document-held id only index segments, and every operand row is numbered by first occurrence (FR-322-AC-278, FR-322-AC-392). A vector that carries a node object outside a graph carries its operand row beside it, `<member>_operand_row` for one node and `operand_rows` (or `<prefix>_operand_rows`) for a list of nodes; every id a vector writes outside a node object is document-held.
+`NI-01` to `NI-12` and `NI-15` to `NI-24` are the `cases` of `node-index-vectors.json` (`NI-13`, `NI-14` and `NI-25` to `NI-27` are built by the test), each an RFC 6902 patch over `fixtures/positive-dependency-call.json`, whose nodes are `0` Integer, `1` Boolean, `2` `Int[0, 9]` (path `["bounded_domain", "integer_range", "min", {"operand": 0}, "0", "max", "9"]`, operand row `[0]`) and `3` `App::check` (operand row `[0]`, the one slot of its literal `type`), with the operand rows `[[], [], [0], [0]]` (FR-322 "Operand index segments"). A case of `schema` `invalid` fails the V2 schema; a case of `schema` `valid` passes it and the reader's operand checks refuse it before every `semantic_graph` check, unless its expected result says otherwise. Also scan every published fixture and vector file: no `node_id.path` holds a `node_id` object, every node-held id holds only operand slots, every document-held id only index segments, and every operand row is numbered by first occurrence (FR-322-AC-278, FR-322-AC-392). A vector that carries a node object outside a graph carries its operand row beside it, `<member>_operand_row` for one node and `operand_rows` (or `<prefix>_operand_rows`) for a list of nodes; every id a vector writes outside a node object is document-held.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
@@ -674,6 +676,10 @@ through XT-20 do not close the FSL-authored part of IR-1052 AC-7.
 | NI-22 | a copy of node `2`'s bytes appended with the row `[1]` | Passes the operand checks and the duplicate-`node_id` check: its key, over Boolean, differs from node `2`'s | FR-322-AC-395 |
 | NI-23 | a copy of node `2`'s bytes appended with the row `[0]` | `invalid_semantic_graph` at `/semantic_graph/nodes/4/node_id`: its key is node `2`'s | FR-322-AC-395 |
 | NI-24 | a `scalar_type`/`text` node inserted at graph index `0` and a `scalar_type`/`rational` node appended, each with an empty row and a `source_map` entry; every row entry and document-held index segment rewritten to the new indexes | Passes the operand checks; each original node, now at its index plus one, has its published bytes and structural key; only `operand_rows`, the two new nodes, `source_map` and its index segments differ | FR-322-AC-392 |
+| NI-25 | built by the test: a request-style document `{"package": "example", "dependencies": [<positive-dependency-library.json>], "items": [{"kind": "composition", "premises": [{"role": "component-guarantee", "key": {"claim": {"node": ID, "occurrence": {"role": "claim", "ordinal": 0}}}}]}]}` whose slot `0` derives from a guarantee of component `B`, `{name: "B", package: "test/predicates"}`, with `ID` `{"package": "test/predicates", "path": ["composite_type", "set", {"node": 6}], "ordinal": 0}` | Resolved against the library's graph, the key equals library node `8`'s (`Set<Lib::Point>`, row `[6]`); no importer node has that key | FR-322-AC-520 |
+| NI-26 | built by the test: in the same document, an `interface-mismatch` counterexample `{"type": "interface-mismatch", "component": "B", "interface": ID, "premise": 0, "reason": "absent"}` with `ID` `{"package": "test/predicates", "path": ["composite_type", "reference", {"node": 14}], "ordinal": 0}` | Resolved against the graph of `B`'s package, the key equals library node `15`'s (`Reference<Order>`, row `[14]`) | FR-322-AC-520 |
+| NI-27 | built by the test: the ids of NI-25 and NI-26 resolved against the importer's graph | `malformed_wire` at `/items/0/premises/0/key/claim/node/path/2/node` and at `/interface/path/2/node`: indexes `6` and `14` are not below the importer's four nodes | FR-322-AC-520 |
+
 
 For FR-322-AC-95, reorder `operand_rows` with the nodes and rewrite each row entry and document-held index segment of the reordered document to its node's new graph index, and check that each node's bytes and rebuilt structural key are unchanged by the reorder. For FR-322-AC-395, also resolve node `3`'s literal `type` through node `3`'s row and check it names node `2`.
 

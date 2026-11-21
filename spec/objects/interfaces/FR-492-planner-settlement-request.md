@@ -74,7 +74,10 @@ first defect's member by its RFC 6901 pointer.
 - `slots` — exactly the declaration's derived premise slots, in derived
   order (FR-490 "Derived items", FR-491 "Derived item and slots"). Each is
   `{role, identity, result?, record?}`: `role` the slot's closed role;
-  `identity` the slot key the declaration derives; `result` a
+  `identity` the slot key the declaration derives (the node ids of a
+  composition's `component-guarantee` slot key resolve against the graph of
+  that slot's component package, as FR-322 "Scope" states for an FR-331
+  `premises` key); `result` a
   premise result, present exactly on a filled item-backed slot; `record` an
   environment record, present exactly on a filled `environment` slot. A slot
   the declaration derives with no item (an operation with no `progress`

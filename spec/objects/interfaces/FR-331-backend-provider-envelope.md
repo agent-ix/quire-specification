@@ -606,6 +606,8 @@ in milliseconds (FR-462).
   the ordered array of its premise slots, each `{role, key}`, `role` one of
   `component-guarantee`, `rely`, `liveness-dependency`, `fairness` and
   `environment`, and `key` the slot key of [FR-492](FR-492-planner-settlement-request.md);
+  the node ids of a `component-guarantee` key resolve against the graph of that
+  slot's component package, not the request package's (FR-322 "Scope");
   it is part of request identity, and an item of another kind that carries
   it refuses before consumption.
 - `assumptions` is carried by every `composition` item that carries `premises`
@@ -1069,7 +1071,7 @@ probabilistic engine's is `exact_prob`.
   `HyperCounterexample`; an FR-419 `schedulability-miss` for a refuted `schedulability` item (FR-419 "Miss counterexample"); or, on a `composition` item, an `interface-mismatch`
   ([FR-492](FR-492-planner-settlement-request.md) "Interface mismatch"):
   `{type, component, interface, premise, reason}`, `component` the peer
-  component's name, `interface` the node of the peer guarantee's temporal clause,
+  component's name, `interface` the node of the peer guarantee's temporal clause, a node id resolved against the graph of that peer component's package (FR-322 "Scope"),
   `premise` the `premises` index of the `rely` or `liveness-dependency` entry
   that needs it and `reason` `absent` or `weaker`; or, on an `operation-contract` item, a
   `contract-counterexample` ([FR-485](../../functional/ir-proof/FR-485-check-operation-contract-items.md)

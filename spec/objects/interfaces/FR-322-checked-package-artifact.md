@@ -1962,6 +1962,41 @@ nested ids.
     [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)
     resolves its `node` against the graph of the dependency named by the key's
     `package` member, not by the `node`'s own `package`.
+  - A `composition` request item
+    ([FR-331](FR-331-backend-provider-envelope.md)) names nodes of its
+    component packages' graphs. Each `component-guarantee` entry of its
+    `premises` is the item of a guarantee `C::G` over component `C`'s subject
+    ([FR-491](../../functional/analysis/FR-491-spell-and-check-a-component-composition-declaration.md)
+    "Derived item and slots"), and every node id in that entry's `key` (its
+    `claim` node, the node ids of its subject and fairness members) resolves
+    against the graph of `C`'s package: the `package` of the composition
+    body's `components` entry whose `name` is the `component` of the
+    guarantee the slot derives from. That package's identity is the one the
+    key's subject identity carries. A `component-guarantee` key nested in a
+    fixed-point slot's key resolves the same way, each against its own
+    component's graph. An `interface-mismatch` counterexample's `interface`
+    resolves against the graph of the package of the component that its
+    `component` member names. The index segments of these ids name nodes of
+    that component graph. They are not resolved against the importer's
+    graph, because the importer's graph does not hold a component's clause
+    or the claim node a component item names. A component's clause is
+    checked and admitted in its own package, and the importer reads it there
+    ("Component clause targets" below). The component's admitted package is
+    one the request already carries in `request.dependencies`.
+  - **Component clause targets.** The importer's graph does not hold the
+    node a `component_composition` body's `guarantees`, `relies` or
+    `liveness_dependencies` `clause` names. That `clause` is a node-held
+    id. Its operand slots name nodes of the importer's graph through the
+    composition node's operand row ("Locality"), and its rebuilt structural
+    key names a node of the admitted package of the component that the
+    enclosing `component` member names, where the reader finds it by
+    structural key (FR-491 "a target in another package resolves through
+    FR-322's dependency packages"). The composition node's `dependencies`
+    lists the target as FR-491 states, and stage 4 checks no `correspondence`
+    edge, so no importer node is required for it. A `clause` whose key names
+    no temporal clause node of that component's admitted package refuses
+    `missing_declaration`/`missing-name` at the `clause` member, the code
+    this artifact gives a clause target that names no node.
 - **Dependency references.** A `dependency_reference` `node` names a declared
   node of another package's graph, so it holds no segment: its `path` is
   the declaration path, all strings, and the V2 schema gives `node` the shape of
@@ -6761,6 +6796,8 @@ is carried by two `protocol` node forms.
 | FR-322-AC-517 | TC-2037's shared-argument vectors admit equal normalized signatures, including optional `X` versus required `Option<X>`, without changing native argument-omission flags. Different normalized types give S3 `unsupported_construct`/`not-yet-implemented`, exit `20`, at the synthesis grammar name, no checked package or plan request; the existing diagnostic names the parameter and deterministic first conflicting operation pair and retains FR-272's declaration/profile context and the exact instantiated feature string defined above. | Test (TC-2037) |
 | FR-322-AC-518 | FR-819-AC-1's tank generates the mode enum `[Fill, Drain]` in that order; hybrid step `operation` and state `mode` reference that exact enum, `index` is `Integer`, `arguments` is an empty record, and `before`/`after`/`initial`/`final` share the trajectory-local state type with `h` of its declared type. Hybrid `delay` and `elapsed` reference the exact builtin `scalar_type`/`rational` node used by `dwell_grid`; no invented time-unit node, receiver or native invocation ordinal is present. FR-819's universal trajectory semantics and FR-193 enclosure evidence represent initial-set and parameter uncertainty. | Test (TC-2037) |
 | FR-322-AC-519 | Operations whose receivers are `Server` and `Worker` generate a receiver union with one payload case for each distinct `Reference<Server>` and `Reference<Worker>` type; an additional receiverless operation makes the field optional. Both receiver types remain supported. Operation/case mismatches or a receiver on the receiverless operation give FR-650's plan-substitution method failure (exit `30`, no outcome document), or reject the internal certificate's `closure` rule at the tampered entry. | Test (TC-2037, TC-1955) |
+| FR-322-AC-520 | A `composition` item's component ids resolve against the component's graph. In a request-style document about `fixtures/positive-dependency-call.json` (package `example`) carrying `fixtures/positive-dependency-library.json` in `dependencies`, whose `composition` item's slot `0` derives from a guarantee whose `component` names the `components` entry `{name: "B", package: "test/predicates"}`, the `component-guarantee` key's `claim` node `{"package": "test/predicates", "path": ["composite_type", "set", {"node": 6}], "ordinal": 0}` rebuilds, against the library's graph, to the structural key of library node `8` (`Set<Lib::Point>`, operand row `[6]`) (`NI-25`), and an `interface-mismatch` counterexample whose `component` is `B` and whose `interface` is `{"package": "test/predicates", "path": ["composite_type", "reference", {"node": 14}], "ordinal": 0}` rebuilds to the key of library node `15` (`NI-26`). Resolved against the importer's four-node graph, each of those index segments is out of range and refuses `malformed_wire` at its `node` member, `/items/0/premises/0/key/claim/node/path/2/node` and `/interface/path/2/node` (`NI-27`). The importer's graph holds no node with either key, and none of the fixtures' bytes change. | Test (TC-233; NI-25..NI-27) |
+
 
 ### FR-322-AC-467
 
